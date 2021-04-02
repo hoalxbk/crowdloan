@@ -256,6 +256,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         public
         whenNotPaused
         nonReentrant
+        tokenRateSetted(_token)
         whitelisted(_candidate, _maxAmount, _deadline, _signature)
     {
         require(_token != address(0), "POOL::TOKEN_ADDRESS_0");
