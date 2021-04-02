@@ -70,7 +70,7 @@ class AuthService extends BaseService {
       await user.save();
       return user;
     } catch (e) {
-      console.error(e)
+      console.error(e);
       return ErrorFactory.internal('error')
     }
   }

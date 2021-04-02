@@ -236,6 +236,11 @@ class TransactionController {
       const tx = await web3.eth.getTransaction(param.txHash);
       if (tx == null)
         return ErrorFactory.badRequest('Transaction not found')
+      const transactionService = new TransactionService();
+      const checkTransaction = await transactionService.checkTransactionIsset(param.txHash)
+      if(!checkTransaction){
+        return ErrorFactory.badRequest('Transaction already exist.')
+      }
       const campaign = await CampaignModel.query().where('campaign_hash', '=', tx.to).first();
       if(!campaign){
         return ErrorFactory.badRequest('Campaign not found!')

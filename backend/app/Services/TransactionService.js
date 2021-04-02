@@ -37,6 +37,15 @@ class transactionService{
     }
 
   }
+
+  async checkTransactionIsset(transaction_hash){
+    const find = await transactionModel.query().where('transaction_hash', transaction_hash).first();
+    if(find){
+      return false
+    }
+    return true
+  }
+
 }
 
 module.exports = transactionService
