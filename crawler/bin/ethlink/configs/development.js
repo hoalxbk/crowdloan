@@ -1,0 +1,48 @@
+module.exports = {
+  // WEB3_API_URL: 'https://rinkeby.infura.io/v3/c745d07314904c539668b553dbd6b670',
+  // WEB3_API_URL: 'https://rinkeby.infura.io/v3/cc59d48c26f54ab58d831f545eda2bb7',
+  // WEB3_API_URL: 'https://rinkeby.infura.io/v3/3a18fd787c2342c4915364de4955bcf5',
+  WEB3_API_URL: 'https://rinkeby-rpc.sotatek.com',
+
+  AVERAGE_BLOCK_TIME: 15000,
+  REQUIRED_CONFIRMATION: 3,
+  CHAIN_ID: 9876,
+  contracts: {
+    CampaignFactory: {
+      CONTRACT_DATA: require('./contracts/CampaignFactory.json'), // CampaignFactory
+      // CONTRACT_ADDRESS: '0xADc1577fC68e123fb72dE3798427Bfb6CF429694',
+      // CONTRACT_ADDRESS: '0xe11309518BAdd4c6c795c7f9e738aD1182F389A7',
+      // CONTRACT_ADDRESS: '0xD683542A17eA97828540dDeBCb145D0faEeb208E',
+      // CONTRACT_ADDRESS: '0x0Bb08d2ee599B93778053B2084b5df4400F6A221',
+      // CONTRACT_ADDRESS: '0x79c86934be686b28b9aeeafc42202907b06e3d7a',
+      // CONTRACT_ADDRESS: '0x59Ac597ce45D70b5400D509a5574F8667D47788f',
+      // CONTRACT_ADDRESS: '0x7a274f2dbbb9b44a1a070a11fb1e1237f643b98c',
+      // CONTRACT_ADDRESS: '0x8455ebe197112e3f8d6aee9c08bd1fa9d95c8914',
+      // CONTRACT_ADDRESS: '0x07dcc8d6a05b26ba802f9c3506bbef3520130af3',
+      // CONTRACT_ADDRESS: '0xa1C984c893B3F07B4a019a37cc3168eaA3C03EaA',
+      // CONTRACT_ADDRESS: '0xe47f4b33201f99d8b813fb239af656ea97115521',
+      CONTRACT_ADDRESS: '0x89a267131c104fa11554f8fc2a5fa4ad52741a74',
+      FIRST_CRAWL_BLOCK: 8310131, // Start Block: 8317131
+      BLOCK_NUM_IN_ONE_GO: 5000,
+      BREAK_TIME_AFTER_ONE_GO: 25000,
+      NEED_NOTIFY_BY_WEBHOOK: true
+    },
+    Campaign: {
+      CONTRACT_DATA: require('./contracts/Campaign.json'), // Campaign
+      // CONTRACT_ADDRESS: '0x0fd47db988fdf544e5b0f0c612ada37452a77aad'
+      CONTRACT_ADDRESS: '0x99AC963e5f6683c5BCdbBe169B742e9321a6FC46', // Ignored
+      FIRST_CRAWL_BLOCK: 8304131,
+      BLOCK_NUM_IN_ONE_GO: 2000,
+      BREAK_TIME_AFTER_ONE_GO: 30000,
+      NEED_NOTIFY_BY_WEBHOOK: true
+    },
+    ETHLink: {
+      CONTRACT_DATA: require('./contracts/ETHLink.json'), // ETHLink
+      CONTRACT_ADDRESS: '0xdf7986c3C00A08967285382A3f1476Cbe7e91ba0',
+      FIRST_CRAWL_BLOCK: 8304131,
+      BLOCK_NUM_IN_ONE_GO: 4000,
+      BREAK_TIME_AFTER_ONE_GO: 40000,
+      NEED_NOTIFY_BY_WEBHOOK: true
+    }
+  },
+};

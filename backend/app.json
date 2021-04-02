@@ -1,0 +1,16 @@
+{
+  "apps": [
+    {
+      "name": "SotatekStarterBackend",
+      "script": "node server.js",
+      "cwd": "",
+      "watch": false
+    },
+    {
+      "name": "SotatekStarterQueueListen",
+      "script": "adonis kue:listen",
+      "cwd": "",
+      "watch": false
+    }
+  ]
+}

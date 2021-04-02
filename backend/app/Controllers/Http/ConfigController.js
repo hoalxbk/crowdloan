@@ -1,0 +1,18 @@
+'use strict'
+const Congfig = use('App/Models/Config');
+const HelperUtils = use('App/Common/HelperUtils');
+
+class ContractController {
+  async getConfig( {request}) {
+    try {
+      const countdown = await Congfig.query().where('key', 'countdown').first()
+      return HelperUtils.responseSuccess(countdown)
+    } catch (e){
+      console.error(e)
+      return HelperUtils.responseErrorInternal(e.message)
+    }
+  }
+
+}
+
+module.exports = ContractController

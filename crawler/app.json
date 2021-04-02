@@ -1,0 +1,28 @@
+{
+  "apps": [
+    {
+      "name": "SotatekStarterCampaignFactoryCrawler",
+      "script": "bin/ethlink/CampaignFactoryLogCrawler.js",
+      "cwd": "dist",
+      "watch": false
+    },
+    {
+      "name": "SotatekStarterCampaignCrawler",
+      "script": "bin/ethlink/CampaignLogCrawler.js",
+      "cwd": "dist",
+      "watch": false
+    },
+    {
+      "name": "SotatekStarterEthLinkCrawler",
+      "script": "bin/ethlink/ETHLinkEventLogCrawler.js",
+      "cwd": "dist",
+      "watch": false
+    },
+    {
+      "name": "SotatekStarterWebhook",
+      "script": "bin/ethlink/WebhookWorker.js",
+      "cwd": "dist",
+      "watch": false
+    }
+  ]
+}
