@@ -39,19 +39,19 @@ module.exports = {
     goerli: {
       url:
         'https://eth-goerli.alchemyapi.io/v2/xGtdt4Mu_Kib3_VzN0uoa8s3G57NWPNd',
-      accounts: [''],
+      accounts: ['8a4902974a7ff479944b3abe29a2b5be56c6e68ba5c491474412f33e1710839e'],
     },
     testnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: 20000000000,
-      accounts: [''],
+      accounts: ['8a4902974a7ff479944b3abe29a2b5be56c6e68ba5c491474412f33e1710839e'],
     },
     bsc_mainnet: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       gasPrice: 20000000000,
-      accounts: [''],
+      accounts: ['8a4902974a7ff479944b3abe29a2b5be56c6e68ba5c491474412f33e1710839e'],
     }
   },
   etherscan: {
