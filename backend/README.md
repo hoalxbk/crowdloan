@@ -19,7 +19,7 @@ cp .env.example .env
 #### Step 3
 Generate app key
 ```
-adnonis key:generate
+adonis key:generate
 ```
 
 
