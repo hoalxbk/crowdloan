@@ -5,6 +5,9 @@ require('@openzeppelin/hardhat-upgrades');
 
 const dotenv = require('dotenv');
 dotenv.config();
+
+const privateKey = process.env.DEPLOY_ACCOUNT_PRIVATE_KEY;
+const alchemyKey = process.env.ALCHEMY_KEY;
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
 task('accounts', 'Prints the list of accounts', async () => {
@@ -38,23 +41,23 @@ module.exports = {
     },
     goerli: {
       url:
-        'https://eth-goerli.alchemyapi.io/v2/xGtdt4Mu_Kib3_VzN0uoa8s3G57NWPNd',
-      accounts: ['8a4902974a7ff479944b3abe29a2b5be56c6e68ba5c491474412f33e1710839e'],
+        `https://eth-goerli.alchemyapi.io/v2/${alchemyKey}`,
+      accounts: [privateKey],
     },
     testnet: {
       url: "https://data-seed-prebsc-1-s1.binance.org:8545",
       chainId: 97,
       gasPrice: 20000000000,
-      accounts: ['8a4902974a7ff479944b3abe29a2b5be56c6e68ba5c491474412f33e1710839e'],
+      accounts: [privateKey],
     },
     bsc_mainnet: {
       url: "https://bsc-dataseed.binance.org/",
       chainId: 56,
       gasPrice: 20000000000,
-      accounts: ['8a4902974a7ff479944b3abe29a2b5be56c6e68ba5c491474412f33e1710839e'],
+      accounts: [privateKey],
     }
   },
   etherscan: {
-    apiKey: 'SAUVZ118TAJY1IWST3PB6E9W1AHXGY1USA',
+    apiKey: process.env.ETHERSCAN_KEY,
   },
 };

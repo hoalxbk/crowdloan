@@ -1,21 +1,27 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.1;
 
-import "../libraries/Ownable.sol"; 
-import "../libraries/ReentrancyGuard.sol"; 
+import "../libraries/Ownable.sol";
+import "../libraries/ReentrancyGuard.sol";
 import "../libraries/SafeMath.sol";
-import "../libraries/IERC20.sol";
 import "../libraries/Pausable.sol";
+import "../interfaces/IERC20.sol";
+import "../interfaces/ISotaTier.sol";
 import "../extensions/SotaWhitelist.sol";
 
 contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     using SafeMath for uint256;
+
+    uint constant MAX_NUM_TIERS = 10;
 
     // The token being sold
     IERC20 public token;
 
     // The address of factory contract
     address public factory;
+
+    // The address of tier contract
+    address public tier;
 
     // Address where funds are collected
     address public fundingWallet;
@@ -41,6 +47,12 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     // Ether to token conversion rate decimals
     uint256 private etherConversionRateDecimals = 0;
 
+    // Token limit amount user can buy each tier
+    uint[MAX_NUM_TIERS] public tierLimitBuy;
+
+    // Number of token user purchased
+    mapping(address => uint256) public userPurchased;
+
     // Pool extensions
     bool public useWhitelist;
 
@@ -60,7 +72,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     }
 
     // -----------------------------------------
-    // Lemonade's event
+    // Lauchpad Starter's event
     // -----------------------------------------
     event PoolCreated(string name, address token, uint256 openTime, uint256 closeTime, uint256 ethRate, uint256 ethRateDecimals, address wallet, address owner);
     event AllowTokenToTradeWithRate(address token, uint256 rate);
@@ -76,7 +88,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     }
 
     // -----------------------------------------
-    // Lemonade external interface
+    // Lauchpad Starter external interface
     // -----------------------------------------
 
     /**
@@ -99,10 +111,14 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
      * @param _duration Duration of ICO Pool
      * @param _openTime When ICO Started
      * @param _ethRate Number of token units a buyer gets per wei
+     * @param _tier Contract address of Sota Tiers
+     * @param _tierLimitBuy Array of max token user can buy each tiers
      * @param _wallet Address where collected funds will be forwarded to
      */
-    function initialize(string calldata _name, address _token, uint256 _duration, uint256 _openTime, uint256 _ethRate, uint256 _ethRateDecimals, address _wallet) external {
+    function initialize(string calldata _name, address _token, uint256 _duration, uint256 _openTime, uint256 _ethRate, uint256 _ethRateDecimals, address _tier, uint[MAX_NUM_TIERS] calldata _tierLimitBuy, address _wallet) external {
         require(msg.sender == factory, "POOL::UNAUTHORIZED");
+        require(_tier != address(0), "POOL::ZERO_TIER_ADDRESS");
+        require(_tierLimitBuy[0] != 0, "POOL::ZERO_TIER_LIMIT_BUY");
 
         name = _name;
         token = IERC20(_token);
@@ -110,6 +126,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         closeTime = _openTime.add(_duration);
         etherConversionRate = _ethRate;
         etherConversionRateDecimals = _ethRateDecimals;
+        tier = _tier;
+        tierLimitBuy = _tierLimitBuy;
         fundingWallet = _wallet;
         owner = tx.origin;
         paused = false;
@@ -132,7 +150,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     function getEtherConversionRateDecimals() public view returns (uint256) {
         return etherConversionRateDecimals;
     }
-    
+
     /**
      * @notice Returns the conversion rate when user buy by eth
      * @return Returns only a fixed number of token rate.
@@ -161,7 +179,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         etherConversionRate = _rate;
         emit PoolStatsChanged();
     }
-    
+
     /**
      * @notice Owner can set the eth conversion rate decimals. Receiver tokens = wei * etherConversionRate / 10 ** etherConversionRateDecimals
      * @param _rateDecimals Fixed number of ether rate decimals
@@ -179,6 +197,19 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         require(erc20TokenConversionRate[_token] != _rate, "POOL::RATE_INVALID");
         erc20TokenConversionRate[_token] = _rate;
         emit AllowTokenToTradeWithRate(_token, _rate);
+        emit PoolStatsChanged();
+    }
+
+    /**
+     * @notice Owner can set the limit token amount each tiers can buy.
+     * @param _tierLimitBuy array of ascending limit token buy-able amount
+     */
+    function setTierLimitBuy(uint[MAX_NUM_TIERS] calldata _tierLimitBuy)
+        public
+        onlyOwner
+    {
+        require(_tierLimitBuy[0] != 0, "POOL::ZERO_TIER_LIMIT_BUY");
+        tierLimitBuy = _tierLimitBuy;
         emit PoolStatsChanged();
     }
 
@@ -229,6 +260,11 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
 
         // calculate token amount to be created
         uint256 tokens = _getEtherToTokenAmount(weiAmount);
+        uint userTier = ISotaTier(tier).getUserTier(_beneficiary);
+        uint256 memory boughtAmount = userPurchased[_beneficiary].add(tokens);
+        require(boughtAmount <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
+        userPurchased[_beneficiary] = boughtAmount;
+
         _deliverTokens(_beneficiary, tokens);
 
         _forwardFunds(weiAmount);
@@ -273,6 +309,9 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         require(allowance >= _amount, "POOL::TOKEN_NOT_APPROVED");
 
         uint256 tokens = _getTokenToTokenAmount(_token, _amount);
+        uint userTier = ISotaTier(tier).getUserTier(_beneficiary);
+        require(userPurchased[_beneficiary].add(tokens) <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
+        userPurchased[_beneficiary] = userPurchased[_beneficiary].add(tokens);
 
         _deliverTokens(_beneficiary, tokens);
 
