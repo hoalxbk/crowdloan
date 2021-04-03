@@ -154,9 +154,6 @@ class AdminController {
             .where('role', role)
             .delete();
 
-          console.log('Clear revokeTokensForUser: --- resetPassword', user.toJSON());
-          await auth.authenticator('jwt').revokeTokensForUser(user);
-
           return HelperUtils.responseSuccess()
         }else {
           return ErrorFactory.badRequest('Reset password failed!')
@@ -195,9 +192,6 @@ class AdminController {
       userFind.password = passwordNew;
       userFind.token_jwt = token;
       await userFind.save();
-
-      console.log('Clear revokeTokensForUser: --- changePassword', userFind.toJSON());
-      await auth.authenticator('jwt').revokeTokensForUser(userFind);
 
       return {
         status: 200,
