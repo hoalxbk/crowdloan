@@ -261,9 +261,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         // calculate token amount to be created
         uint256 tokens = _getEtherToTokenAmount(weiAmount);
         uint userTier = ISotaTier(tier).getUserTier(_beneficiary);
-        uint256 memory boughtAmount = userPurchased[_beneficiary].add(tokens);
-        require(boughtAmount <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
-        userPurchased[_beneficiary] = boughtAmount;
+        require(userPurchased[_beneficiary].add(tokens) <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
+        userPurchased[_beneficiary] = userPurchased[_beneficiary].add(tokens);
 
         _deliverTokens(_beneficiary, tokens);
 
