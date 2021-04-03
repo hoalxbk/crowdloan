@@ -2,6 +2,5 @@
 pragma solidity >=0.7.1;
 
 interface IPoolFactory {
-    function getPlatformFeeRate() external view returns (uint256);
-    function getplatformRevenueAddress() external view returns (address);
+    function getTier() external view returns (address);
 }

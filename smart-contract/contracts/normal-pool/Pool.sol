@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.1;
 
+import "../interfaces/IERC20.sol";
+import "../interfaces/IPoolFactory.sol";
+import "../interfaces/ISotaTier.sol";
 import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../libraries/SafeMath.sol";
 import "../libraries/Pausable.sol";
-import "../interfaces/IERC20.sol";
-import "../interfaces/ISotaTier.sol";
 import "../extensions/SotaWhitelist.sol";
 
 contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
@@ -19,9 +20,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
 
     // The address of factory contract
     address public factory;
-
-    // The address of tier contract
-    address public tier;
 
     // Address where funds are collected
     address public fundingWallet;
@@ -111,13 +109,11 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
      * @param _duration Duration of ICO Pool
      * @param _openTime When ICO Started
      * @param _ethRate Number of token units a buyer gets per wei
-     * @param _tier Contract address of Sota Tiers
      * @param _tierLimitBuy Array of max token user can buy each tiers
      * @param _wallet Address where collected funds will be forwarded to
      */
-    function initialize(string calldata _name, address _token, uint256 _duration, uint256 _openTime, uint256 _ethRate, uint256 _ethRateDecimals, address _tier, uint[MAX_NUM_TIERS] calldata _tierLimitBuy, address _wallet) external {
+    function initialize(string calldata _name, address _token, uint256 _duration, uint256 _openTime, uint256 _ethRate, uint256 _ethRateDecimals, uint[MAX_NUM_TIERS] calldata _tierLimitBuy, address _wallet) external {
         require(msg.sender == factory, "POOL::UNAUTHORIZED");
-        require(_tier != address(0), "POOL::ZERO_TIER_ADDRESS");
         require(_tierLimitBuy[0] != 0, "POOL::ZERO_TIER_LIMIT_BUY");
 
         name = _name;
@@ -126,7 +122,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         closeTime = _openTime.add(_duration);
         etherConversionRate = _ethRate;
         etherConversionRateDecimals = _ethRateDecimals;
-        tier = _tier;
         tierLimitBuy = _tierLimitBuy;
         fundingWallet = _wallet;
         owner = tx.origin;
@@ -257,10 +252,10 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         _preValidatePurchase(_beneficiary, weiAmount);
         require(_validPurchase(), "POOL::ENDED");
         require(_verifyWhitelist(_candidate, _maxAmount, _deadline, _signature));
-        
+
         // calculate token amount to be created
         uint256 tokens = _getEtherToTokenAmount(weiAmount);
-        
+        _verifyTierLimitBuy(_beneficiary, tokens);
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -296,7 +291,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         require(_verifyWhitelist(_candidate, _maxAmount, _deadline, _signature));
 
         _verifyAllowance(msg.sender, _token, _amount);
-        
+
         _preValidatePurchase(_beneficiary, _amount);
 
         require(
@@ -304,10 +299,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
             "POOL::TOKEN_NOT_ALLOWED"
         );
 
-
         uint256 tokens = _getTokenToTokenAmount(_token, _amount);
-        uint userTier = ISotaTier(tier).getUserTier(_beneficiary);
-        require(userPurchased[_beneficiary].add(tokens) <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
+        _verifyTierLimitBuy(_beneficiary, tokens);
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -451,6 +444,12 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         IERC20 tradeToken = IERC20(_token);
         uint256 allowance = tradeToken.allowance(_user, address(this));
         require(allowance >= _amount, "POOL::TOKEN_NOT_APPROVED");
+    }
+
+    function _verifyTierLimitBuy(address _user, uint256 _amount) private view {
+		address tier = IPoolFactory(factory).getTier();
+        uint userTier = ISotaTier(tier).getUserTier(_user);
+        require(userPurchased[_user].add(_amount) <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
     }
 
     function _verifyWhitelist(address _candidate, uint256 _maxAmount, uint256 _deadline, bytes memory _signature) private view returns (bool) {

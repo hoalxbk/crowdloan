@@ -56,6 +56,7 @@ contract ERC20 is Context, IERC20 {
         _name = name_;
         _symbol = symbol_;
         _decimals = 18;
+        _totalSupply = 1000000e18;
     }
 
     /**
