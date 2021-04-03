@@ -45,9 +45,13 @@ const namedMiddleware = {
   checkStatus: 'App/Middleware/CheckStatus',
   checkPublicStatus: 'App/Middleware/CheckPublicStatus',
   checkJwtSecret: 'App/Middleware/CheckJwtSecret',
+  checkAdminJwtSecret: 'App/Middleware/CheckAdminJwtSecret',
   checkJwtWebhook: 'App/Middleware/CheckJwtWebhook',
   checkIcoOwner: 'App/Middleware/CheckIcoOwner',
   checkSignatrue: 'App/Middleware/CheckSignatrue',
+  checkAdminSignature: 'App/Middleware/CheckAdminSignature',
+  typeAdmin: 'App/Middleware/TypeAdmin',
+  typeUser: 'App/Middleware/TypeUser',
 }
 
 /*

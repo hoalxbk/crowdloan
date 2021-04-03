@@ -61,6 +61,10 @@ module.exports = Object.freeze({
     ICO_OWNER: 'user',
     PUBLIC_USER: 'public',
   },
+  // USER_TYPE_PREFIX: {
+  //   ICO_OWNER: 'admin',
+  //   PUBLIC_USER: 'user',
+  // },
   USER_INACTIVE: 0,
   USER_ACTIVE: 1,
   FILE_SITE: '2mb',

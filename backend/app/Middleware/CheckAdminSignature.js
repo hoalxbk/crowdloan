@@ -5,18 +5,17 @@ const sigUtil = require('eth-sig-util')
 const Web3 = require('web3')
 const Const = use('App/Common/Const');
 
-class CheckSignatrue {
+class CheckAdminSignature {
   async handle({ request, }, next) {
     try {
       const params = request.all();
       const type = request.params.type;
 
       console.log('Check Signature with: ', params);
-      const isAdmin = type == Const.USER_TYPE_PREFIX.ICO_OWNER;
 
       const signature = params.signature
-      const wallet_address = Web3.utils.toChecksumAddress(params.wallet_address);
-      const message = isAdmin ? process.env.MESSAGE_SIGNATURE : process.env.MESSAGE_INVESTOR_SIGNATURE;
+      const wallet_address = Web3.utils.toChecksumAddress(params.wallet_address)
+      const message = process.env.MESSAGE_SIGNATURE;
       console.log('Message: ', message);
 
       const mes = [
@@ -43,4 +42,4 @@ class CheckSignatrue {
   }
 }
 
-module.exports = CheckSignatrue;
+module.exports = CheckAdminSignature;

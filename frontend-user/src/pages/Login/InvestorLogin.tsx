@@ -63,7 +63,7 @@ const InvestorLogin: React.FC<any> = (props: any) => {
       if (currentPage === 'signIn') {
         setLoadingUserExists(true);
 
-        const userExists = await userAlreadyExists(ethAddress);
+        const userExists = await userAlreadyExists(ethAddress, true);
         setLoadingUserExists(false);
 
         setUserExists(userExists);
