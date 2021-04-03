@@ -64,13 +64,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         _;
     }
 
-    modifier whitelisted(address _candidate, uint256 _maxAmount, uint256 _deadline, bytes memory _signature) {
-        if (useWhitelist) {
-            require(verify(owner, _candidate, _maxAmount, _deadline, _signature), "POOL::USER_NOT_ALLOWED");
-        }
-        _;
-    }
-
     // -----------------------------------------
     // Lauchpad Starter's event
     // -----------------------------------------
@@ -257,7 +250,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         _preValidatePurchase(_beneficiary, weiAmount);
         require(_validPurchase(), "POOL::ENDED");
         require(_verifyWhitelist(_candidate, _maxAmount, _deadline, _signature));
-        
+
         // calculate token amount to be created
         uint256 tokens = _getEtherToTokenAmount(weiAmount);
         
