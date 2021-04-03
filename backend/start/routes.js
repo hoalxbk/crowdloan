@@ -87,24 +87,22 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('jwt/verify', 'AuthController.verifyJwtToken').middleware(['auth']);
-    Route.post('change-password', 'UserController.changePassword').middleware(['checkSignatrue', 'auth', 'checkRole']);
+  Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
+  Route.post('change-password', 'UserController.changePassword').middleware(['checkSignatrue', 'auth', 'checkRole']);
+  Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser', 'checkPrefix', 'checkJwtSecret']); //user/public
-
-// Route.group(() => {
-//   Route.post('jwt/verify', 'AuthController.verifyJwtToken').middleware(['auth']);
-//   Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
-//   // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
-//   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
-// }).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
-//
-
-Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
-
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
   .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);
 
+Route.group(() => {
+  Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
+  // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
+  Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
+}).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
 
 // API V2
+Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
+
 Route.get('latest-transaction', 'TransactionController.latestTransaction')
 Route.get('public-campaign', 'CampaignController.myCampaign')
 Route.get('public-campaign/:status', 'CampaignController.myCampaign').middleware('checkPublicStatus')
