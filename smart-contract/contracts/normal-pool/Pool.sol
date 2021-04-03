@@ -252,17 +252,15 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         payable
         whenNotPaused
         nonReentrant
-        whitelisted(_candidate, _maxAmount, _deadline, _signature)
     {
         uint256 weiAmount = msg.value;
         _preValidatePurchase(_beneficiary, weiAmount);
         require(_validPurchase(), "POOL::ENDED");
-
+        require(_verifyWhitelist(_candidate, _maxAmount, _deadline, _signature));
+        
         // calculate token amount to be created
         uint256 tokens = _getEtherToTokenAmount(weiAmount);
-        uint userTier = ISotaTier(tier).getUserTier(_beneficiary);
-        require(userPurchased[_beneficiary].add(tokens) <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
-        userPurchased[_beneficiary] = userPurchased[_beneficiary].add(tokens);
+        
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -292,25 +290,24 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         whenNotPaused
         nonReentrant
         tokenRateSetted(_token)
-        whitelisted(_candidate, _maxAmount, _deadline, _signature)
     {
-        require(_token != address(0), "POOL::TOKEN_ADDRESS_0");
         require(_token != address(token), "POOL::TOKEN_INVALID");
         require(_validPurchase(), "POOL::ENDED");
+        require(_verifyWhitelist(_candidate, _maxAmount, _deadline, _signature));
+
+        _verifyAllowance(msg.sender, _token, _amount);
+        
         _preValidatePurchase(_beneficiary, _amount);
+
         require(
             getErc20TokenConversionRate(_token) != 0,
             "POOL::TOKEN_NOT_ALLOWED"
         );
 
-        IERC20 tradeToken = IERC20(_token);
-        uint256 allowance = tradeToken.allowance(msg.sender, address(this));
-        require(allowance >= _amount, "POOL::TOKEN_NOT_APPROVED");
 
         uint256 tokens = _getTokenToTokenAmount(_token, _amount);
         uint userTier = ISotaTier(tier).getUserTier(_beneficiary);
         require(userPurchased[_beneficiary].add(tokens) <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
-        userPurchased[_beneficiary] = userPurchased[_beneficiary].add(tokens);
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -391,6 +388,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
       internal
     {
       token.transfer(_beneficiary, _tokenAmount);
+      userPurchased[_beneficiary] = userPurchased[_beneficiary].add(_tokenAmount);
     }
 
     /**
@@ -447,5 +445,18 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
    */
     function _transferToken(address _token, address _to, uint256 _amount) private {
         IERC20(_token).transferFrom(msg.sender, _to, _amount);
+    }
+
+    function _verifyAllowance(address _user, address _token, uint256 _amount) private view {
+        IERC20 tradeToken = IERC20(_token);
+        uint256 allowance = tradeToken.allowance(_user, address(this));
+        require(allowance >= _amount, "POOL::TOKEN_NOT_APPROVED");
+    }
+
+    function _verifyWhitelist(address _candidate, uint256 _maxAmount, uint256 _deadline, bytes memory _signature) private view returns (bool) {
+        if (useWhitelist) {
+            return (verify(owner, _candidate, _maxAmount, _deadline, _signature));
+        }
+        return true;
     }
 }
