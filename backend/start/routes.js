@@ -65,13 +65,9 @@ Route.group(() => {
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
 
 Route.group(() => {
-  // Route.post('jwt/verify', 'AuthAdminController.verifyJwtToken').middleware(['auth:admin']);
   Route.get('profile', 'AdminController.profile').middleware(['auth:admin', 'checkRole']);
-
-  // Add admin_id field to tokens
   Route.post('change-password', 'AdminController.changePassword').middleware(['checkSignatrue', 'auth:admin', 'checkRole']);
-
-  // Route.post('update-profile', 'AdminController.updateProfile').middleware(['auth:admin', 'checkRole']).validator('UpdateProfile');
+  Route.post('update-profile', 'AdminController.updateProfile').middleware(['auth:admin', 'checkRole']).validator('UpdateProfile');
   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth:admin']);
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'checkAdminJwtSecret']); //user/public
 
@@ -91,12 +87,12 @@ Route.group(() => {
 
 Route.group(() => {
   Route.post('jwt/verify', 'AuthController.verifyJwtToken').middleware(['auth']);
+    Route.post('change-password', 'UserController.changePassword').middleware(['checkSignatrue', 'auth', 'checkRole']);
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser', 'checkPrefix', 'checkJwtSecret']); //user/public
 
 // Route.group(() => {
 //   Route.post('jwt/verify', 'AuthController.verifyJwtToken').middleware(['auth']);
 //   Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
-//   Route.post('change-password', 'UserController.changePassword').middleware(['checkSignatrue', 'auth', 'checkRole']);
 //   // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
 //   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
 // }).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
