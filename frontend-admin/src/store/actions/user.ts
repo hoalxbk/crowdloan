@@ -5,6 +5,7 @@ import { BaseRequest } from '../../request/Request';
 import { getWeb3Instance } from '../../services/web3';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import {apiRoute} from "../../utils";
 
 type UserRegisterProps = {
   username: string;
@@ -244,7 +245,7 @@ export const getUserDetail = () => {
     try {
       const baseRequest = new BaseRequest();
 
-      const response = await baseRequest.get('/user/profile') as any;
+      const response = await baseRequest.get(apiRoute('profile')) as any;
       const resObj = await response.json();
 
       if (resObj.status && resObj.status === 200) {
@@ -290,7 +291,7 @@ export const updateUserProfile = (updatedUser: UserProfileProps) => {
              const errMsg = err.message || result.error.message
               dispatchErrorWithMsg(dispatch, userActions.USER_PROFILE_UPDATE_FAILURE, errMsg);
           } else {
-            const response = await baseRequest.post(`/user/update-profile`, {
+            const response = await baseRequest.post(apiRoute('update-profile'), {
               firstname: firstName,
               lastname: lastName,
               avatar,
