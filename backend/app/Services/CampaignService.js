@@ -6,6 +6,7 @@ const Const = use('App/Common/Const');
 const ErrorFactory = use('App/Common/ErrorFactory');
 const BigNumber = use('bignumber.js');
 const CheckTxStatus = use('App/Jobs/CheckTxStatus');
+const WhitelistService = use('App/Services/WhitelistUserService')
 
 const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -234,7 +235,7 @@ class CampaignService {
       }
       if(status && status === 1){
         listData = listData.whereRaw('finish_time >=' + dateNow)
-          .whereRaw('start_time <=' + dateNow)
+          .whereRaw('start_time <=' + daowteNow)
       }
       if(status && status === 2){
         listData = listData.where('start_time', '>=', dateNow)
@@ -244,6 +245,22 @@ class CampaignService {
       }
       listData = await listData.paginate(page,limit);
       return listData
+    }
+
+    // Investor join campaign
+    async joinCampaign(campaign_id, wallet_address) {
+      // check exist campaign available to join
+      const currentDate = Date.now();
+      console.log('joinCampaign', currentDate, campaign_id)
+      const camp = await CampaignModel.query().where('id', campaign_id)
+        .where('start_time', '<=', currentDate)
+        .where('finish_time', '>=', currentDate).fetch();
+      if (camp == null) {
+        console.log("null")
+      }
+      console.log("joinCampaign",camp)
+      const whiteListSv = new WhitelistService();
+
     }
 }
 

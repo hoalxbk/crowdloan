@@ -4,6 +4,7 @@ const CampaignModel = use('App/Models/Campaign');
 const CampaignService = use('App/Services/CampaignService');
 const Const = use('App/Common/Const');
 const Common = use('App/Common/Common');
+const HelperUtils = use('App/Common/HelperUtils');
 
 const CONFIGS_FOLDER = '../../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -245,8 +246,29 @@ class CampaignController {
       console.log("error", e)
       return ErrorFactory.internal("error")
     }
-
   }
+
+  async joinCampaign({request, auth}) {
+    const params = request.all()
+    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
+    if (wallet_address == null) {
+      throw new ErrorFactory.badRequest("User don't have a valid wallet");
+    }
+    const type = request.params.type;
+    if (!type || (type !== Const.USER_TYPE_PREFIX.PUBLIC_USER)) {
+      throw new ErrorFactory.badRequest("Only accept user type to join campaign");
+    }
+    const campaignService = new CampaignService();
+    try {
+      await campaignService.joinCampaign(params.campaign_id, wallet_address);
+      return HelperUtils.responseSuccess(null,"Join Campaign Successful !");
+    } catch (e) {
+      console.log("error", e)
+      return ErrorFactory.internal("Internal Error : Join Campaign")
+    }
+  }
+
+
 }
 
 module.exports = CampaignController

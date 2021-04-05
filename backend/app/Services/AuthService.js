@@ -15,19 +15,13 @@ class AuthService extends BaseService {
     const userService = new UserService();
     const filterParams = {
       wallet_address: params.wallet_address,
-      role: params.role,
+      role: Const.USER_ROLE.PUBLIC_USER
     };
     console.log('Login with filterParams: ', filterParams);
 
     const user = await userService.findUser(filterParams);
     if (!user) {
       ErrorFactory.unauthorizedInputException('The current ethereum address has not been signed up on the system !', Const.ERROR_CODE.AUTH_ERROR.ADDRESS_NOT_EXIST);
-    }
-
-    const isMatchPassword = await Hash.verify(params.password, user.password);
-
-    if (!isMatchPassword) {
-      ErrorFactory.unauthorizedInputException('Incorrect password !', Const.ERROR_CODE.AUTH_ERROR.PASSWORD_NOT_MATCH);
     }
     return user;
   }
@@ -56,7 +50,8 @@ class AuthService extends BaseService {
   }
 
   async createUser({email, username, signature, password, wallet_address, type, role}) {
-    const isExistWhitelistUser = await this.checkExistWhitelistUser({ email });
+    // const isExistWhitelistUser = await this.checkExistWhitelistUser({ email });
+    const isExistWhitelistUser = false;
     const userType = isExistWhitelistUser ? Const.USER_TYPE.WHITELISTED : Const.USER_TYPE.REGULAR;
     try {
       const user = new UserModel;

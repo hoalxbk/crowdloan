@@ -6,7 +6,7 @@ export const userAlreadyExists = async (ethAddress: string, isInvestor: boolean 
 
     let url = '';
 
-    url = !isInvestor ? '/user/check-wallet-address': 'public/check-wallet-address';
+    url = '/user/check-wallet-address';
 
     if (ethAddress) {
       const response = await baseRequest.post(url, {

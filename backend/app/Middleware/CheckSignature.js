@@ -5,7 +5,7 @@ const sigUtil = require('eth-sig-util')
 const Web3 = require('web3')
 const Const = use('App/Common/Const');
 
-class CheckSignatrue {
+class CheckSignature {
   async handle({ request, }, next) {
     try {
       const params = request.all();
@@ -42,4 +42,4 @@ class CheckSignatrue {
   }
 }
 
-module.exports = CheckSignatrue;
+module.exports = CheckSignature;

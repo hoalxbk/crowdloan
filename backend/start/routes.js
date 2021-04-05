@@ -49,32 +49,31 @@ Route.group(() => {
   // Route.post('user/upload-avatar', 'UserController.uploadAvatar');
   Route.get('my-campaign', 'CampaignController.myCampaign')
   Route.get('my-campaign/:status', 'CampaignController.myCampaign').middleware('checkStatus')
-}).middleware(['auth', 'checkJwtSecret']);
+}).middleware(['auth']);
 
 // Investor User
 Route.get('campaign-latest-active', 'CampaignController.campaignLastestActive')
 
 Route.group(() => {
-  Route.post('/login', 'AuthController.login').validator('Login').middleware('checkSignatrue');
-  Route.post('/register', 'AuthController.adminRegister').validator('Register').middleware('checkSignatrue');
+  Route.post('/login', 'UserAuthController.login').validator('Login').middleware('checkSignature');
+  Route.post('/register', 'UserAuthController.register').validator('Register').middleware('checkSignature');
   Route.get('confirm-email/:token', 'UserController.confirmEmail'); // Confirm email when register
-  Route.post('forgot-password', 'UserController.forgotPassword').validator('ForgotPassword').middleware('checkSignatrue');;
-  Route.post('check-wallet-address', 'AuthController.checkWalletAddress');
+  Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
-  Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignatrue');
+  Route.post('jwt/verify', 'UserAuthController.verifyJwtToken').middleware(['auth']);
+  Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
+  Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
+  Route.get('my-campaign', 'CampaignController.myCampaign').middleware(['auth']);
+  Route.get('my-campaign/:status', 'CampaignController.myCampaign').middleware('auth','checkStatus');
+  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['auth']);
+  Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware('auth');
+  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
 }).prefix(':type').middleware(['checkPrefix']);
 
-Route.group(() => {
-  Route.post('jwt/verify', 'AuthController.verifyJwtToken').middleware(['auth']);
-  Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
-  Route.post('change-password', 'UserController.changePassword').middleware(['checkSignatrue', 'auth', 'checkRole']);
-  // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
-  Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
-}).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
-Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
+Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'auth']);
 
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
-  .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);
+  .middleware(['checkPrefix', 'auth']);
 
 
 // API V2

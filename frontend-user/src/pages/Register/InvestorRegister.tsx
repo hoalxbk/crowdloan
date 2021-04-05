@@ -80,8 +80,7 @@ const InvestorRegister: React.FC<any> = (props: any) => {
   }, [loginInvestor, error]);
 
   const handleFormSubmit = (data: any) =>  {
-    const isInvestor = true;
-    dispatch(registerAccount(data, isInvestor));
+    dispatch(registerAccount(data));
   }
 
   const render = () => {
@@ -115,39 +114,7 @@ const InvestorRegister: React.FC<any> = (props: any) => {
             </div>
             <form onSubmit={handleSubmit(handleFormSubmit)} className="login__form">
               <TextField id="standard-secondary" value={ethAddress} label="Current Ethereum Address" color="secondary" className="login__form-field" disabled />
-
               <>
-                <TextField
-                  name="username"
-                  inputProps={{ minLength: 6, maxLength: 30 }}
-                  inputRef={register({
-                    required: true ,
-                    minLength: {
-                      value: 6,
-                      message: "Username must have at least 6 characters"
-                    },
-                  })}
-                  onKeyPress={(e: any) => {
-                    const VALID_CHAR_REGEX = /[a-zA-Z0-9]/;
-
-                    if (!VALID_CHAR_REGEX.test(e.key)) { return false };
-                  }}
-                  onBlur={(_: any) => {
-                    let value = getValues('username');
-
-                    value = value.replace(/\s/g, "").normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D');;
-                    setValue('username', value);
-                  }}
-                  label="Username *"
-                  color="secondary"
-                  className="login__form-field"
-                />
-                <p className="login__form-error-message">
-                  {
-                    errors.username && errors.username.type !== 'required' ? errors.username.message: renderErrorRequired(errors, 'username')
-                  }
-                </p>
-
                 <TextField
                   label="Email *"
                   name="email"
@@ -172,45 +139,7 @@ const InvestorRegister: React.FC<any> = (props: any) => {
                     errors.email && errors.email.type !== 'required' ? errors.email.message: renderErrorRequired(errors, 'email')
                   }
                 </p>
-
-                <TextField
-                  label="Password *"
-                  name="password"
-                  inputProps={{ maxLength: 255, type: 'password' }}
-                  inputRef={register({
-                    required: true,
-                    minLength: {
-                      value: 8,
-                      message: "Password must have at least 8 characters"
-                    }})}
-                  color="secondary" className="login__form-field"
-                />
-                <p className="login__form-error-message">
-                  {
-                    errors.password && errors.password.type !== 'required' ? errors.password.message: renderErrorRequired(errors, 'password')
-                  }
-                </p>
-
-                <TextField
-                  label="Password Confirmation *"
-                  name="passwordConfirmation"
-                  inputProps={{ maxLength: 255, type: 'password' }}
-                  inputRef={register({
-                    required: true,
-                    validate: value => value === password.current || "The passwords do not match"
-                  })}
-                  color="secondary"
-                  className="login__form-field"
-                />
-
-                <p className="login__form-error-message">
-                  {
-                    errors.passwordConfirmation && errors.passwordConfirmation.type !== 'required' ? errors.passwordConfirmation.message: errors.confirmationPassword ? errors.confirmationPassword.message: renderErrorRequired(errors, 'passwordConfirmation')
-                  }
-                </p>
               </>
-
-              <Link className="login__form-desc login__form-forgot-password" to="/forgot-password/investor">Forgot your password ?</Link>
               <Link className="login__form-desc login__form-forgot-password" to={publicRoute('/login')}>Sign in ?</Link>
               <br/>
 

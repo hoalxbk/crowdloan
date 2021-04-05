@@ -47,7 +47,7 @@ const namedMiddleware = {
   checkJwtSecret: 'App/Middleware/CheckJwtSecret',
   checkJwtWebhook: 'App/Middleware/CheckJwtWebhook',
   checkIcoOwner: 'App/Middleware/CheckIcoOwner',
-  checkSignatrue: 'App/Middleware/CheckSignatrue',
+  checkSignature: 'App/Middleware/CheckSignature',
 }
 
 /*

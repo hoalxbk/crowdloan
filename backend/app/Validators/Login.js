@@ -5,7 +5,7 @@ class Login {
       // username: 'required',
       // email: 'required',
       signature: 'required',
-      password: 'required',
+      // password: 'required',
       wallet_address: 'required',
     };
   }
@@ -14,7 +14,7 @@ class Login {
     return {
       'wallet_address.required': 'You must provide a wallet address.',
       'signature.required': 'You must provide a signature.',
-      'password.required': 'You must provide a password.',
+      // 'password.required': 'You must provide a password.',
     };
   }
 

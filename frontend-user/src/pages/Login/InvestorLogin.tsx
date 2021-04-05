@@ -33,17 +33,6 @@ const InvestorLogin: React.FC<any> = (props: any) => {
     mode: 'onChange'
   });
 
-  const password = useRef({});
-  password.current = watch("password", "");
-
-  const renderErrorRequired = (errors: any, prop: string) => {
-    if (errors[prop]) {
-      if (errors[prop].type === "required") {
-        return 'This field is required';
-      }
-    }
-  }
-
   useEffect(() => {
     if (error || errorRegister) {
       dispatch(alertFailure(error || errorRegister));
@@ -86,9 +75,7 @@ const InvestorLogin: React.FC<any> = (props: any) => {
   }, [loginInvestor, error]);
 
   const handleFormSubmit = (data: any) =>  {
-    const { passwordLogin } = data;
-    const isInvestor = true;
-    dispatch(login(passwordLogin, isInvestor));
+    dispatch(login());
 
     // if (!userExists) {
     //   dispatch(registerAccount(data));
@@ -128,38 +115,18 @@ const InvestorLogin: React.FC<any> = (props: any) => {
 
             <form onSubmit={handleSubmit(handleFormSubmit)} className="login__form">
               <TextField id="standard-secondary" value={ethAddress} label="Current Ethereum Address" color="secondary" className="login__form-field" disabled />
-              <div>
-                <TextField
-                  label="Password *"
-                  name="passwordLogin"
-                  inputProps={{ maxLength: 255, type: 'password' }}
-                  inputRef={register({
-                    required: true,
-                  })}
-                  color="secondary"
-                  className="login__form-field"
-                />
-
-                <p className="login__form-error-message">
-                  {
-                    renderErrorRequired(errors, 'passwordLogin')
-                  }
-                </p>
-              </div>
-
               <p className="login__form-desc login__form-privacy">
                 By clicking sign in you indicate that you have read and agree to our <a>Terms of Service</a> and <a>Privacy Policy</a>
               </p>
-              <Link className="login__form-desc login__form-forgot-password" to={publicRoute('/forgot-password/investor')}>Forgot your password ?</Link>
-              <Link className="login__form-desc login__form-forgot-password" to={publicRoute('/register')}>Sign up ?</Link>
+              <Link className="login__form-desc login__form-forgot-password" to={publicRoute('/register')}>Would you like to sign up instead?</Link>
               <br/>
 
               <Button
                 label={'Sign in'}
                 buttonType="primary"
                 className={'login__form-cta'}
-                loading={userRegisterLoading || investorLoginLoading}
-                disabled={userRegisterLoading || investorLoginLoading}
+                loading={investorLoginLoading}
+                disabled={investorLoginLoading}
               />
 
             </form>
