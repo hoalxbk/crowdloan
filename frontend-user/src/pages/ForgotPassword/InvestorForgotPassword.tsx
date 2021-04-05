@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
-import {adminRoute, publicRoute} from "../../utils";
+import {adminRoute, apiRoute, publicRoute} from "../../utils";
 import InvestorLayout from "../InvestorLayout/InvestorLayout";
 import TextTitle from "../InvestorLayout/TextTitle";
 import TextSubTitle from "../InvestorLayout/TextSubTitle";
@@ -72,7 +72,7 @@ const InvestorForgotPassword: React.FC<any> = (props: any) => {
             return;
         }
 
-        let url = '/public/forgot-password';
+        let url = apiRoute('/forgot-password');
         const baseRequest = new BaseRequest();
         const response = await baseRequest.post(url, {
           signature: result.result,

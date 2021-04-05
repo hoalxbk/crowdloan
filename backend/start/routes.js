@@ -54,18 +54,18 @@ Route.group(() => {
 }).middleware(['typeAdmin', 'auth:admin', 'checkAdminJwtSecret']);
 
 Route.group(() => {
-  Route.post('/login', 'AuthAdminController.login').validator('Login').middleware('checkSignatrue');
-  Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignatrue');
+  Route.post('/login', 'AuthAdminController.login').validator('Login').middleware('checkSignature');
+  Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignature');
   Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
-  Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignatrue');;
-  Route.post('check-wallet-address', 'AuthController.checkWalletAddress');
+  Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');;
+  Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.get('check-token/:token', 'AdminController.checkToken');
-  Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignatrue');
+  Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
 
 Route.group(() => {
   Route.get('profile', 'AdminController.profile').middleware(['auth:admin', 'checkRole']);
-  Route.post('change-password', 'AdminController.changePassword').middleware(['checkSignatrue', 'auth:admin', 'checkRole']);
+  Route.post('change-password', 'AdminController.changePassword').middleware(['checkSignature', 'auth:admin', 'checkRole']);
   Route.post('update-profile', 'AdminController.updateProfile').middleware(['auth:admin', 'checkRole']).validator('UpdateProfile');
   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth:admin']);
 
@@ -93,11 +93,12 @@ Route.group(() => {
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
 
 Route.group(() => {
-  Route.post('jwt/verify', 'AuthController.verifyJwtToken').middleware(['auth']);
+  Route.post('jwt/verify', 'UserAuthController.verifyJwtToken').middleware(['auth']);
   Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
-  Route.post('change-password', 'UserController.changePassword').middleware(['checkSignatrue', 'auth', 'checkRole']);
+  Route.post('change-password', 'UserController.changePassword').middleware(['checkSignature', 'auth', 'checkRole']);
   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser', 'checkPrefix', 'checkJwtSecret']); //user/public
+
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
   .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);
 
