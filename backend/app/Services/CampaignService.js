@@ -1,6 +1,7 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const WhitelistModel = use('App/Models/WhitelistUser');
 const Config = use('Config');
 const Const = use('App/Common/Const');
 const ErrorFactory = use('App/Common/ErrorFactory');
@@ -248,19 +249,31 @@ class CampaignService {
     }
 
     // Investor join campaign
-    async joinCampaign(campaign_id, wallet_address) {
+    async joinCampaign(campaign_id, wallet_address, email) {
       // check exist campaign available to join
       const currentDate = Date.now();
       console.log('joinCampaign', currentDate, campaign_id)
-      const camp = await CampaignModel.query().where('id', campaign_id)
+      const camp = await CampaignModel.query()
+        .where('id', campaign_id)
         .where('start_time', '<=', currentDate)
         .where('finish_time', '>=', currentDate).fetch();
       if (camp == null) {
-        console.log("null")
+        console.log("Do not found campaign with id", campaign_id)
+        ErrorFactory.badRequest('Bad request with campaign id');
       }
-      console.log("joinCampaign",camp)
-      const whiteListSv = new WhitelistService();
-
+      // check exist whitelist
+      const existWl = WhitelistModel.query().where('wallet_address',wallet_address)
+        .where('campaign_id',campaign_id).first();
+      if (existWl != null) {
+        console.log("Existed record on whitelist with the same wallet_address and campaign_id",wallet_address,campaign_id)
+        ErrorFactory.badRequest('Bad request duplicate request with wallet_address');
+      }
+      // insert to whitelist
+      const whitelist = new WhitelistModel();
+      whitelist.wallet_address = wallet_address;
+      whitelist.campaign_id = campaign_id;
+      whitelist.email = email;
+      await whitelist.save();
     }
 }
 

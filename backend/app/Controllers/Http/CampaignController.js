@@ -16,6 +16,7 @@ const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Erc20.json');
 
 const Web3 = require('web3');
+const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
@@ -251,20 +252,21 @@ class CampaignController {
   async joinCampaign({request, auth}) {
     const params = request.all()
     const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
+    const email = auth.user.email;
     if (wallet_address == null) {
-      throw new ErrorFactory.badRequest("User don't have a valid wallet");
-    }
-    const type = request.params.type;
-    if (!type || (type !== Const.USER_TYPE_PREFIX.PUBLIC_USER)) {
-      throw new ErrorFactory.badRequest("Only accept user type to join campaign");
+      return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }
     const campaignService = new CampaignService();
     try {
-      await campaignService.joinCampaign(params.campaign_id, wallet_address);
+      await campaignService.joinCampaign(params.campaign_id, wallet_address, email);
       return HelperUtils.responseSuccess(null,"Join Campaign Successful !");
     } catch (e) {
       console.log("error", e)
-      return ErrorFactory.internal("Internal Error : Join Campaign")
+      if (e instanceof BadRequestException) {
+        return HelperUtils.responseBadRequest(e.message);
+      } else {
+        return HelperUtils.responseErrorInternal(e.message);
+      }
     }
   }
 

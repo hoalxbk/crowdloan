@@ -59,7 +59,7 @@ const responseNotFound = (message) => {
 
 const responseBadRequest = (message) => {
   return {
-    status: 500,
+    status: 400,
     message: message || 'Looks like this is unkown request, please try again or contact us.',
     data: null,
   }
