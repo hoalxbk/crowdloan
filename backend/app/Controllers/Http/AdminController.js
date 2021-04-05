@@ -175,8 +175,6 @@ class AdminController {
   async changePassword({request, auth}) {
     const param = request.all();
 
-    console.log('fdsadsa');
-
     const passwordOld = param.password_old;
     const passwordNew = param.password_new;
     const role = request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
@@ -249,6 +247,79 @@ class AdminController {
     await findUser.save();
     return HelperUtils.responseSuccess();
   }
+
+  async adminList({request}) {
+    const params = request.only(['limit', 'page']);
+    const searchQuery = request.input('searchQuery');
+    const limit = params.limit || Const.DEFAULT_LIMIT;
+    const page = params.page || 1;
+
+    const adminService = new AdminService();
+    let adminQuery = adminService.buildQueryBuilder(params);
+    if (searchQuery) {
+      adminQuery = adminService.buildSearchQuery(adminQuery, searchQuery);
+    }
+    const admins = await adminQuery.paginate(page, limit);
+    return HelperUtils.responseSuccess(admins);
+  }
+
+  async adminDetail({ request, params }) {
+    const id = params.id;
+    const adminService = new AdminService();
+    const admins = await adminService.findUser({ id });
+    return HelperUtils.responseSuccess(admins);
+  }
+
+  async create({ request }) {
+    try {
+      const inputs = request.only(['email', 'username', 'wallet_address', 'firstname', 'lastname']);
+      inputs.password = request.input('password');
+      console.log('Create Admin with params: ', inputs);
+
+      const adminService = new AdminService();
+      const isExistUser = await adminService.findUser({
+        wallet_address: inputs.wallet_address,
+      });
+      if (isExistUser) {
+        return HelperUtils.responseBadRequest('Wallet is used');
+      }
+
+      const admin = new AdminModel();
+      admin.fill(inputs);
+      admin.signature = randomString(15);  // TODO: Fill any string
+      admin.is_active = Const.USER_ACTIVE;
+      const res = await admin.save();
+
+      return HelperUtils.responseSuccess(res);
+    } catch (e) {
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
+  async update({ request, params }) {
+    try {
+      const inputs = request.only(['email', 'username', 'wallet_address', 'firstname', 'lastname']);
+      const password = request.input('password');
+      console.log('Update Admin with params: ', params.id, inputs);
+
+      const adminService = new AdminService();
+      const admin = await adminService.findUser({ id: params.id });
+      if (!admin) {
+        return HelperUtils.responseNotFound();
+      }
+
+      const updateInputs = inputs;
+      if (password) {
+        updateInputs.password = await Hash.make(password);
+      }
+      await adminService.buildQueryBuilder({id: params.id}).update(updateInputs);
+
+      return HelperUtils.responseSuccess();
+    } catch (e) {
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
 }
 
 module.exports = AdminController

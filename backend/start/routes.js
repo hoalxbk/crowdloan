@@ -69,6 +69,12 @@ Route.group(() => {
   Route.post('change-password', 'AdminController.changePassword').middleware(['checkSignatrue', 'auth:admin', 'checkRole']);
   Route.post('update-profile', 'AdminController.updateProfile').middleware(['auth:admin', 'checkRole']).validator('UpdateProfile');
   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth:admin']);
+
+  Route.get('admins', 'AdminController.adminList').middleware(['auth:admin']);
+  Route.get('admins/:id', 'AdminController.adminDetail').middleware(['auth:admin']);
+  Route.post('admins', 'AdminController.create').middleware(['auth:admin']);
+  Route.put('admins/:id', 'AdminController.update').middleware(['auth:admin']);
+
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'checkAdminJwtSecret']); //user/public
 
 

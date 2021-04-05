@@ -10,6 +10,9 @@ const HelperUtils = use('App/Common/HelperUtils');
 class AdminService {
     buildQueryBuilder(params) {
       let builder = AdminModel.query();
+      if (params.id) {
+        builder = builder.where('id', params.id);
+      }
       if (params.username) {
         builder = builder.where('username', params.username);
       }
@@ -37,6 +40,14 @@ class AdminService {
         builder = builder.where('is_active', Const.USER_ACTIVE);
       }
       return builder;
+    }
+
+    buildSearchQuery(query, searchQuery) {
+      return query.where((q) => {
+        q.where('email', 'like', `%${searchQuery}%`)
+          .orWhere('wallet_address', 'like', `%${searchQuery}%`)
+          .orWhere('username', 'like', `%${searchQuery}%`);
+      })
     }
 
     async findUser(params) {
