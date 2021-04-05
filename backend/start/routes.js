@@ -1,6 +1,5 @@
 'use strict'
 
-
 /*
 |--------------------------------------------------------------------------
 | Routes
@@ -82,13 +81,15 @@ Route.group(() => {
 Route.get('campaign-latest-active', 'CampaignController.campaignLastestActive')
 
 Route.group(() => {
-  Route.post('/login', 'AuthController.login').validator('Login').middleware('checkSignatrue');
-  Route.post('/register', 'AuthController.adminRegister').validator('Register').middleware('checkSignatrue');
+  Route.post('/login', 'UserAuthController.login').validator('Login').middleware('checkSignature');
+  Route.post('/register', 'UserAuthController.register').validator('Register').middleware('checkSignature');
   Route.get('confirm-email/:token', 'UserController.confirmEmail'); // Confirm email when register
-  Route.post('forgot-password', 'UserController.forgotPassword').validator('ForgotPassword').middleware('checkSignatrue');;
-  Route.post('check-wallet-address', 'AuthController.checkWalletAddress');
+  Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
-  Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignatrue');
+  Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
+  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['auth','checkSignature']);
+  Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware('auth');
+  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
 
 Route.group(() => {

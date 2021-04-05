@@ -6,7 +6,7 @@ const Const = use('App/Common/Const');
 const Config = use('Config');
 const Web3 = require('web3')
 
-class AuthController {
+class UserAuthController {
 
   async verifyJwtToken({ request, auth }) {
     try {
@@ -73,15 +73,12 @@ class AuthController {
     const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address)
 
     const filterParams = {
-      'password': param.password,
       'wallet_address': wallet_address
     };
     try {
       const authService = new AuthService();
       const user = await authService.login({
-        ...filterParams,
-        role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER,
-        // role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Config.get('const.user') : Config.get('const.public')
+        ...filterParams
       });
 
       const token = await auth.generate(user, true);
@@ -95,7 +92,7 @@ class AuthController {
     }
   }
 
-  async adminRegister({ request, auth, params }) {
+  async register({ request, auth, params }) {
     try {
       const param = request.only(['email', 'username', 'signature', 'password', 'wallet_address'])
       const wallet_address = Web3.utils.toChecksumAddress(request.input('wallet_address'));
@@ -131,4 +128,4 @@ class AuthController {
   }
 }
 
-module.exports = AuthController;
+module.exports = UserAuthController;

@@ -3,10 +3,10 @@
 /** @type {typeof import('@adonisjs/lucid/src/Lucid/Model')} */
 const Model = use('Model')
 
-class WhitelistUser extends Model {
+class WinnerListUser extends Model {
   static get table() {
-    return 'whitelist_users';
+    return 'winner_list_users';
   }
 }
 
-module.exports = WhitelistUser
+module.exports = WinnerListUser

@@ -22,7 +22,7 @@ type UserProfileProps = {
 
 const MESSAGE_INVESTOR_SIGNATURE = process.env.REACT_APP_MESSAGE_INVESTOR_SIGNATURE || "";
 
-const getMessageParams = (isInvestor: boolean = false) => {
+const getMessageParams = () => {
   const msgSignature = MESSAGE_INVESTOR_SIGNATURE;
 
   return [{
@@ -70,11 +70,11 @@ export const clearUserProfileUpdate = () => {
   }
 }
 
-export const login = (password: string, isInvestor: boolean = false) => {
+export const login = () => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     try {
       dispatch({
-        type: !isInvestor ? userActions.USER_LOGIN_LOADING: userActions.INVESTOR_LOGIN_LOADING
+        type: userActions.INVESTOR_LOGIN_LOADING
       });
 
       const baseRequest = new BaseRequest();
@@ -85,37 +85,43 @@ export const login = (password: string, isInvestor: boolean = false) => {
         const { ethereum } = windowObj;
        await ethereum.sendAsync({
             method: 'eth_signTypedData',
-            params: [getMessageParams(isInvestor), ethAddress],
+            params: [getMessageParams(), ethAddress],
             from: ethAddress,
         }, async function(err: Error, result: any) {
           if (err || result.error) {
              const errMsg = err.message || result.error.message
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_LOGIN_FAILURE: userActions.INVESTOR_LOGIN_FAILURE, errMsg);
+              dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
           } else {
-            const response = await baseRequest.post(`/${isInvestor ? 'public': 'user'}/login`, {
-              password,
+            const response = await baseRequest.post(`/user/login`, {
               signature: result.result,
               // message: baseRequest.getSignatureMessage(isInvestor),
               wallet_address: ethAddress,
-            }, isInvestor) as any;
+            }) as any;
 
             const resObj = await response.json();
 
             if (resObj.status && resObj.status === 200 && resObj.data) {
               const { token, user } = resObj.data;
 
-              localStorage.setItem(!isInvestor ? 'access_token': 'investor_access_token', token.token);
+              localStorage.setItem('investor_access_token', token.token);
 
               dispatch({
-                type: !isInvestor ? userActions.USER_LOGIN_SUCCESS: userActions.INVESTOR_LOGIN_SUCCESS,
+                type: userActions.INVESTOR_LOGIN_SUCCESS,
                 payload: user
               });
             }
 
             if (resObj.status && resObj.status !== 200) {
-              console.log('RESPONSE Login: ', resObj);
-              dispatch(alertFailure(resObj.message));
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_LOGIN_FAILURE: userActions.INVESTOR_LOGIN_FAILURE, '');
+              if (resObj.status == 404) {
+                // redirect to register page
+                dispatch(alertFailure(resObj.message));
+                dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+              } else {
+                // show error
+                console.log('RESPONSE Login: ', resObj);
+                dispatch(alertFailure(resObj.message));
+                dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+              }
             }
           }
         });
@@ -123,15 +129,15 @@ export const login = (password: string, isInvestor: boolean = false) => {
     } catch (error) {
       console.log('ERROR Login: ', error);
       dispatch(alertFailure(error.message));
-      dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, '');
+      dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
     }
   }
 }
 
-export const register = ({ username, email, password }: UserRegisterProps, isInvestor: boolean = false) => {
+export const register = ({ username, email, password }: UserRegisterProps) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     dispatch({
-      type: !isInvestor ? userActions.USER_REGISTER_LOADING: userActions.INVESTOR_REGISTER_LOADING
+      type: userActions.INVESTOR_REGISTER_LOADING
     });
     try {
       const baseRequest = new BaseRequest();
@@ -143,24 +149,24 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
 
        await ethereum.sendAsync({
             method: 'eth_signTypedData',
-            params: [getMessageParams(isInvestor), ethAddress],
+            params: [getMessageParams(), ethAddress],
             from: ethAddress,
         }, async function(err: Error, result: any) {
           if (err || result.error) {
              const errMsg = err.message || result.error.message
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_REGISTER_FAILURE: userActions.INVESTOR_REGISTER_FAILURE, errMsg);
+              dispatchErrorWithMsg(dispatch, userActions.INVESTOR_REGISTER_FAILURE, errMsg);
 
             return;
           }
 
-          const response = await baseRequest.post(`/${isInvestor ? 'public': 'user'}/register/`, {
+          const response = await baseRequest.post(`/user/register/`, {
             username,
             email,
             password,
             wallet_address: ethAddress,
             signature: result.result,
             // message: baseRequest.getSignatureMessage(isInvestor),
-          }, isInvestor) as any;
+          }) as any;
 
           const resObj = await response.json();
 
@@ -169,7 +175,7 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
             if (resObj.data) {
               const { token, user } = resObj.data;
 
-              localStorage.setItem(!isInvestor ? 'access_token': 'investor_access_token', token.token);
+              localStorage.setItem('investor_access_token', token.token);
 
               dispatch({
                 type: alertActions.SUCCESS_MESSAGE,
@@ -177,12 +183,12 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
               });
 
               dispatch({
-                type: !isInvestor ? userActions.USER_REGISTER_SUCCESS: userActions.INVESTOR_REGISTER_SUCCESS,
+                type: userActions.INVESTOR_REGISTER_SUCCESS,
                 payload: user
               });
 
               dispatch({
-                type: !isInvestor ? userActions.USER_LOGIN_SUCCESS: userActions.INVESTOR_LOGIN_SUCCESS,
+                type: userActions.INVESTOR_LOGIN_SUCCESS,
                 payload: user
               });
             } else {
@@ -192,7 +198,7 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
               });
 
               dispatch({
-                type: !isInvestor ? userActions.USER_REGISTER_SUCCESS: userActions.INVESTOR_REGISTER_SUCCESS,
+                type: userActions.INVESTOR_REGISTER_SUCCESS,
                 payload: resObj.message
               });
             }
@@ -202,14 +208,14 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
           if (resObj.status && resObj.status !== 200) {
             console.log('RESPONSE Register: ', resObj);
             dispatch(alertFailure(resObj.message));
-            dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_REGISTER_FAILURE: userActions.INVESTOR_REGISTER_FAILURE, '');
+            dispatchErrorWithMsg(dispatch, userActions.INVESTOR_REGISTER_FAILURE, '');
           }
         });
       }
     } catch (error) {
       console.log('ERROR Register: ', error);
       dispatch(alertFailure(error.message));
-      dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_REGISTER_FAILURE: userActions.INVESTOR_REGISTER_FAILURE, '');
+      dispatchErrorWithMsg(dispatch, userActions.INVESTOR_REGISTER_FAILURE, '');
     }
   }
 };
