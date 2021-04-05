@@ -4,7 +4,16 @@ import { NONAME } from 'dns';
 const useCommonStyle = makeStyles((theme) => {
   return {
     DefaultLayout: {
-      display: 'flex',
+      height: '100vh',
+  
+      /* grid container settings */
+      display: 'grid',
+      gridTemplateColumns: '1fr',
+      gridTemplateRows: 'auto 1fr auto',
+      gridTemplateAreas: 
+        `'header'
+        'main'
+        'footer'`
     },
     headPage: {
       display: 'flex',
