@@ -91,9 +91,9 @@ export const login = (password: string, isInvestor: boolean = false) => {
         }, async function(err: Error, result: any) {
           if (err || result.error) {
              const errMsg = err.message || result.error.message
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_LOGIN_FAILURE: userActions.INVESTOR_LOGIN_FAILURE, errMsg);
+              dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, errMsg);
           } else {
-            const response = await baseRequest.post(`/${isInvestor ? 'public': 'user'}/login`, {
+            const response = await baseRequest.post(apiRoute('login'), {
               password,
               signature: result.result,
               wallet_address: ethAddress,
@@ -115,7 +115,7 @@ export const login = (password: string, isInvestor: boolean = false) => {
             if (resObj.status && resObj.status !== 200) {
               console.log('RESPONSE Login: ', resObj);
               dispatch(alertFailure(resObj.message));
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_LOGIN_FAILURE: userActions.INVESTOR_LOGIN_FAILURE, '');
+              dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, '');
             }
           }
         });
@@ -152,7 +152,7 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
             return;
           }
 
-          const response = await baseRequest.post(`/${isInvestor ? 'public': 'user'}/register/`, {
+          const response = await baseRequest.post(apiRoute('register'), {
             username,
             email,
             password,

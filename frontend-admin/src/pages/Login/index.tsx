@@ -65,7 +65,7 @@ const Login: React.FC<any> = (props: any) => {
 
         setUserExists(userExists);
       } else setUserExists(false);
-    }
+    };
 
     ethAddress && checkUserExists();
   }, [currentPage, ethAddress, loginUser]);
@@ -74,7 +74,6 @@ const Login: React.FC<any> = (props: any) => {
     if (loginUser) {
       props.history.push(adminRoute('/'));
     }
-
     return () => {
       error && dispatch(resetUserState());
     }
@@ -136,30 +135,10 @@ const Login: React.FC<any> = (props: any) => {
             </div>
             <form onSubmit={handleSubmit(handleFormSubmit)} className="login__form">
               <TextField id="standard-secondary" value={ethAddress} label="Current Ethereum Address" color="secondary" className="login__form-field" disabled />
-              <div>
-                <TextField
-                  label="Password *"
-                  name="passwordLogin"
-                  inputProps={{ maxLength: 255, type: 'password' }}
-                  inputRef={register({
-                    required: true,
-                  })}
-                  color="secondary"
-                  className="login__form-field"
-                />
-
-                <p className="login__form-error-message">
-                  {
-                    renderErrorRequired(errors, 'passwordLogin')
-                  }
-                </p>
-              </div>
 
               <p className="login__form-desc login__form-privacy">
                 By clicking sign in you indicate that you have read and agree to our <a>Terms of Service</a> and <a>Privacy Policy</a>
               </p>
-              <Link className="login__form-desc login__form-forgot-password" to="/forgot-password">Forgot your password ?</Link>
-              <br/>
               <Link className="login__form-desc login__form-forgot-password" to={adminRoute('/register')}>Sign up ?</Link>
               <button disabled={userRegisterLoading || userLoginLoading} type="submit" className="login__form-button">
                 Sign in
