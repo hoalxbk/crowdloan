@@ -278,7 +278,7 @@ export const isCampaignPurchasable = () => {
         type: buyTokenActions.BUY_TOKEN_AVAILABLE_LOADING
       })
       const baseRequest = new BaseRequest();
-      const response = await baseRequest.post('/user/jwt/verify', {}, true) as any;
+      const response = await baseRequest.post('/public/jwt/verify', {}, true) as any;
       const resObj = await response.json();
 
       if (resObj?.status === 200 && resObj?.data) {

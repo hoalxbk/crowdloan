@@ -2,14 +2,13 @@
 
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
-const UserService = use('App/Services/UserService')
-const UserModel = use('App/Models/User')
+const AdminService = use('App/Services/AdminService')
+const AdminModel = use('App/Models/Admin')
 const PasswordResetModel = use('App/Models/PasswordReset')
 const Helpers = use('Helpers')
 const HelperUtils = use('App/Common/HelperUtils');
 const Const = use('App/Common/Const');
 const Mail = use('Mail')
-// const Bcrypt = use('bcrypt')
 const Env = use('Env')
 const randomString = use('random-string');
 const Hash = use('Hash');
@@ -17,11 +16,11 @@ const Event = use('Event')
 
 const SendForgotPasswordJob = use('App/Jobs/SendForgotPasswordJob')
 
-class UserController {
+class AdminController {
   async profile({ request, auth }) {
     let user = auth.user;
     const params = request.all();
-    const userService = new UserService();
+    const adminService = new AdminService();
     const userAuthInfo = {
       email: user.email,
       username: user.username,
@@ -29,7 +28,7 @@ class UserController {
     };
 
     return HelperUtils.responseSuccess({
-      user: await userService.findUser(userAuthInfo)
+      user: await adminService.findUser(userAuthInfo)
     });
   }
 
@@ -37,23 +36,23 @@ class UserController {
     try {
       let user = auth.user;
       const params = request.only(['firstname', 'lastname']);
-      const userService = new UserService();
+      const adminService = new AdminService();
       const userAuthInfo = {
         email: user.email,
         role: user.role,
       };
-      user = await userService.findUser(userAuthInfo);
+      user = await adminService.findUser(userAuthInfo);
       if (!user) {
         return HelperUtils.responseNotFound('User Not Found');
       }
 
-      const result = await userService.updateUser(params, userAuthInfo);
+      const result = await adminService.updateUser(params, userAuthInfo);
       if (!result) {
         return HelperUtils.responseErrorInternal('Update Fail');
       }
 
       return HelperUtils.responseSuccess({
-        user: await userService.findUser(userAuthInfo),
+        user: await adminService.findUser(userAuthInfo),
       }, 'Update Success');
     } catch (e) {
       console.log(e);
@@ -85,8 +84,8 @@ class UserController {
   async forgotPassword({request}) {
     const params = request.all();
     const role =  request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
-    const userService = new UserService();
-    const user = await userService.findUser({
+    const adminService = new AdminService();
+    const user = await adminService.findUser({
       email: params.email,
       wallet_address: params.wallet_address,
       role,
@@ -95,7 +94,7 @@ class UserController {
       console.error('user not found.')
       return HelperUtils.responseSuccess();
     }
-    const token = await userService.resetPasswordEmail(params.email, role);
+    const token = await adminService.resetPasswordEmail(params.email, role);
     const mailData = {};
     mailData.username = user.username;
     mailData.email = user.email;
@@ -114,8 +113,8 @@ class UserController {
     try {
       const token =  request.params.token;
       const role =  request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ?  Const.USER_ROLE.ICO_OWNER :  Const.USER_ROLE.PUBLIC_USER;
-      const userService = new UserService();
-      const checkToken = await userService.checkToken(token, role);
+      const adminService = new AdminService();
+      const checkToken = await adminService.checkToken(token, role);
       return HelperUtils.responseSuccess({
         data: checkToken,
         status: 200,
@@ -136,12 +135,12 @@ class UserController {
       const wallet_address = params.wallet_address;
       const token = request.params.token;
       const role = request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
-      const userService = new UserService();
-      const checkToken = await userService.checkToken(token, role);
+      const adminService = new AdminService();
+      const checkToken = await adminService.checkToken(token, role);
 
       if (checkToken) {
         const token = randomString({ length: 40 });
-        const user = await (new UserService()).findUser({
+        const user = await (new AdminService()).findUser({
           email: checkToken.email,
           wallet_address: wallet_address,
           role
@@ -175,6 +174,9 @@ class UserController {
 
   async changePassword({request, auth}) {
     const param = request.all();
+
+    console.log('fdsadsa');
+
     const passwordOld = param.password_old;
     const passwordNew = param.password_new;
     const role = request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
@@ -182,8 +184,8 @@ class UserController {
 
     if(await Hash.verify(passwordOld, user.password)) {
       const token = randomString({ length: 40 });
-      const userService = new UserService();
-      const userFind = await userService.findUser({
+      const adminService = new AdminService();
+      const userFind = await adminService.findUser({
         email: user.email,
         role,
       });
@@ -209,8 +211,8 @@ class UserController {
     try {
       const token = request.params.token;
       const role = request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
-      const userService = new UserService();
-      const checkToken = await userService.confirmEmail(token, role);
+      const adminService = new AdminService();
+      const checkToken = await adminService.confirmEmail(token, role);
       if (!checkToken) {
         return HelperUtils.responseErrorInternal('Active account link has expried.');
       }
@@ -234,7 +236,7 @@ class UserController {
       Event.fire('new:createWhitelist', param)
     }
     const type = param.type == Const.USER_TYPE.WHITELISTED ? Const.USER_TYPE.WHITELISTED : Const.USER_TYPE.REGULAR
-    const findUser = await UserModel.query()
+    const findUser = await AdminModel.query()
       .where('email', param.email)
       .where('role', Const.USER_ROLE.PUBLIC_USER)
       .first();
@@ -249,4 +251,4 @@ class UserController {
   }
 }
 
-module.exports = UserController
+module.exports = AdminController

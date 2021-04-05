@@ -1,4 +1,10 @@
-# Sotatek Starter User Fronend 
+# Sotatek Starter User Frontend 
+
+## Evironment
+```
+Node version: 14.15.4
+```
+
 
 ## Setup
 

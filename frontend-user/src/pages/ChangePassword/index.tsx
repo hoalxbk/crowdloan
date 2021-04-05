@@ -90,6 +90,7 @@ const ChangePassword: React.FC<any> = (props: any) => {
           password_old: data.password,
           password_new: data.newPassword,
           signature: result.result,
+          wallet_address: ethAddress,
         }, role === 'investor') as any;
 
         const resObj = await response.json();

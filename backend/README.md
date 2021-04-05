@@ -25,7 +25,7 @@ adonis key:generate
 
 
 #### Step 4
-Edit .env file to config evironment
+Edit .env file to config environment
 
 ``Config Database``
 ```
