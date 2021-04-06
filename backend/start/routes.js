@@ -13,6 +13,8 @@
 |
 */
 
+const Const = use('App/Common/Const');
+
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 Route.get('/', () => 'It\'s working')
@@ -49,39 +51,70 @@ Route.group(() => {
   // Route.post('user/upload-avatar', 'UserController.uploadAvatar');
   Route.get('my-campaign', 'CampaignController.myCampaign')
   Route.get('my-campaign/:status', 'CampaignController.myCampaign').middleware('checkStatus')
-}).middleware(['auth', 'checkJwtSecret']);
+}).middleware(['typeAdmin', 'auth:admin', 'checkAdminJwtSecret']);
+
+Route.group(() => {
+  Route.post('/login', 'AuthAdminController.login').validator('Login').middleware('checkSignature');
+  Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignature');
+  Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
+  Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');;
+  Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
+  Route.get('check-token/:token', 'AdminController.checkToken');
+  Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
+}).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
+
+Route.group(() => {
+  Route.get('profile', 'AdminController.profile').middleware(['auth:admin', 'checkRole']);
+  Route.post('change-password', 'AdminController.changePassword').middleware(['checkSignature', 'auth:admin', 'checkRole']);
+  Route.post('update-profile', 'AdminController.updateProfile').middleware(['auth:admin', 'checkRole']).validator('UpdateProfile');
+  Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth:admin']);
+
+  Route.get('admins', 'AdminController.adminList').middleware(['auth:admin']);
+  Route.get('admins/:id', 'AdminController.adminDetail').middleware(['auth:admin']);
+  Route.post('admins', 'AdminController.create').middleware(['auth:admin']);
+  Route.put('admins/:id', 'AdminController.update').middleware(['auth:admin']);
+
+}).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'checkAdminJwtSecret']); //user/public
+
 
 // Investor User
 Route.get('campaign-latest-active', 'CampaignController.campaignLastestActive')
 
 Route.group(() => {
-  Route.post('/login', 'AuthController.login').validator('Login').middleware('checkSignatrue');
-  Route.post('/register', 'AuthController.adminRegister').validator('Register').middleware('checkSignatrue');
+  Route.post('/login', 'UserAuthController.login').validator('Login').middleware('checkSignature');
+  Route.post('/register', 'UserAuthController.register').validator('Register').middleware('checkSignature');
   Route.get('confirm-email/:token', 'UserController.confirmEmail'); // Confirm email when register
-  Route.post('forgot-password', 'UserController.forgotPassword').validator('ForgotPassword').middleware('checkSignatrue');;
-  Route.post('check-wallet-address', 'AuthController.checkWalletAddress');
+  Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
-  Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignatrue');
-}).prefix(':type').middleware(['checkPrefix']);
+  Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
+  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['auth','checkSignature']);
+  Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware('auth');
+  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
+}).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
 
 Route.group(() => {
-  Route.post('jwt/verify', 'AuthController.verifyJwtToken').middleware(['auth']);
+  Route.post('jwt/verify', 'UserAuthController.verifyJwtToken').middleware(['auth']);
   Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
-  Route.post('change-password', 'UserController.changePassword').middleware(['checkSignatrue', 'auth', 'checkRole']);
-  // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
+  Route.post('change-password', 'UserController.changePassword').middleware(['checkSignature', 'auth', 'checkRole']);
   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
-}).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
-Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
+}).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser', 'checkPrefix', 'checkJwtSecret']); //user/public
 
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
   .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);
 
+Route.group(() => {
+  Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
+  // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
+  Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
+}).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
 
 // API V2
+Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
+
 Route.get('latest-transaction', 'TransactionController.latestTransaction')
 Route.get('public-campaign', 'CampaignController.myCampaign')
 Route.get('public-campaign/:status', 'CampaignController.myCampaign').middleware('checkPublicStatus')
-// Route.post('user/change-type', 'UserController.changeType').validator('ChangeUserType')
+Route.post('user/change-type', 'UserController.changeType').validator('ChangeUserType')
 Route.post('user/buy', 'UserBuyCampaignController.getUserBuy').validator('CheckUserBought')
 Route.get('coming-soon', 'ConfigController.getConfig')
 

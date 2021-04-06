@@ -1,18 +1,18 @@
 const ErrorFactory = use('App/Common/ErrorFactory');
-const AuthService = use('App/Services/AuthService');
-const UserService = use('App/Services/UserService');
+const AuthAdminService = use('App/Services/AuthAdminService');
+const AdminService = use('App/Services/AdminService');
 const HelperUtils = use('App/Common/HelperUtils');
 const Const = use('App/Common/Const');
 const Config = use('Config');
 const Web3 = require('web3')
 
-class AuthController {
+class AuthAdminController {
 
   async verifyJwtToken({ request, auth }) {
     try {
       const isValid = await auth.check();
       const authUser = await auth.jwtPayload.data;
-      const dbUser = await (new UserService).findUser(authUser);
+      const dbUser = await (new AdminService).findUser(authUser);
       if (isValid && authUser && dbUser && dbUser.type === Const.USER_TYPE.WHITELISTED) {
         return HelperUtils.responseSuccess({
           msgCode: 'TOKEN_IS_VALID'
@@ -40,10 +40,10 @@ class AuthController {
     try {
       const inputs = request.all();
       const walletAddress = inputs.wallet_address || ' ';
-      const userService = new UserService();
+      const adminService = new AdminService();
 
       console.log('Check Wallet: ', inputs, params);
-      const user = await userService.findUser({
+      const user = await adminService.findUser({
         wallet_address: walletAddress,
         role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER,
       });
@@ -71,19 +71,14 @@ class AuthController {
     }
     const param = request.all();
     const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address)
-
-    const filterParams = {
-      'password': param.password,
-      'wallet_address': wallet_address
-    };
     try {
-      const authService = new AuthService();
+      const authService = new AuthAdminService();
       const user = await authService.login({
-        ...filterParams,
-        role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Config.get('const.user') : Config.get('const.public')
+        'wallet_address': wallet_address,
+        role: Const.USER_ROLE.ICO_OWNER,
       });
 
-      const token = await auth.generate(user, true);
+      const token = await auth.authenticator('admin').generate(user, true);
       return HelperUtils.responseSuccess({
         user,
         token,
@@ -99,13 +94,13 @@ class AuthController {
       const param = request.only(['email', 'username', 'signature', 'password', 'wallet_address'])
       const wallet_address = Web3.utils.toChecksumAddress(request.input('wallet_address'));
       param.wallet_address = wallet_address;
-      console.log(111, wallet_address)
+
       const type = params.type;
       const role = type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
 
-      const authService = new AuthService();
+      const authService = new AuthAdminService();
       let user = await authService.checkIssetUser({ email: param.email, role });
-      console.log(user)
+      console.log(user);
       if(!user) {
         user = await authService.checkWalletUser({wallet_address, role});
         if(user){
@@ -130,4 +125,4 @@ class AuthController {
   }
 }
 
-module.exports = AuthController;
+module.exports = AuthAdminController;

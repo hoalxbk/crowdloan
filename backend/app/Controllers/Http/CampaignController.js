@@ -4,6 +4,7 @@ const CampaignModel = use('App/Models/Campaign');
 const CampaignService = use('App/Services/CampaignService');
 const Const = use('App/Common/Const');
 const Common = use('App/Common/Common');
+const HelperUtils = use('App/Common/HelperUtils');
 
 const CONFIGS_FOLDER = '../../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -15,6 +16,7 @@ const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Erc20.json');
 
 const Web3 = require('web3');
+const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
@@ -112,7 +114,7 @@ class CampaignController {
     if (!campaigns) {
       return ErrorFactory.badRequest('Campaign not found')
     }else {
-      const data = JSON.parse(JSON.stringify(campaigns))
+      const data = JSON.parse(JSON.stringify(campaigns));
       return {
         status: 200,
         data: data
@@ -245,8 +247,30 @@ class CampaignController {
       console.log("error", e)
       return ErrorFactory.internal("error")
     }
-
   }
+
+  async joinCampaign({request, auth}) {
+    const params = request.all()
+    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
+    const email = auth.user.email;
+    if (wallet_address == null) {
+      return HelperUtils.responseBadRequest("User don't have a valid wallet");
+    }
+    const campaignService = new CampaignService();
+    try {
+      await campaignService.joinCampaign(params.campaign_id, wallet_address, email);
+      return HelperUtils.responseSuccess(null,"Join Campaign Successful !");
+    } catch (e) {
+      console.log("error", e)
+      if (e instanceof BadRequestException) {
+        return HelperUtils.responseBadRequest(e.message);
+      } else {
+        return HelperUtils.responseErrorInternal(e.message);
+      }
+    }
+  }
+
+
 }
 
 module.exports = CampaignController

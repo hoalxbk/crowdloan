@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
-import {adminRoute, publicRoute} from "../../utils";
+import {adminRoute, apiRoute, publicRoute} from "../../utils";
 import {logout} from "../../store/actions/user";
 
 const MESSAGE_SIGNATURE = process.env.REACT_APP_MESSAGE_SIGNATURE || "";
@@ -84,12 +84,13 @@ const ChangePassword: React.FC<any> = (props: any) => {
 
         let url = '';
 
-        url = role === 'investor' ? '/public/change-password': '/user/change-password';
+        url = apiRoute('/change-password');
 
         const response = await baseRequest.post(url, {
           password_old: data.password,
           password_new: data.newPassword,
           signature: result.result,
+          wallet_address: ethAddress,
         }, role === 'investor') as any;
 
         const resObj = await response.json();
@@ -98,7 +99,7 @@ const ChangePassword: React.FC<any> = (props: any) => {
          dispatch(alertFailure(resObj.message));
        } else {
          dispatch(alertSuccess('Change password successful!'));
-         const isInvestor = role === 'investor';
+         const isInvestor = false;
          dispatch(logout(isInvestor));
          const redirectUrl = isInvestor ? publicRoute('/') : adminRoute('/login');
          props.history.push(redirectUrl);

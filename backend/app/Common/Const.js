@@ -1,4 +1,5 @@
 module.exports = Object.freeze({
+  DEFAULT_LIMIT: 10,
   TOKEN_DECIMAL: 18,
   CONTRACTS: {
     // map to contract_name in contract_logs table
@@ -57,9 +58,13 @@ module.exports = Object.freeze({
     WHITELISTED: 1,
     REGULAR: 2,
   },
+  // USER_TYPE_PREFIX: {
+  //   ICO_OWNER: 'user',
+  //   PUBLIC_USER: 'public',
+  // },
   USER_TYPE_PREFIX: {
-    ICO_OWNER: 'user',
-    PUBLIC_USER: 'public',
+    ICO_OWNER: 'admin',
+    PUBLIC_USER: 'user',
   },
   USER_INACTIVE: 0,
   USER_ACTIVE: 1,

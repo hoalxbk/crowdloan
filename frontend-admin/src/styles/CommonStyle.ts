@@ -6,6 +6,12 @@ const useCommonStyle = makeStyles((theme) => {
     DefaultLayout: {
       display: 'flex',
     },
+    error: {
+      color: 'red',
+    },
+    required: {
+      color: 'red',
+    },
     headPage: {
       display: 'flex',
       marginBottom: 25,
