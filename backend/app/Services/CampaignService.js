@@ -261,8 +261,9 @@ class CampaignService {
         console.log("Do not found campaign with id", campaign_id)
         ErrorFactory.badRequest('Bad request with campaign id');
       }
-      // check exist whitelist
-      const existWl = WhitelistModel.query().where('wallet_address',wallet_address)
+      // check exist whitelist with wallet and campaign
+      const existWl = WhitelistModel.query()
+        .where('wallet_address',wallet_address)
         .where('campaign_id',campaign_id).first();
       if (existWl != null) {
         console.log("Existed record on whitelist with the same wallet_address and campaign_id",wallet_address,campaign_id)

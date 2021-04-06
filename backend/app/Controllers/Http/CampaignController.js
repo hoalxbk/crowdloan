@@ -250,12 +250,15 @@ class CampaignController {
   }
 
   async joinCampaign({request, auth}) {
+    // get all params
     const params = request.all()
+    // get user wallet_address
     const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
     const email = auth.user.email;
     if (wallet_address == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }
+    // call to join campaign
     const campaignService = new CampaignService();
     try {
       await campaignService.joinCampaign(params.campaign_id, wallet_address, email);
@@ -267,6 +270,13 @@ class CampaignController {
       } else {
         return HelperUtils.responseErrorInternal(e.message);
       }
+    }
+  }
+
+  async deposit({request, auth}) {
+    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
+    if (wallet_address == null) {
+      return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }
   }
 

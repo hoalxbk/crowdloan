@@ -1,21 +1,35 @@
 'use strict'
 
-const ErrorFactory = use('App/Common/ErrorFactory');
 const WhitelistService = use('App/Services/WhitelistUserService')
 const HelperUtils = use('App/Common/HelperUtils');
+const Redis = use('Redis');
 
 class WhiteListUserController {
-  async getWhiteList(params) {
-    const filterParams = {
-      'campaign_id': params.campaign_id
-    };
-    const whitelistService = new WhitelistService();
+  async getWhiteList({request}) {
+    // get request params
+    const campaign_id = request.params.campaignId;
+    console.log(`start getWhiteList with campaign_id ${campaign_id}`);
     try {
-      const result = await whitelistService.findWhitelistUser(filterParams);
-      return HelperUtils.responseSuccess({result});
+      // get from redis cached
+      const redisKey = 'whitelist_' + campaign_id;
+      const cachedWL = await Redis.get(redisKey);
+      if (cachedWL) {
+        console.log(`existed key ${redisKey} on redis`);
+        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      }
+      // if not existed whitelist on redis then get from db
+      const filterParams = {
+        'campaign_id': campaign_id
+      };
+      const whitelistService = new WhitelistService();
+      // get winner list
+      const whitelist = await whitelistService.findWhitelistUser(filterParams);
+      // save to redis
+      await Redis.set(redisKey, JSON.stringify(whitelist));
+      return HelperUtils.responseSuccess(whitelist);
     } catch (e) {
       console.log(e);
-      return ErrorFactory.internal('ERROR: Get Whitelist User Failed !');
+      return HelperUtils.responseErrorInternal('Get Whitelist Failed !');
     }
   }
 }

@@ -2,8 +2,6 @@
 
 const ErrorFactory = use('App/Common/ErrorFactory');
 const WinnerListModel = use('App/Models/WinnerListUser');
-const Const = use('App/Common/Const');
-const HelperUtils = use('App/Common/HelperUtils');
 
 class WinnerListUserService {
   buildQueryBuilder(params) {
