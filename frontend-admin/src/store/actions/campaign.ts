@@ -80,6 +80,7 @@ export const getCampaigns = (currentPage: number = 1, query: string = '', startT
         payload: err.message
       })
     }
+
   }
 }
 

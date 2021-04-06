@@ -1,4 +1,5 @@
 import { BaseRequest } from '../request/Request';
+import {apiRoute} from "./index";
 
 export const userAlreadyExists = async (ethAddress: string, isInvestor: boolean = false): Promise<boolean> => {
   try {
@@ -6,7 +7,7 @@ export const userAlreadyExists = async (ethAddress: string, isInvestor: boolean 
 
     let url = '';
 
-    url = !isInvestor ? '/user/check-wallet-address': 'public/check-wallet-address';
+    url = apiRoute('/check-wallet-address');
 
     if (ethAddress) {
       const response = await baseRequest.post(url, {
@@ -20,7 +21,7 @@ export const userAlreadyExists = async (ethAddress: string, isInvestor: boolean 
         return false;
       }
     }
-    
+
     return false;
   } catch (error) {
     return false;

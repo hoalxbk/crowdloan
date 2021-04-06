@@ -28,6 +28,9 @@ import { NotificationContainer, NotificationManager } from 'react-notifications'
 import 'react-notifications/lib/notifications.css';
 import {adminRoute, publicRoute} from "./utils";
 import ComingSoon from "./pages/ComingSoon/ComingSoon";
+import AdminList from "./pages/AdminList/AdminList";
+import AdminEdit from "./pages/AdminDetail/AdminEdit";
+import AdminCreate from "./pages/AdminDetail/AdminCreate";
 
 /**
  * Main App routes.
@@ -76,6 +79,10 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         <Route path={('/confirm-email/:role?/:token')} component={ConfirmEmail} />
         <Route path={'/change-password/:role?'} component={ChangePassword} />
         <Route path={adminRoute('/network-change')} component={NetworkChange} />
+
+        <Route path={adminRoute('/admins')} component={AdminList} />
+        <Route path={adminRoute('/admin-detail/:id')} component={AdminEdit} />
+        <Route path={adminRoute('/admin-create')} component={AdminCreate} />
 
         <Route path={('/coming-soon')} component={ComingSoon} />
         <Route component={NotFoundPage} />

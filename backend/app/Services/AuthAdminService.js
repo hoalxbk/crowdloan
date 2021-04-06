@@ -24,11 +24,11 @@ class AuthAdminService extends BaseService {
       ErrorFactory.unauthorizedInputException('The current ethereum address has not been signed up on the system !', Const.ERROR_CODE.AUTH_ERROR.ADDRESS_NOT_EXIST);
     }
 
-    const isMatchPassword = await Hash.verify(params.password, user.password);
+    // const isMatchPassword = await Hash.verify(params.password, user.password);
 
-    if (!isMatchPassword) {
-      ErrorFactory.unauthorizedInputException('Incorrect password !', Const.ERROR_CODE.AUTH_ERROR.PASSWORD_NOT_MATCH);
-    }
+    // if (!isMatchPassword) {
+    //   ErrorFactory.unauthorizedInputException('Incorrect password !', Const.ERROR_CODE.AUTH_ERROR.PASSWORD_NOT_MATCH);
+    // }
     return user;
   }
 
@@ -56,17 +56,17 @@ class AuthAdminService extends BaseService {
   }
 
   async createUser({email, username, signature, password, wallet_address, type, role}) {
-    const isExistWhitelistUser = await this.checkExistWhitelistUser({ email });
-    const userType = isExistWhitelistUser ? Const.USER_TYPE.WHITELISTED : Const.USER_TYPE.REGULAR;
+    // const isExistWhitelistUser = await this.checkExistWhitelistUser({ email });
+    // const userType = isExistWhitelistUser ? Const.USER_TYPE.WHITELISTED : Const.USER_TYPE.REGULAR;
     try {
       const user = new AdminModel;
       user.email = email;
-      user.username = username;
+      user.username = email;
       user.password = password;
       user.wallet_address = wallet_address;
       user.signature = signature;
       user.role = role || Const.USER_ROLE.ICO_OWNER;
-      user.type = userType;
+      user.type = Const.USER_TYPE.WHITELISTED;  // Always whitelisted
       await user.save();
       return user;
     } catch (e) {

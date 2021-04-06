@@ -114,7 +114,7 @@ class CampaignController {
     if (!campaigns) {
       return ErrorFactory.badRequest('Campaign not found')
     }else {
-      const data = JSON.parse(JSON.stringify(campaigns))
+      const data = JSON.parse(JSON.stringify(campaigns));
       return {
         status: 200,
         data: data

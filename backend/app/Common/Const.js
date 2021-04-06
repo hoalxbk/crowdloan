@@ -1,4 +1,5 @@
 module.exports = Object.freeze({
+  DEFAULT_LIMIT: 10,
   TOKEN_DECIMAL: 18,
   CONTRACTS: {
     // map to contract_name in contract_logs table

@@ -7,7 +7,7 @@ import { withRouter, useParams } from 'react-router-dom';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
-import {adminRoute, publicRoute} from "../../utils";
+import {adminRoute, apiRoute, publicRoute} from "../../utils";
 
 const loginLogo = '/images/login-logo.png';
 
@@ -36,7 +36,7 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
       if (token) {
         const baseRequest = new BaseRequest();
 
-        const response = await baseRequest.get(`${role === 'investor' ? `/public/confirm-email/${token}`: `/user/confirm-email/${token}`}`) as any;
+        const response = await baseRequest.get(apiRoute(`/confirm-email/${token}`)) as any;
         const resObj = await response.json();
 
         if (resObj.status && resObj.status === 200) {

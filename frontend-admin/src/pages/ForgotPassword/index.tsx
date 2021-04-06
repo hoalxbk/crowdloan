@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
-import {adminRoute, publicRoute} from "../../utils";
+import {adminRoute, apiRoute, publicRoute} from "../../utils";
 
 const MESSAGE_SIGNATURE = process.env.REACT_APP_MESSAGE_SIGNATURE || "";
 
@@ -69,7 +69,7 @@ const ForgotPassword: React.FC<any> = (props: any) => {
             return;
         }
 
-        let url = '/user/forgot-password';
+        let url = apiRoute('/forgot-password');
         const baseRequest = new BaseRequest();
         const response = await baseRequest.post(url, {
           signature: result.result,

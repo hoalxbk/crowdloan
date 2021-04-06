@@ -71,16 +71,11 @@ class AuthAdminController {
     }
     const param = request.all();
     const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address)
-
-    const filterParams = {
-      'password': param.password,
-      'wallet_address': wallet_address
-    };
     try {
       const authService = new AuthAdminService();
       const user = await authService.login({
-        ...filterParams,
-        role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER,
+        'wallet_address': wallet_address,
+        role: Const.USER_ROLE.ICO_OWNER,
       });
 
       const token = await auth.authenticator('admin').generate(user, true);
@@ -105,7 +100,7 @@ class AuthAdminController {
 
       const authService = new AuthAdminService();
       let user = await authService.checkIssetUser({ email: param.email, role });
-      console.log(user)
+      console.log(user);
       if(!user) {
         user = await authService.checkWalletUser({wallet_address, role});
         if(user){

@@ -17,7 +17,7 @@ import {alertFailure} from "./alert";
 import {logout} from "./user";
 import campaignABI from "../../abi/Campaign.json";
 import BigNumber from "bignumber.js";
-import {getETHPrices} from "../../utils";
+import {apiRoute, getETHPrices} from "../../utils";
 
 
 const verifyMaxCanBuy = async (
@@ -154,7 +154,7 @@ export const buyToken = (amount: any, tokenConvert: any, campaignId: string, uni
 
             console.log('buyResult with ETH: ', buyResult)
             const baseRequest = new BaseRequest();
-            const res = await baseRequest.post(`/public/transaction-create`, {
+            const res = await baseRequest.post(apiRoute(apiRoute(`/transaction-create`)), {
               campaign_hash: campaignId,
               transaction_hash: buyResult.transactionHash,
               eth: amount,
@@ -166,7 +166,7 @@ export const buyToken = (amount: any, tokenConvert: any, campaignId: string, uni
               .then(res => res.json())
               .then(res => {
                 if (res.status === 200) {
-                  console.log('Res /public/transaction-create', res);
+                  console.log('Res /transaction-create', res);
                   return res;
                 } else {
                   dispatch(alertFailure(res.message));
@@ -230,7 +230,7 @@ export const buyToken = (amount: any, tokenConvert: any, campaignId: string, uni
                console.log('buyResult with USDT', buyResult);
                const tokenAddress = buyResult?.events?.TokenPurchaseByToken?.returnValues?.token;
                const baseRequest = new BaseRequest();
-               const res = await baseRequest.post(`/public/transaction-create`, {
+               const res = await baseRequest.post(apiRoute(`/transaction-create`), {
                  campaign_hash: campaignId,
                  transaction_hash: buyResult.transactionHash,
                  eth: 0,
@@ -242,7 +242,7 @@ export const buyToken = (amount: any, tokenConvert: any, campaignId: string, uni
                  .then(res => res.json())
                  .then(res => {
                    if (res.status === 200) {
-                     console.log('Res /public/transaction-create', res);
+                     console.log('Res /transaction-create', res);
                      return res;
                    } else {
                      dispatch(alertFailure(res.message));
@@ -278,7 +278,7 @@ export const isCampaignPurchasable = () => {
         type: buyTokenActions.BUY_TOKEN_AVAILABLE_LOADING
       })
       const baseRequest = new BaseRequest();
-      const response = await baseRequest.post('/public/jwt/verify', {}, true) as any;
+      const response = await baseRequest.post(apiRoute('/jwt/verify'), {}, true) as any;
       const resObj = await response.json();
 
       if (resObj?.status === 200 && resObj?.data) {

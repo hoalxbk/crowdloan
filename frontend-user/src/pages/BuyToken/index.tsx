@@ -17,7 +17,7 @@ import { isCampaignPurchasable } from '../../store/actions/buy-token';
 import { userAlreadyExists } from '../../utils/user';
 import { alertFailure } from '../../store/actions/alert';
 import useStyles from './style';
-import {adminRoute, publicRoute} from "../../utils";
+import {adminRoute, apiRoute, publicRoute} from "../../utils";
 import {BaseRequest} from "../../request/Request";
 import {MAX_BUY_CAMPAIGN} from "../../constants";
 import BigNumber from "bignumber.js";
@@ -190,7 +190,7 @@ const BuyToken = (props: any) => {
 
   const checkMaxUsd = async (ethAmount: number, usdtAmount: number) => {
     const baseRequest = new BaseRequest();
-    const res = await baseRequest.post(`/public/check-max-usd`, {
+    const res = await baseRequest.post(apiRoute(`/check-max-usd`), {
       campaign: campaignDetail.transactionHash,
       eth: ethAmount,
       usdt: usdtAmount,
@@ -198,7 +198,7 @@ const BuyToken = (props: any) => {
       .then(res => res.json())
       .then(res => {
         if (res.status === 200) {
-          console.log('Res /public/check-max-usd', res);
+          console.log('Res /check-max-usd', res);
           return res;
         } else {
           dispatch(alertFailure(res.message));
@@ -347,7 +347,7 @@ const BuyToken = (props: any) => {
           setIsMaxBuy={setIsMaxBuy}
           checkMaxUsd={checkMaxUsd}
         />
-        <Link className={`login__form-redirect`} to="/change-password/investor">Change password ?</Link>
+        {/*<Link className={`login__form-redirect`} to="/change-password/investor">Change password ?</Link>*/}
       </div>
     </div>
     </>

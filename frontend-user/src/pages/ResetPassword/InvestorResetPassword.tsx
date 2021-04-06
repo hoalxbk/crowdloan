@@ -6,7 +6,7 @@ import {useForm} from 'react-hook-form';
 import _ from 'lodash';
 import {alertFailure, alertSuccess} from '../../store/actions/alert';
 import {BaseRequest} from '../../request/Request';
-import {adminRoute, publicRoute} from "../../utils";
+import {adminRoute, apiRoute, publicRoute} from "../../utils";
 import InvestorLayout from "../InvestorLayout/InvestorLayout";
 import TextTitle from "../InvestorLayout/TextTitle";
 import TextSubTitle from "../InvestorLayout/TextSubTitle";
@@ -61,7 +61,7 @@ const InvestorResetPassword: React.FC<any> = (props: any) => {
     const isAvailableToken = async () => {
       setIsAvailableLoading(true);
 
-      const response = await baseRequest.get(`/public/check-token/${token}`) as any;
+      const response = await baseRequest.get(apiRoute(`/check-token/${token}`)) as any;
       const resObj = await response.json();
 
       if (resObj?.status !== 200 || resObj?.data.status !== 200) {
@@ -97,7 +97,7 @@ const InvestorResetPassword: React.FC<any> = (props: any) => {
           return;
         }
 
-        const response = await baseRequest.post(`/public/reset-password/${token}`, {
+        const response = await baseRequest.post(apiRoute(`/reset-password/${token}`), {
           password: data.password,
           signature: result.result,
           wallet_address: ethAddress,
