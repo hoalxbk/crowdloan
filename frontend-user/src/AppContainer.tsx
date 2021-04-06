@@ -77,11 +77,12 @@ const AppContainer = (props: any) => {
           }
         }
       });
+
     }
   };
 
   useEffect(()  => {
-    onLoginWithoutLoginPage();
+    // onLoginWithoutLoginPage();
   }, [props.location.pathname]);
 
   useEffect(() => {
@@ -97,65 +98,65 @@ const AppContainer = (props: any) => {
       });
 
       ethereum.on('accountsChanged', function (accounts: any) {
-        console.log('accountsChanged');
-        const account = accounts.length ? accounts[0] : '';
-
-        if (account) {
-          if (loginUser && account !== loginUser.wallet_address) {
-            dispatch(logout());
-          }
-          if (loginInvestor && account !== loginInvestor.wallet_address) {
-            dispatch(logout(true));
-          } else {
-            dispatch({
-              type: userActions.USER_CONNECT_WALLET_SUCCESS,
-              payload: account,
-            });
-          }
-        } else {
-          dispatch(logout());
-          dispatch({
-            type: userActions.USER_CONNECT_WALLET_LOCK,
-          });
-        }
+        // console.log('accountsChanged');
+        // const account = accounts.length ? accounts[0] : '';
+        //
+        // if (account) {
+        //   if (loginUser && account !== loginUser.wallet_address) {
+        //     dispatch(logout());
+        //   }
+        //   if (loginInvestor && account !== loginInvestor.wallet_address) {
+        //     dispatch(logout(true));
+        //   } else {
+        //     dispatch({
+        //       type: userActions.USER_CONNECT_WALLET_SUCCESS,
+        //       payload: account,
+        //     });
+        //   }
+        // } else {
+        //   dispatch(logout());
+        //   dispatch({
+        //     type: userActions.USER_CONNECT_WALLET_LOCK,
+        //   });
+        // }
       });
 
       ethereum.on('chainChanged', (newNetworkId: string) => {
-        console.log('chainChanged');
-        const { history } = props;
-        const pathName = history.location.pathname;
-        let backUrlKey = checkIsAdminRoute(pathName) ? BACK_URL_NETWORK_CHANGE_OWNER : BACK_URL_NETWORK_CHANGE;
-
-        console.log('pathName', pathName);
-        console.log('backUrlKey', backUrlKey);
-
-        if (Number(NETWORK_ID) !== Number(newNetworkId)) {
-          console.log('CHANGE_TO_OTHER_NETWORK');
-          if (pathName !== '/network-change') {
-            localStorage.setItem(backUrlKey, pathName);
-            if (checkIsAdminRoute(pathName)) {
-              history.push('/dashboard/network-change');
-            } else {
-              history.push('/network-change');
-            }
-          }
-          return true;
-        }
-
-        const backUrl = localStorage.getItem(backUrlKey);
-        console.log('SAME_NETWORK');
-        console.log('backUrl', backUrl);
-
-        if (backUrl) {
-          if (backUrlKey === BACK_URL_NETWORK_CHANGE_OWNER) {
-            history.push('/dashboard');
-          } else {
-            history.push(backUrl);
-          }
-          setTimeout(() => {
-            localStorage.removeItem(backUrlKey);
-          }, 1000);
-        }
+        // console.log('chainChanged');
+        // const { history } = props;
+        // const pathName = history.location.pathname;
+        // let backUrlKey = checkIsAdminRoute(pathName) ? BACK_URL_NETWORK_CHANGE_OWNER : BACK_URL_NETWORK_CHANGE;
+        //
+        // console.log('pathName', pathName);
+        // console.log('backUrlKey', backUrlKey);
+        //
+        // if (Number(NETWORK_ID) !== Number(newNetworkId)) {
+        //   console.log('CHANGE_TO_OTHER_NETWORK');
+        //   if (pathName !== '/network-change') {
+        //     localStorage.setItem(backUrlKey, pathName);
+        //     if (checkIsAdminRoute(pathName)) {
+        //       history.push('/dashboard/network-change');
+        //     } else {
+        //       history.push('/network-change');
+        //     }
+        //   }
+        //   return true;
+        // }
+        //
+        // const backUrl = localStorage.getItem(backUrlKey);
+        // console.log('SAME_NETWORK');
+        // console.log('backUrl', backUrl);
+        //
+        // if (backUrl) {
+        //   if (backUrlKey === BACK_URL_NETWORK_CHANGE_OWNER) {
+        //     history.push('/dashboard');
+        //   } else {
+        //     history.push(backUrl);
+        //   }
+        //   setTimeout(() => {
+        //     localStorage.removeItem(backUrlKey);
+        //   }, 1000);
+        // }
 
       });
     }
