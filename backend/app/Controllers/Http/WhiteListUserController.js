@@ -12,9 +12,9 @@ class WhiteListUserController {
     try {
       // get from redis cached
       const redisKey = 'whitelist_' + campaign_id;
-      const cachedWL = await Redis.get(redisKey);
-      if (cachedWL) {
+      if (Redis.exists(redisKey)) {
         console.log(`existed key ${redisKey} on redis`);
+        const cachedWL = await Redis.get(redisKey);
         return HelperUtils.responseSuccess(JSON.parse(cachedWL));
       }
       // if not existed whitelist on redis then get from db
