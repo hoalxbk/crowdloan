@@ -172,20 +172,27 @@ const Dashboard = (props: any) => {
     getComingSoonTime();
   }, []);
 
-  if (countdown && !parsed.campaignId) {
-    const now = unixTimeNow();
-    const countdownUnix = moment(countdown).unix();
-    // campaignDetail && !campaignLatestActive &&
-    // ?campaignId=0x726A13d0da774eF8D4844f2aB93c54254B609824
-    if (now < countdownUnix) {
-      return (
-        <ComingSoon
-          countdown={countdown}
-          campaignDetail={campaignDetail}
-        />
-      );
-    }
-  }
+  // return (
+  //   <ComingSoon
+  //     countdown={countdown}
+  //     campaignDetail={campaignDetail}
+  //   />
+  // );
+
+  // if (countdown && !parsed.campaignId) {
+  //   const now = unixTimeNow();
+  //   const countdownUnix = moment(countdown).unix();
+  //   // campaignDetail && !campaignLatestActive &&
+  //   // ?campaignId=0x726A13d0da774eF8D4844f2aB93c54254B609824
+  //   if (now < countdownUnix) {
+  //     return (
+  //       <ComingSoon
+  //         countdown={countdown}
+  //         campaignDetail={campaignDetail}
+  //       />
+  //     );
+  //   }
+  // }
 
   const checkMaxUsd = async (ethAmount: number, usdtAmount: number) => {
     const baseRequest = new BaseRequest();
@@ -229,28 +236,28 @@ const Dashboard = (props: any) => {
     dispatch(getUsdtAllowance(amount, campaignId));
   };
 
-  console.log('loginInvestor: ', loginInvestor);
-  if (!loginInvestor) {
-    setTimeout(() => {
-      history.push(publicRoute('/login'));
-    }, 500);
-
-    return (
-      <div className={classes.buyToken}>
-        <div className={`${classes.buyToken}__wrapper`}>
-          <div className={`${classes.buyToken}__loading`}>
-            <div className={`${classes.buyToken}__logo`}>
-              <img src={loginLogo} alt="logo" />
-            </div>
-            <div className="login__user-loading">
-              <CircularProgress size={75} thickness={4} value={100} />
-              <p className="login__user-loading-text">Loading Ethereum Wallet</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // console.log('loginInvestor: ', loginInvestor);
+  // if (!loginInvestor) {
+  //   setTimeout(() => {
+  //     history.push(publicRoute('/login'));
+  //   }, 500);
+  //
+  //   return (
+  //     <div className={classes.buyToken}>
+  //       <div className={`${classes.buyToken}__wrapper`}>
+  //         <div className={`${classes.buyToken}__loading`}>
+  //           <div className={`${classes.buyToken}__logo`}>
+  //             <img src={loginLogo} alt="logo" />
+  //           </div>
+  //           <div className="login__user-loading">
+  //             <CircularProgress size={75} thickness={4} value={100} />
+  //             <p className="login__user-loading-text">Loading Ethereum Wallet</p>
+  //           </div>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   if ((campaignLatestActiveLoading && campaignLatestActive) || campaignDetailLoading || isPurchasableLoading) {
     return (
