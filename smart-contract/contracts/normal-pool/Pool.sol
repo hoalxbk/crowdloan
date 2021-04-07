@@ -15,6 +15,12 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
 
     uint constant MAX_NUM_TIERS = 10;
 
+    struct OfferedCurrency {
+        address currency;
+        uint256 decimals;
+        uint256 rate;
+    }
+
     // The token being sold
     IERC20 public token;
 
@@ -36,20 +42,14 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     // Amount of token sold
     uint256 public tokenSold = 0;
 
-    // Name of ICO Pool
-    string public name;
-
-    // Ether to token conversion rate
-    uint256 private etherConversionRate;
-
-    // Ether to token conversion rate decimals
-    uint256 private etherConversionRateDecimals = 0;
-
     // Token limit amount user can buy each tier
     uint[MAX_NUM_TIERS] public tierLimitBuy;
 
     // Number of token user purchased
     mapping(address => uint256) public userPurchased;
+
+    // Get offered currencies
+    OfferedCurrency[] public offeredCurrency;
 
     // Pool extensions
     bool public useWhitelist;
@@ -65,7 +65,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     // -----------------------------------------
     // Lauchpad Starter's event
     // -----------------------------------------
-    event PoolCreated(string name, address token, uint256 openTime, uint256 closeTime, uint256 ethRate, uint256 ethRateDecimals, address wallet, address owner);
+    event PoolCreated(address token, uint256 openTime, uint256 closeTime, address offeredCurrency, uint256 offeredCurrencyDecimals, uint256 offeredCurrencyRate, address wallet, address owner);
     event AllowTokenToTradeWithRate(address token, uint256 rate);
     event TokenPurchaseByEther(address indexed purchaser, address indexed beneficiary, uint256 value, uint256 amount);
     event TokenPurchaseByToken(address indexed purchaser, address indexed beneficiary, address token, uint256 value, uint256 amount);
@@ -97,94 +97,78 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     }
 
     /**
-     * @param _name Name of ICO Pool
      * @param _token Address of the token being sold
      * @param _duration Duration of ICO Pool
      * @param _openTime When ICO Started
-     * @param _ethRate Number of token units a buyer gets per wei
+     * @param _offeredCurrency Address of offered token
+     * @param _offeredCurrencyDecimals Decimals of offered token
+     * @param _offeredRate Number of currency token units a buyer gets
      * @param _tierLimitBuy Array of max token user can buy each tiers
      * @param _wallet Address where collected funds will be forwarded to
      */
-    function initialize(string calldata _name, address _token, uint256 _duration, uint256 _openTime, uint256 _ethRate, uint256 _ethRateDecimals, uint[MAX_NUM_TIERS] calldata _tierLimitBuy, address _wallet) external {
+    function initialize(address _token, uint256 _duration, uint256 _openTime, address _offeredCurrency, uint256 _offeredCurrencyDecimals, uint256 _offeredRate, uint[MAX_NUM_TIERS] calldata _tierLimitBuy, address _wallet) external {
         require(msg.sender == factory, "POOL::UNAUTHORIZED");
-        require(_tierLimitBuy[0] != 0, "POOL::ZERO_TIER_LIMIT_BUY");
 
-        name = _name;
         token = IERC20(_token);
         openTime = _openTime;
         closeTime = _openTime.add(_duration);
-        etherConversionRate = _ethRate;
-        etherConversionRateDecimals = _ethRateDecimals;
         tierLimitBuy = _tierLimitBuy;
         fundingWallet = _wallet;
         owner = tx.origin;
         paused = false;
 
-        emit PoolCreated(_name, _token, _openTime, closeTime, _ethRate, _ethRateDecimals, _wallet, owner);
+        offeredCurrency.push(OfferedCurrency({
+            currency: _offeredCurrency,
+            decimals: _offeredCurrencyDecimals,
+            rate: _offeredRate
+        }));
+
+        emit PoolCreated(_token, _openTime, closeTime, _offeredCurrency, _offeredCurrencyDecimals, _offeredRate, _wallet, owner);
     }
 
     /**
-     * @notice Returns the conversion rate when user buy by eth
+     * @notice Returns the conversion rate when user buy by offered token
      * @return Returns only a fixed number of rate.
      */
-    function getEtherConversionRate() public view returns (uint256) {
-        return etherConversionRate;
+    function getOfferedCurrencyRate() public view returns (uint256) {
+        return offeredCurrency[0].rate;
     }
 
     /**
-     * @notice Returns the conversion rate decimals when user buy by eth
+     * @notice Returns the conversion rate decimals when user buy by offered token
      * @return Returns only a fixed number of decimals.
      */
-    function getEtherConversionRateDecimals() public view returns (uint256) {
-        return etherConversionRateDecimals;
+    function getOfferedCurrencyDecimals() public view returns (uint256) {
+        return offeredCurrency[0].decimals;
     }
 
     /**
-     * @notice Returns the conversion rate when user buy by eth
-     * @return Returns only a fixed number of token rate.
-     * @param _token address of token to query token exchange rate
-     */
-    function getErc20TokenConversionRate(address _token) public view returns (uint256) {
-        return erc20TokenConversionRate[_token];
-    }
-
-    /**
-     * @notice Owner can set the eth conversion rate. Receiver tokens = wei * etherConversionRate / 10 ** etherConversionRateDecimals
+     * @notice Owner can set the offered token conversion rate. Receiver tokens = tradeTokens * tokenRate
      * @param _rate Fixed number of ether rate
-     * @param _rateDecimals Fixed number of ether rate decimals
+     * @param _decimals Fixed number of ether rate decimals
      */
-    function setEtherConversionRateAndDecimals(uint256 _rate, uint256 _rateDecimals) public onlyOwner {
-        etherConversionRate = _rate;
-        etherConversionRateDecimals = _rateDecimals;
+    function setOfferedCurrencyRateAndDecimals(uint256 _rate, uint256 _decimals) public onlyOwner {
+        offeredCurrency[0].rate = _rate;
+        offeredCurrency[0].decimals = _decimals;
         emit PoolStatsChanged();
     }
+
     /**
-     * @notice Owner can set the eth conversion rate. Receiver tokens = wei * etherConversionRate / 10 ** etherConversionRateDecimals
+     * @notice Owner can set the offered token conversion rate. Receiver tokens = wei * etherConversionRate / 10 ** etherConversionRateDecimals
      * @param _rate Fixed number of ether rate
      */
-    function setEtherConversionRate(uint256 _rate) public onlyOwner {
-        require(etherConversionRate != _rate, "POOL::RATE_INVALID");
-        etherConversionRate = _rate;
+    function setOfferedCurrencynRate(uint256 _rate) public onlyOwner {
+        require(offeredCurrency[0].rate != _rate, "POOL::RATE_INVALID");
+        offeredCurrency[0].rate = _rate;
         emit PoolStatsChanged();
     }
 
     /**
      * @notice Owner can set the eth conversion rate decimals. Receiver tokens = wei * etherConversionRate / 10 ** etherConversionRateDecimals
-     * @param _rateDecimals Fixed number of ether rate decimals
+     * @param _decimals Fixed number of offered token decimals
      */
-    function setEtherConversionRateDecimals(uint256 _rateDecimals) public onlyOwner {
-        etherConversionRateDecimals = _rateDecimals;
-        emit PoolStatsChanged();
-    }
-
-    /**
-     * @notice Owner can set the token conversion rate. Receiver tokens = tradeTokens * tokenRate
-     * @param _token address of token to query token exchange rate
-     */
-    function setErc20TokenConversionRate(address _token, uint256 _rate) public onlyOwner {
-        require(erc20TokenConversionRate[_token] != _rate, "POOL::RATE_INVALID");
-        erc20TokenConversionRate[_token] = _rate;
-        emit AllowTokenToTradeWithRate(_token, _rate);
+    function setEtherConversionRateDecimals(uint256 _decimals) public onlyOwner {
+        offeredCurrency[0].decimals = _decimals;
         emit PoolStatsChanged();
     }
 
@@ -233,7 +217,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         address _beneficiary,
         address _candidate,
         uint256 _maxAmount,
-        uint256 _deadline,
         bytes memory _signature
     )
         public
@@ -242,12 +225,14 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         nonReentrant
     {
         uint256 weiAmount = msg.value;
+        address currency = offeredCurrency[0].currency;
         _preValidatePurchase(_beneficiary, weiAmount);
+        require(currency == address(0), "POOL::WRONG_BUY_METHOD");
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _deadline, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _signature));
 
         // calculate token amount to be created
-        uint256 tokens = _getEtherToTokenAmount(weiAmount);
+        uint256 tokens = _getOfferedCurrencyToTokenAmount(weiAmount);
         _verifyTierLimitBuy(_beneficiary, tokens);
 
         _deliverTokens(_beneficiary, tokens);
@@ -271,7 +256,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         uint256 _amount,
         address _candidate,
         uint256 _maxAmount,
-        uint256 _deadline,
         bytes memory _signature
     )
         public
@@ -279,20 +263,20 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         nonReentrant
         tokenRateSetted(_token)
     {
-        require(_token != address(token), "POOL::TOKEN_INVALID");
+        require(offeredCurrency[0].currency != address(0), "POOL::WRONG_BUY_METHOD");
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _deadline, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _signature));
 
         _verifyAllowance(msg.sender, _token, _amount);
 
         _preValidatePurchase(_beneficiary, _amount);
 
         require(
-            getErc20TokenConversionRate(_token) != 0,
+            _token == offeredCurrency[0].currency,
             "POOL::TOKEN_NOT_ALLOWED"
         );
 
-        uint256 tokens = _getTokenToTokenAmount(_token, _amount);
+        uint256 tokens = _getOfferedCurrencyToTokenAmount(_amount);
         _verifyTierLimitBuy(_beneficiary, tokens);
 
         _deliverTokens(_beneficiary, tokens);
@@ -343,23 +327,13 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
 
     /**
     * @dev Override to extend the way in which ether is converted to tokens.
-    * @param _weiAmount Value in wei to be converted into tokens
+    * @param _amount Value in wei to be converted into tokens
     * @return Number of tokens that can be purchased with the specified _weiAmount
     */
-    function _getEtherToTokenAmount(uint256 _weiAmount) internal view returns (uint256) {
-        uint256 rate = getEtherConversionRate();
-        return _weiAmount.mul(rate).div(10 ** etherConversionRateDecimals);
-    }
-
-    /**
-    * @dev Override to extend the way in which ether is converted to tokens.
-    * @param _token Address of exchange token
-    * @param _amount Value of exchange tokens
-    * @return Number of tokens that can be purchased with the specified _weiAmount
-    */
-    function _getTokenToTokenAmount(address _token, uint256 _amount) internal view returns (uint256) {
-        uint256 rate = getErc20TokenConversionRate(_token);
-        return _amount.mul(rate);
+    function _getOfferedCurrencyToTokenAmount(uint256 _amount) internal view returns (uint256) {
+        uint256 rate = getOfferedCurrencyRate();
+        uint256 decimals = getOfferedCurrencyDecimals();
+        return _amount.mul(rate).div(10 ** decimals);
     }
 
     /**
@@ -445,9 +419,9 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         require(userPurchased[_user].add(_amount) <= tierLimitBuy[userTier], "POOL::LIMIT_BUY_EXCEED");
     }
 
-    function _verifyWhitelist(address _candidate, uint256 _maxAmount, uint256 _deadline, bytes memory _signature) private view returns (bool) {
+    function _verifyWhitelist(address _candidate, uint256 _maxAmount, bytes memory _signature) private view returns (bool) {
         if (useWhitelist) {
-            return (verify(owner, _candidate, _maxAmount, _deadline, _signature));
+            return (verify(owner, _candidate, _maxAmount, _signature));
         }
         return true;
     }

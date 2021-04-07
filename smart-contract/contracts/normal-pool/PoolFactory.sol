@@ -11,8 +11,8 @@ contract PoolFactory is Ownable, Pausable, Initializable {
     // SotaTier contract
     address private tier;
 
-	// Max tier
-	uint constant MAX_NUM_TIERS = 10;
+    // Max tier
+    uint256 constant MAX_NUM_TIERS = 10;
 
     // Array of created Pools Address
     address[] public allPools;
@@ -82,29 +82,30 @@ contract PoolFactory is Ownable, Pausable, Initializable {
     /**
      * @notice Register ICO Pool for tokens
      * @dev To register, you MUST have an ERC20 token
-     * @param _name String name of new pool
      * @param _token address of ERC20 token
      * @param _duration Number of ICO time in seconds
      * @param _openTime Number of start ICO time in seconds
-     * @param _ethRate Conversion rate for buy token. tokens = value * rate
-     * @param _ethRateDecimals Decimals of token eth rate
+     * @param _offeredCurrency Address of offered token
+     * @param _offeredCurrencyDecimals Decimals of offered token
+     * @param _offeredRate Conversion rate for buy token. tokens = value * rate
      * @param _tierLimitBuy Array of max token user can buy each tiers
      * @param _wallet Address of funding ICO wallets. Sold tokens in eth will transfer to this address
      */
     function registerPool(
-        string memory _name,
         address _token,
         uint256 _duration,
         uint256 _openTime,
-        uint256 _ethRate,
-        uint256 _ethRateDecimals,
+        address _offeredCurrency,
+        uint256 _offeredCurrencyDecimals,
+        uint256 _offeredRate,
         uint256[MAX_NUM_TIERS] memory _tierLimitBuy,
         address _wallet
     ) external whenNotPaused returns (address pool) {
         require(_token != address(0), "ICOFactory::ZERO_ADDRESS");
+        require(_offeredCurrency != address(0), "ICOFactory::ZERO_ADDRESS");
         require(_duration != 0, "ICOFactory::ZERO_DURATION");
         require(_wallet != address(0), "ICOFactory::ZERO_ADDRESS");
-        require(_ethRate != 0, "ICOFactory::ZERO_ETH_RATE");
+        require(_offeredRate != 0, "ICOFactory::ZERO_OFFERED_RATE");
         require(_tierLimitBuy[0] != 0, "POOL::ZERO_TIER_LIMIT_BUY");
         bytes memory bytecode = type(Pool).creationCode;
         uint256 tokenIndex = getCreatedPoolsLengthByToken(msg.sender, _token);
@@ -114,12 +115,12 @@ contract PoolFactory is Ownable, Pausable, Initializable {
             pool := create2(0, add(bytecode, 32), mload(bytecode), salt)
         }
         IPool(pool).initialize(
-            _name,
             _token,
             _duration,
             _openTime,
-            _ethRate,
-            _ethRateDecimals,
+            _offeredCurrency,
+            _offeredCurrencyDecimals,
+            _offeredRate,
             _tierLimitBuy,
             _wallet
         );
