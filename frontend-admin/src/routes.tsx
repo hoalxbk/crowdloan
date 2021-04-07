@@ -31,6 +31,10 @@ import ComingSoon from "./pages/ComingSoon/ComingSoon";
 import AdminList from "./pages/AdminList/AdminList";
 import AdminEdit from "./pages/AdminDetail/AdminEdit";
 import AdminCreate from "./pages/AdminDetail/AdminCreate";
+import Pools from "./pages/Pools";
+import PoolCreate from "./pages/PoolCreate/PoolCreate";
+import PoolDetailPage from "./pages/PoolDetailPage";
+import PoolEdit from "./pages/PoolCreate/PoolEdit";
 
 /**
  * Main App routes.
@@ -63,11 +67,12 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
           render={() => <Redirect to={`${adminRoute()}`} />}
         />
         <PrivateRoute exact path={adminRoute()} component={HomePage} />
-        <PrivateRoute exact path={adminRoute('campaign-detail/:id')} component={CampaignDetailPage} />
+
         <PrivateRoute exact path={adminRoute('/campaign-detail/pending/:id')} component={TransactionPending} />
-        <PrivateRoute exact path={adminRoute('/error')} component={ErrorPage} />
-        <PrivateRoute path={adminRoute('/campaigns')} exact component={Campaigns} />
-        <PrivateRoute path={adminRoute('/campaigns/add')} exact component={CreateCampaign} />
+        <PrivateRoute exact path={adminRoute('campaign-detail/:id')} component={PoolEdit} />
+        <PrivateRoute path={adminRoute('/campaigns')} exact component={Pools} />
+        <PrivateRoute path={adminRoute('/campaigns/add')} exact component={PoolCreate} />
+
         <PrivateRoute path={adminRoute('/setting')} component={Setting} />
         <PrivateRoute path={adminRoute('/profile')} component={Profile} />
 
@@ -85,6 +90,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         <Route path={adminRoute('/admin-create')} component={AdminCreate} />
 
         <Route path={('/coming-soon')} component={ComingSoon} />
+        <PrivateRoute exact path={adminRoute('/error')} component={ErrorPage} />
         <Route component={NotFoundPage} />
       </Switch>
     </div>

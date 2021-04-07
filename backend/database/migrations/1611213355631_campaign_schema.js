@@ -19,7 +19,7 @@ class CampaignSchema extends Schema {
       table.string('finish_time')
       table.string('token_conversion_rate')
       table.string('ether_conversion_rate')
-      table.boolean('is_pause')
+      table.boolean('is_pause').default(0);
       table.string('transaction_hash')
       table
         .tinyint('blockchain_status')
