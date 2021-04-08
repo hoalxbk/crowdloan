@@ -83,7 +83,7 @@ export const login = () => {
       if (ethAddress) {
         const windowObj = window as any;
         const { ethereum } = windowObj;
-       await ethereum.sendAsync({
+        await ethereum.sendAsync({
             method: 'eth_signTypedData',
             params: [getMessageParams(), ethAddress],
             from: ethAddress,
@@ -146,8 +146,7 @@ export const register = ({ username, email, password }: UserRegisterProps) => {
       const ethAddress = await getCurrentAccount();
 
       if (ethAddress) {
-
-       await ethereum.sendAsync({
+        await ethereum.sendAsync({
             method: 'eth_signTypedData',
             params: [getMessageParams(), ethAddress],
             from: ethAddress,

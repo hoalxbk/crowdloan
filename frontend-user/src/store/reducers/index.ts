@@ -29,6 +29,16 @@ import { settingDeactivateReducer } from './setting-deactivate';
 import { settingOwnerReducer } from './setting-owner';
 import { balanceReducer } from './balance';
 import { usdtDetailReducer } from './usdt-detail';
+import { 
+  getTiersReducer,
+  getUserTierReducer,
+  depositReducer,
+  withdrawReducer,
+  getUserInfoReducer,
+  withdrawFeeReducer,
+  withdrawPercentReducer
+} from './sota-tiers'
+import { getAllowanceReducer, approveReducer } from './sota-token';
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -69,6 +79,15 @@ const rootReducer = combineReducers({
   balance: balanceReducer,
   usdtDetail: usdtDetailReducer,
   alert: alertReducer,
+  tiers: getTiersReducer,
+  userTier: getUserTierReducer,
+  deposit: depositReducer,
+  withdraw: withdrawReducer,
+  userInfo: getUserInfoReducer,
+  allowance: getAllowanceReducer,
+  approved: approveReducer,
+  withdrawFee: withdrawFeeReducer,
+  withdrawPercent: withdrawPercentReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

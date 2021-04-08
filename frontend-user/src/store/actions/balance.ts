@@ -19,14 +19,14 @@ export const getBalance = (loginUser: string) => {
         }
       }
 
-      const contract = getContractInstance(erc20ABI, process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS as string);
-      if (contract) {
-        const usdtDecimals = await contract.methods.decimals().call();
-        const usdtBalance = await contract.methods.balanceOf(loginUser).call();
-        const usdtBalanceConvert = (new BigNumber(usdtBalance)).div(new BigNumber(`1e+${usdtDecimals}`)).toString();
+      const sotaContract = getContractInstance(erc20ABI, process.env.REACT_APP_SOTA as string);
+      if (sotaContract) {
+        const sotaDecimals = await sotaContract.methods.decimals().call();
+        const sotaBalance = await sotaContract.methods.balanceOf(loginUser).call();
+        const sotaBalanceConvert = (new BigNumber(sotaBalance)).div(new BigNumber(`1e+${sotaDecimals}`)).toString();
         result = {
           ...result,
-          usdt: usdtBalanceConvert,
+          sota: sotaBalanceConvert,
         };
       }
 
