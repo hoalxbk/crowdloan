@@ -9,7 +9,6 @@ contract ERC20Token is ERC20Burnable, ERC20Mintable {
     constructor (
         string memory name_,
         string memory symbol_,
-        uint8 decimals_,
 		    address owner,
         uint256 totalSupply
     ) ERC20(name_, symbol_) {

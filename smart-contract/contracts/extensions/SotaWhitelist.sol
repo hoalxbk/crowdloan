@@ -11,10 +11,9 @@ contract SotaWhitelist {
     // Using Openzeppelin ECDSA cryptography library
     function getMessageHash(
         address _candidate,
-        uint256 _maxAmount,
-        uint256 _deadline
+        uint256 _maxAmount
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_candidate, _maxAmount, _deadline));
+        return keccak256(abi.encodePacked(_candidate, _maxAmount));
     }
 
     // Verify signature function
@@ -22,19 +21,18 @@ contract SotaWhitelist {
         address _signer,
         address _candidate,
         uint256 _maxAmount,
-        uint256 _deadline,
         bytes memory signature
     ) public pure returns (bool) {
-        bytes32 messageHash = getMessageHash(_candidate, _maxAmount, _deadline);
+        bytes32 messageHash = getMessageHash(_candidate, _maxAmount);
         bytes32 ethSignedMessageHash = getEthSignedMessageHash(messageHash);
-        
+
         return getSignerAddress(ethSignedMessageHash, signature) == _signer;
     }
-    
+
     function getSignerAddress(bytes32 _messageHash, bytes memory _signature) public pure returns(address signer) {
         return ECDSA.recover(_messageHash, _signature);
     }
-    
+
     // Split signature to r, s, v
     function splitSignature(bytes memory _signature)
         public

@@ -29,7 +29,7 @@ contract SotaTier is Ownable, ReentrancyGuard {
 	event Withdrawn(address indexed user, uint indexed amount, uint fee);
 	event EmergencyWithdrawn(address indexed user, uint amount);
 
-	constructor(address _sotaTokenAddress) public {
+	constructor(address _sotaTokenAddress) {
 		SOTA = ERC20Burnable(_sotaTokenAddress);
 
 		tierPrice[1] = 2000e18;
