@@ -7,3 +7,7 @@
 /frontend-user/.eslintcache
 /frontend-user/.env
 /backend/.env
+/frontend-admin/package-lock.json
+/frontend-admin/node_modules/
+/frontend-admin/.eslintcache
+/frontend-admin/.env
