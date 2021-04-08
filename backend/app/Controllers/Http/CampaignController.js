@@ -406,11 +406,7 @@ class CampaignController {
   async getPool({ request, auth, params }) {
     const pool = await CampaignModel.query()
       .with('tiers')
-      // .with('winners')
-      // .with('whitelistUsers')
       .where('id', params.id)
-      // .where('is_pause', Const.ACTIVE)
-      // .orderBy('created_at', 'desc')
       .first();
 
     return {
