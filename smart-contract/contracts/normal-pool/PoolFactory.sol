@@ -106,7 +106,6 @@ contract PoolFactory is Ownable, Pausable, Initializable {
         require(_duration != 0, "ICOFactory::ZERO_DURATION");
         require(_wallet != address(0), "ICOFactory::ZERO_ADDRESS");
         require(_offeredRate != 0, "ICOFactory::ZERO_OFFERED_RATE");
-        require(_tierLimitBuy[0] != 0, "POOL::ZERO_TIER_LIMIT_BUY");
         bytes memory bytecode = type(Pool).creationCode;
         uint256 tokenIndex = getCreatedPoolsLengthByToken(msg.sender, _token);
         bytes32 salt =

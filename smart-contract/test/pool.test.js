@@ -3,96 +3,81 @@ const hardhat = require('hardhat');
 const { provider, utils } = hardhat.ethers;
 
 describe('Pool', function () {
-  // Scope variable
-  let poolFactory, pool;
-  let token, tradeToken;
-  let accounts;
-  // Pool Factory
-  // Configurations
-  const name = "My Test Pool";
-  const duration = 86400;
-  const openTime = (Date.now() / 1000).toFixed();
-  const ethRate = 100;
-  const tierLimitBuy = [
-    (10 * 10 ** 18).toString(), // 10
-    (30 * 10 ** 18).toString(), // 20
-    (20 * 10 ** 18).toString(), // 30
-    (40 * 10 ** 18).toString(), // 40
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
-  ];
-  let wallet;
-  //
   beforeEach(async () => {
     // Get accounts
     accounts = await hardhat.ethers.provider.listAccounts();
     owner = accounts[0];
-    wallet = accounts[1];
-    // Deploy ERC20
+	wallet = accounts[1];
+    USDTToken = "0x7648563Ef8FFDb8863fF7aDB5A860e3b14D28946";
+
+    // Deploy Tier Token
     const ERC20Token = await hardhat.ethers.getContractFactory(
       'ERC20Token',
     );
-    const deployedERC20 = await ERC20Token.deploy(
+    const deployedTierToken = await ERC20Token.deploy(
       "SotaToken",
       "SOTA",
-      18,
       owner,
       `5${'0'.repeat(27)}`
     );
-    await deployedERC20.deployed();
-    erc20 = deployedERC20;
+    await deployedTierToken.deployed();
+    tierToken = deployedTierToken.address;
+
+    // Deploy ICO Token
+    const deployedIcoToken = await ERC20Token.deploy(
+    "IcoToken",
+    "ICO",
+    owner,
+    `5${'0'.repeat(27)}`
+    );
+    await deployedIcoToken.deployed();
+    icoToken = deployedIcoToken;
+
     // Deploy Tier Contract
     const SotaTier = await hardhat.ethers.getContractFactory(
       'SotaTier',
     );
-    const deployedTierContract = await SotaTier.deploy(erc20.address);
+    const deployedTierContract = await SotaTier.deploy(tierToken);
     await deployedTierContract.deployed();
-    tierContract = deployedTierContract;
+    tierContract = deployedTierContract.address;
+
     // Deploy Pool Factory
     const PoolFactory = await hardhat.ethers.getContractFactory(
       'PoolFactory',
     );
-    const deployedPoolFactory = await upgrades.deployProxy(PoolFactory, [tierContract.address]);
+    const deployedPoolFactory = await upgrades.deployProxy(PoolFactory, [tierContract]);
     poolFactory = deployedPoolFactory;
 
-    // Deploy token
-    const Token = await hardhat.ethers.getContractFactory(
-      'ERC20Token',
-    );
-    const token1 = await Token.deploy(
-      "Token1",
-      "T1",
-      18,
-      owner,
-      `1${'0'.repeat(27)}`
-    );
-    await token1.deployed();
-    token = token1;
-    // Deploy trade token
-    const token2 = await Token.deploy(
-      "Token2",
-      "T2",
-      18,
-      owner,
-      `1${'0'.repeat(27)}`
-    );
-    await token2.deployed();
-    tradeToken = token2;
+	duration = 86400;
+	openTime = (Date.now() / 1000).toFixed();
+	offeredCurrency = USDTToken;
+	offeredCurrencyRate = 2;
+	offeredCurrencyDecimals = 6;
+	tierLimitBuy = [
+		(10 * 10 ** 18).toString(), // 10
+		(30 * 10 ** 18).toString(), // 20
+		(20 * 10 ** 18).toString(), // 30
+		(40 * 10 ** 18).toString(), // 40
+		0,
+		0,
+		0,
+		0,
+		0,
+		0,
+	];
+
     // Register new pool
-    await poolFactory.registerPool(name, token.address, duration, openTime, ethRate, 1, tierLimitBuy, wallet);
+    await poolFactory.registerPool(icoToken.address, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet);
 
     const poolAddress = await poolFactory.allPools(0);
 
-    // Assign Pool Contract
-    const Pool = await hardhat.ethers.getContractFactory('Pool');
-    pool = await Pool.attach(poolAddress);
+	const Pool = await hardhat.ethers.getContractFactory(
+		'Pool',
+	  );
+	pool = await Pool.attach(poolAddress);
 
     // Transfer token to pool
-    await token.transfer(pool.address, utils.parseEther('100'));
+    await icoToken.transfer(poolAddress, utils.parseEther('100'));
   });
 
   // Initialize properties
@@ -103,7 +88,7 @@ describe('Pool', function () {
   // Token Address
   it('Should return token address', async function () {
     const tokenAddress = await pool.token();
-    expect(tokenAddress).to.equal(token.address);
+    expect(tokenAddress).to.equal(icoToken.address);
   });
 
   // Factory Address
