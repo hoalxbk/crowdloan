@@ -1,6 +1,7 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const Tier = use('App/Models/Tier');
 const CampaignService = use('App/Services/CampaignService');
 const Const = use('App/Common/Const');
 const Common = use('App/Common/Common');
@@ -277,6 +278,96 @@ class CampaignController {
     const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
     if (wallet_address == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
+    }
+  }
+
+  async createPool({request, auth}) {
+    const params = request.only([
+      'register_by',
+      'title', 'banner', 'description', 'address_receiver',
+      'token', 'token_by_eth', 'token_images', 'total_sold_coin',
+      'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
+      'accept_currency', 'network_available', 'buy_type', 'pool_type',
+      'min_tier', 'tier_configuration',
+    ]);
+
+    const tiers = (params.tier_configuration || []).map((item) => {
+      return {
+        name: item.name,
+        start_time: item.startTime,
+        end_time: item.endTime,
+        max_buy: item.maxBuy,
+      };
+    });
+
+    const createData = {
+      'title': params.title,
+      'description': params.description,
+      'token': params.token,
+      'start_time': params.start_time,
+      'finish_time': params.finish_time,
+      'ether_conversion_rate': params.token_by_eth,
+
+      'banner': params.banner,
+      'address_receiver': params.address_receiver,
+      'token_images': params.token_images,
+      'total_sold_coin': params.total_sold_coin,
+      'release_time': params.release_time,
+      'start_join_pool_time': params.start_join_pool_time,
+      'end_join_pool_time': params.end_join_pool_time,
+      'accept_currency': params.accept_currency,
+      'network_available': params.network_available,
+      'buy_type': params.buy_type,
+      'pool_type': params.pool_type,
+      'min_tier': params.min_tier,
+
+      // 'tiers': JSON.stringify(tiers),
+    };
+
+    console.log('Create Pool with data: ', createData);
+
+    try {
+      const campaign = new CampaignModel();
+      campaign.fill(createData);
+      await campaign.save();
+
+      const tiers = (params.tier_configuration || []).map((item) => {
+        const tierObj = new Tier();
+        tierObj.fill({
+          name: item.name,
+          start_time: item.startTime,
+          end_time: item.endTime,
+          max_buy: item.maxBuy,
+        });
+        return tierObj;
+      });
+      await campaign.tiers().saveMany(tiers);
+
+      console.log('params.tier_configuration', tiers);
+
+      return HelperUtils.responseSuccess(campaign);
+    } catch (e) {
+      console.log('ERROR', e);
+      return ErrorFactory.internal('error')
+    }
+  }
+
+
+  async getPool({ request, auth, params }) {
+
+    console.log('params========>', params);
+
+    const pool = await CampaignModel.query()
+      // .whereNotNull('campaign_hash')
+      .with('tiers')
+      // .where('is_pause', Const.ACTIVE)
+      .where('id', params.id)
+      // .orderBy('created_at', 'desc')
+      .first();
+
+    return {
+      status: 200,
+      data: pool
     }
   }
 

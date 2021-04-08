@@ -13,6 +13,10 @@ class Campaign extends Model {
   affiliateCampaign() {
     return this.hasMany('App/Models/AffiliateCampaign', 'id', 'campaign_id');
   }
+
+  tiers () {
+    return this.hasMany('App/Models/Tier')
+  }
 }
 
 module.exports = Campaign;

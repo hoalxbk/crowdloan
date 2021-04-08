@@ -48,9 +48,8 @@ Route.group(() => {
   Route.delete('asset-tokens/delete/:id', 'AssetTokenController.remove')
   Route.get('affiliate-campaign/:token', 'AffiliateCampaignController.affiliateList')
 
-  // Route.post('user/upload-avatar', 'UserController.uploadAvatar');
   Route.get('my-campaign', 'CampaignController.myCampaign')
-  Route.get('my-campaign/:status', 'CampaignController.myCampaign').middleware('checkStatus')
+  Route.get('my-campaign/:status', 'CampaignController.myCampaign').middleware('checkStatus');
 }).middleware(['typeAdmin', 'auth:admin', 'checkAdminJwtSecret']);
 
 Route.group(() => {
@@ -61,6 +60,11 @@ Route.group(() => {
   Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.get('check-token/:token', 'AdminController.checkToken');
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
+  Route.post('upload-avatar', 'FileController.uploadAvatar');
+
+  Route.post('pool/create', 'CampaignController.createPool')
+  Route.get('pool/:id', 'CampaignController.getPool')
+
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
 
 Route.group(() => {

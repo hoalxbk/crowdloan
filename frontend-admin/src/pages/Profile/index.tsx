@@ -28,7 +28,6 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     dispatch(getUserDetail());
-
     return () => {
       dispatch(clearUserProfileUpdate());
     }
@@ -60,7 +59,7 @@ const Profile: React.FC = () => {
       .catch((error) => {
         console.log(error)
       });
-  }
+  };
 
   const handleFormSubmit = (data:any) => {
     dispatch(updateUserProfile(data));

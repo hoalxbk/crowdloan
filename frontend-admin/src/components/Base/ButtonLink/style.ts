@@ -24,14 +24,14 @@ const useStyles = makeStyles<Theme, Props>(props => ({
   },
   buttonContent: {
     display: 'flex',
-    padding: '12px 15px',
+    padding: '12px 15px 0 15px',
     alignItems: 'center',
     fontSize: 14,
     color: 'white',
     fontWeight: 500
   },
   buttonText: {
-    marginLeft: props => props.spacing 
+    marginLeft: props => props.spacing
   }
 }));
 

@@ -60,27 +60,6 @@ class AdminController {
     }
   }
 
-  // async uploadAvatar({request}) {
-  //   const validationOptions = {
-  //     types: ['image'],
-  //     size: Const.FILE_SITE,
-  //     extnames: Const.FILE_EXT
-  //   };
-  //
-  //   const profilePic = request.file('avatar', validationOptions);
-  //   const timeStamp = Date.now();
-  //   const fileName = timeStamp + '_' + (profilePic.clientName || '').replace(/\s/g, '_');
-  //   await profilePic.move(Helpers.tmpPath('uploads'), {
-  //     name: fileName,
-  //     overwrite: true
-  //   });
-  //   if (!profilePic.moved()) {
-  //     return profilePic.error()
-  //   }
-  //
-  //   return HelperUtils.responseSuccess({ fileName });
-  // }
-
   async forgotPassword({request}) {
     const params = request.all();
     const role =  request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
