@@ -23,6 +23,11 @@ class WinnerListUserService {
 
   async findWinnerListUser(params) {
     let builder = this.buildQueryBuilder(params);
+    if (params.page && params.pageSize) {
+      // pagination
+      return await builder.paginate(params.page, params.pageSize);
+    }
+    // return all result
     return await builder.fetch();
   }
 }

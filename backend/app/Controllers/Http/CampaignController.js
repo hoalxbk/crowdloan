@@ -274,6 +274,13 @@ class CampaignController {
     }
   }
 
+  async deposit({request, auth}) {
+    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
+    if (wallet_address == null) {
+      return HelperUtils.responseBadRequest("User don't have a valid wallet");
+    }
+  }
+
   async createPool({request, auth}) {
     const params = request.only([
       'register_by',
@@ -358,15 +365,6 @@ class CampaignController {
       data: pool,
     }
   }
-
-  async deposit({request, auth}) {
-    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
-    if (wallet_address == null) {
-      return HelperUtils.responseBadRequest("User don't have a valid wallet");
-    }
-  }
-
-
 }
 
 module.exports = CampaignController

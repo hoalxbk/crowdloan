@@ -5,7 +5,7 @@ const Model = use('Model')
 
 class WinnerListUser extends Model {
   static get table() {
-    return 'winner_list_users';
+    return 'winner_list';
   }
 }
 
