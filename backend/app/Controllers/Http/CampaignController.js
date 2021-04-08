@@ -3,6 +3,8 @@
 const CampaignModel = use('App/Models/Campaign');
 const Tier = use('App/Models/Tier');
 const CampaignService = use('App/Services/CampaignService');
+const WalletService = use('App/Services/WalletAccountService');
+const TierService = use('App/Services/TierService');
 const Const = use('App/Common/Const');
 const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
@@ -15,12 +17,15 @@ const CONTRACT_FACTORY_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPA
 const { abi: CONTRACT_ABI } = CONTRACT_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Erc20.json');
+const { abi: CONTRACT_TIER_ABI } = require('../../../blockchain_configs/contracts/Tier.json');
 
 const Web3 = require('web3');
 const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
+const privateKey = process.env.OWNER_POOL_PRIVATE_KEY
+const tierSmartContract = process.env.TIER_SMART_CONTRACT
 
 class CampaignController {
   async campaignList ({request}) {
@@ -275,9 +280,65 @@ class CampaignController {
   }
 
   async deposit({request, auth}) {
-    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
-    if (wallet_address == null) {
-      return HelperUtils.responseBadRequest("User don't have a valid wallet");
+    try {
+      // get all request params
+      const params = request.all();
+      console.log(params);
+      // get user wallet
+      const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
+      if (userWalletAddress == null) {
+        return HelperUtils.responseBadRequest("User don't have a valid wallet");
+      }
+      // check user tier
+      const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
+      const userTier = await tierSc.methods.getUserTier(userWalletAddress).call();
+      console.log(`user tier is ${userTier}`);
+      // call to db to get tier info
+      const tierService = new TierService();
+      const tierParams = {
+        'campaign_id': params.campaign_id,
+        'level': params.level
+      };
+      const tier = await tierService.findByLevelAndCampaign(tierParams);
+      // check max buy limit
+      if (tier.max_buy < params.amount) {
+        return ErrorFactory.badRequest('User request with buy amount over max limit of your tier');
+      }
+      const filterParams = {
+        'campaign_id': params.campaign_id,
+      };
+      // call to db get campaign info
+      const campaignService = new CampaignService();
+      const camp = await campaignService.findByCampaignId(params.campaign_id)
+      if (camp == null) {
+        return ErrorFactory.badRequest("Error");
+      }
+      // get private key from db
+      const walletService = new WalletService();
+      const wallet = await walletService.findByCampaignId(filterParams);
+      if (wallet == null) {
+        return ErrorFactory.badRequest("Error");
+      }
+      // call to SC to get sign hash
+      const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
+      // TODO convert from usdt -> token
+      const amount = web3.utils.toWei(params.amount.toString(),"ether");
+      console.log({amount}, userWalletAddress,camp.start_time);
+      const messageHash = await poolContract.methods.getMessageHash(userWalletAddress,amount,camp.start_time).call();
+      console.log(`message hash ${messageHash}`);
+      const privateKey = wallet.private_key;
+      console.log(`private key ${privateKey}`)
+      // get sign for wallet address
+      const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+      const accAddress = account.address;
+      web3.eth.accounts.wallet.add(account);
+      web3.eth.defaultAccount = accAddress;
+      const signature = await web3.eth.sign(messageHash,accAddress);
+      console.log(`signature ${signature}`);
+      return HelperUtils.responseSuccess(signature);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
     }
   }
 

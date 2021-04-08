@@ -251,15 +251,17 @@ class CampaignService {
     // Investor join campaign
     async joinCampaign(campaign_id, wallet_address, email) {
       // check exist campaign available to join
-      const currentDate = Date.now();
+      const currentDate = Date.now()/1000;
       console.log(`joinCampaign with date ${currentDate} and campaign_id ${campaign_id}`);
       const camp = await CampaignModel.query()
         .where('id', campaign_id)
-        .where('start_time', '<=', currentDate)
-        .where('finish_time', '>=', currentDate).fetch();
+        .where('start_join_pool_time', '<=', currentDate)
+        .where('end_join_pool_time', '>=', currentDate).first();
+      console.log(`Check campaign ${camp == null} `);
+      console.log(camp);
       if (camp == null) {
-        console.log(`Do not found campaign_id ${campaign_id}`)
-        ErrorFactory.badRequest('Bad request with campaign id');
+        console.log(`Do not found campaign with id ${campaign_id}`)
+        ErrorFactory.badRequest('Bad request do not found campaign with id ' + campaign_id + ' to join');
       }
       // check exist whitelist with wallet and campaign
       const existWl = await WhitelistModel.query()
@@ -267,22 +269,30 @@ class CampaignService {
         .where('campaign_id',campaign_id).first();
       if (existWl != null) {
         console.log(`Existed record on whitelist with the same wallet_address ${wallet_address} and campaign_id ${campaign_id}`);
-        ErrorFactory.badRequest('Bad request duplicate request with wallet_address');
+        ErrorFactory.badRequest('Bad request duplicate with wallet_address ' + wallet_address);
       }
-      // insert to whitelist
+      // insert to whitelist table
       const whitelist = new WhitelistModel();
       whitelist.wallet_address = wallet_address;
       whitelist.campaign_id = campaign_id;
       whitelist.email = email;
       await whitelist.save();
-      // check exist key from redis cached
-      const redisKey = 'whitelist_' + campaign_id;
-      if (Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        // remove old key
-        Redis.del(redisKey);
+      // key regex
+      const redisKeyRegex = 'whitelist_' + campaign_id + '*';
+      // find all key matched with key regex
+      const keys = await Redis.keys(redisKeyRegex);
+      // remove all old key
+      for (const key of keys) {
+        console.log(key);
+        await Redis.del(key);
       }
     }
+
+  async findByCampaignId(campaign_id) {
+    let builder = CampaignModel.query()
+      .where('id', campaign_id);
+    return await builder.first();
+  }
 }
 
 module.exports = CampaignService;

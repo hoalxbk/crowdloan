@@ -29,6 +29,31 @@
       "anonymous": false,
       "inputs": [
         {
+          "indexed": true,
+          "internalType": "address",
+          "name": "previousOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "OwnershipTransferred",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [],
+      "name": "Pause",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
           "indexed": false,
           "internalType": "string",
           "name": "name",
@@ -50,12 +75,6 @@
           "indexed": false,
           "internalType": "uint256",
           "name": "closeTime",
-          "type": "uint256"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "releaseTime",
           "type": "uint256"
         },
         {
@@ -83,38 +102,13 @@
           "type": "address"
         }
       ],
-      "name": "CampaignCreated",
+      "name": "PoolCreated",
       "type": "event"
     },
     {
       "anonymous": false,
       "inputs": [],
-      "name": "CampaignStatsChanged",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "previousOwner",
-          "type": "address"
-        },
-        {
-          "indexed": true,
-          "internalType": "address",
-          "name": "newOwner",
-          "type": "address"
-        }
-      ],
-      "name": "OwnershipTransferred",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [],
-      "name": "Pause",
+      "name": "PoolStatsChanged",
       "type": "event"
     },
     {
@@ -133,26 +127,7 @@
           "type": "uint256"
         }
       ],
-      "name": "RefundedTokenForIcoWhenEndIco",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": false,
-          "internalType": "address",
-          "name": "wallet",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "amount",
-          "type": "uint256"
-        }
-      ],
-      "name": "TokenClaimed",
+      "name": "RefundedIcoToken",
       "type": "event"
     },
     {
@@ -239,9 +214,29 @@
           "internalType": "address",
           "name": "_beneficiary",
           "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_candidate",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_signature",
+          "type": "bytes"
         }
       ],
-      "name": "buyTokenByEther",
+      "name": "buyTokenByEtherWithPermission",
       "outputs": [],
       "stateMutability": "payable",
       "type": "function"
@@ -254,7 +249,7 @@
           "type": "address"
         },
         {
-          "internalType": "contract IERC20",
+          "internalType": "address",
           "name": "_token",
           "type": "address"
         },
@@ -262,16 +257,29 @@
           "internalType": "uint256",
           "name": "_amount",
           "type": "uint256"
+        },
+        {
+          "internalType": "address",
+          "name": "_candidate",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_signature",
+          "type": "bytes"
         }
       ],
-      "name": "buyTokenByToken",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "claimTokens",
+      "name": "buyTokenByTokenWithPermission",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -316,60 +324,9 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getAvailableTokens",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
       "inputs": [
         {
           "internalType": "address",
-          "name": "_address",
-          "type": "address"
-        }
-      ],
-      "name": "getBuyableTokens",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "address",
-          "name": "_address",
-          "type": "address"
-        }
-      ],
-      "name": "getClaimableTokens",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract IERC20",
           "name": "_token",
           "type": "address"
         }
@@ -383,6 +340,25 @@
         }
       ],
       "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_messageHash",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getEthSignedMessageHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -412,16 +388,56 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getLatestEthPrice",
-      "outputs": [
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_candidate",
+          "type": "address"
+        },
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "_maxAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_deadline",
           "type": "uint256"
         }
       ],
-      "stateMutability": "view",
+      "name": "getMessageHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_messageHash",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "getSignerAddress",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "signer",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "pure",
       "type": "function"
     },
     {
@@ -432,7 +448,7 @@
           "type": "string"
         },
         {
-          "internalType": "contract IERC20",
+          "internalType": "address",
           "name": "_token",
           "type": "address"
         },
@@ -448,11 +464,6 @@
         },
         {
           "internalType": "uint256",
-          "name": "_releaseTime",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
           "name": "_ethRate",
           "type": "uint256"
         },
@@ -460,6 +471,11 @@
           "internalType": "uint256",
           "name": "_ethRateDecimals",
           "type": "uint256"
+        },
+        {
+          "internalType": "uint256[10]",
+          "name": "_tierLimitBuy",
+          "type": "uint256[10]"
         },
         {
           "internalType": "address",
@@ -474,33 +490,7 @@
     },
     {
       "inputs": [],
-      "name": "isClaimable",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "isFinalized",
-      "outputs": [
-        {
-          "internalType": "bool",
-          "name": "",
-          "type": "bool"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "isOpen",
       "outputs": [
         {
           "internalType": "bool",
@@ -576,35 +566,14 @@
           "internalType": "address",
           "name": "_wallet",
           "type": "address"
-        }
-      ],
-      "name": "refundTokenForIcoOwner",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "releaseTime",
-      "outputs": [
+        },
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "_amount",
           "type": "uint256"
         }
       ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "contract AggregatorV3Interface",
-          "name": "_chainlinkContract",
-          "type": "address"
-        }
-      ],
-      "name": "setChainlinkContract",
+      "name": "refundRemainingTokens",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -625,7 +594,7 @@
     {
       "inputs": [
         {
-          "internalType": "contract IERC20",
+          "internalType": "address",
           "name": "_token",
           "type": "address"
         },
@@ -700,14 +669,75 @@
     {
       "inputs": [
         {
+          "internalType": "bool",
+          "name": "_whitelist",
+          "type": "bool"
+        }
+      ],
+      "name": "setPoolExtentions",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256[10]",
+          "name": "_tierLimitBuy",
+          "type": "uint256[10]"
+        }
+      ],
+      "name": "setTierLimitBuy",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "_signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "splitSignature",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "r",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "s",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "uint8",
+          "name": "v",
+          "type": "uint8"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "uint256",
-          "name": "_releaseTime",
+          "name": "",
           "type": "uint256"
         }
       ],
-      "name": "setReleaseTime",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "name": "tierLimitBuy",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -725,33 +755,7 @@
     },
     {
       "inputs": [],
-      "name": "tokenClaimed",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
       "name": "tokenSold",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [],
-      "name": "totalRaisedTokens",
       "outputs": [
         {
           "internalType": "uint256",
@@ -780,6 +784,77 @@
       "name": "unpause",
       "outputs": [],
       "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "useWhitelist",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "userPurchased",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_signer",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_candidate",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_deadline",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "verify",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "pure",
       "type": "function"
     },
     {
