@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
-import {ADMIN_URL_PREFIX, API_URL_PREFIX} from "../constants";
+import {ADMIN_URL_PREFIX, API_URL_PREFIX, IMAGE_URL_PREFIX} from "../constants";
 import axios from "axios";
 
 export function formatPrecisionAmount(amount: any, precision: number = 18): string {
@@ -41,6 +41,12 @@ export const checkIsInvestorRoute = (pathname: string) => {
 export const apiRoute = (url = '') => {
   const truncateUrl = _.trim(url, '/');
   const resUrl = `/${API_URL_PREFIX}/${truncateUrl}`;
+  return resUrl;
+};
+
+export const imageRoute = (url = '') => {
+  const truncateUrl = _.trim(url, '/');
+  const resUrl = `${process.env.REACT_APP_API_BASE_URL || ''}/${IMAGE_URL_PREFIX}/${truncateUrl}`;
   return resUrl;
 };
 
