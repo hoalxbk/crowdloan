@@ -22,9 +22,6 @@ class AddFieldCampaignSchema extends Schema {
       table.string('pool_type').nullable();
       table.integer('min_tier').nullable().defaultTo(1);
 
-      // table.text('tiers').nullable().default('[]');
-
-
       // banner
       // address_receiver
       // token_by_eth    //—> ether_conversion_rate

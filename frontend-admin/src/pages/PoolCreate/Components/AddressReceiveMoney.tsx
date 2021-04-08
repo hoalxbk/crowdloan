@@ -24,7 +24,7 @@ function AddressReceiveMoney(props: any) {
           type="text"
           name="addressReceiver"
           ref={register({
-            // required: true,
+            required: true,
             validate: {
               validAddress: (val: any) => isValidAddress(val)
             }

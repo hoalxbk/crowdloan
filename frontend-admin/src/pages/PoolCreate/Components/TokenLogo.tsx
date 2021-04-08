@@ -95,7 +95,7 @@ function TokenLogo(props: any) {
             name='tokenImages'
             value={imageUploaded}
             ref={register({
-              // required: true
+              required: true
             })}
           />
           <p className={classes.formErrorMessage}>
