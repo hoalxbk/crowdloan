@@ -8,11 +8,16 @@ class WinnerListUserController {
   async getWinnerList({request}) {
     // get request params
     const campaign_id = request.params.campaignId;
-    console.log(`start getWinnerList with campaign_id ${campaign_id}`);
+    const page = request.input('page');
+    const pageSize = request.input('limit') ? request.input('limit') : 10;
+    console.log(`start getWinnerList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
     try {
       // get from redis cached
-      const redisKey = 'winners_' + campaign_id;
-      if (Redis.exists(redisKey)) {
+      let redisKey = 'winners_' + campaign_id;
+      if (page) {
+        redisKey = redisKey.concat('_',page,'_',pageSize);
+      }
+      if (await Redis.exists(redisKey)) {
         console.log(`existed key ${redisKey} on redis`);
         const cachedWinners = await Redis.get(redisKey);
         return HelperUtils.responseSuccess(JSON.parse(cachedWinners));
@@ -20,10 +25,11 @@ class WinnerListUserController {
       // if not existed winners on redis then get from db
       // create params to query to db
       const filterParams = {
-        'campaign_id': campaign_id
+        'campaign_id': campaign_id,
+        'page': page,
+        'pageSize': pageSize
       };
       const winnerListService = new WinnerListService();
-
       // get winner list
       const winners = await winnerListService.findWinnerListUser(filterParams);
       // save to redis
