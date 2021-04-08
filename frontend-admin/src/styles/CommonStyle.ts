@@ -184,7 +184,13 @@ const useCommonStyle = makeStyles((theme) => {
       position: 'absolute',
       right: 16,
       top: 12,
-    }
+    },
+
+    tableScroll: {
+      overflow: 'auto',
+      maxHeight: 600,
+    },
+
   };
 });
 

@@ -21,9 +21,8 @@ class AddFieldCampaignSchema extends Schema {
       table.string('buy_type').nullable();
       table.string('pool_type').nullable();
       table.integer('min_tier').nullable().defaultTo(1);
-
-      // table.text('tiers').nullable().default('[]');
-
+      table.boolean('is_deploy').notNullable().defaultTo(0);
+      table.boolean('is_display').notNullable().defaultTo(0); // Display in dashboard
 
       // banner
       // address_receiver

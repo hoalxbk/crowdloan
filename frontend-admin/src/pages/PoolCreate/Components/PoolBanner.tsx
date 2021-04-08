@@ -99,7 +99,7 @@ function PoolBanner(props: any) {
             name='banner'
             value={imageUploaded}
             ref={register({
-              // required: true
+              required: true
             })}
           />
 

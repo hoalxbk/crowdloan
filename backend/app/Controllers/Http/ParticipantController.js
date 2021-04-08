@@ -1,6 +1,8 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const WhitelistUser = use('App/Models/WhitelistUser');
+const WinnerListUser = use('App/Models/WinnerListUser');
 const CampaignService = use('App/Services/CampaignService');
 const Const = use('App/Common/Const');
 const Common = use('App/Common/Common');
@@ -21,9 +23,29 @@ const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
 
-class PoolController {
+class ParticipantController {
 
+  async getParticipantUsers({ request, params }) {
+    const users = await WhitelistUser.query()
+      .where('campaign_id', params.campaign_id)
+      .fetch();
 
+    return {
+      status: 200,
+      data: users,
+    }
+  }
+
+  async getWinnerUsers({ request, params }) {
+    const users = await WinnerListUser.query()
+      .where('campaign_id', params.campaign_id)
+      .fetch();
+
+    return {
+      status: 200,
+      data: users,
+    }
+  }
 }
 
-module.exports = PoolController
+module.exports = ParticipantController

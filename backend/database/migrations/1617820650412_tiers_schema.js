@@ -8,6 +8,7 @@ class TiersSchema extends Schema {
     this.create('tiers', (table) => {
       table.increments();
 
+      table.integer('level').unsigned().nullable();
       table.string('name').nullable();
       table.string('start_time').nullable();
       table.string('end_time').nullable();

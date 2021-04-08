@@ -20,11 +20,12 @@ import {useDispatch, useSelector} from "react-redux";
 import {TokenType} from "../../utils/token";
 import {isFactorySuspended} from "../../utils/campaignFactory";
 import {useForm} from "react-hook-form";
-import {createPool} from "../../request/pool";
+import {createPool, updatePool} from "../../request/pool";
 import {alertFailure, alertSuccess} from "../../store/actions/alert";
 import {adminRoute} from "../../utils";
 import {withRouter} from "react-router-dom";
 import PoolName from "./Components/PoolName";
+import UserJoinPool from "./Components/UserJoinPool";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -32,7 +33,6 @@ function PoolForm(props: any) {
   const dispatch = useDispatch();
 
   const { isEdit, poolDetail } = props;
-
   const [isSuspend, setIsSuspend] = useState(true);
   const { loading } = useSelector(( state: any ) => state.campaignCreate);
   const [token, setToken] = useState<TokenType | null>(null);
@@ -49,42 +49,6 @@ function PoolForm(props: any) {
     mode: "onChange",
     defaultValues: poolDetail,
   });
-
-  const getDefaultValueForm = () => {
-    if (isEdit) {
-      return {
-        // // Pool general
-        // title: data.title,
-        // banner: data.banner,
-        // description: data.description,
-        // address_receiver: data.addressReceiver,
-        //
-        // // Token
-        // token: data.token,
-        // token_by_eth: data.tokenByETH,
-        // token_images: data.tokenImages,
-        // total_sold_coin: data.totalSoldCoin,
-        //
-        // // Time
-        // start_time: data.start_time && data.start_time.unix(),
-        // finish_time: data.finish_time && data.finish_time.unix(),
-        // release_time: data.release_time && data.release_time.unix(),
-        // start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
-        // end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
-        //
-        // // Types
-        // accept_currency: data.acceptCurrency,
-        // network_available: data.networkAvailable,
-        // buy_type: data.buyType,
-        // pool_type: data.poolType,
-        //
-        // // Tier
-        // min_tier: data.minTier,
-        // tier_configuration: tierConfiguration,
-      }
-    }
-    return {};
-  };
 
   const handleFormSubmit = async (data: any) => {
     const { title, start_time, finish_time, release_time, token: tokenAddress, addressReceiver, tokenByETH, affiliate } = data;
@@ -127,11 +91,16 @@ function PoolForm(props: any) {
 
     };
 
-    const response = await createPool(submitData);
+    let response;
+    if (isEdit) {
+      response = await updatePool(submitData, poolDetail.id);
+    } else {
+      response = await createPool(submitData);
+    }
 
-    if (response.status === 200) {
+    if (response?.status === 200) {
       dispatch(alertSuccess('Successful!'));
-      props.history.push(adminRoute('/campaigns'))
+      history.push(adminRoute('/campaigns'));
     } else {
       dispatch(alertFailure('Fail!'));
     }
@@ -232,6 +201,15 @@ function PoolForm(props: any) {
           clearErrors={clearErrors}
           renderError={renderError}
           control={control}
+        />
+
+        <AddressReceiveMoney
+          poolDetail={poolDetail}
+          register={register}
+          setValue={setValue}
+          errors={errors}
+          clearErrors={clearErrors}
+          renderError={renderError}
         />
 
         <TokenLogo
@@ -338,14 +316,7 @@ function PoolForm(props: any) {
           renderError={renderError}
           control={control}
         />
-        <AddressReceiveMoney
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-        />
+
       </div>
 
 
@@ -357,6 +328,22 @@ function PoolForm(props: any) {
         errors={errors}
         clearErrors={clearErrors}
       />
+
+
+      {isEdit && poolDetail && poolDetail.buy_type === 'whitelist' &&
+        <div className={classes.exchangeRate}>
+          <UserJoinPool
+            poolDetail={poolDetail}
+            register={register}
+            token={token}
+            setValue={setValue}
+            errors={errors}
+            clearErrors={clearErrors}
+            control={control}
+          />
+        </div>
+      }
+
 
       <button disabled={loading} className={classes.formButton} onClick={handleCampaignCreate}>
         {

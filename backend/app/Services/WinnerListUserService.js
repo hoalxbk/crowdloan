@@ -2,8 +2,6 @@
 
 const ErrorFactory = use('App/Common/ErrorFactory');
 const WinnerListModel = use('App/Models/WinnerListUser');
-const Const = use('App/Common/Const');
-const HelperUtils = use('App/Common/HelperUtils');
 
 class WinnerListUserService {
   buildQueryBuilder(params) {
@@ -25,6 +23,11 @@ class WinnerListUserService {
 
   async findWinnerListUser(params) {
     let builder = this.buildQueryBuilder(params);
+    if (params.page && params.pageSize) {
+      // pagination
+      return await builder.paginate(params.page, params.pageSize);
+    }
+    // return all result
     return await builder.fetch();
   }
 }
