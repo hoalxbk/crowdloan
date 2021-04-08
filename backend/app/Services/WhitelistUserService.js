@@ -2,8 +2,6 @@
 
 const ErrorFactory = use('App/Common/ErrorFactory');
 const WhitelistModel = use('App/Models/WhitelistUser');
-const Const = use('App/Common/Const');
-const HelperUtils = use('App/Common/HelperUtils');
 
 class WhitelistUserService {
   buildQueryBuilder(params) {

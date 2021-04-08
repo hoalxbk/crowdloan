@@ -7,7 +7,7 @@ const Const = use('App/Common/Const');
 const ErrorFactory = use('App/Common/ErrorFactory');
 const BigNumber = use('bignumber.js');
 const CheckTxStatus = use('App/Jobs/CheckTxStatus');
-const WhitelistService = use('App/Services/WhitelistUserService')
+const Redis = use('Redis');
 
 const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -252,20 +252,21 @@ class CampaignService {
     async joinCampaign(campaign_id, wallet_address, email) {
       // check exist campaign available to join
       const currentDate = Date.now();
-      console.log('joinCampaign', currentDate, campaign_id)
+      console.log(`joinCampaign with date ${currentDate} and campaign_id ${campaign_id}`);
       const camp = await CampaignModel.query()
         .where('id', campaign_id)
         .where('start_time', '<=', currentDate)
         .where('finish_time', '>=', currentDate).fetch();
       if (camp == null) {
-        console.log("Do not found campaign with id", campaign_id)
+        console.log(`Do not found campaign_id ${campaign_id}`)
         ErrorFactory.badRequest('Bad request with campaign id');
       }
-      // check exist whitelist
-      const existWl = WhitelistModel.query().where('wallet_address',wallet_address)
+      // check exist whitelist with wallet and campaign
+      const existWl = await WhitelistModel.query()
+        .where('wallet_address',wallet_address)
         .where('campaign_id',campaign_id).first();
       if (existWl != null) {
-        console.log("Existed record on whitelist with the same wallet_address and campaign_id",wallet_address,campaign_id)
+        console.log(`Existed record on whitelist with the same wallet_address ${wallet_address} and campaign_id ${campaign_id}`);
         ErrorFactory.badRequest('Bad request duplicate request with wallet_address');
       }
       // insert to whitelist
@@ -274,6 +275,13 @@ class CampaignService {
       whitelist.campaign_id = campaign_id;
       whitelist.email = email;
       await whitelist.save();
+      // check exist key from redis cached
+      const redisKey = 'whitelist_' + campaign_id;
+      if (Redis.exists(redisKey)) {
+        console.log(`existed key ${redisKey} on redis`);
+        // remove old key
+        Redis.del(redisKey);
+      }
     }
 }
 
