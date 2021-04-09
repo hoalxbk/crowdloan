@@ -20,16 +20,20 @@ const contractNames = {
   Campaign: 'Campaign',
 };
 const campaignEvent = {
-  // CampaignCreated: 'CampaignCreated',
+  PoolCreated: 'PoolCreated',
   AllowTokenToTradeWithRate: 'AllowTokenToTradeWithRate',
   TokenPurchaseByEther: 'TokenPurchaseByEther',
   TokenPurchaseByToken: 'TokenPurchaseByToken',
-  TokenPurchaseByEtherWithEthLink: 'TokenPurchaseByEtherWithEthLink',
-  RefundedTokenForIcoWhenEndIco: 'RefundedTokenForIcoWhenEndIco',
-  CloseTimeChanged: 'CloseTimeChanged',
-  OpenTimeChanged: 'OpenTimeChanged',
-  CampaignStatsChanged: 'CampaignStatsChanged',
-  TokenClaimed: 'TokenClaimed',
+  RefundedIcoToken: 'RefundedIcoToken',
+  PoolStatsChanged: 'PoolStatsChanged',
+
+  // CampaignCreated: 'CampaignCreated',
+  // TokenPurchaseByEtherWithEthLink: 'TokenPurchaseByEtherWithEthLink',
+  // RefundedTokenForIcoWhenEndIco: 'RefundedTokenForIcoWhenEndIco',
+  // CloseTimeChanged: 'CloseTimeChanged',
+  // OpenTimeChanged: 'OpenTimeChanged',
+  // CampaignStatsChanged: 'CampaignStatsChanged',
+  // TokenClaimed: 'TokenClaimed',
 };
 
 prepareEnvironment()
@@ -165,17 +169,17 @@ function makeFieldReturnValues(eventLog: any) {
 function makeFieldFrom(eventLog: any, transaction: any) {
   if (contractName === contractNames.Campaign) {
     switch (eventLog.event) {
-      // case campaignEvent.CampaignCreated:
-      //   break; // use default
+      case campaignEvent.PoolCreated:
+        break; // use default
+      case campaignEvent.AllowTokenToTradeWithRate:
+        break; // use default
       case campaignEvent.TokenPurchaseByEther:
         break; // use default
       case campaignEvent.TokenPurchaseByToken:
         break; // use default
-      case campaignEvent.RefundedTokenForIcoWhenEndIco:
+      case campaignEvent.RefundedIcoToken:
         break; // use default
-      case campaignEvent.CampaignStatsChanged:
-        break; // use default
-      case campaignEvent.TokenClaimed:
+      case campaignEvent.PoolStatsChanged:
         break; // use default
     }
   }
@@ -185,17 +189,17 @@ function makeFieldFrom(eventLog: any, transaction: any) {
 function makeFieldTo(eventLog: any, transaction: any) {
   if (contractName === contractNames.Campaign) {
     switch (eventLog.event) {
-      // case campaignEvent.CampaignCreated:
-      //   break; // use default
+      case campaignEvent.PoolCreated:
+        break; // use default
+      case campaignEvent.AllowTokenToTradeWithRate:
+        break; // use default
       case campaignEvent.TokenPurchaseByEther:
         break; // use default
       case campaignEvent.TokenPurchaseByToken:
         break; // use default
-      case campaignEvent.RefundedTokenForIcoWhenEndIco:
+      case campaignEvent.RefundedIcoToken:
         break; // use default
-      case campaignEvent.CampaignStatsChanged:
-        break; // use default
-      case campaignEvent.TokenClaimed:
+      case campaignEvent.PoolStatsChanged:
         break; // use default
     }
   }
@@ -205,17 +209,17 @@ function makeFieldTo(eventLog: any, transaction: any) {
 function makeFieldValue(eventLog: any, transaction: any) {
   if (contractName === contractNames.Campaign) {
     switch (eventLog.event) {
-      // case campaignEvent.CampaignCreated:
-      //   break; // use default
+      case campaignEvent.PoolCreated:
+        break; // use default
+      case campaignEvent.AllowTokenToTradeWithRate:
+        break; // use default
       case campaignEvent.TokenPurchaseByEther:
         break; // use default
       case campaignEvent.TokenPurchaseByToken:
         break; // use default
-      case campaignEvent.RefundedTokenForIcoWhenEndIco:
+      case campaignEvent.RefundedIcoToken:
         break; // use default
-      case campaignEvent.CampaignStatsChanged:
-        break; // use default
-      case campaignEvent.TokenClaimed:
+      case campaignEvent.PoolStatsChanged:
         break; // use default
     }
   }

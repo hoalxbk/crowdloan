@@ -8,8 +8,6 @@ const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 
-// import configs from '../../blockchain_configs'
-
 class WalletAccountService {
   buildQueryBuilder(params) {
     // create query
@@ -35,7 +33,7 @@ class WalletAccountService {
     wallet.campaign_id = campaignId;
 
     await wallet.save();
-    console.log('wallet:', wallet);
+    console.log('Created wallet: ', wallet);
 
     return wallet;
   }

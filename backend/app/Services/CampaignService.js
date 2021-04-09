@@ -21,11 +21,10 @@ const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
 
 class CampaignService {
     async createCampaign(param, receipt, receiptData) {
-      try {
         const campaign = new CampaignModel();
-        campaign.campaign_id = param.params.campaignId;
+        campaign.campaign_id = param.params.poolId;
         campaign.registed_by = param.params.registedBy;
-        campaign.campaign_hash    = param.params.campaign;
+        campaign.campaign_hash    = param.params.pool;
         campaign.token       = param.params.token;
         campaign.title        = receipt[2]
         campaign.start_time  = receipt[0];
@@ -39,23 +38,20 @@ class CampaignService {
         campaign.funding_wallet_address = receipt[6];
         campaign.is_pause = receipt[7];
         campaign.transaction_hash = param.txHash;
+        campaign.is_deploy = true;
         await campaign.save();
         return campaign;
-      }
-      catch (e){
-        console.log('ERROR', e);
-        return ErrorFactory.internal('error')
-      }
     }
 
     async updateCampaign(param, receipt, receiptData) {
-      try {
+      console.log('Update Campaign with: ', param, receipt, receiptData);
+
         const campaign = CampaignModel.query().where(function () {
-          this.where('campaign_hash', '=', param.params.campaign)
+          this.where('campaign_hash', '=', param.params.pool)
             .orWhere('transaction_hash', '=', param.txHash)
         }).update({
             campaign_hash: param.params.campaign,
-            campaign_id: param.params.campaignId,
+            campaign_id: param.params.poolId,
             registed_by: param.params.registedBy,
             transaction_hash: param.txHash,
             token: param.params.token,
@@ -70,13 +66,10 @@ class CampaignService {
             decimals : receiptData[1],
             symbol : receiptData[2],
             affiliate: false,
+            is_deploy: true,
         });
         return campaign;
-      }
-      catch (e){
-        console.log('ERROR', e);
-        return ErrorFactory.internal('error')
-      }
+
     }
 
     async editCampaign(receipt, campaign){

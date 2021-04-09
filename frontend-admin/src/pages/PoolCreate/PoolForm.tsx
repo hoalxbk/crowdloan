@@ -28,6 +28,7 @@ import {withRouter} from "react-router-dom";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
 import LeftCampaignDetailPage from "../CampaignDetailPage/LeftCampaignDetailPage";
+import {renderErrorCreatePool} from "../../utils/validate";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -47,7 +48,7 @@ function PoolForm(props: any) {
     checkCampaignFactorySuspended();
   }, []);
 
-  const { register, setValue, clearErrors, errors, handleSubmit, control, watch } = useForm({
+  const { register, setValue, getValues, clearErrors, errors, handleSubmit, control, watch } = useForm({
     mode: "onChange",
     defaultValues: poolDetail,
   });
@@ -125,37 +126,7 @@ function PoolForm(props: any) {
     handleSubmit(handleFormSubmit)();
   };
 
-  const renderError = (errors: any, prop: string) => {
-    if (errors[prop]) {
-      const errorName = prop.split("_").join(' ');
-      const errorType = errors[prop].type;
-      switch (errorType) {
-        case 'required': {
-          return 'This field is required';
-        }
-        case 'greaterOrEqualToday': {
-          return `The ${errorName} must be after current date.`;
-        }
-        case 'greateOrEqualStartTime': {
-          return 'This finish time must be after the start time';
-        }
-        case 'greaterOrEqualFinishTime': {
-          return 'This relase time must be after the finish time';
-        }
-        case 'validAddress': {
-          return "Address receive is invalid.";
-        }
-        case 'invalidToken': {
-          return errors[prop].message;
-        }
-        case 'tokenAlreadyUsed': {
-          return 'Token address is already in use.';
-        }
-      };
-    }
-
-    return;
-  };
+  const renderError = renderErrorCreatePool;
 
   console.log('errors==========>', errors);
 
@@ -242,6 +213,7 @@ function PoolForm(props: any) {
                 clearErrors={clearErrors}
                 renderError={renderError}
                 control={control}
+                getValues={getValues}
               />
             </div>
 
