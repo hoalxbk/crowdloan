@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => {
       gridArea: 'header',
       width: '100%',
       padding: '10px 80px',
-      backgroundColor: '#030925',
+      backgroundColor: '#020616',
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
