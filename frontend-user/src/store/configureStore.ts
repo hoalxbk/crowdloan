@@ -23,8 +23,8 @@ const investorStateFilter = createFilter('investor', ['data']);
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['campaigns', 'campaignCreate',  'campaignDetail', 'alert', 'campaignICORegister', 'transactionCampaign', 'transactionCampaign', 'affiliateCampaign', 'campaignAffiliateCreate', 'affiliateLinkGenerate', 'campaignErc20RateSet', 'campaignLatest', 'tokensByUser', 'tokenCreateByUser', 'campaignEdit', 'campaignStatusToggle', 'campaignRefundTokens', 'settingDeactivate', 'campaignProcessing'],
-  whitelist: ['user', 'userConnect', 'investor'],
+  blacklist: [],
+  whitelist: ['wallet', 'connector', 'appNetwork'],
   transforms: [userStateFilter, investorStateFilter]
 };
 

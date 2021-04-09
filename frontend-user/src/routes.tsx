@@ -57,7 +57,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
           render={() => <Redirect to={`${'/dashboard'}`} />}
         />
         <Route exact path={`${'/dashboard'}`} component={Dashboard} />
-        <Route path={`${'/buy-token'}`} component={BuyToken} />
+        <Route path={`${'/buy-token/:id'}`} component={BuyToken} />
         <Route path={'/register'} component={InvestorRegister} />
         <Route path={'/login'} component={InvestorLogin} />
         <Route path={'/forgot-password/investor'} exact component={InvestorForgotPassword} />
