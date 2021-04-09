@@ -102,7 +102,6 @@ contract PoolFactory is Ownable, Pausable, Initializable {
         address _wallet
     ) external whenNotPaused returns (address pool) {
         require(_token != address(0), "ICOFactory::ZERO_ADDRESS");
-        require(_offeredCurrency != address(0), "ICOFactory::ZERO_ADDRESS");
         require(_duration != 0, "ICOFactory::ZERO_DURATION");
         require(_wallet != address(0), "ICOFactory::ZERO_ADDRESS");
         require(_offeredRate != 0, "ICOFactory::ZERO_OFFERED_RATE");
@@ -118,8 +117,8 @@ contract PoolFactory is Ownable, Pausable, Initializable {
             _duration,
             _openTime,
             _offeredCurrency,
-            _offeredCurrencyDecimals,
             _offeredRate,
+            _offeredCurrencyDecimals,
             _tierLimitBuy,
             _wallet
         );

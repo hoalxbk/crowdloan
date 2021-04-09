@@ -1,12 +1,14 @@
 require('@nomiclabs/hardhat-waffle');
 require('@nomiclabs/hardhat-ethers');
 require('@nomiclabs/hardhat-etherscan');
+require("@nomiclabs/hardhat-web3");
 require('@openzeppelin/hardhat-upgrades');
 
 const dotenv = require('dotenv');
 dotenv.config();
 
 const privateKey = process.env.DEPLOY_ACCOUNT_PRIVATE_KEY;
+
 const alchemyKey = process.env.ALCHEMY_KEY;
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -40,8 +42,7 @@ module.exports = {
       url: 'http://127.0.0.1:8545',
     },
     goerli: {
-      url:
-        `https://eth-goerli.alchemyapi.io/v2/${alchemyKey}`,
+      url: `https://goerli.infura.io/v3/`,
       accounts: [privateKey],
     },
     testnet: {

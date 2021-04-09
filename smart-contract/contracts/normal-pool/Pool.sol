@@ -16,7 +16,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     uint256 constant MAX_NUM_TIERS = 10;
 
     struct OfferedCurrency {
-        address currency;
         uint256 decimals;
         uint256 rate;
     }
@@ -49,11 +48,10 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     mapping(address => uint256) public userPurchased;
 
     // Get offered currencies
-    OfferedCurrency[] public offeredCurrency;
+    mapping(address => OfferedCurrency) public offeredCurrencies;
 
     // Pool extensions
     bool public useWhitelist;
-    bool public useTier;
 
     // -----------------------------------------
     // Lauchpad Starter's event
@@ -124,8 +122,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         uint256 _duration,
         uint256 _openTime,
         address _offeredCurrency,
-        uint256 _offeredCurrencyDecimals,
         uint256 _offeredRate,
+        uint256 _offeredCurrencyDecimals,
         uint256[MAX_NUM_TIERS] calldata _tierLimitBuy,
         address _wallet
     ) external {
@@ -139,13 +137,10 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         owner = tx.origin;
         paused = false;
 
-        offeredCurrency.push(
-            OfferedCurrency({
-                currency: _offeredCurrency,
-                rate: _offeredRate,
-                decimals: _offeredCurrencyDecimals
-            })
-        );
+        offeredCurrencies[_offeredCurrency] = OfferedCurrency({
+            rate: _offeredRate,
+            decimals: _offeredCurrencyDecimals
+        });
 
         emit PoolCreated(
             _token,
@@ -163,16 +158,16 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
      * @notice Returns the conversion rate when user buy by offered token
      * @return Returns only a fixed number of rate.
      */
-    function getOfferedCurrencyRate() public view returns (uint256) {
-        return offeredCurrency[0].rate;
+    function getOfferedCurrencyRate(address _token) public view returns (uint256) {
+        return offeredCurrencies[_token].rate;
     }
 
     /**
      * @notice Returns the conversion rate decimals when user buy by offered token
      * @return Returns only a fixed number of decimals.
      */
-    function getOfferedCurrencyDecimals() public view returns (uint256) {
-        return offeredCurrency[0].decimals;
+    function getOfferedCurrencyDecimals(address _token) public view returns (uint256) {
+        return offeredCurrencies[_token].decimals;
     }
 
     /**
@@ -180,35 +175,32 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
      * @param _rate Fixed number of ether rate
      * @param _decimals Fixed number of ether rate decimals
      */
-    function setOfferedCurrencyRateAndDecimals(uint256 _rate, uint256 _decimals)
+    function setOfferedCurrencyRateAndDecimals(address _token, uint256 _rate, uint256 _decimals)
         public
         onlyOwner
     {
-        require(offeredCurrency[0].rate != _rate, "POOL::RATE_INVALID");
-        offeredCurrency[0].rate = _rate;
-        offeredCurrency[0].decimals = _decimals;
+        offeredCurrencies[_token].rate = _rate;
+        offeredCurrencies[_token].decimals = _decimals;
         emit PoolStatsChanged();
     }
 
     /**
      * @notice Owner can set the offered token conversion rate. Receiver tokens = tradeTokens * tokenRate / 10 ** etherConversionRateDecimals
-     * @param _rate Fixed number of ether rate
+     * @param _rate Fixed number of rate
      */
-    function setOfferedCurrencynRate(uint256 _rate) public onlyOwner {
-        require(offeredCurrency[0].rate != _rate, "POOL::RATE_INVALID");
-        offeredCurrency[0].rate = _rate;
+    function setOfferedCurrencyRate(address _token, uint256 _rate) public onlyOwner {
+        require(offeredCurrencies[_token].rate != _rate, "POOL::RATE_INVALID");
+        offeredCurrencies[_token].rate = _rate;
         emit PoolStatsChanged();
     }
 
     /**
-     * @notice Owner can set the eth conversion rate decimals. Receiver tokens = tradeTokens * tokenRate / 10 ** etherConversionRateDecimals
-     * @param _decimals Fixed number of offered token decimals
+     * @notice Owner can set the offered token conversion rate. Receiver tokens = tradeTokens * tokenRate / 10 ** etherConversionRateDecimals
+     * @param _decimals Fixed number of decimals
      */
-    function setEtherConversionRateDecimals(uint256 _decimals)
-        public
-        onlyOwner
-    {
-        offeredCurrency[0].decimals = _decimals;
+    function setOfferedCurrencyDecimals(address _token, uint256 _decimals) public onlyOwner {
+        require(offeredCurrencies[_token].decimals != _decimals, "POOL::RATE_INVALID");
+        offeredCurrencies[_token].decimals = _decimals;
         emit PoolStatsChanged();
     }
 
@@ -246,11 +238,9 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
     /**
      * @notice Owner can set extentions.
      * @param _whitelist Value in bool. True if using whitelist
-     * @param _tier Value in bool. True if using tier
      */
-    function setPoolExtentions(bool _whitelist, bool _tier) public onlyOwner() {
+    function setPoolExtentions(bool _whitelist) public onlyOwner() {
         useWhitelist = _whitelist;
-        useTier = _tier;
         emit PoolStatsChanged();
     }
 
@@ -261,15 +251,16 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         bytes memory _signature
     ) public payable whenNotPaused nonReentrant {
         uint256 weiAmount = msg.value;
-        address currency = offeredCurrency[0].currency;
+
+        require(offeredCurrencies[address(0)].rate != 0, "POOL::PURCHASE_METHOD_NOT_ALLOWED");
+
         _preValidatePurchase(_beneficiary, weiAmount);
-        require(currency == address(0), "POOL::WRONG_BUY_METHOD");
+
         require(_validPurchase(), "POOL::ENDED");
         require(_verifyWhitelist(_candidate, _maxAmount, _signature));
 
         // calculate token amount to be created
-        uint256 tokens = _getOfferedCurrencyToTokenAmount(weiAmount);
-        _verifyTierLimitBuy(_beneficiary, tokens);
+        uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -287,10 +278,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         uint256 _maxAmount,
         bytes memory _signature
     ) public whenNotPaused nonReentrant {
-        require(
-            offeredCurrency[0].currency == _token,
-            "POOL::WRONG_BUY_METHOD"
-        );
+        require(offeredCurrencies[_token].rate != 0, "POOL::PURCHASE_METHOD_NOT_ALLOWED");
         require(_validPurchase(), "POOL::ENDED");
         require(_verifyWhitelist(_candidate, _maxAmount, _signature));
 
@@ -298,8 +286,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
 
         _preValidatePurchase(_beneficiary, _amount);
 
-        uint256 tokens = _getOfferedCurrencyToTokenAmount(_amount);
-        _verifyTierLimitBuy(_beneficiary, tokens);
+        uint256 tokens = _getOfferedCurrencyToTokenAmount(_token, _amount);
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -359,13 +346,13 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
      * @param _amount Value in wei to be converted into tokens
      * @return Number of tokens that can be purchased with the specified _weiAmount
      */
-    function _getOfferedCurrencyToTokenAmount(uint256 _amount)
+    function _getOfferedCurrencyToTokenAmount(address _token, uint256 _amount)
         internal
         view
         returns (uint256)
     {
-        uint256 rate = getOfferedCurrencyRate();
-        uint256 decimals = getOfferedCurrencyDecimals();
+        uint256 rate = getOfferedCurrencyRate(_token);
+        uint256 decimals = getOfferedCurrencyDecimals(_token);
         return _amount.mul(rate).div(10**decimals);
     }
 
@@ -449,17 +436,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
         IERC20 tradeToken = IERC20(_token);
         uint256 allowance = tradeToken.allowance(_user, address(this));
         require(allowance >= _amount, "POOL::TOKEN_NOT_APPROVED");
-    }
-
-    function _verifyTierLimitBuy(address _user, uint256 _amount) private view {
-        if (useTier) {
-            address tier = IPoolFactory(factory).getTier();
-            uint256 userTier = ISotaTier(tier).getUserTier(_user);
-            require(
-                userPurchased[_user].add(_amount) <= tierLimitBuy[userTier],
-                "POOL::LIMIT_BUY_EXCEED"
-            );
-        }
     }
 
     function _verifyWhitelist(
