@@ -15,9 +15,9 @@ export const getTiers = () => {
       const { connector } = getState().connector.data;
 
       const contract = getContractInstance(
-        sotaTiersABI.abi, 
+        sotaTiersABI.abi,
         process.env.REACT_APP_SOTATIER as string,
-        connector, 
+        connector,
         appChainID
       );
 
@@ -191,7 +191,7 @@ export const getWithdrawFee = (address: string, amount: string) => {
 };
 
 
-export const getWithdrawPercent = (address: string, amount: string) => {
+export const getWithdrawPercent = () => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_PERCENT_LOADING });
     try {
