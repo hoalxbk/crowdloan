@@ -14,12 +14,16 @@ import useStyles from './style'
 const Account = (props: any) => {
   const classes = useStyles();
   const dispatch = useDispatch();
+  const { history } = props;
 
   const { data: balance = {} } = useSelector((state: any) => state.balance);
   const { data: loginInvestor } = useSelector((state: any) => state.investor);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
 
   useEffect(() => {
+    if(!loginInvestor) {
+      history.push('/login')
+    }
     dispatch(getBalance(loginInvestor.wallet_address));
     dispatch(getUserInfo(loginInvestor.wallet_address));
     dispatch(getTiers());
