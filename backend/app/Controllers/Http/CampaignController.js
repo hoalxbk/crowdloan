@@ -289,6 +289,8 @@ class CampaignController {
       if (userWalletAddress == null) {
         return HelperUtils.responseBadRequest("User don't have a valid wallet");
       }
+      // TODO check winner
+      // TODO list reserved
       // check user tier
       const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
       const userTier = await tierSc.methods.getUserTier(userWalletAddress).call();
@@ -297,17 +299,17 @@ class CampaignController {
       const tierService = new TierService();
       const tierParams = {
         'campaign_id': params.campaign_id,
-        'level': params.level
+        'level': userTier
       };
       const tier = await tierService.findByLevelAndCampaign(tierParams);
-      // check max buy limit
-      if (tier.max_buy < params.amount) {
-        return ErrorFactory.badRequest('User request with buy amount over max limit of your tier');
+      if (tier == null) {
+        return ErrorFactory.badRequest("Error");
       }
       const filterParams = {
         'campaign_id': params.campaign_id,
       };
       // call to db get campaign info
+      // TODO check start and end time
       const campaignService = new CampaignService();
       const camp = await campaignService.findByCampaignId(params.campaign_id)
       if (camp == null) {
@@ -321,10 +323,11 @@ class CampaignController {
       }
       // call to SC to get sign hash
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
-      // TODO convert from usdt -> token
-      const amount = web3.utils.toWei(params.amount.toString(),"ether");
-      console.log({amount}, userWalletAddress,camp.start_time);
-      const messageHash = await poolContract.methods.getMessageHash(userWalletAddress,amount,camp.start_time).call();
+      // get convert rate usdt -> token
+      const rate = await poolContract.methods.getErc20TokenConversionRate('0x46dF195bc34f80059fC8Da6F91C88d7ca9Fd0b4b').call();
+      const maxTokenAmount = web3.utils.toWei((tier.max_buy * rate).toString(), "ether");
+      console.log(rate, maxTokenAmount, userWalletAddress, camp.start_time);
+      const messageHash = await poolContract.methods.getMessageHash(userWalletAddress, maxTokenAmount, camp.start_time).call();
       console.log(`message hash ${messageHash}`);
       const privateKey = wallet.private_key;
       console.log(`private key ${privateKey}`)
@@ -333,9 +336,14 @@ class CampaignController {
       const accAddress = account.address;
       web3.eth.accounts.wallet.add(account);
       web3.eth.defaultAccount = accAddress;
-      const signature = await web3.eth.sign(messageHash,accAddress);
+      const signature = await web3.eth.sign(messageHash, accAddress);
       console.log(`signature ${signature}`);
-      return HelperUtils.responseSuccess(signature);
+      const response = {
+        'max_buy': tier.max_buy,
+        'signature': signature,
+        'dead_line': camp.start_time
+      }
+      return HelperUtils.responseSuccess(response);
     } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal(e.message);
