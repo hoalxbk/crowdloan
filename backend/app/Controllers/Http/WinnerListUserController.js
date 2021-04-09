@@ -1,21 +1,43 @@
 'use strict'
 
-const ErrorFactory = use('App/Common/ErrorFactory');
 const WinnerListService = use('App/Services/WinnerListUserService')
 const HelperUtils = use('App/Common/HelperUtils');
+const Redis = use('Redis');
 
 class WinnerListUserController {
-  async getWinnerList(params) {
-    const filterParams = {
-      'campaign_id': params.campaign_id
-    };
-    const winnerListService = new WinnerListService();
+  async getWinnerList({request}) {
+    // get request params
+    const campaign_id = request.params.campaignId;
+    const page = request.input('page');
+    const pageSize = request.input('limit') ? request.input('limit') : 10;
+    console.log(`start getWinnerList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
     try {
-      const result = await winnerListService.findWinnerListUser(filterParams);
-      return HelperUtils.responseSuccess({result});
+      // get from redis cached
+      let redisKey = 'winners_' + campaign_id;
+      if (page) {
+        redisKey = redisKey.concat('_',page,'_',pageSize);
+      }
+      if (await Redis.exists(redisKey)) {
+        console.log(`existed key ${redisKey} on redis`);
+        const cachedWinners = await Redis.get(redisKey);
+        return HelperUtils.responseSuccess(JSON.parse(cachedWinners));
+      }
+      // if not existed winners on redis then get from db
+      // create params to query to db
+      const filterParams = {
+        'campaign_id': campaign_id,
+        'page': page,
+        'pageSize': pageSize
+      };
+      const winnerListService = new WinnerListService();
+      // get winner list
+      const winners = await winnerListService.findWinnerListUser(filterParams);
+      // save to redis
+      await Redis.set(redisKey, JSON.stringify(winners))
+      return HelperUtils.responseSuccess(winners);
     } catch (e) {
       console.log(e);
-      return ErrorFactory.internal('ERROR: Get Winner User List Failed !');
+      return HelperUtils.responseErrorInternal('Get Winner List Failed !');
     }
   }
 }

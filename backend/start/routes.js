@@ -48,9 +48,8 @@ Route.group(() => {
   Route.delete('asset-tokens/delete/:id', 'AssetTokenController.remove')
   Route.get('affiliate-campaign/:token', 'AffiliateCampaignController.affiliateList')
 
-  // Route.post('user/upload-avatar', 'UserController.uploadAvatar');
   Route.get('my-campaign', 'CampaignController.myCampaign')
-  Route.get('my-campaign/:status', 'CampaignController.myCampaign').middleware('checkStatus')
+  Route.get('my-campaign/:status', 'CampaignController.myCampaign').middleware('checkStatus');
 }).middleware(['typeAdmin', 'auth:admin', 'checkAdminJwtSecret']);
 
 Route.group(() => {
@@ -61,6 +60,12 @@ Route.group(() => {
   Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.get('check-token/:token', 'AdminController.checkToken');
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
+  Route.post('upload-avatar', 'FileController.uploadAvatar');
+
+  Route.post('pool/create', 'CampaignController.createPool')
+  Route.post('pool/:id/update', 'CampaignController.updatePool')
+  Route.get('pool/:id', 'CampaignController.getPool')
+
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
 
 Route.group(() => {
@@ -107,6 +112,11 @@ Route.group(() => {
   // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
 }).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
+
+// Participants
+Route.get('pool/:campaign_id/participants', 'ParticipantController.getParticipantUsers')
+Route.get('pool/:campaign_id/winners', 'ParticipantController.getWinnerUsers');
+
 
 // API V2
 Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);

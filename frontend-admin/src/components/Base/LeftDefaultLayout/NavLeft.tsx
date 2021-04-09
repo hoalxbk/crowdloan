@@ -10,7 +10,7 @@ const nav = [
     icon: 'icon-home',
   },
   {
-    title: 'List Campaign',
+    title: 'List Pool',
     part: adminRoute('/campaigns'),
     icon: 'icon-list-campaign',
   },

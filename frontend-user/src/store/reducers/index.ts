@@ -31,6 +31,16 @@ import { balanceReducer } from './balance';
 import { usdtDetailReducer } from './usdt-detail';
 import { appNetworkReducer, connectorReducer } from './appNetwork';
 import { walletReducer } from './wallet';
+import { 
+  getTiersReducer,
+  getUserTierReducer,
+  depositReducer,
+  withdrawReducer,
+  getUserInfoReducer,
+  withdrawFeeReducer,
+  withdrawPercentReducer
+} from './sota-tiers'
+import { getAllowanceReducer, approveReducer } from './sota-token';
 
 const rootReducer = combineReducers({
   user: userReducer,
@@ -73,7 +83,16 @@ const rootReducer = combineReducers({
   alert: alertReducer,
   appNetwork: appNetworkReducer,
   connector: connectorReducer,
-  wallet: walletReducer
+  wallet: walletReducer,
+  tiers: getTiersReducer,
+  userTier: getUserTierReducer,
+  deposit: depositReducer,
+  withdraw: withdrawReducer,
+  userInfo: getUserInfoReducer,
+  allowance: getAllowanceReducer,
+  approved: approveReducer,
+  withdrawFee: withdrawFeeReducer,
+  withdrawPercent: withdrawPercentReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

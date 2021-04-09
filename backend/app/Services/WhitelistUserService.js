@@ -2,11 +2,10 @@
 
 const ErrorFactory = use('App/Common/ErrorFactory');
 const WhitelistModel = use('App/Models/WhitelistUser');
-const Const = use('App/Common/Const');
-const HelperUtils = use('App/Common/HelperUtils');
 
 class WhitelistUserService {
   buildQueryBuilder(params) {
+    // create query
     let builder = WhitelistModel.query();
     if (params.id) {
       builder = builder.where('id', params.id);
@@ -25,6 +24,11 @@ class WhitelistUserService {
 
   async findWhitelistUser(params) {
     let builder = this.buildQueryBuilder(params);
+    if (params.page && params.pageSize) {
+      // pagination
+      return await builder.paginate(params.page, params.pageSize);
+    }
+    // return all result
     return await builder.fetch();
   }
 }
