@@ -4,7 +4,7 @@ import { withRouter, Link } from 'react-router-dom';
 import _ from 'lodash';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
-import BackgroundComponent from '../../components/BackgroundComponent';
+import BackgroundComponent from './BackgroundComponent';
 import Card from './Card';
 
 const cardImage = '/images/card-image.jpg';

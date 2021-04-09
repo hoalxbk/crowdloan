@@ -360,7 +360,28 @@ const useCommonStyle = makeStyles((theme) => {
           }
         }
       }
-    }
+    },
+    nnb2832d: {
+      font: 'normal normal bold 28px/32px DM Sans',
+    },
+    nnb1824d: {
+      font: 'normal normal bold 18px/24px DM Sans',
+    },
+    nnb1624d: {
+      font: 'normal normal bold 16px/24px DM Sans',
+    },
+    nnb1418d: {
+      font: 'normal normal bold 14px/18px DM Sans',
+    },
+    nnb1214d: {
+      font: 'normal normal bold 12px/14px DM Sans',
+    },
+    nnn1424h: {
+      font: 'normal normal normal 14px/24px Helvetica',
+    },
+    nnn1218h: {
+      font: 'normal normal normal 12px/18px Helvetica',
+    },
   };
 });
 

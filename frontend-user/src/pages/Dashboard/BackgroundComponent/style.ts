@@ -6,6 +6,10 @@ const useStyles = makeStyles((theme: any) => {
       position: 'relative',
       width: '100%',
 
+      '& > img': {
+        width: '100%',
+      },
+
       '& .btn': {
         height: '42px',
         fontFamily: 'DM Sans',
