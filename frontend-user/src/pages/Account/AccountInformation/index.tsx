@@ -1,5 +1,4 @@
-import React, {useEffect, useState} from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
 
@@ -8,16 +7,8 @@ const AccountInformation = (props: any) => {
   const { classNamePrefix = '', balance = {}, userInfo = {} } = props;
   const { data: loginInvestor } = useSelector((state: any) => state.investor);
 
-  useEffect(() => {
-
-  });
-
   const handleKYC = () => {
     console.log('hande KYC')
-  }
-
-  const changePassword = () => {
-    console.log('change password')
   }
 
   return (
@@ -27,7 +18,6 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>Email</span>
           <span>{loginInvestor.email}</span>
-          {/* <button onClick={changePassword}>Change Password</button> */}
         </div>
         <div className={styles.inputGroup}>
           <span>Your Wallet</span>
@@ -40,9 +30,9 @@ const AccountInformation = (props: any) => {
           </div>
           <div className={styles.walletInfo}>
             <p>Wallet balance</p>
-            <span>{ balance.sota }</span>
+            <span>{ parseFloat(balance.sota).toFixed(2) }</span>
             <p>Locked-in </p>
-            <span>{ userInfo.staked }</span>
+            <span>{ parseFloat(userInfo.staked).toFixed(2) }</span>
           </div>
         </div>
       </div>

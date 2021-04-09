@@ -60,16 +60,12 @@ const useStyles = makeStyles((theme: any) => {
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#232394',
+        backgroundColor: '#1C223B',
         borderRadius: '50%',
+      },
 
-        '& img.active': {
-          opacity: 1
-        },
-
-        '& img': {
-          opacity: 0.7
-        },
+      '&.active > div': {
+        backgroundColor: '#232394',
       },
 
       '&:last-child': {
