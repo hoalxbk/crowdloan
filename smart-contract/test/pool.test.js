@@ -1,34 +1,46 @@
-const { expect, util } = require('chai');
+const {
+  expect,
+  util
+} = require('chai');
 const hardhat = require('hardhat');
-const { provider, utils } = hardhat.ethers;
+const {
+  provider,
+  utils
+} = hardhat.ethers;
 
 describe('Pool', function () {
+  let USDTToken, USDCToken, pool;
   beforeEach(async () => {
     // Get accounts
     accounts = await hardhat.ethers.provider.listAccounts();
     owner = accounts[0];
-	wallet = accounts[1];
-    USDTToken = "0x7648563Ef8FFDb8863fF7aDB5A860e3b14D28946";
+    wallet = accounts[1];
+
+    const StableTokenFactory = await hardhat.ethers.getContractFactory('StableToken');
+    USDTToken = await StableTokenFactory.deploy("Tether", "USDT", 6);
+    USDCToken = await StableTokenFactory.deploy("USD Coin", "USDC", 6);
 
     // Deploy Tier Token
     const ERC20Token = await hardhat.ethers.getContractFactory(
       'ERC20Token',
     );
+
     const deployedTierToken = await ERC20Token.deploy(
       "SotaToken",
       "SOTA",
       owner,
       `5${'0'.repeat(27)}`
     );
+
     await deployedTierToken.deployed();
     tierToken = deployedTierToken.address;
 
     // Deploy ICO Token
     const deployedIcoToken = await ERC20Token.deploy(
-    "IcoToken",
-    "ICO",
-    owner,
-    `5${'0'.repeat(27)}`
+      "IcoToken",
+      "ICO",
+      owner,
+      `5${'0'.repeat(27)}`
     );
     await deployedIcoToken.deployed();
     icoToken = deployedIcoToken;
@@ -48,33 +60,32 @@ describe('Pool', function () {
     const deployedPoolFactory = await upgrades.deployProxy(PoolFactory, [tierContract]);
     poolFactory = deployedPoolFactory;
 
-	duration = 86400;
-	openTime = (Date.now() / 1000).toFixed();
-	offeredCurrency = USDTToken;
-	offeredCurrencyRate = 2;
-	offeredCurrencyDecimals = 6;
-	tierLimitBuy = [
-		(10 * 10 ** 18).toString(), // 10
-		(30 * 10 ** 18).toString(), // 20
-		(20 * 10 ** 18).toString(), // 30
-		(40 * 10 ** 18).toString(), // 40
-		0,
-		0,
-		0,
-		0,
-		0,
-		0,
-	];
-
+    duration = 86400;
+    openTime = (Date.now() / 1000).toFixed();
+    offeredCurrency = USDTToken.address;
+    offeredCurrencyRate = 2;
+    offeredCurrencyDecimals = 6;
+    tierLimitBuy = [
+      (10 * 10 ** 18).toString(), // 10
+      (30 * 10 ** 18).toString(), // 20
+      (20 * 10 ** 18).toString(), // 30
+      (40 * 10 ** 18).toString(), // 40
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+    ];
     // Register new pool
     await poolFactory.registerPool(icoToken.address, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet);
 
     const poolAddress = await poolFactory.allPools(0);
 
-	const Pool = await hardhat.ethers.getContractFactory(
-		'Pool',
-	  );
-	pool = await Pool.attach(poolAddress);
+    const Pool = await hardhat.ethers.getContractFactory(
+      'Pool',
+    );
+    pool = Pool.attach(poolAddress);
 
     // Transfer token to pool
     await icoToken.transfer(poolAddress, utils.parseEther('100'));
@@ -117,57 +128,6 @@ describe('Pool', function () {
 
   // Test Functions
 
-  // Get getEtherConversionRate
-  it('Should return correct etherConversionRate', async function() {
-    const contractConversionRate = await pool.getEtherConversionRate();
-
-    expect(contractConversionRate).to.equal(ethRate);
-  })
-
-  // Get getEtherConversionRateDecimals
-  it('Should return correct etherConversionRateDecimals', async function() {
-    const contractConversionRateDecimals = await pool.getEtherConversionRateDecimals();
-
-    expect(contractConversionRateDecimals).to.equal(1);
-  })
-
-  // Set ETH Rate
-  it('Should set ETH Conversion rate', async function () {
-    const newRate = 5;
-    await pool.setEtherConversionRate(newRate);
-
-    const newContractRate = await pool.getEtherConversionRate();
-    expect(newContractRate).to.equal(newContractRate);
-  });
-
-  // Set ERC20 Rate
-  it('Should set ERC Conversion rate', async function () {
-    const tokenRate = 5;
-    await pool.setErc20TokenConversionRate(tradeToken.address, tokenRate);
-
-    const contractTokenRate = await pool.getErc20TokenConversionRate(tradeToken.address);
-    expect(contractTokenRate).to.equal(tokenRate);
-  });
-
-  // Set ERC20 Rate Decimals
-  it('Should set ERC Conversion rate decimals', async function () {
-    const tokenRateDecimals = 5;
-    await pool.setEtherConversionRateDecimals(tokenRateDecimals);
-
-    const contractTokenRateDecimals = await pool.getEtherConversionRateDecimals();
-    expect(contractTokenRateDecimals).to.equal(tokenRateDecimals);
-  });
-
-  // Set ERC20 Rate Decimals
-  it('Should set ERC Conversion rate decimals FAILED', async function () {
-    const tokenRateDecimals = -1;
-
-    await expect(pool.setEtherConversionRateDecimals(tokenRateDecimals)).to.be.reverted;
-
-    const contractTokenRateDecimals = await pool.getEtherConversionRateDecimals();
-    expect(contractTokenRateDecimals).to.equal(1);
-  });
-
   // Set Close time
   it('Should set Close time', async function () {
     const newCloseTime = (Date.now() / 1000 + 86400).toFixed();
@@ -186,52 +146,73 @@ describe('Pool', function () {
     expect(contractOpenTime).to.equal(newOpenTime);
   });
 
-  // BUY TOKENS
-  it('Should decrease balance when buy token by ethers', async function () {
-    const balanceBeforeBuy = await provider.getBalance(accounts[0]);
-    await pool.buyTokenByEtherWithPermission(accounts[0], {
-      value: utils.parseEther('5')
-    });
-    const balanceAfterBuy = await provider.getBalance(accounts[0]);
-    expect(ethers.BigNumber.from(balanceAfterBuy).lt(ethers.BigNumber.from(balanceBeforeBuy).sub(utils.parseEther('4.9')))).to.equal(true);
+  // Get getEtherConversionRate
+  // 0x0000000000000000000000000000000000000000
+  it('Should return correct etherConversionRate', async function () {
+    const address0 = "0x0000000000000000000000000000000000000000";
+    await pool.setOfferedCurrencyRateAndDecimals(address0, 100, 1);
+
+    const contractConversionRate = await pool.getOfferedCurrencyRate(address0);
+    const contractConversionDecimal = await pool.getOfferedCurrencyDecimals(address0);
+
+    expect(contractConversionRate).to.equal(100);
+    expect(contractConversionDecimal).to.equal(1);
+  })
+
+  // Set token conversion rate
+  // 0x0000000000000000000000000000000000000000
+  it('Should return correct USDT token conversion rate', async function () {
+    await pool.setOfferedCurrencyRateAndDecimals(USDTToken.address, 100, 1);
+
+    const contractConversionRate = await pool.getOfferedCurrencyRate(USDTToken.address);
+    const contractConversionDecimal = await pool.getOfferedCurrencyDecimals(USDTToken.address);
+
+    expect(contractConversionRate).to.equal(100);
+    expect(contractConversionDecimal).to.equal(1);
+  })
+
+  it('Should return correct USDC token conversion rate', async function () {
+    await pool.setOfferedCurrencyRateAndDecimals(USDCToken.address, 100, 1);
+
+    const contractConversionRate = await pool.getOfferedCurrencyRate(USDCToken.address);
+    const contractConversionDecimal = await pool.getOfferedCurrencyDecimals(USDCToken.address);
+
+    expect(contractConversionRate).to.equal(100);
+    expect(contractConversionDecimal).to.equal(1);
+  })
+
+  it('Should return correct USDC & USDT token conversion rate', async function () {
+    await pool.setOfferedCurrencyRateAndDecimals(USDCToken.address, 200, 1);
+    await pool.setOfferedCurrencyRateAndDecimals(USDTToken.address, 500, 2);
+
+    const contractConversionRate = await pool.getOfferedCurrencyRate(USDCToken.address);
+    const contractConversionDecimal = await pool.getOfferedCurrencyDecimals(USDCToken.address);
+
+    const contractConversionRate2 = await pool.getOfferedCurrencyRate(USDTToken.address);
+    const contractConversionDecimal2 = await pool.getOfferedCurrencyDecimals(USDTToken.address);
+
+    expect(contractConversionRate).to.equal(200);
+    expect(contractConversionDecimal).to.equal(1);
+
+    expect(contractConversionRate2).to.equal(500);
+    expect(contractConversionDecimal2).to.equal(2);
+  })
+
+  // Get getEtherConversionRateDecimals
+  it('Should return correct etherConversionRateDecimals', async function () {
+    const address0 = "0x0000000000000000000000000000000000000000";
+    await pool.setOfferedCurrencyDecimals(address0, 8);
+
+    const contractConversionDecimal = await pool.getOfferedCurrencyDecimals(address0);
+    expect(contractConversionDecimal).to.equal(8);
+  })
+
+  // Should return correct factory
+  it('Should return correct factory address', async function () {
+    const factoryAddress = await pool.factory();
+
+    expect(factoryAddress).to.equal(poolFactory.address);
   });
 
-  it('Should receiver token when buy token by ethers', async function () {
-    await pool.buyTokenByEther(accounts[0], {
-      value: utils.parseEther('5')
-    });
-    const tokenBalance = await token.balanceOf(accounts[0]);
-    expect(ethers.BigNumber.from(tokenBalance).gte(ethers.BigNumber.from(utils.parseEther('5')).mul(ethRate))).to.equal(true);
-  });
 
-   // BUY TOKENS BY TOKENS
-  it('Should decrease token balance when buy token by token', async function () {
-    // Set ERC20 Conversion Rate
-    // to enable trade by token
-    await pool.setErc20TokenConversionRate(tradeToken.address, 1);
-    // Save user token balance before buy
-    const balanceBeforeBuy = await tradeToken.balanceOf(accounts[0]);
-    // Approve for pool to transfer token
-    await tradeToken.approve(pool.address, utils.parseEther('1000'));
-    // Buy tokens
-    await pool.buyTokenByToken(accounts[0], tradeToken.address, utils.parseEther('1'));
-    // Get balance after buy
-    const balanceAfterBuy = await tradeToken.balanceOf(accounts[0]);
-
-    expect(ethers.BigNumber.from(balanceAfterBuy).lt(ethers.BigNumber.from(balanceBeforeBuy).sub(utils.parseEther('0.9')))).to.equal(true);
-  });
-
-  it('Should receiver token when buy token by tokens', async function () {
-    // Set ERC20 Conversion Rate
-    // to enable trade by token
-    await pool.setErc20TokenConversionRate(tradeToken.address, 1);
-    // Approve for pool to transfer token
-    await tradeToken.approve(pool.address, utils.parseEther('1000'));
-    // Buy tokens
-    await pool.buyTokenByEther(accounts[0], {
-      value: utils.parseEther('5')
-    });
-    const tokenBalance = await token.balanceOf(accounts[0]);
-    expect(ethers.BigNumber.from(tokenBalance).gte(ethers.BigNumber.from(utils.parseEther('5')).mul(ethRate))).to.equal(true);
-  });
 });
