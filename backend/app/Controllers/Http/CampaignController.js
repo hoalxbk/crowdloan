@@ -3,9 +3,12 @@
 const CampaignModel = use('App/Models/Campaign');
 const Tier = use('App/Models/Tier');
 const CampaignService = use('App/Services/CampaignService');
+const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
 const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
+const RedisUtils = use('App/Common/RedisUtils');
+const Redis = use('Redis');
 
 const CONFIGS_FOLDER = '../../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -323,6 +326,7 @@ class CampaignController {
       const tiers = (params.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
+          level: (index + 1),
           name: item.name,
           start_time: item.startTime,
           end_time: item.endTime,
@@ -333,6 +337,10 @@ class CampaignController {
       await campaign.tiers().saveMany(tiers);
 
       console.log('params.tier_configuration', tiers);
+
+      const campaignId = campaign.id;
+      // Create Web3 Account
+      const account = await (new WalletAccountService).createWalletAddress(campaignId);
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
@@ -374,17 +382,18 @@ class CampaignController {
     };
 
     console.log('Update Pool with data: ', data, params);
-
+    const campaignId = params.campaignId;
     try {
-      const campaign = await CampaignModel.query().where('id', params.id).first();
+      const campaign = await CampaignModel.query().where('id', campaignId).first();
       if (!campaign) {
         return HelperUtils.responseNotFound('Pool not found');
       }
-      await CampaignModel.query().where('id', params.id).update(data);
+      await CampaignModel.query().where('id', campaignId).update(data);
 
-      const tiers = (inputParams.tier_configuration || []).map((item) => {
+      const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
+          level: (index + 1),
           name: item.name,
           start_time: item.startTime,
           end_time: item.endTime,
@@ -392,9 +401,17 @@ class CampaignController {
         });
         return tierObj;
       });
-      const campaignUpdated = await CampaignModel.query().where('id', params.id).first();
+      const campaignUpdated = await CampaignModel.query().where('id', campaignId).first();
       await campaignUpdated.tiers().delete();
       await campaignUpdated.tiers().saveMany(tiers);
+
+      // Delete cache
+      let redisKey = RedisUtils.getRedisKeyPoolDetail(campaignId);
+      if (Redis.exists(redisKey)) {
+        console.log(`existed key ${redisKey} on redis`);
+        // remove old key
+        Redis.del(redisKey);
+      }
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
@@ -404,16 +421,35 @@ class CampaignController {
   }
 
   async getPool({ request, auth, params }) {
-    const pool = await CampaignModel.query()
-      .with('tiers')
-      .where('id', params.id)
-      .first();
+    const campaignId = params.campaignId;
+    try {
+      let redisKey = RedisUtils.getRedisKeyPoolDetail(campaignId);
 
-    return {
-      status: 200,
-      data: pool,
+      console.log('redisKey', redisKey);
+
+      const isExistRedisData = await Redis.exists(redisKey);
+      if (isExistRedisData) {
+        const cachedPoolDetail = await Redis.get(redisKey);
+        console.log('Exist cache data Public Pool Detail: ', cachedPoolDetail);
+        return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
+      }
+
+      console.log('Not exist Redis cache');
+      const pool = await CampaignModel.query()
+        .with('tiers')
+        .where('id', campaignId)
+        .first();
+
+      // Cache data
+      await Redis.set(redisKey, JSON.stringify(pool));
+
+      return HelperUtils.responseSuccess(pool);
+    } catch (e) {
+      console.log(e)
+      return HelperUtils.responseErrorInternal(e.message);
     }
   }
+
 }
 
-module.exports = CampaignController
+module.exports = CampaignController;

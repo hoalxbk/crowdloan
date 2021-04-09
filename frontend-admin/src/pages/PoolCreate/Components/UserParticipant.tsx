@@ -6,8 +6,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
-import {Button, makeStyles} from "@material-ui/core";
-import CreateEditTierForm from "./CreateEditTierForm";
+import {makeStyles} from "@material-ui/core";
 import {useCommonStyle} from "../../../styles";
 
 const useStylesTable = makeStyles({
@@ -15,7 +14,6 @@ const useStylesTable = makeStyles({
     minWidth: 650,
   },
 });
-
 
 function UserParticipant(props: any) {
   const commonStyle = useCommonStyle();
@@ -47,7 +45,6 @@ function UserParticipant(props: any) {
     }
     setRows(newRows);
   };
-
 
   return (
     <>

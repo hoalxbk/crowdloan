@@ -1,4 +1,9 @@
 import React, {useEffect, useState} from 'react';
+import useStyles from "./style";
+import {useCommonStyle} from "../../styles";
+import {useForm} from "react-hook-form";
+
+import {useDispatch, useSelector} from "react-redux";
 import PoolBanner from "./Components/PoolBanner";
 import TokenAddress from "./Components/TokenAddress";
 import TotalCoinSold from "./Components/TotalCoinSold";
@@ -13,19 +18,16 @@ import AcceptCurrency from "./Components/AcceptCurrency";
 import PoolDescription from "./Components/PoolDescription";
 import AddressReceiveMoney from "./Components/AddressReceiveMoney";
 import ExchangeRate from "./Components/ExchangeRate";
-import {CircularProgress} from "@material-ui/core";
-import useStyles from "./style";
-import {useCommonStyle} from "../../styles";
-import {useDispatch, useSelector} from "react-redux";
+import {CircularProgress, Grid} from "@material-ui/core";
 import {TokenType} from "../../utils/token";
 import {isFactorySuspended} from "../../utils/campaignFactory";
-import {useForm} from "react-hook-form";
 import {createPool, updatePool} from "../../request/pool";
 import {alertFailure, alertSuccess} from "../../store/actions/alert";
 import {adminRoute} from "../../utils";
 import {withRouter} from "react-router-dom";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
+import LeftCampaignDetailPage from "../CampaignDetailPage/LeftCampaignDetailPage";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -158,204 +160,213 @@ function PoolForm(props: any) {
   console.log('errors==========>', errors);
 
   return (
-    <div className= {classes.container}>
-      <div className={classes.exchangeRate}>
-        <PoolName
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-        <PoolBanner
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-      </div>
-
-      <div className={classes.exchangeRate}>
-        <TokenAddress
-          poolDetail={poolDetail}
-          register={register}
-          token={token}
-          setToken={setToken}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          watch={watch}
-        />
-
-        <TotalCoinSold
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-
-        <AddressReceiveMoney
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-        />
-
-        <TokenLogo
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-      </div>
-
-      <div className={classes.exchangeRate}>
-        <DurationTime
-          poolDetail={poolDetail}
-          register={register}
-          token={token}
-          setToken={setToken}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-      </div>
+  <>
+    <div className="contentPage">
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
 
 
-      <div className={classes.exchangeRate}>
-        <MinTier
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
+          <div className="">
+            <div className={classes.exchangeRate}>
+              <PoolName
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+              <PoolBanner
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+            </div>
 
-        <TierTable
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-      </div>
+            <div className={classes.exchangeRate}>
+              <TokenAddress
+                poolDetail={poolDetail}
+                register={register}
+                token={token}
+                setToken={setToken}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                watch={watch}
+              />
 
+              <TotalCoinSold
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
 
+              <AddressReceiveMoney
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+              />
 
+              <TokenLogo
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+            </div>
 
-      <div className={classes.exchangeRate}>
-        <BuyType
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-
-        <PoolType
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-
-        <NetworkAvailable
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-
-        <AcceptCurrency
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-      </div>
-
-
-      <div className={classes.exchangeRate}>
-        <PoolDescription
-          poolDetail={poolDetail}
-          register={register}
-          setValue={setValue}
-          errors={errors}
-          clearErrors={clearErrors}
-          renderError={renderError}
-          control={control}
-        />
-
-      </div>
+            <div className={classes.exchangeRate}>
+              <DurationTime
+                poolDetail={poolDetail}
+                register={register}
+                token={token}
+                setToken={setToken}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+            </div>
 
 
-      <ExchangeRate
-        poolDetail={poolDetail}
-        register={register}
-        token={token}
-        setValue={setValue}
-        errors={errors}
-        clearErrors={clearErrors}
-      />
+            <div className={classes.exchangeRate}>
+              <MinTier
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
+              <TierTable
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+            </div>
 
 
-      {isEdit && poolDetail && poolDetail.buy_type === 'whitelist' &&
-        <div className={classes.exchangeRate}>
-          <UserJoinPool
-            poolDetail={poolDetail}
-            register={register}
-            token={token}
-            setValue={setValue}
-            errors={errors}
-            clearErrors={clearErrors}
-            control={control}
-          />
-        </div>
-      }
+            <div className={classes.exchangeRate}>
+              <BuyType
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
+              <PoolType
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
+              <NetworkAvailable
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
+              <AcceptCurrency
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+            </div>
 
 
-      <button disabled={loading} className={classes.formButton} onClick={handleCampaignCreate}>
-        {
-          loading ? <CircularProgress size={25} />: "Create New"
-        }
-      </button>
+            <div className={classes.exchangeRate}>
+              <PoolDescription
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
+            </div>
 
 
+            <ExchangeRate
+              poolDetail={poolDetail}
+              register={register}
+              token={token}
+              setValue={setValue}
+              errors={errors}
+              clearErrors={clearErrors}
+            />
 
 
+            <button disabled={loading} className={classes.formButton} onClick={handleCampaignCreate}>
+              {
+                loading ? <CircularProgress size={25} />: "Create New"
+              }
+            </button>
+
+          </div>
+
+
+        </Grid>
+
+        <Grid item xs={6}>
+          {isEdit && poolDetail && poolDetail.buy_type === 'whitelist' &&
+            <div className={classes.exchangeRate}>
+              <UserJoinPool
+                poolDetail={poolDetail}
+                register={register}
+                token={token}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                control={control}
+              />
+            </div>
+          }
+        </Grid>
+
+      </Grid>
     </div>
 
+  </>
   );
 }
 
