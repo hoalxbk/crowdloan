@@ -1,13 +1,12 @@
-import React, { useState } from 'react';
+import React, { Children, useState } from 'react';
 import useStyles from './style';
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
 
 const warningIcon = '/images/icons/warning.svg';
 const closeIcon = '/images/icons/close.svg';
 const backgroundImage = '/images/icons/background.svg';
 const arrowRightIcon = '/images/icons/arrow-right.svg';
 
-const Button = (props: any) => {
+const BackgroundComponent = (props: any) => {
   const styles = useStyles();
 
   const [showAlert, setShowAlert] = useState(true)
@@ -41,4 +40,4 @@ const Button = (props: any) => {
   );
 };
 
-export default Button;
+export default BackgroundComponent;

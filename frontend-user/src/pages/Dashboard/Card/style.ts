@@ -47,7 +47,6 @@ const useStyles = makeStyles((theme: any) => {
         '& > div': {
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
           justifyContent: 'center',
           width: '100%'
         },
@@ -59,6 +58,8 @@ const useStyles = makeStyles((theme: any) => {
           fontSize: '18px',
           lineHeight: '24px',
           color: '#FFFFFF',
+          textAlign: 'left',
+          marginBottom: '0'
         },
 
         '& > div p': {

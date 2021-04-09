@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme: any) => {
   return {
     textTitleHeader: {
-      color: '#FFCC00',
+      color: '#FFFFFF',
       fontSize: 33,
       fontWeight: 600,
       paddingBottom: 10,
@@ -44,6 +44,8 @@ const useStyles = makeStyles((theme: any) => {
       justifyContent: 'center',
       alignItems: 'center',
       textAlign: 'left',
+      background: '#020719',
+      overflow: 'auto',
       '&__not-purchasable': {
         fontSize: 16,
         fontWeight: 500,
@@ -65,12 +67,18 @@ const useStyles = makeStyles((theme: any) => {
           outline: 'none'
         }
       },
+      '& .form': {
+        width: '480px',
+        borderRadius: '20px',
+        backgroundColor: 'rgba(255, 255, 255, 0.06)',
+        padding: '30px 40px',
+      },
       '&__logo': {
         textAlign: 'center',
         marginBottom: '42px',
       },
       '&__wrapper': {
-        width: '545px',
+        width: '100%',
         maxWidth: '100%',
       },
       '&__campaign': {
@@ -266,11 +274,16 @@ const useStyles = makeStyles((theme: any) => {
       },
 
       '& .MuiFormLabel-root': {
-        color: 'white'
+        color: 'white',
+        transform: 'translate(0, -8px) scale(1)'
       },
 
       '& .MuiInput-underline:before': {
-        borderColor: 'white'
+        content: 'none'
+      },
+
+      '& .MuiInput-colorSecondary.MuiInput-underline:after': {
+        content: 'none'
       },
 
       '&__title': {
@@ -286,20 +299,21 @@ const useStyles = makeStyles((theme: any) => {
       },
 
       '& .login__form-privacy a': {
-        color: '#337ab7'
+        color: '#6398FF'
       },
 
       '& .login__form-cta': {
         padding: '15px 30px',
-        backgroundColor: '#FFCC00',
+        backgroundColor: '#3232DC',
         border: 'none',
-        marginTop: 30,
-        color: 'white',
-        fontWeight: 700,
+        marginTop: '20px',
+        color: '#FFFFFF',
         width: '100%',
-        fontSize: 16,
-        borderRadius: 5,
+        borderRadius: '60px',
         cursor: 'pointer',
+        height: '42px',
+        boxShadow: 'none',
+        font: 'normal normal bold 14px/18px DM Sans',
 
         '&:focus': {
           outline: 'none'
@@ -307,9 +321,8 @@ const useStyles = makeStyles((theme: any) => {
       },
 
       '& .login__form-desc': {
-        color: '#968f8f',
+        color: 'rgba(255, 255, 255, 0.6)',
         marginTop: 20,
-        fontSize: 16
       },
 
       '& .login__form-desc-link': {
@@ -331,12 +344,18 @@ const useStyles = makeStyles((theme: any) => {
       },
 
       '& .login__form-forgot-password': {
+        font: 'normal normal bold 14px/18px DM Sans',
         cursor: 'pointer',
-        fontWeight: '700',
-        fontSize: 15,
-        textAlign: 'left',
-        color: '#FFCC00',
-        display: 'block'
+        color: '#6398FF',
+      },
+
+      '& .signup span': {
+        font: 'normal normal normal 14px/24px Helvetica',
+        color: '#FFFFFF',
+      },
+
+      '& .signup': {
+        marginTop: '120px'
       },
 
       '& .login__form-redirect': {
