@@ -3,8 +3,9 @@ import {WalletConnectConnector} from '@web3-react/walletconnect-connector'
 import {InjectedConnector} from '@web3-react/injected-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import {FortmaticConnector} from '../connectors/Fortmatic';
+import {ETH_CHAIN_ID} from './network';
 
-import {FORMATIC_KEY, NETWORK_URL, APP_NETWORKS_NAME } from './network';
+import {FORMATIC_KEY, FORMATIC_KEY_TEST, NETWORK_URL, APP_NETWORKS_NAME } from './network';
 
 export const bscConnector = new BscConnector({}) as any;
 export const injected = new InjectedConnector({});
@@ -25,7 +26,7 @@ bscConnector.handleChainChanged = (chainId: string) => {
 
 // mainnet only
 export const walletConnect = new WalletConnectConnector({
-  rpc: {1: NETWORK_URL as string},
+  rpc: {[Number(ETH_CHAIN_ID)]: NETWORK_URL as string},
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
   pollingInterval: 15000

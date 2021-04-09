@@ -13,7 +13,7 @@ import { APP_NETWORKS_ID, ETH_CHAIN_ID, BSC_CHAIN_ID } from '../../../../constan
 import { requestSupportNetwork } from '../../../../utils/setupNetwork';
 import { connectWalletSuccess, disconnectWallet } from '../../../../store/actions/wallet';
 
-import { settingAppNetwork, NetworkUpdateType } from '../../../../store/actions/appNetwork';
+import { settingAppNetwork, NetworkUpdateType, settingCurrentConnector } from '../../../../store/actions/appNetwork';
 
 const INFURA_KEY = process.env.REACT_APP_INFURA_KEY || "";
 const ETH_NETWORK_NAME = process.env.REACT_APP_ETH_NETWORK_NAME || "";
@@ -159,35 +159,47 @@ const useProviderConnect = (
     return;
   }
 
-  const tryActivate = useCallback(async (connector: AbstractConnector, appChainID: string, walletName: string) => {
+  const tryActivate = useCallback(async (connector: AbstractConnector, appChainID: string, wallet: string) => {
       setConnectWalletLoading(true);
 
       try {
-        if (walletName === ConnectorNames.MetaMask || walletName === ConnectorNames.BSC) {
-          await requestSupportNetwork(appChainID, walletName);
+        if (wallet === ConnectorNames.MetaMask || wallet === ConnectorNames.BSC) {
+          await requestSupportNetwork(appChainID, wallet);
         }
 
         if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
           connector.walletConnectProvider = undefined;
         }
+        // if (connector && walletName === ConnectorNames.Fortmatic) {
 
-        if (connector && walletName === ConnectorNames.Fortmatic) {
-          connector.on("OVERLAY_READY", () => {
-            setOpenConnectDialog && setOpenConnectDialog(false);
-          });
+        //   await activate(connector, undefined, true)
+        //   .then(() => { 
+        //     dispatch(settingCurrentConnector(walletName));
+        //     setWalletNameSuccess(walletName);
+        //   })
+        //   .catch(err => {
+        //     if (error instanceof UnsupportedChainIdError) {
+        //       activate(connector);
+        //     } else {
+        //       console.log(err.message);
+        //     }
+        //   });
 
-          await activate(connector, undefined, true).catch(err => {
-            if (error instanceof UnsupportedChainIdError) {
-              activate(connector);
-            } else {
-              console.log(err.message);
-            }
-          }).then(() => setWalletNameSuccess(walletName));;
+        // }
 
-        }
+        if (connector && walletName) {
+          if (wallet === ConnectorNames.Fortmatic) {
+            connector.on("OVERLAY_READY", () => {
+              setOpenConnectDialog && setOpenConnectDialog(false);
+            });
+          }
 
-        if (connector && walletName !== ConnectorNames.Fortmatic) {
-          await activate(connector, undefined, true).then(() => setWalletNameSuccess(walletName)).catch(error => {
+          await activate(connector, undefined, true)
+          .then(() => { 
+            dispatch(settingCurrentConnector(wallet));
+            setWalletNameSuccess(wallet);
+          })
+          .catch(error => {
             if (error instanceof UnsupportedChainIdError) {
               console.debug('Error when activate: ', error.message);
               activate(connector);
@@ -195,6 +207,7 @@ const useProviderConnect = (
               dispatch(disconnectWallet());
               handleError && handleError();
               setConnectWalletLoading(false);
+              setWalletName(walletName.filter(name => wallet !== name));
               console.debug('Error when try to activate: ', error.message);
               return;
             }
@@ -241,6 +254,7 @@ const useProviderConnect = (
 
   const handleConnectorDisconnect = useCallback(() => {
     dispatch(disconnectWallet());
+    dispatch(settingCurrentConnector(undefined));
     setWalletName([]);
     setCurrentConnector(undefined);
     setWalletNameSuccess(undefined);

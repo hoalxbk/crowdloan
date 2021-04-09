@@ -33,10 +33,11 @@ const useStyles = makeStyles((theme: any) => {
       display: 'inline-block'
     },
     poolDetailInfo: {
-
+      background: 'transparent',
+      display: 'flex'
     },
     poolDetailIntro: {
-
+      color: 'white' 
     },
     poolDetailBasic: {
 

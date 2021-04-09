@@ -1,5 +1,15 @@
-import DefaultLayout  from '../../components/Layout/DefaultLayout';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+
 import usePoolDetails, { PoolDetailKey } from './hooks/usePoolDetails';
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+import useAuth from '../../hooks/useAuth';
+
+import DefaultLayout  from '../../components/Layout/DefaultLayout';
+import Tiers from '../Account/Tiers';
+
+import { getTiers } from '../../store/actions/sota-tiers';
+
 import useStyles from './style';
 
 const poolImage = "/images/pool_circle.svg";
@@ -10,8 +20,17 @@ type BuyTokenProps = {
 }
 
 const BuyToken: React.FC<BuyTokenProps> = (props: BuyTokenProps) => {
+  const dispatch = useDispatch();
   const styles = useStyles();
+
+  const { isAuth, connectedAccount } = useAuth();
   const poolDetails = usePoolDetails();
+  const tier = useTypedSelector(state => state.tiers);
+
+  useEffect(() => {
+    if (isAuth)console.log(connectedAccount);
+    isAuth && dispatch(getTiers()) 
+  }, [isAuth]);
 
   return (
     <DefaultLayout>
@@ -40,6 +59,9 @@ const BuyToken: React.FC<BuyTokenProps> = (props: BuyTokenProps) => {
               ))
             }
           </div>
+          <div>
+            <Tiers />
+          </div> 
         </main>
       </div>
     </DefaultLayout>

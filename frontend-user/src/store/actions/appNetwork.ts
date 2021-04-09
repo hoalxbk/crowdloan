@@ -39,25 +39,16 @@ export const settingAppNetwork = (networkType: string, updatedVal: string | unde
   }
 };
 
-export const settingCurrentConnector = (connector: string, updatedVal: string) => {
-  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
-    dispatch({ type: appNetworkActions.APP_NETWORKS_SETTING_LOADING });
-
+export const settingCurrentConnector = (connectorName: string | undefined) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     try {
-
-      if (connector in ConnectorNames) {
-
-        // dispatch({
-        //   type: appNetworkActions.APP_NETWORKS_SETTING_SUCCESS,
-        //   payload: updatedNetworkData
-        // })
-      } else {
-        throw new Error("Wrong update network type!");
-      }
-
+      dispatch({ 
+        type: appNetworkActions.CONNECTOR_SETTING_SUCCESS,
+        payload: connectorName 
+      })
     } catch (error) {
       dispatch({
-        type: appNetworkActions.APP_NETWORKS_SETTING_ERROR,
+        type: appNetworkActions.CONNECTOR_SETTING_ERROR,
         payload: error
       });
     }
