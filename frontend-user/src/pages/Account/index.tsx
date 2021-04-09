@@ -13,7 +13,6 @@ import useStyles from './style'
 
 const Account = (props: any) => {
   const classes = useStyles();
-
   const dispatch = useDispatch();
 
   const { data: balance = {} } = useSelector((state: any) => state.balance);
