@@ -1,4 +1,9 @@
 import Web3 from 'web3';
+import { connectorNames, ConnectorNames } from '../constants/connectors';
+import { ETH_CHAIN_ID } from '../constants/network';
+
+const NETWORK_URL = process.env.REACT_APP_NETWORK_URL || "";
+const BSC_NETWORK_URL = process.env.REACT_APP_BSC_RPC_URL || "";
 
 export const getWeb3Instance = () => {
   const windowObj = window as any;
@@ -18,24 +23,29 @@ export const isMetaMaskInstalled = () => {
   return ethereum && ethereum.isMetaMask;
 };
 
-export const getContractInstance = (ABIContract: any, contractAddress: string) => {
-  const windowObj = window as any;
-  const { ethereum } = windowObj;
-  if (ethereum && ethereum.isMetaMask) {
-    const web3Instance = new Web3(ethereum);
+export const getProviderByNetwork = (networkName: connectorNames, appChainID?: string) => {
+  if (networkName === ConnectorNames.MetaMask || networkName  === ConnectorNames.BSC) {
+    const { ethereum } = (window as any);
+    return isMetaMaskInstalled() ? ethereum : undefined;
+  } 
+
+  if (appChainID) {
+      return new Web3.providers.HttpProvider(appChainID === ETH_CHAIN_ID ? NETWORK_URL: BSC_NETWORK_URL);
+  }  
+}
+
+export const getContractInstance = (ABIContract: any, contractAddress: string, networkName?: connectorNames, appChainID?: string) => {
+  const provider = getProviderByNetwork(networkName as connectorNames, appChainID);
+  if (provider) {
+    const web3Instance = new Web3(provider);
+
     return new web3Instance.eth.Contract(
       ABIContract,
       contractAddress,
     );
-  } else if (windowObj.web3) {
-    const web3Instance = new Web3(windowObj.web3.currentProvider);
-    return new web3Instance.eth.Contract(
-      ABIContract,
-      contractAddress,
-    );
-  } else {
-    return null;
   }
+
+  return;
 };
 
 export const convertFromWei = (value: any, unit = 'ether') => {
