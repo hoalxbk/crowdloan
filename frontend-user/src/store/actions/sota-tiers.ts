@@ -90,8 +90,6 @@ export const getUserInfo = (address: string) => {
   }
 };
 
-// export const withdrawFeePercent = ()
-
 export const deposit = (address: string, amount: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
@@ -158,10 +156,11 @@ export const getWithdrawFee = (address: string, amount: string) => {
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string);
 
       result = await contract?.methods.calculateWithdrawFee(address, convertToWei(amount)).call();
+      
 
       dispatch({
         type: sotaTiersActions.WITHDRAW_FEE_SUCCESS,
-        payload: result,
+        payload: convertFromWei(result),
       });
 
     } catch (error) {
@@ -174,15 +173,33 @@ export const getWithdrawFee = (address: string, amount: string) => {
 };
 
 
-export const getWithdrawPercent = (address: string, amount: string) => {
+export const getWithdrawPercent = () => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_PERCENT_LOADING });
     try {
       let result = {};
+      let data = [];
 
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string);
 
-      result = await contract?.methods.widthdrawFeePercent(address, convertToWei(amount)).call();
+      result = await contract?.methods.withdrawFeePercent(0).call();
+      console.log(result)
+      data.push(result)
+      result = await contract?.methods.withdrawFeePercent(1).call();
+      data.push(result)
+      result = await contract?.methods.withdrawFeePercent(2).call();
+      data.push(result)
+      result = await contract?.methods.withdrawFeePercent(3).call();
+      data.push(result)
+      result = await contract?.methods.withdrawFeePercent(4).call();
+      data.push(result)
+      result = await contract?.methods.withdrawFeePercent(5).call();
+      data.push(result)
+
+      result = {
+        ...result,
+        penaltiesPercent: data
+      }
 
       dispatch({
         type: sotaTiersActions.WITHDRAW_PERCENT_SUCCESS,
@@ -190,6 +207,7 @@ export const getWithdrawPercent = (address: string, amount: string) => {
       });
 
     } catch (error) {
+      console.log(error)
       dispatch({
         type: sotaTiersActions.WITHDRAW_PERCENT_FAILURE,
         payload: error

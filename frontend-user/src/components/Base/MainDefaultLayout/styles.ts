@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => {
       gridArea: 'main',
       width: '100%',
       padding: '80px',
-      backgroundColor: '#020616'
+      backgroundColor: '#030925',
     },
   };
 });

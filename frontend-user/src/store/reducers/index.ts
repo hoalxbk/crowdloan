@@ -85,7 +85,7 @@ const rootReducer = combineReducers({
   withdraw: withdrawReducer,
   userInfo: getUserInfoReducer,
   allowance: getAllowanceReducer,
-  approved: approveReducer,
+  approve: approveReducer,
   withdrawFee: withdrawFeeReducer,
   withdrawPercent: withdrawPercentReducer
 });
