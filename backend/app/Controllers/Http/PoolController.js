@@ -149,12 +149,7 @@ class PoolController {
       await campaignUpdated.tiers().saveMany(tiers);
 
       // Delete cache
-      let redisKey = RedisUtils.getRedisKeyPoolDetail(campaignId);
-      if (Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        // remove old key
-        Redis.del(redisKey);
-      }
+      RedisUtils.deleteRedisPoolDetail(campaignId);
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
@@ -164,27 +159,22 @@ class PoolController {
   }
 
   async getPool({ request, auth, params }) {
-    const campaignId = params.campaignId;
+    const poolId = params.campaignId;
+    console.log('Start getPool with poolId: ', poolId);
     try {
-      let redisKey = RedisUtils.getRedisKeyPoolDetail(campaignId);
-
-      console.log('redisKey', redisKey);
-
-      const isExistRedisData = await Redis.exists(redisKey);
-      if (isExistRedisData) {
-        const cachedPoolDetail = await Redis.get(redisKey);
+      if (await RedisUtils.checkExistRedisPoolDetail(poolId)) {
+        const cachedPoolDetail = await RedisUtils.getRedisPoolDetail(poolId);
         console.log('Exist cache data Public Pool Detail: ', cachedPoolDetail);
         return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
       }
 
-      console.log('Not exist Redis cache');
       const pool = await CampaignModel.query()
         .with('tiers')
-        .where('id', campaignId)
+        .where('id', poolId)
         .first();
 
       // Cache data
-      await Redis.set(redisKey, JSON.stringify(pool));
+      RedisUtils.createRedisPoolDetail(poolId, pool);
 
       return HelperUtils.responseSuccess(pool);
     } catch (e) {
@@ -197,38 +187,65 @@ class PoolController {
     const param = request.all();
     const limit = param.limit ? param.limit : Config.get('const.limit_default');
     const page = param.page ? param.page : Config.get('const.page_default');
-    const filter = {};
-    let listData = CampaignModel.query().orderBy('id', 'DESC');
-    if(param.title){
-      listData =  listData.where(builder => {
-        builder.where('title', 'like', '%'+ param.title +'%')
-          .orWhere('symbol', 'like', '%'+ param.title +'%')
-        if((param.title).toLowerCase() == Config.get('const.suspend')){
-          builder.orWhere('is_pause', '=', 1)
-        }
-        if((param.title).toLowerCase() == Config.get('const.active')){
-          builder.orWhere('is_pause', '=', 0)
-        }
-      })
+    param.limit = limit;
+    param.page = page;
+    console.log('Start Pool List with params: ', param);
+
+    try {
+      // console.log(await RedisUtils.checkExistRedisPoolList(param));
+      console.log('9999999');
+
+      if (await RedisUtils.checkExistRedisPoolList(param)) {
+        const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
+        console.log('Exist cache data Public Pool List: ', cachedPoolDetail);
+        return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
+      }
+
+      const filter = {};
+      let listData = CampaignModel.query().orderBy('id', 'DESC');
+      if(param.title) {
+        listData =  listData.where(builder => {
+          builder.where('title', 'like', '%'+ param.title +'%')
+            .orWhere('symbol', 'like', '%'+ param.title +'%')
+          if((param.title).toLowerCase() == Config.get('const.suspend')){
+            builder.orWhere('is_pause', '=', 1)
+          }
+          if((param.title).toLowerCase() == Config.get('const.active')){
+            builder.orWhere('is_pause', '=', 0)
+          }
+        })
+      }
+      if(param.start_time && !param.finish_time) {
+        listData = listData.where('start_time', '>=', param.start_time)
+      }
+      if(param.finish_time && !param.start_time ) {
+        listData = listData.where('finish_time', '<=', param.finish_time)
+      }
+      if(param.finish_time && param.start_time ) {
+        listData = listData.whereRaw('finish_time <=' + param.finish_time)
+          .whereRaw('start_time >=' + param.start_time)
+      }
+      if(param.registed_by){
+        listData = listData.where('registed_by', '=', param.registed_by)
+      }
+      listData = await listData.paginate(page,limit);
+
+      // Cache data
+      RedisUtils.createRedisPoolList(param, listData);
+
+      return HelperUtils.responseSuccess(listData);
+
+      // return {
+      //   status: 200,
+      //   data: listData,
+      // }
+
+    } catch (e) {
+      console.log(e)
+      return HelperUtils.responseErrorInternal(e.message);
     }
-    if(param.start_time && !param.finish_time){
-      listData = listData.where('start_time', '>=', param.start_time)
-    }
-    if(param.finish_time && !param.start_time ){
-      listData = listData.where('finish_time', '<=', param.finish_time)
-    }
-    if(param.finish_time && param.start_time ){
-      listData = listData.whereRaw('finish_time <=' + param.finish_time)
-        .whereRaw('start_time >=' + param.start_time)
-    }
-    if(param.registed_by){
-      listData = listData.where('registed_by', '=', param.registed_by)
-    }
-    listData = await listData.paginate(page,limit);
-    return {
-      status: 200,
-      data: listData,
-    }
+
+
   }
 
 }

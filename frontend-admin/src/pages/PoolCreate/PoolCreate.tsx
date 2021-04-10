@@ -30,17 +30,14 @@ import TierTable from "./Components/TierTable";
 import {createPool} from "../../request/pool";
 import {alertFailure, alertSuccess} from "../../store/actions/alert";
 import PoolForm from "./PoolForm";
+import BackButton from "../../components/Base/ButtonLink/BackButton";
 
 const PoolCreate: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   const isEdit = false;
-  const goBack = () => {
-    const { history } = props;
-    history.goBack();
-  };
 
   return (
     <DefaultLayout>
-      <ButtonLink onClick={goBack} spacing={6} to={adminRoute('/campaigns')} text="Back" icon="icon-arrow-left.svg" />
+      <BackButton to={adminRoute('/campaigns')}/>
       <PoolForm
         isEdit={isEdit}
       />

@@ -182,6 +182,16 @@ function PoolForm(props: any) {
                 control={control}
               />
 
+              <TokenLogo
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
               <AddressReceiveMoney
                 poolDetail={poolDetail}
                 register={register}
@@ -191,7 +201,40 @@ function PoolForm(props: any) {
                 renderError={renderError}
               />
 
-              <TokenLogo
+            </div>
+
+            <div className={classes.exchangeRate}>
+              <BuyType
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
+              <PoolType
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
+              <NetworkAvailable
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                clearErrors={clearErrors}
+                renderError={renderError}
+                control={control}
+              />
+
+              <AcceptCurrency
                 poolDetail={poolDetail}
                 register={register}
                 setValue={setValue}
@@ -241,47 +284,6 @@ function PoolForm(props: any) {
             </div>
 
 
-            <div className={classes.exchangeRate}>
-              <BuyType
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-              />
-
-              <PoolType
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-              />
-
-              <NetworkAvailable
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-              />
-
-              <AcceptCurrency
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-              />
-            </div>
 
 
             <div className={classes.exchangeRate}>
