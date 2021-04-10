@@ -4,8 +4,8 @@ import {useCommonStyle} from "../../../styles";
 import {Controller} from "react-hook-form";
 import {DatePicker} from "antd";
 import moment from "moment";
-import {imageRoute} from "../../../utils";
 import {DATETIME_FORMAT} from "../../../constants";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function DurationTime(props: any) {
   const classes = useStyles();
@@ -13,19 +13,17 @@ function DurationTime(props: any) {
   const [ startTime, setStartTime ] = useState<Date | null>(null);
   const [ finishTime, setFinishTime ] = useState<Date | null>(null);
   const [ releaseTime, setReleaseTime ] = useState<Date | null>(null);
-
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
+    register, setValue, getValues, clearErrors, errors, handleSubmit, control,
     poolDetail,
-    renderError
   } = props;
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail) {
       if (poolDetail.start_time) {
         setValue('start_time', moment(poolDetail.start_time, DATETIME_FORMAT));
       }
-
       if (poolDetail.finish_time) {
         setValue('finish_time', moment(poolDetail.finish_time, DATETIME_FORMAT));
       }
@@ -41,12 +39,12 @@ function DurationTime(props: any) {
     }
   }, [poolDetail]);
 
-  const handleDatePicking = (datePicker: string, selectedDate: Date | Date[]) => {
-    if (selectedDate) {
-      clearErrors(datePicker);
-    };
-    setValue(datePicker, selectedDate);
-  };
+  // const handleDatePicking = (datePicker: string, selectedDate: Date | Date[]) => {
+  //   if (selectedDate) {
+  //     clearErrors(datePicker);
+  //   };
+  //   setValue(datePicker, selectedDate);
+  // };
 
   return (
     <>
@@ -54,11 +52,17 @@ function DurationTime(props: any) {
       <div className={classes.formControlFlex}>
         <div className={classes.formControlFlexBlock}>
           <label className={classes.formControlLabel}>Start Join Pool Time</label>
-          <div style={{marginBottom: 15}}>
+          <div style={{marginBottom: 25}}>
             <Controller
               control={control}
               rules={{
-                required: true
+                required: true,
+                validate: {
+                  // greaterOrEqualToday: (value) => {
+                  //   console.log(value);
+                  //   return new Date(value) >= new Date();
+                  // },
+                }
               }}
               name="start_join_pool_time"
               render={(field) => {
@@ -87,11 +91,44 @@ function DurationTime(props: any) {
 
         <div className={classes.formControlFlexBlock}>
           <label className={classes.formControlLabel}>End Join Pool Time</label>
-          <div style={{marginBottom: 15}}>
+          <div style={{marginBottom: 25}}>
             <Controller
               control={control}
               rules={{
-                required: true
+                required: true,
+                validate: {
+                  greateOrEqualStartJoinPoolTime: value => {
+                    const startTime = getValues('start_join_pool_time');
+                    const valueUnix = moment(value).unix();
+                    const startTimeUnix = moment(startTime).unix();
+                    console.log('Validate End Join Time', valueUnix, startTimeUnix);
+
+                    return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
+                  }
+                  // validDate: (value: string) => {
+                  //   if (timeTypeMenu === 'start time') {
+                  //     if (new Date(value) > new Date(matchedCampaign.closeTime * 1000)) {
+                  //       return 'The start time must before finish time.';
+                  //     } else if (new Date(value) >= new Date(matchedCampaign.releaseTime * 1000)) {
+                  //       return 'The start time must before release time.';
+                  //     }
+                  //   } else if (timeTypeMenu === 'finish time') {
+                  //     if (new Date(value) < new Date(matchedCampaign.startTime * 1000)) {
+                  //       return 'The finish time must after start time.';
+                  //     } else if (new Date(value) >= new Date(matchedCampaign.releaseTime * 1000)) {
+                  //       return 'The finish time must before release time.';
+                  //     }
+                  //   } else if (timeTypeMenu === 'release time') {
+                  //     if (new Date(value) < new Date(matchedCampaign.closeTime * 1000)) {
+                  //       return 'The release time must after finish time.';
+                  //     } else if (new Date(value) < new Date(matchedCampaign.startTime * 1000)) {
+                  //       return 'The release time must after start time.';
+                  //     }
+                  //   }
+                  //
+                  //   return true;
+                  // }
+                }
               }}
               name="end_join_pool_time"
               render={(field) => {
@@ -158,7 +195,17 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true
+                required: true,
+                validate: {
+                  greateOrEqualStartTime: value => {
+                    const startTime = getValues('start_time');
+                    const valueUnix = moment(value).unix();
+                    const startTimeUnix = moment(startTime).unix();
+                    console.log('Validate Finish Time', valueUnix, startTimeUnix);
+
+                    return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
+                  }
+                }
               }}
               name="finish_time"
               render={(field) => {
@@ -213,7 +260,17 @@ function DurationTime(props: any) {
           <Controller
             control={control}
             rules={{
-              required: true
+              required: true,
+              validate: {
+                greaterOrEqualFinishTime: value => {
+                  const startTime = getValues('finish_time');
+                  const valueUnix = moment(value).unix();
+                  const startTimeUnix = moment(startTime).unix();
+                  console.log('Validate Claim Time', valueUnix, startTimeUnix);
+
+                  return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
+                }
+              }
             }}
             name="release_time"
             render={(field) => {

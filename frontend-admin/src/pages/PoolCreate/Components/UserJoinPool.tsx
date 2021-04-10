@@ -1,22 +1,21 @@
 import React, {useEffect, useState} from 'react';
 import useStyles from "../style";
-import {Tabs} from 'antd';
 import UserParticipant from "./UserParticipant";
 import UserWinner from "./UserWinner";
 import {getParticipantUser, getWinnerUser} from "../../../request/participants";
 
+import {Tabs} from 'antd';
 const { TabPane } = Tabs;
-
 function callback(key: any) {
   console.log(key);
 }
 
-function UserJoinPool(props: any) {
+const UserJoinPool = (props: any) => {
   const classes = useStyles();
   const {
     register, setValue, clearErrors, errors, handleSubmit, control,
     poolDetail,
-    renderError
+    renderError,
   } = props;
 
   const [winners, setWinners] = useState([]);
@@ -61,16 +60,16 @@ function UserJoinPool(props: any) {
           }
         </TabPane>
         <TabPane tab="Reserve" key="3">
-          {/*{winners && winners.length > 0 &&*/}
-          {/*<UserWinner*/}
-          {/*  users={winners}*/}
-          {/*/>*/}
-          {/*}*/}
+          {winners && winners.length > 0 &&
+            <UserWinner
+              users={winners}
+            />
+          }
         </TabPane>
       </Tabs>
 
     </>
   );
-}
+};
 
 export default UserJoinPool;

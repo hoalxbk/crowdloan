@@ -75,6 +75,11 @@ class WebhookSeeder {
         url: 'webhook/ico-campaign',
       },
       {
+        contract_name: Const.CONTRACTS.CAMPAIGNFACTORY,
+        type: 'PoolCreated',
+        url: 'webhook/ico-campaign',
+      },
+      {
         contract_name: Const.CONTRACTS.ETHLINK,
         type: 'NewCampaign',
         url: 'webhook/affiliate-campaign',

@@ -25,27 +25,27 @@ const ErrorFactory = use('App/Common/ErrorFactory');
 
 class ParticipantController {
 
-  async getParticipantUsers({ request, params }) {
-    const users = await WhitelistUser.query()
-      .where('campaign_id', params.campaign_id)
-      .fetch();
-
-    return {
-      status: 200,
-      data: users,
-    }
-  }
-
-  async getWinnerUsers({ request, params }) {
-    const users = await WinnerListUser.query()
-      .where('campaign_id', params.campaign_id)
-      .fetch();
-
-    return {
-      status: 200,
-      data: users,
-    }
-  }
+  // async getParticipantUsers({ request, params }) {
+  //   const users = await WhitelistUser.query()
+  //     .where('campaign_id', params.campaign_id)
+  //     .fetch();
+  //
+  //   return {
+  //     status: 200,
+  //     data: users,
+  //   }
+  // }
+  //
+  // async getWinnerUsers({ request, params }) {
+  //   const users = await WinnerListUser.query()
+  //     .where('campaign_id', params.campaign_id)
+  //     .fetch();
+  //
+  //   return {
+  //     status: 200,
+  //     data: users,
+  //   }
+  // }
 }
 
 module.exports = ParticipantController

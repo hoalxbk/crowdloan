@@ -7,6 +7,7 @@ module.exports = {
   limit_default: 10,
   page_default: 1,
   decimal_default: 18,
+
   event_by_token: 'TokenPurchaseByToken',
   event_by_ether: 'TokenPurchaseByEther',
   event_by_eth_with_eth: 'TokenPurchaseByEtherWithEthLink',
@@ -19,6 +20,7 @@ module.exports = {
   TokenPurchaseByEtherWithEthLink: 'buyWithEtherWithETHLink',
   RefundedTokenForIcoWhenEndIco: 'Refund',
   TokenClaimed: 'TokenClaimed',
+
   suspend: 'suspend',
   active: 'active',
   processing: 'processing',
