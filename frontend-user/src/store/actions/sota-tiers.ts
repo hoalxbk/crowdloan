@@ -81,10 +81,6 @@ export const getUserInfo = (address: string) => {
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-<<<<<<< HEAD
-      const connector  = getState().connector.data;
-      const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
-=======
       const { connector } = getState().connector.data;
       const contract = getContractInstance(
         sotaTiersABI.abi,
@@ -92,7 +88,6 @@ export const getUserInfo = (address: string) => {
         connector,
         appChainID
       );
->>>>>>> 1e03c9e24e468baf92c8bc550dcf1afb39502838
 
       let result = await contract?.methods.userInfo(address).call();
       const staked = convertFromWei(result.staked)
@@ -213,11 +208,7 @@ export const getWithdrawPercent = () => {
     dispatch({ type: sotaTiersActions.WITHDRAW_PERCENT_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-<<<<<<< HEAD
-      const connector = getState().connector.data;
-=======
       const { connector } = getState().connector.data || "Metamask";
->>>>>>> 1e03c9e24e468baf92c8bc550dcf1afb39502838
       let result = {};
       let data = [];
 
