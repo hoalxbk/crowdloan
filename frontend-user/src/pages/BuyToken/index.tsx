@@ -41,6 +41,7 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   const { id } = useParams() as any;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
+  console.log(poolDetails);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
   const tokenDetails = {
      decimals: 18, name: 'Dyrus', symbol: 'DYRUS', address: '0xb9d089545cc4bbbfcd3b5a9e4e52550960790693' 
@@ -49,6 +50,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const { tokenBalance } = useTokenBalance(tokenDetails, connectedAccount);
   const { approveToken, tokenApproveLoading } = useTokenApprove(tokenDetails, connectedAccount, "0x954e1498272113b759a65cb83380998fe80f5264")
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
+  console.log(poolDetailsMapping);
 
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 

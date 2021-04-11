@@ -11,7 +11,7 @@ const useStyles = makeStyles((theme: any) => {
       borderRadius: 60,
       cursor: 'pointer',
       transition: '.2s all ease-in',
-      width: 160,
+      width: 180,
 
       '&:focus': {
         outline: 'none',

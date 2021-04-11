@@ -24,7 +24,7 @@ const useTokenDetails = (address: string) => {
     const fetchTokenDetails = async (address: string) => {
       setTokenDetailsLoading(true);
 
-      const contract = getContractInstance(ERC20_ABI, "0x954e1498272113b759a65cb83380998fe80f5264", connector, appChainID, SmartContractMethod.Read);
+      const contract = getContractInstance(ERC20_ABI, address, connector, appChainID, SmartContractMethod.Read);
 
       if (contract) {
         const symbolCall = contract.methods.symbol().call();

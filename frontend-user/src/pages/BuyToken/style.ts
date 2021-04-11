@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme: any) => {
   return {
     poolDetailContainer: {
-
+      padding: '40px 120px 80px 120px'
     },
     poolDetailHeader: {
       display: 'flex',

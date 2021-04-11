@@ -20,7 +20,7 @@ export type PoolDetailsReturnType ={
 const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const [poolDetailDone, setPoolDetailDone] = useState<boolean>(false);
   const { loading, error, data }  = useFetch<any>(`/pool/${poolId}`);
-  const { tokenDetails } = useTokenDetails(data ? data.token: '');
+  const { tokenDetails } = useTokenDetails("0xb9d089545cc4bbbfcd3b5a9e4e52550960790693");
 
   const poolDetails = useMemo(() => {
     if (data && !loading && !error && tokenDetails && poolDetailDone)  {
