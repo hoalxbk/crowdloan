@@ -25,6 +25,9 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     // The address of factory contract
     address public factory;
 
+    // The address of signer account
+    address public signer;
+
     // Address where funds are collected
     address public fundingWallet;
 
@@ -39,9 +42,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
 
     // Amount of token sold
     uint256 public tokenSold = 0;
-
-    // Token limit amount user can buy each tier
-    uint256[MAX_NUM_TIERS] public tierLimitBuy;
 
     // Number of token user purchased
     mapping(address => uint256) public userPurchased;
@@ -113,8 +113,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
      * @param _offeredCurrency Address of offered token
      * @param _offeredCurrencyDecimals Decimals of offered token
      * @param _offeredRate Number of currency token units a buyer gets
-     * @param _tierLimitBuy Array of max token user can buy each tiers
      * @param _wallet Address where collected funds will be forwarded to
+     * @param _signer Address where collected funds will be forwarded to
      */
     function initialize(
         address _token,
@@ -123,18 +123,18 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         address _offeredCurrency,
         uint256 _offeredRate,
         uint256 _offeredCurrencyDecimals,
-        uint256[MAX_NUM_TIERS] calldata _tierLimitBuy,
-        address _wallet
+        address _wallet,
+        address _signer
     ) external {
         require(msg.sender == factory, "POOL::UNAUTHORIZED");
 
         token = IERC20(_token);
         openTime = _openTime;
         closeTime = _openTime.add(_duration);
-        tierLimitBuy = _tierLimitBuy;
         fundingWallet = _wallet;
         owner = tx.origin;
         paused = false;
+        signer = _signer;
 
         offeredCurrencies[_offeredCurrency] = OfferedCurrency({
             rate: _offeredRate,
@@ -204,18 +204,6 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     }
 
     /**
-     * @notice Owner can set the limit token amount each tier can buy.
-     * @param _tierLimitBuy array of ascending limit token buy-able amount
-     */
-    function setTierLimitBuy(uint256[MAX_NUM_TIERS] calldata _tierLimitBuy)
-        public
-        onlyOwner
-    {
-        tierLimitBuy = _tierLimitBuy;
-        emit PoolStatsChanged();
-    }
-
-    /**
      * @notice Owner can set the close time (time in seconds). User can buy before close time.
      * @param _closeTime Value in uint256 determine when we stop user to by tokens
      */
@@ -261,6 +249,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
 
+        require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
+
         _deliverTokens(_beneficiary, tokens);
 
         _forwardFunds(weiAmount);
@@ -286,6 +276,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         _preValidatePurchase(_beneficiary, _amount);
 
         uint256 tokens = _getOfferedCurrencyToTokenAmount(_token, _amount);
+
+        require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -362,7 +354,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
      */
     function _deliverTokens(address _beneficiary, uint256 _tokenAmount)
         internal
-    {
+    {   
         token.transfer(_beneficiary, _tokenAmount);
         userPurchased[_beneficiary] = userPurchased[_beneficiary].add(
             _tokenAmount
@@ -443,7 +435,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         bytes memory _signature
     ) private view returns (bool) {
         if (useWhitelist) {
-            return (verify(owner, _candidate, _maxAmount, _signature));
+            return (verify(signer, _candidate, _maxAmount, _signature));
         }
         return true;
     }

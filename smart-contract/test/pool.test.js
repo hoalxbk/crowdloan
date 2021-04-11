@@ -78,7 +78,7 @@ describe('Pool', function () {
       0,
     ];
     // Register new pool
-    await poolFactory.registerPool(icoToken.address, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet);
+    await poolFactory.registerPool(icoToken.address, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet, wallet);
 
     const poolAddress = await poolFactory.allPools(0);
 
