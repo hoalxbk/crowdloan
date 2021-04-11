@@ -16,6 +16,8 @@ const Tiers = (props: any) => {
 
   const {
     showMoreInfomation = false,
+    tiersBuyLimit,
+    tokenSymbol
   } = props;
 
   const [currentProcess, setCurrentProcess] = useState(0)
@@ -62,7 +64,7 @@ const Tiers = (props: any) => {
                 <img src={TIERS[idx + 1].icon} />
               </div>
               <span className="tier-name">{TIERS[idx + 1].name}</span>
-              { showMoreInfomation && <span>{ convertFromWei(tier) }</span> }
+              { showMoreInfomation && <span>{tiersBuyLimit[idx]} {tokenSymbol}</span> }
             </li>
           }
         })}

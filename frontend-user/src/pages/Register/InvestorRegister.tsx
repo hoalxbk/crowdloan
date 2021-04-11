@@ -12,11 +12,14 @@ import {publicRoute} from "../../utils";
 import InvestorLayout from "../InvestorLayout/InvestorLayout";
 import TextTitle from "../InvestorLayout/TextTitle";
 import ConnectYourWallet from "../InvestorLayout/ConnectYourWallet";
+import useStyles from './style'
+import Logo from '../InvestorLayout/Logo'
 
 const EMAIL_REGEX = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const InvestorRegister: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
+  const styles = useStyles();
 
   const [loadingUserExists, setLoadingUserExists] = useState(false);
   const [userExists, setUserExists] = useState(false);
@@ -108,13 +111,14 @@ const InvestorRegister: React.FC<any> = (props: any) => {
         return (
           <>
             <div className="login__logo-ether-title">
+              <Logo></Logo>
               <TextTitle>
                 Create An Account
               </TextTitle>
             </div>
-            <form onSubmit={handleSubmit(handleFormSubmit)} className="login__form">
+            <form onSubmit={handleSubmit(handleFormSubmit)} className={styles.loginForm}>
               <TextField id="standard-secondary" value={ethAddress} label="Current Ethereum Address" color="secondary" className="login__form-field" disabled />
-              <>
+              <div>
                 <TextField
                   label="Email *"
                   name="email"
@@ -139,9 +143,7 @@ const InvestorRegister: React.FC<any> = (props: any) => {
                     errors.email && errors.email.type !== 'required' ? errors.email.message: renderErrorRequired(errors, 'email')
                   }
                 </p>
-              </>
-              <Link className="login__form-desc login__form-forgot-password" to={publicRoute('/login')}>Sign in ?</Link>
-              <br/>
+              </div>
 
               <Button
                 label={'Sign up'}
@@ -150,7 +152,10 @@ const InvestorRegister: React.FC<any> = (props: any) => {
                 loading={userRegisterLoading || investorLoginLoading}
                 disabled={userRegisterLoading || investorLoginLoading}
               />
-
+              <div className="signup">
+                <span>Have an account ?&nbsp;</span>
+                <Link className="login__form-desc login__form-forgot-password" to={publicRoute('/login')}>Sign in ?</Link>
+              </div>
             </form>
           </>
         )

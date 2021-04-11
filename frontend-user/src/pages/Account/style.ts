@@ -16,7 +16,8 @@ const useStyles = makeStyles((theme: any) => {
     accountContainer: {
       display: 'grid',
       gridTemplateColumns: '1fr 440px',
-      gap: '100px'
+      gap: '100px',
+      padding: '80px'
     },
     leftPanel: {
     },

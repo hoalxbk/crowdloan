@@ -22,7 +22,6 @@ const ManageTier = (props: any) => {
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = {} } = useSelector((state: any) => state.balance);
 
-
   const { 
     classNamePrefix = '',
   } = props;
@@ -35,15 +34,16 @@ const ManageTier = (props: any) => {
 
   useEffect(() => {
     if(!loadedWithdrawPercent) {
-      dispatch(getWithdrawPercent());
+      /* dispatch(getWithdrawPercent()); */
       setLoadedWithdrawPercent(true)
     }
   })
 
   useEffect(() => {
+    // if(!_.isEmpty(userInfo) && !_.isEmpty(withdrawFee)) return
     dispatch(getWithdrawFee(loginInvestor.wallet_address, userInfo.staked));
     setPenaltyPercent(Math.round(parseFloat(withdrawFee) * 100 / parseFloat(userInfo.staked)))
-  }, [withdrawFee, userInfo, withdrawFee])
+  }, [withdrawFee, userInfo])
 
   useEffect(() => {
     if(depositing == false) setOpenModalDeposit(false)

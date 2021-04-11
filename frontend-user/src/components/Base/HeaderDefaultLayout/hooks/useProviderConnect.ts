@@ -12,6 +12,7 @@ import { ConnectorNames } from '../../../../constants/connectors';
 import { APP_NETWORKS_ID, ETH_CHAIN_ID, BSC_CHAIN_ID } from '../../../../constants/network';
 import { requestSupportNetwork } from '../../../../utils/setupNetwork';
 import { connectWalletSuccess, disconnectWallet } from '../../../../store/actions/wallet';
+import getAccountBalance from '../../../../utils/getAccountBalance';
 
 import { settingAppNetwork, NetworkUpdateType, settingCurrentConnector } from '../../../../store/actions/appNetwork';
 
@@ -38,8 +39,6 @@ const useProviderConnect = (
   const [loginError, setLoginError] = useState('');
 
   const {activate, active, connector, chainId, error, account: connectedAccount} = useWeb3React();
-
-  console.log(walletNameSuccess);
 
   const previousAccount = usePrevious(account);
   const activePrevious = usePrevious(active);
@@ -170,22 +169,6 @@ const useProviderConnect = (
         if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
           connector.walletConnectProvider = undefined;
         }
-        // if (connector && walletName === ConnectorNames.Fortmatic) {
-
-        //   await activate(connector, undefined, true)
-        //   .then(() => { 
-        //     dispatch(settingCurrentConnector(walletName));
-        //     setWalletNameSuccess(walletName);
-        //   })
-        //   .catch(err => {
-        //     if (error instanceof UnsupportedChainIdError) {
-        //       activate(connector);
-        //     } else {
-        //       console.log(err.message);
-        //     }
-        //   });
-
-        // }
 
         if (connector && walletName) {
           if (wallet === ConnectorNames.Fortmatic) {
@@ -225,17 +208,7 @@ const useProviderConnect = (
   useEffect(() => {
     const getAccountDetails = async () => {
       if (appChainID && connectedAccount && walletNameSuccess) {
-        const exactNetwork = appChainID === walletChainID;
-
-        const provider = 
-         appChainID === ETH_CHAIN_ID 
-           ? new ethers.providers.InfuraProvider(ETH_NETWORK_NAME, INFURA_KEY)
-           : new ethers.providers.JsonRpcProvider(BSC_RPC_URL);
-
-        const accountBalance = exactNetwork 
-          ? await provider.getBalance(connectedAccount)
-          : { _hex: '0x00' }
-
+        const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, walletNameSuccess);
 
         dispatch(
           connectWalletSuccess(

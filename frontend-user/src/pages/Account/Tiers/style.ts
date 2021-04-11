@@ -7,6 +7,7 @@ const useStyles = makeStyles((theme: any) => {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: '20px',
+      width: 560,
 
       '& p': {
         fontFamily: 'Helvetica',
@@ -72,7 +73,7 @@ const useStyles = makeStyles((theme: any) => {
         alignItems: 'flex-end'
       },
 
-      '&:first-child': {
+      '&:nth-child(2)': {
         alignItems: 'flex-start'
       },
 
