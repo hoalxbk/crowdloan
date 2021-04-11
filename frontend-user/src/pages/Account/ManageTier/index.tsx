@@ -34,7 +34,7 @@ const ManageTier = (props: any) => {
 
   useEffect(() => {
     if(!loadedWithdrawPercent) {
-      dispatch(getWithdrawPercent());
+      /* dispatch(getWithdrawPercent()); */
       setLoadedWithdrawPercent(true)
     }
   })
