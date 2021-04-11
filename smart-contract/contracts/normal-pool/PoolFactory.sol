@@ -88,8 +88,8 @@ contract PoolFactory is Ownable, Pausable, Initializable {
      * @param _offeredCurrency Address of offered token
      * @param _offeredCurrencyDecimals Decimals of offered token
      * @param _offeredRate Conversion rate for buy token. tokens = value * rate
-     * @param _tierLimitBuy Array of max token user can buy each tiers
      * @param _wallet Address of funding ICO wallets. Sold tokens in eth will transfer to this address
+     * @param _signer Address of funding ICO wallets. Sold tokens in eth will transfer to this address
      */
     function registerPool(
         address _token,
@@ -98,8 +98,8 @@ contract PoolFactory is Ownable, Pausable, Initializable {
         address _offeredCurrency,
         uint256 _offeredCurrencyDecimals,
         uint256 _offeredRate,
-        uint256[MAX_NUM_TIERS] memory _tierLimitBuy,
-        address _wallet
+        address _wallet,
+        address _signer
     ) external whenNotPaused returns (address pool) {
         require(_token != address(0), "ICOFactory::ZERO_ADDRESS");
         require(_duration != 0, "ICOFactory::ZERO_DURATION");
@@ -119,8 +119,8 @@ contract PoolFactory is Ownable, Pausable, Initializable {
             _offeredCurrency,
             _offeredRate,
             _offeredCurrencyDecimals,
-            _tierLimitBuy,
-            _wallet
+            _wallet,
+            _signer
         );
         getPools[msg.sender][_token].push(pool);
         allPools.push(pool);

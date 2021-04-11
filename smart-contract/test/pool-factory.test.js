@@ -90,7 +90,7 @@ describe('Pool Factory', function () {
       0,
     ];
     const wallet = accounts[1];
-    await poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet);
+    await poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet, wallet);
 
     // Get pool length
     const poolLength = await poolFactory.allPoolsLength();
@@ -128,7 +128,7 @@ describe('Pool Factory', function () {
     ];
     const wallet = accounts[1];
 
-    await expect(poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet)).to.be.reverted;
+    await expect(poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet, wallet)).to.be.reverted;
   });
 
   // DURATION == 0
@@ -153,7 +153,7 @@ describe('Pool Factory', function () {
     ];
     const wallet = accounts[1];
 
-    await expect(poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet)).to.be.reverted;
+    await expect(poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet, wallet)).to.be.reverted;
   });
 
   // WALLET == address(0)
@@ -178,7 +178,7 @@ describe('Pool Factory', function () {
     ];
     const wallet = '0x0000000000000000000000000000000000000000';
 
-    await expect(poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet)).to.be.reverted;
+    await expect(poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet, wallet)).to.be.reverted;
   });
   // SUSPENDING STATUS
 
@@ -216,6 +216,7 @@ describe('Pool Factory', function () {
         offeredCurrencyRate,
         offeredCurrencyDecimals,
         tierLimitBuy,
+        wallet,
         wallet,
       ),
     ).to.be.reverted;
