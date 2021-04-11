@@ -7,6 +7,7 @@ import PoolForm from "./PoolForm";
 import {getPoolDetail} from "../../request/pool";
 import moment from "moment";
 import {DATETIME_FORMAT} from "../../constants";
+import BackButton from "../../components/Base/ButtonLink/BackButton";
 
 const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   const isEdit = true;
@@ -31,18 +32,13 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
       });
   }, [id]);
 
-  const goBack = () => {
-    const { history } = props;
-    history.goBack();
-  };
-
   return (
     <DefaultLayout>
-      <ButtonLink onClick={goBack} spacing={6} to={adminRoute('/campaigns')} text="Back" icon="icon-arrow-left.svg" />
-        <PoolForm
-          isEdit={isEdit}
-          poolDetail={poolDetail}
-        />
+      <BackButton to={adminRoute('/campaigns')}/>
+      <PoolForm
+        isEdit={isEdit}
+        poolDetail={poolDetail}
+      />
     </DefaultLayout>
   )
 }

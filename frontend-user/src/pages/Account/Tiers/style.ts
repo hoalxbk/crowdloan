@@ -73,7 +73,7 @@ const useStyles = makeStyles((theme: any) => {
         alignItems: 'flex-end'
       },
 
-      '&:first-child': {
+      '&:nth-child(2)': {
         alignItems: 'flex-start'
       },
 

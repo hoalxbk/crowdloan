@@ -5,6 +5,8 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Controller } from "react-hook-form";
+import {getParticipantUser} from "../../../request/participants";
+import {getTiers} from "../../../request/tier";
 
 function AcceptCurrency(props: any) {
   const classes = useStyles();
@@ -20,6 +22,15 @@ function AcceptCurrency(props: any) {
     }
   }, [poolDetail]);
 
+  useEffect(() => {
+    if (poolDetail && poolDetail.id) {
+      getTiers(poolDetail.id)
+        .then((res) => {
+          // setPartipants(res.data);
+        });
+    }
+  }, [poolDetail]);
+
   return (
     <>
       <div className={classes.formControl}>
@@ -29,14 +40,10 @@ function AcceptCurrency(props: any) {
           <Controller
             rules={{ required: true }}
             control={control}
-            defaultValue="eth"
+            defaultValue="usdt"
             name="acceptCurrency"
             as={
               <RadioGroup row>
-                <FormControlLabel
-                  value="eth" control={<Radio />}
-                  label="Ether"
-                />
                 <FormControlLabel
                   value="usdt" control={<Radio />}
                   label="USDT"
@@ -44,6 +51,10 @@ function AcceptCurrency(props: any) {
                 <FormControlLabel
                   value="usdc" control={<Radio />}
                   label="USDC"
+                />
+                <FormControlLabel
+                  value="eth" control={<Radio />}
+                  label="Ether"
                 />
               </RadioGroup>
             }

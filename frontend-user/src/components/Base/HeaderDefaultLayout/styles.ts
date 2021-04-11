@@ -83,6 +83,11 @@ const useStyles = makeStyles((theme) => {
       background: '#3232DC',
       borderRadius: '8px',
       display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      border: 'none',
+      outline: 'none',
+      padding: '0 15px',
       height: 42,
     },
     btnAccount: {

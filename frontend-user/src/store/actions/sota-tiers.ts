@@ -15,7 +15,7 @@ export const getTiers = () => {
       const connector  = getState().connector.data;
 
       const contract = getContractInstance(
-        sotaTiersABI.abi, 
+        sotaTiersABI.abi,
         process.env.REACT_APP_SOTATIER as string,
         connector, 
         appChainID,
@@ -67,6 +67,7 @@ export const getUserTier = (address: string) => {
       });
 
     } catch (error) {
+      console.log(error)
       dispatch({
         type: sotaTiersActions.USER_TIER_FAILURE,
         payload: error
@@ -80,8 +81,18 @@ export const getUserInfo = (address: string) => {
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
+<<<<<<< HEAD
       const connector  = getState().connector.data;
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
+=======
+      const { connector } = getState().connector.data;
+      const contract = getContractInstance(
+        sotaTiersABI.abi,
+        process.env.REACT_APP_SOTATIER as string,
+        connector,
+        appChainID
+      );
+>>>>>>> 1e03c9e24e468baf92c8bc550dcf1afb39502838
 
       let result = await contract?.methods.userInfo(address).call();
       const staked = convertFromWei(result.staked)
@@ -127,6 +138,7 @@ export const deposit = (address: string, amount: string) => {
         payload: result,
       });
     } catch (error) {
+      console.log(error)
       dispatch({
         type: sotaTiersActions.DEPOSIT_FAILURE,
         payload: error
@@ -158,6 +170,7 @@ export const withdraw = (address: string, amount: string) => {
       });
 
     } catch (error) {
+      console.log(error)
       dispatch({
         type: sotaTiersActions.WITHDRAW_FAILURE,
         payload: error
@@ -185,6 +198,7 @@ export const getWithdrawFee = (address: string, amount: string) => {
       });
 
     } catch (error) {
+      console.log(error)
       dispatch({
         type: sotaTiersActions.WITHDRAW_FEE_FAILURE,
         payload: error
@@ -194,12 +208,16 @@ export const getWithdrawFee = (address: string, amount: string) => {
 };
 
 
-export const getWithdrawPercent = (address: string, amount: string) => {
+export const getWithdrawPercent = () => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_PERCENT_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
+<<<<<<< HEAD
       const connector = getState().connector.data;
+=======
+      const { connector } = getState().connector.data || "Metamask";
+>>>>>>> 1e03c9e24e468baf92c8bc550dcf1afb39502838
       let result = {};
       let data = [];
 

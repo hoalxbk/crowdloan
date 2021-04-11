@@ -9,6 +9,7 @@ import ButtonLink from '../../components/Base/ButtonLink';
 import {useCommonStyle} from '../../styles';
 import {adminRoute} from "../../utils";
 import {getAdminDetail} from "../../request/admin";
+import BackButton from "../../components/Base/ButtonLink/BackButton";
 
 interface MatchParams {
   id: string;
@@ -48,9 +49,7 @@ const AdminEdit: React.FC<RouteComponentProps<MatchParams>> = (props: RouteCompo
     <DefaultLayout>
       <div className={commonStyle.headPage}>
         <div className={commonStyle.headPageLeft}>
-          <ButtonLink to={adminRoute('/admins')} text="Back" icon="icon-arrow-left.svg">
-            <img className="icon-back" src="/images/icon-arrow-left.svg" alt=""/>Back
-          </ButtonLink>
+          <BackButton to={adminRoute('/admins')}/>
         </div>
       </div>
       <div className="contentPage">

@@ -6,7 +6,7 @@ import erc20ABI from '../../abi/Erc20.json';
 import BigNumber from "bignumber.js";
 
 export const getBalance = (loginUser: string) => {
-  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: balanceActions.BALANCE_LOADING });
     try {
       const web3Instance = getWeb3Instance();
@@ -18,8 +18,15 @@ export const getBalance = (loginUser: string) => {
           eth: convertFromWei(ethBalance),
         }
       }
+      const { appChainID } = getState().appNetwork.data;
+      const { connector } = getState().connector.data;
 
-      const sotaContract = getContractInstance(erc20ABI, process.env.REACT_APP_SOTA as string);
+      const sotaContract = getContractInstance(
+        erc20ABI,
+        process.env.REACT_APP_SOTA as string,
+        connector,
+        appChainID
+      );
       if (sotaContract) {
         const sotaDecimals = await sotaContract.methods.decimals().call();
         const sotaBalance = await sotaContract.methods.balanceOf(loginUser).call();

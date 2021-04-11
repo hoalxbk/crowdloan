@@ -3,9 +3,12 @@
 const CampaignModel = use('App/Models/Campaign');
 const Tier = use('App/Models/Tier');
 const CampaignService = use('App/Services/CampaignService');
+const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
 const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
+const RedisUtils = use('App/Common/RedisUtils');
+const Redis = use('Redis');
 
 const CONFIGS_FOLDER = '../../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -63,14 +66,20 @@ class CampaignController {
   async icoCampaignCreate( {request}) {
     try{
       const param = request.all();
-      if(param.event != Config.get('const.event_ico_create_campaign') && param.event != Config.get('const.event_ico_create_eth_link'))
-        return ErrorFactory.badRequest('event not found')
-      const contract = new web3.eth.Contract(CONTRACT_ABI, param.params.campaign);
+      console.log('[Webhook] - Create Pool with params: ', param);
+
+      if(param.event != Const.CRAWLER_EVENT.POOL_CREATED) {
+        return ErrorFactory.badRequest('Event Name is invalid');
+      }
+
+      const campaignHash = param.params.pool;
+      const token = param.params.token;
+      const contract = new web3.eth.Contract(CONTRACT_ABI, campaignHash);
       const receipt = await Promise.all([
         contract.methods.openTime().call(),
         contract.methods.closeTime().call(),
         contract.methods.name().call(),
-        contract.methods.getErc20TokenConversionRate(param.params.token).call(),
+        contract.methods.getErc20TokenConversionRate(token).call(),
         contract.methods.getEtherConversionRate().call(),
         contract.methods.getEtherConversionRateDecimals().call(),
         contract.methods.fundingWallet().call(),
@@ -78,16 +87,19 @@ class CampaignController {
       ]);
       const findCampaign = await CampaignModel.query()
         .where(function () {
-          this.where('campaign_hash', '=', param.params.campaign)
+          this.where('campaign_hash', '=', campaignHash)
             .orWhere('transaction_hash', '=', param.txHash)
         })
         .first();
-      const contractFactory = new web3.eth.Contract(CONTRACT_ERC20_ABI, param.params.token);
+
+      console.log('Find Campaign: ', JSON.stringify(findCampaign));
+
+      const contractERC20 = new web3.eth.Contract(CONTRACT_ERC20_ABI, token);
       // TODO: Check to remove this
       const receiptData = await Promise.all([
-        contractFactory.methods.name().call(),
-        contractFactory.methods.decimals().call(),
-        contractFactory.methods.symbol().call(),
+        contractERC20.methods.name().call(),
+        contractERC20.methods.decimals().call(),
+        contractERC20.methods.symbol().call(),
       ]);
       const CampaignSv = new CampaignService();
       let campaign = {}
@@ -100,9 +112,9 @@ class CampaignController {
         status: 200,
         data: campaign,
       };
-    }catch (e){
+    } catch (e) {
       console.log(e)
-      return ErrorFactory.badRequest("error")
+      return ErrorFactory.badRequest("error");
     }
   }
 
@@ -281,139 +293,6 @@ class CampaignController {
     }
   }
 
-  async createPool({request, auth}) {
-    const params = request.only([
-      'register_by',
-      'title', 'banner', 'description', 'address_receiver',
-      'token', 'token_by_eth', 'token_images', 'total_sold_coin',
-      'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
-      'accept_currency', 'network_available', 'buy_type', 'pool_type',
-      'min_tier', 'tier_configuration',
-    ]);
-
-    const data = {
-      'title': params.title,
-      'description': params.description,
-      'token': params.token,
-      'start_time': params.start_time,
-      'finish_time': params.finish_time,
-      'ether_conversion_rate': params.token_by_eth,
-
-      'banner': params.banner,
-      'address_receiver': params.address_receiver,
-      'token_images': params.token_images,
-      'total_sold_coin': params.total_sold_coin,
-      'release_time': params.release_time,
-      'start_join_pool_time': params.start_join_pool_time,
-      'end_join_pool_time': params.end_join_pool_time,
-      'accept_currency': params.accept_currency,
-      'network_available': params.network_available,
-      'buy_type': params.buy_type,
-      'pool_type': params.pool_type,
-      'min_tier': params.min_tier,
-    };
-
-    console.log('Create Pool with data: ', data);
-
-    try {
-      const campaign = new CampaignModel();
-      campaign.fill(data);
-      await campaign.save();
-
-      const tiers = (params.tier_configuration || []).map((item, index) => {
-        const tierObj = new Tier();
-        tierObj.fill({
-          name: item.name,
-          start_time: item.startTime,
-          end_time: item.endTime,
-          max_buy: item.maxBuy,
-        });
-        return tierObj;
-      });
-      await campaign.tiers().saveMany(tiers);
-
-      console.log('params.tier_configuration', tiers);
-
-      return HelperUtils.responseSuccess(campaign);
-    } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error')
-    }
-  }
-
-  async updatePool({ request, auth, params }) {
-    const inputParams = request.only([
-      'register_by',
-      'title', 'banner', 'description', 'address_receiver',
-      'token', 'token_by_eth', 'token_images', 'total_sold_coin',
-      'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
-      'accept_currency', 'network_available', 'buy_type', 'pool_type',
-      'min_tier', 'tier_configuration',
-    ]);
-
-    const data = {
-      'title': inputParams.title,
-      'description': inputParams.description,
-      'token': inputParams.token,
-      'start_time': inputParams.start_time,
-      'finish_time': inputParams.finish_time,
-      'ether_conversion_rate': inputParams.token_by_eth,
-
-      'banner': inputParams.banner,
-      'address_receiver': inputParams.address_receiver,
-      'token_images': inputParams.token_images,
-      'total_sold_coin': inputParams.total_sold_coin,
-      'release_time': inputParams.release_time,
-      'start_join_pool_time': inputParams.start_join_pool_time,
-      'end_join_pool_time': inputParams.end_join_pool_time,
-      'accept_currency': inputParams.accept_currency,
-      'network_available': inputParams.network_available,
-      'buy_type': inputParams.buy_type,
-      'pool_type': inputParams.pool_type,
-      'min_tier': inputParams.min_tier,
-    };
-
-    console.log('Update Pool with data: ', data, params);
-
-    try {
-      const campaign = await CampaignModel.query().where('id', params.id).first();
-      if (!campaign) {
-        return HelperUtils.responseNotFound('Pool not found');
-      }
-      await CampaignModel.query().where('id', params.id).update(data);
-
-      const tiers = (inputParams.tier_configuration || []).map((item) => {
-        const tierObj = new Tier();
-        tierObj.fill({
-          name: item.name,
-          start_time: item.startTime,
-          end_time: item.endTime,
-          max_buy: item.maxBuy,
-        });
-        return tierObj;
-      });
-      const campaignUpdated = await CampaignModel.query().where('id', params.id).first();
-      await campaignUpdated.tiers().delete();
-      await campaignUpdated.tiers().saveMany(tiers);
-
-      return HelperUtils.responseSuccess(campaign);
-    } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error')
-    }
-  }
-
-  async getPool({ request, auth, params }) {
-    const pool = await CampaignModel.query()
-      .with('tiers')
-      .where('id', params.id)
-      .first();
-
-    return {
-      status: 200,
-      data: pool,
-    }
-  }
 }
 
-module.exports = CampaignController
+module.exports = CampaignController;

@@ -42,6 +42,13 @@ export const renderErrorCreatePool = (errors: any, prop: string) => {
       case 'required': {
         return 'This field is required';
       }
+      case 'greateOrEqualStartJoinPoolTime': {
+        return 'This end join pool time must be after the start join pool time';
+      }
+      case 'greaterOrEqualEndJoinPoolTime': {
+        return 'This relase time must be after the finish time';
+      }
+
       case 'greaterOrEqualToday': {
         return `The ${errorName} must be after current date.`;
       }
@@ -51,6 +58,9 @@ export const renderErrorCreatePool = (errors: any, prop: string) => {
       case 'greaterOrEqualFinishTime': {
         return 'This relase time must be after the finish time';
       }
+
+
+
       case 'validAddress': {
         return "Address receive is invalid.";
       }
