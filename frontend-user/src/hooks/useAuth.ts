@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { useSelector } from 'react-redux';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 import { useWeb3React } from '@web3-react/core';
 
 import { connectorNames } from  '../constants/connectors';
@@ -8,13 +8,16 @@ import { WalletConnectionState } from  '../store/reducers/wallet';
 type ReturnType = {
   isAuth: boolean,
   connectedAccount: string | null | undefined;
+  wrongChain: boolean
 }
 
 const useAuth = (): ReturnType => {
-  const { active, account }  = useWeb3React();
-  const walletsInfo = useSelector((state: any) => state.wallet).entities;
+  const { active, account, chainId }  = useWeb3React();
   const [activeWallet, setActiveWallet] = useState<connectorNames | undefined>(undefined);
   const [isAuth, setIsAuth] = useState(false);
+
+  const walletsInfo = useTypedSelector(state => state.wallet).entities;
+  const { appChainID } = useTypedSelector((state: any) => state.appNetwork).data;
 
   const getCurrentActiveWallet = useCallback(() => {
     let isFound = false;
@@ -36,7 +39,7 @@ const useAuth = (): ReturnType => {
     }
   }, [active, activeWallet]);
 
-  return { isAuth, connectedAccount: account };
+  return { isAuth, connectedAccount: account, wrongChain: appChainID != chainId };
 }
 
 export default useAuth;

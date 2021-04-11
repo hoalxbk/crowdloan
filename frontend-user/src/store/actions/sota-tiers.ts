@@ -1,7 +1,7 @@
 import { sotaTiersActions } from '../constants/sota-tiers';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { getContractInstance, convertFromWei, convertToWei } from '../../services/web3';
+import { getContractInstance, convertFromWei, convertToWei, SmartContractMethod } from '../../services/web3';
 import sotaTiersABI from '../../abi/SotaTiers.json';
 import { getBalance } from './balance';
 
@@ -12,14 +12,17 @@ export const getTiers = () => {
     dispatch({ type: sotaTiersActions.TIERS_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector  = getState().connector.data;
 
       const contract = getContractInstance(
         sotaTiersABI.abi, 
         process.env.REACT_APP_SOTATIER as string,
         connector, 
-        appChainID
+        appChainID,
+        SmartContractMethod.Read
       );
+
+      console.log(contract)
 
       let result = await contract?.methods.getTiers().call();
 
@@ -50,7 +53,7 @@ export const getUserTier = (address: string) => {
     dispatch({ type: sotaTiersActions.USER_TIER_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector = getState().connector.data;
       let result = {};
 
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
@@ -77,7 +80,7 @@ export const getUserInfo = (address: string) => {
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector  = getState().connector.data;
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
 
       let result = await contract?.methods.userInfo(address).call();
@@ -107,7 +110,7 @@ export const deposit = (address: string, amount: string) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector = getState().connector.data;
       let result = {};
 
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
@@ -137,7 +140,7 @@ export const withdraw = (address: string, amount: string) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector = getState().connector.data;
       let result = {};
 
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
@@ -168,7 +171,7 @@ export const getWithdrawFee = (address: string, amount: string) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_FEE_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector = getState().connector.data;
       let result = {};
 
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
@@ -196,7 +199,7 @@ export const getWithdrawPercent = (address: string, amount: string) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_PERCENT_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector = getState().connector.data;
       let result = {};
       let data = [];
 
