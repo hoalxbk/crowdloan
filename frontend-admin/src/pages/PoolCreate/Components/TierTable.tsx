@@ -101,11 +101,6 @@ function TierTable(props: any) {
       newRows.splice(index, 1);
     }
     setRows(newRows);
-
-    // setEditData(row);
-    // setEditRow(index);
-    // setIsEdit(true);
-    // setIsOpenEditPopup(true);
   };
 
   return (

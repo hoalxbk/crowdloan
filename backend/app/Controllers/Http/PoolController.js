@@ -183,7 +183,7 @@ class PoolController {
     }
   }
 
-  async getPoolList ({request}) {
+  async getPoolList({request}) {
     const param = request.all();
     const limit = param.limit ? param.limit : Config.get('const.limit_default');
     const page = param.page ? param.page : Config.get('const.page_default');
@@ -193,7 +193,7 @@ class PoolController {
 
     try {
       // console.log(await RedisUtils.checkExistRedisPoolList(param));
-      console.log('9999999');
+      // console.log('9999999');
 
       if (await RedisUtils.checkExistRedisPoolList(param)) {
         const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
