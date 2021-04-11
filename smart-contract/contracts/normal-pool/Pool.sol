@@ -3,14 +3,13 @@ pragma solidity ^0.7.1;
 
 import "../interfaces/IERC20.sol";
 import "../interfaces/IPoolFactory.sol";
-import "../interfaces/ISotaTier.sol";
 import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../libraries/SafeMath.sol";
 import "../libraries/Pausable.sol";
-import "../extensions/SotaWhitelist.sol";
+import "../extensions/RedKiteWhitelist.sol";
 
-contract Pool is Ownable, ReentrancyGuard, Pausable, SotaWhitelist {
+contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     using SafeMath for uint256;
 
     uint256 constant MAX_NUM_TIERS = 10;

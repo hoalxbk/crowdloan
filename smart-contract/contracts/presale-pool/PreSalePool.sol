@@ -3,7 +3,6 @@ pragma solidity ^0.7.1;
 
 import "../interfaces/IERC20.sol";
 import "../interfaces/IPoolFactory.sol";
-import "../interfaces/ISotaTier.sol";
 import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../libraries/SafeMath.sol";
