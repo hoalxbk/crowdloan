@@ -24,13 +24,6 @@ function MinTier(props: any) {
     <>
       <FormControl component="fieldset">
         <label className={classes.formControlLabel}>Min Tier</label>
-        {/*<input*/}
-        {/*  type='number'*/}
-        {/*  name="minTier"*/}
-        {/*  ref={register({ required: true })}*/}
-        {/*  className={`${classes.formInputBox}`}*/}
-        {/*/>*/}
-
         <Controller
           rules={{ required: true }}
           control={control}

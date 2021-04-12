@@ -56,7 +56,7 @@ Route.group(() => {
   Route.post('/login', 'AuthAdminController.login').validator('Login').middleware('checkSignature');
   Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignature');
   Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
-  Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');;
+  Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');
   Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.get('check-token/:token', 'AdminController.checkToken');
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
@@ -116,7 +116,7 @@ Route.group(() => {
 // Public API:
 Route.get('pool/:campaignId/participants', 'WhiteListUserController.getWhiteList')
 Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
-Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
+// Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId', 'PoolController.getPool');
 Route.get('pools', 'PoolController.getPoolList');

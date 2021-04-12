@@ -27,7 +27,6 @@ import {adminRoute} from "../../utils";
 import {withRouter} from "react-router-dom";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
-import LeftCampaignDetailPage from "../CampaignDetailPage/LeftCampaignDetailPage";
 import {renderErrorCreatePool} from "../../utils/validate";
 
 function PoolForm(props: any) {
@@ -37,7 +36,8 @@ function PoolForm(props: any) {
 
   const { isEdit, poolDetail } = props;
   const [isSuspend, setIsSuspend] = useState(true);
-  const { loading } = useSelector(( state: any ) => state.campaignCreate);
+  // const { loading } = useSelector(( state: any ) => state.campaignCreate);
+  const [loading, setLoading] = useState(false);
   const [token, setToken] = useState<TokenType | null>(null);
 
   useEffect(() => {
@@ -54,72 +54,69 @@ function PoolForm(props: any) {
   });
 
   const handleFormSubmit = async (data: any) => {
-    const { title, start_time, finish_time, release_time, token: tokenAddress, addressReceiver, tokenByETH, affiliate } = data;
+    setLoading(true);
+    try {
+      const history = props.history;
+      let tierConfiguration = data.tierConfiguration || '[]';
+      tierConfiguration = JSON.parse(tierConfiguration);
+      tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
+        return {
+          ...currency,
+          currency: data.acceptCurrency,
+        };
+      });
+      const submitData = {
+        register_by: '',
 
-    const history = props.history;
+        // Pool general
+        title: data.title,
+        banner: data.banner,
+        description: data.description,
+        address_receiver: data.addressReceiver,
 
-    let tierConfiguration = data.tierConfiguration || '[]';
-    tierConfiguration = JSON.parse(tierConfiguration);
-    const submitData = {
-      register_by: '',
+        // Token
+        token: data.token,
+        token_by_eth: data.tokenByETH,
+        token_images: data.tokenImages,
+        total_sold_coin: data.totalSoldCoin,
 
-      // Pool general
-      title: data.title,
-      banner: data.banner,
-      description: data.description,
-      address_receiver: data.addressReceiver,
+        // Time
+        start_time: data.start_time && data.start_time.unix(),
+        finish_time: data.finish_time && data.finish_time.unix(),
+        release_time: data.release_time && data.release_time.unix(),
+        start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
+        end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
 
-      // Token
-      token: data.token,
-      token_by_eth: data.tokenByETH,
-      token_images: data.tokenImages,
-      total_sold_coin: data.totalSoldCoin,
+        // Types
+        accept_currency: data.acceptCurrency,
+        network_available: data.networkAvailable,
+        buy_type: data.buyType,
+        pool_type: data.poolType,
 
-      // Time
-      start_time: data.start_time && data.start_time.unix(),
-      finish_time: data.finish_time && data.finish_time.unix(),
-      release_time: data.release_time && data.release_time.unix(),
-      start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
-      end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
+        // Tier
+        min_tier: data.minTier,
+        tier_configuration: tierConfiguration,
 
-      // Types
-      accept_currency: data.acceptCurrency,
-      network_available: data.networkAvailable,
-      buy_type: data.buyType,
-      pool_type: data.poolType,
+      };
 
-      // Tier
-      min_tier: data.minTier,
-      tier_configuration: tierConfiguration,
+      let response;
+      if (isEdit) {
+        response = await updatePool(submitData, poolDetail.id);
+      } else {
+        response = await createPool(submitData);
+      }
+      setLoading(false);
 
-    };
-
-    let response;
-    if (isEdit) {
-      response = await updatePool(submitData, poolDetail.id);
-    } else {
-      response = await createPool(submitData);
+      if (response?.status === 200) {
+        dispatch(alertSuccess('Successful!'));
+        history.push(adminRoute('/campaigns'));
+      } else {
+        dispatch(alertFailure('Fail!'));
+      }
+    } catch (e) {
+      setLoading(false);
+      console.log('ERROR: ', e);
     }
-
-    if (response?.status === 200) {
-      dispatch(alertSuccess('Successful!'));
-      history.push(adminRoute('/campaigns'));
-    } else {
-      dispatch(alertFailure('Fail!'));
-    }
-
-    // dispatch(createCampaign({
-    //   title,
-    //   startTime: start_time,
-    //   finishTime: finish_time,
-    //   releaseTime: release_time,
-    //   token: tokenAddress,
-    //   tokenInfo: token,
-    //   addressReceiver,
-    //   tokenByETH,
-    //   affiliate: 'no',
-    // }, history));
-
   };
 
   const handleCampaignCreate = () => {
@@ -278,7 +275,7 @@ function PoolForm(props: any) {
                 setValue={setValue}
                 errors={errors}
                 clearErrors={clearErrors}
-                renderError={renderError}
+                // renderError={renderError}
                 control={control}
               />
             </div>

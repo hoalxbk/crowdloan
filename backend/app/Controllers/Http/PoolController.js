@@ -24,6 +24,7 @@ const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
+const moment = require('moment');
 
 class PoolController {
 
@@ -71,9 +72,10 @@ class PoolController {
         tierObj.fill({
           level: (index + 1),
           name: item.name,
-          start_time: item.startTime,
-          end_time: item.endTime,
+          start_time: moment(item.startTime).unix(),
+          end_time: moment(item.endTime).unix(),
           max_buy: item.maxBuy,
+          currency: item.currency,
         });
         return tierObj;
       });
@@ -138,9 +140,10 @@ class PoolController {
         tierObj.fill({
           level: (index + 1),
           name: item.name,
-          start_time: item.startTime,
-          end_time: item.endTime,
+          start_time: moment(item.startTime).unix(),
+          end_time: moment(item.endTime).unix(),
           max_buy: item.maxBuy,
+          currency: item.currency,
         });
         return tierObj;
       });
@@ -150,11 +153,12 @@ class PoolController {
 
       // Delete cache
       RedisUtils.deleteRedisPoolDetail(campaignId);
+      RedisUtils.deleteRedisTierList(campaignId);
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
       console.log('ERROR', e);
-      return ErrorFactory.internal('error')
+      return ErrorFactory.internal('error');
     }
   }
 

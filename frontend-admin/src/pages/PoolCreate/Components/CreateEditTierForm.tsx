@@ -65,11 +65,16 @@ function CreateEditTierForm(props: any) {
           <label className={classes.formControlLabel}>Name</label>
           <input
             type="text"
+            value={editData.name}
+            className={classes.formControlInput}
+            disabled={true}
+          />
+          <input
+            type="hidden"
             name="name"
             ref={register({ required: true })}
             maxLength={255}
             className={classes.formControlInput}
-            disabled={true}
           />
         </div>
         <p className={classes.formErrorMessage}>

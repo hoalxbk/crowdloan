@@ -111,7 +111,7 @@ const Pools: React.FC<any> = (props: any) => {
         </span>
         <span className={classes.refreshCampaignsContainer} onClick={() => handleCampaignQuery(currentPage, query, startTime, finishTime, filter)}>
           <CachedIcon className={`${classes.refreshCampaignsIcon} refreshCampaignsIcon`} />
-          <p className={classes.refreshCampaignsText}>Click to refresh campaigns</p>
+          <p className={classes.refreshCampaignsText}>Click to refresh pools</p>
         </span>
       </div>
       <TableContainer component={Paper} className={classes.tableContainer}>
