@@ -7,12 +7,18 @@ export enum WalletConnectionState {
   CONNECTED = "connected"
 }
 
+export enum TwoFactors {
+  Layer1 = "Layer1",
+  Layer2 = "Layer2"
+}
+
 type connectorNames = Extract<ConnectorNames, ConnectorNames.WalletConnect | ConnectorNames.BSC | ConnectorNames.MetaMask | ConnectorNames.Fortmatic>
 
 type WalletState =  {
   entities: { [key: string]: WalletType },
   loading: boolean,
-  error: string
+  error: string,
+  twoFactor: TwoFactors | undefined
 }
 
 const wallets = { 
@@ -61,7 +67,8 @@ const walletInitialState = Object.keys(wallets).reduce<Record<string, WalletType
 const initialState = {
   entities: walletInitialState,
   loading: false,
-  error: ''
+  error: '',
+  twoFactor: undefined
 }
 
 
@@ -98,7 +105,15 @@ export const walletReducer = (state: WalletState = initialState, action: AnyActi
           balances,
           addresses,
           connectionState: WalletConnectionState.CONNECTED
-        }})
+        }}),
+        twoFactor: TwoFactors.Layer1
+      }
+    }
+
+    case walletActions.WALLET_CONNECT_LAYER2_SUCCESS: {
+      return {
+        ...state,
+        twoFactor: TwoFactors.Layer2
       }
     }
 

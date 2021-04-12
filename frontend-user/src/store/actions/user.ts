@@ -1,10 +1,12 @@
 import {alertFailure, alertSuccess} from '../../store/actions/alert';
+import { ConnectorNames, connectorNames } from '../../constants/connectors';
 import { userActions } from '../constants/user';
 import { alertActions } from '../constants/alert';
 import { BaseRequest } from '../../request/Request';
 import { getWeb3Instance } from '../../services/web3';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { Web3Provider } from '@ethersproject/providers'
 
 type UserRegisterProps = {
   username: string;
@@ -28,9 +30,28 @@ const getMessageParams = () => {
   return [{
     type: 'string',      // Any valid solidity type
     name: 'Message',     // Any string label you want
-    value: msgSignature  // The value to sign
+    value: msgSignature // The value to sign
   }]
 }
+
+const getParamsWithConnector = (connectedAccount: string) => ({
+  [ConnectorNames.BSC]: {
+    method: 'eth_sign',
+    params: [connectedAccount, MESSAGE_INVESTOR_SIGNATURE]
+  },
+  [ConnectorNames.WalletConnect]: {
+    method: 'eth_sign',
+    params: [connectedAccount, MESSAGE_INVESTOR_SIGNATURE]
+  },
+  [ConnectorNames.Fortmatic]: {
+    method: 'eth_signTypedData',
+    params: [getMessageParams(), connectedAccount]
+  },
+  [ConnectorNames.MetaMask]: {
+    method: 'eth_signTypedData',
+    params: [getMessageParams(), connectedAccount]
+  },
+})
 
 const dispatchErrorWithMsg = (dispatch: Dispatch, action: string, msg: string) => {
   dispatch({
@@ -70,32 +91,33 @@ export const clearUserProfileUpdate = () => {
   }
 }
 
-export const login = () => {
-  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+export const login = (connectedAccount: string, library: Web3Provider) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     try {
       dispatch({
         type: userActions.INVESTOR_LOGIN_LOADING
       });
 
       const baseRequest = new BaseRequest();
-      const ethAddress = await getCurrentAccount();
+      const connector = getState().connector.data;
+      console.log(connector);
+      const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
+      console.log(paramsWithConnector);
 
-      if (ethAddress) {
-        const windowObj = window as any;
-        const { ethereum } = windowObj;
-        await ethereum.sendAsync({
-            method: 'eth_signTypedData',
-            params: [getMessageParams(), ethAddress],
-            from: ethAddress,
+      if (connectedAccount && library && paramsWithConnector) {
+        const provider = library.provider;
+        provider && (provider as any).sendAsync({
+            method: paramsWithConnector.method,
+            params: paramsWithConnector.params
         }, async function(err: Error, result: any) {
           if (err || result.error) {
-             const errMsg = err.message || result.error.message
+             const errMsg = (err.message || (err as any).error) || result.error.message
+             console.log('Error when signing message: ', errMsg);
               dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
           } else {
             const response = await baseRequest.post(`/user/login`, {
               signature: result.result,
-              // message: baseRequest.getSignatureMessage(isInvestor),
-              wallet_address: ethAddress,
+              wallet_address: connectedAccount,
             }) as any;
 
             const resObj = await response.json();

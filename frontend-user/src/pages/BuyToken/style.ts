@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolDetailTierWrapper: {
       display: 'flex',
-      justifyContent: 'center',
+      justifyContent: 'space-between',
       alignItems: 'center',
       marginTop: 30
     },
@@ -167,14 +167,16 @@ const useStyles = makeStyles((theme: any) => {
       alignItems: 'flex-start'
     },
     loader: {
-      '& .css-1isorwc': {
-        top: '50%',
-        transform: 'translateY(-50%)'
-      }
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
     },
     loaderText: {
       fontWeight: 700,
-      marginTop: 20
+      marginTop: 20,
+      color: "#999999",
+      fontSize: 16
     }
   };
 });

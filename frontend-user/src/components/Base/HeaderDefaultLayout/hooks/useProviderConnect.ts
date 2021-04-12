@@ -1,34 +1,33 @@
-import { useState, useContext, useEffect, SetStateAction, Dispatch, useCallback } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect, SetStateAction, Dispatch, useCallback } from 'react';
+import { useDispatch } from 'react-redux';
+import { useHistory } from 'react-router-dom';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
-import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
-import { AppContext, AppContextType } from '../../../../AppContext';
 
 import usePrevious from '../../../../hooks/usePrevious';
+import { useTypedSelector } from '../../../../hooks/useTypedSelector';
 import { ConnectorNames } from '../../../../constants/connectors';
 import { APP_NETWORKS_ID, ETH_CHAIN_ID, BSC_CHAIN_ID } from '../../../../constants/network';
 import { requestSupportNetwork } from '../../../../utils/setupNetwork';
 import { connectWalletSuccess, disconnectWallet } from '../../../../store/actions/wallet';
+import { TwoFactors } from '../../../../store/reducers/wallet';
 import getAccountBalance from '../../../../utils/getAccountBalance';
 
 import { settingAppNetwork, NetworkUpdateType, settingCurrentConnector } from '../../../../store/actions/appNetwork';
 
-const INFURA_KEY = process.env.REACT_APP_INFURA_KEY || "";
-const ETH_NETWORK_NAME = process.env.REACT_APP_ETH_NETWORK_NAME || "";
-const BSC_RPC_URL = process.env.REACT_APP_BSC_RPC_URL || "";
-
 const useProviderConnect = (
   setOpenConnectDialog?: Dispatch<SetStateAction<boolean>>, 
   openConnectDialog?: boolean,
-  handleError?: () => void
+  handleError?: () => void,
+  handleLogout?: () => void,
+  binanceAvailable?: boolean
 ) => {
   const dispatch = useDispatch();
 
-  const { binanceAvailable } = useContext<AppContextType>(AppContext);
-  const { appChainID, walletChainID } = useSelector((state: any) => state.appNetwork).data;
+  const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
+  const { twoFactor } = useTypedSelector(state => state.wallet);
   const [account, setAccount] = useState<string | undefined>(undefined);
 
   const [appNetworkLoading, setAppNetworkLoading] = useState(false);
@@ -38,6 +37,7 @@ const useProviderConnect = (
   const [connectWalletLoading, setConnectWalletLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
+  const history = useHistory();
   const {activate, active, connector, chainId, error, account: connectedAccount} = useWeb3React();
 
   const previousAccount = usePrevious(account);
@@ -207,7 +207,7 @@ const useProviderConnect = (
 
   useEffect(() => {
     const getAccountDetails = async () => {
-      if (appChainID && connectedAccount && walletNameSuccess) {
+      if (appChainID && !twoFactor && connectedAccount && walletNameSuccess) {
         const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, walletNameSuccess);
 
         dispatch(
@@ -218,22 +218,31 @@ const useProviderConnect = (
               [connectedAccount]: new BigNumber(accountBalance._hex).div(new BigNumber(10).pow(18)).toFixed(5) 
             }
           )
-        )
-      }
-    }
+        );
 
+        history.push('/login');
+      } 
+      // else if (twoFactor === TwoFactors.Layer1) {
+      //   handleLogout && handleLogout();
+      //   handleConnectorDisconnect();
+      // }
+    } 
     getAccountDetails();
-  }, [walletNameSuccess, connectedAccount, appChainID, walletChainID, loginError]);
+  }, [walletNameSuccess, connectedAccount, appChainID, walletChainID, loginError, twoFactor]);
 
   const handleConnectorDisconnect = useCallback(() => {
+    if (walletNameSuccess === ConnectorNames.WalletConnect) {
+      localStorage.removeItem("walletconnect");
+    }
+
     dispatch(disconnectWallet());
     dispatch(settingCurrentConnector(undefined));
     setWalletName([]);
-    setCurrentConnector(undefined);
     setWalletNameSuccess(undefined);
     setCurrentConnector(undefined);
     setLoginError('');
-  }, []);
+
+  }, [walletNameSuccess]);
   
   return {
     handleProviderChosen,
