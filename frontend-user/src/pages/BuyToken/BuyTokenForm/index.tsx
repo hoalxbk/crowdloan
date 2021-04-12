@@ -54,6 +54,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     estimateErr, 
     tokenDepositLoading, 
     tokenDepositTransaction,
+    setTokenDepositLoading
   } = usePoolDepositAction({ poolAddress });
   const { account: connectedAccount } = useWeb3React();
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
@@ -102,16 +103,20 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   }
 
   const handleTokenDeposit = async () => {
-    setOpenSubmitModal(true);
+    try {
+      setOpenSubmitModal(true);
 
-    // Call to smart contract to deposit token and refetch user balance
-    await deposit(input);
-    await fetchUserBalance();
+      // Call to smart contract to deposit token and refetch user balance
+      await deposit(input);
+      await fetchUserBalance();
 
-    //  Clear input field and additional information field below and close modal
-    setInput("");
-    setEstimateTokens(0);
-    setTransactionFee(0);
+      //  Clear input field and additional information field below and close modal
+      setInput("");
+      setEstimateTokens(0);
+      setTransactionFee(0);
+    } catch (err) {
+      setOpenSubmitModal(false);
+    }
   }
 
   return (
@@ -160,7 +165,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
       </div>
       <TransactionSubmitModal 
         opened={openSubmitModal} 
-        handleClose={() => setOpenSubmitModal(false)} 
+        handleClose={() => { setOpenSubmitModal(false); setTokenDepositLoading(false)}} 
         transactionHash={tokenDepositTransaction}
       />
     </div>

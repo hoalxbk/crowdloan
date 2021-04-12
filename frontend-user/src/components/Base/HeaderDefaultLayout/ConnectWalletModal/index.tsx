@@ -10,6 +10,7 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import useStyles from './style';
 import ConnectWalletBox from '../ConnectWalletBox';
+import { AppContext } from '../../../../AppContext';
 import { APP_NETWORKS, APP_NETWORKS_NAME, appNetworkType, ETH_CHAIN_ID } from '../../../../constants/network';
 import { SUPPORTED_WALLETS, connectorsSupportByNetwork } from '../../../../constants/connectors';
 import { HeaderContext, HeaderContextType } from '../context/HeaderContext';
@@ -82,7 +83,8 @@ const DialogContent = withStyles((theme: Theme) => ({
 const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => {
   const styles = useStyles();
   const { opened, handleClose } = props;
-  const { setAgreedTerms, agreedTerms, walletName, handleProviderChosen, connectWalletLoading } = useContext<HeaderContextType>(HeaderContext);
+  const { walletName, handleProviderChosen, connectWalletLoading } = useContext(AppContext);
+  const { setAgreedTerms, agreedTerms } = useContext<HeaderContextType>(HeaderContext);
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
   const connectorsByNetwork = appChainID === ETH_CHAIN_ID ? SUPPORTED_WALLETS: connectorsSupportByNetwork[APP_NETWORKS_NAME.BSC];
 

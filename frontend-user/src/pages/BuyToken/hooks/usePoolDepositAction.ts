@@ -67,7 +67,7 @@ const usePoolDepositAction = ({ poolAddress }: PoolDepositActionParams) => {
       dispatch(alertSuccess("Token Deposit Successful!"));
     } catch (err) {
       setTokenDepositLoading(false);
-      console.log(err.message);
+      throw new Error(err.message);
     }
   }, [connectedAccount, library, poolAddress])
 
@@ -115,6 +115,7 @@ const usePoolDepositAction = ({ poolAddress }: PoolDepositActionParams) => {
     tokenDepositLoading,
     tokenDepositTransaction,
     setTokenDepositTransaction,
+    setTokenDepositLoading,
     estimateFeeLoading,
     estimateErr
   };
