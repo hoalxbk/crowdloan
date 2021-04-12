@@ -167,11 +167,6 @@ class PoolController {
     }
   }
 
-
-
-
-
-
   async updateDeploySuccess({ request, auth, params }) {
     // const inputParams = request.only([
     //   'is_deploy',
@@ -201,13 +196,6 @@ class PoolController {
       return ErrorFactory.internal('error');
     }
   }
-
-
-
-
-
-
-
 
 
   async getPool({ request, auth, params }) {

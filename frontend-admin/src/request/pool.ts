@@ -10,7 +10,6 @@ export const createPool = async (data: any) => {
   return resObject;
 };
 
-
 export const updatePool = async (data: any, id: any) => {
   const baseRequest = new BaseRequest();
   let url = apiRoute(`/pool/${id}/update`);

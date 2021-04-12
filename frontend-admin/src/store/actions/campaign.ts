@@ -592,15 +592,12 @@ export const createPoolAction = (campaign: any, history: any) => {
         return (new BigNumber(tier.maxBuy || 0)).multipliedBy(Math.pow(10, decimal)).toString();
       });
 
-      // const lengthTiers = tiers.length;
       for (let i = 0; i < 5; i++) {
         tiers.push(0);
       }
 
       if (factorySmartContract) {
         let createdCampaign;
-
-
         const userWalletAddress = getState().user.data.wallet_address;
 
         createdCampaign = await factorySmartContract.methods.registerPool(
@@ -613,7 +610,6 @@ export const createPoolAction = (campaign: any, history: any) => {
           from: userWalletAddress,
         });
 
-console.log(createdCampaign);
         if (createdCampaign) {
           dispatch({ type: alertActions.SUCCESS_MESSAGE, payload: 'Deploy Pool Successful!'});
 

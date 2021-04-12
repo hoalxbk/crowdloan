@@ -1,15 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import useStyles from "../style";
-import Radio from '@material-ui/core/Radio';
-import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControlLabel from '@material-ui/core/FormControlLabel';
-import FormControl from '@material-ui/core/FormControl';
-import { Controller } from "react-hook-form";
-
 // @ts-ignore
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 // @ts-ignore
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+
 // CSS in /src/index.css
 
 function PoolDescription(props: any) {
@@ -58,7 +53,9 @@ function PoolDescription(props: any) {
           type="hidden"
           value={description}
           name="description"
-          ref={register({ required: true })}
+          ref={register({
+            // required: true
+          })}
         />
 
         <p className={classes.formErrorMessage}>
