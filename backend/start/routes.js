@@ -63,6 +63,7 @@ Route.group(() => {
   Route.post('upload-avatar', 'FileController.uploadAvatar');
 
   Route.post('pool/create', 'CampaignController.createPool')
+  Route.post('pool/:id/update', 'CampaignController.updatePool')
   Route.get('pool/:id', 'CampaignController.getPool')
 
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
@@ -112,6 +113,11 @@ Route.group(() => {
   // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
 }).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
+
+// Participants
+Route.get('pool/:campaign_id/participants', 'ParticipantController.getParticipantUsers')
+Route.get('pool/:campaign_id/winners', 'ParticipantController.getWinnerUsers');
+
 
 // API V2
 Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);

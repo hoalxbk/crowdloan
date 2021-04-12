@@ -19,12 +19,14 @@ function TotalCoinSold(props: any) {
     }
   }, [poolDetail]);
 
-  // const handleChange = (event: any, maskedvalue: any, floatvalue: any) => {
-  //   setTotalSoldCoin(maskedvalue);
-  // };
+  const handleChange = (value: any, name: any) => {
+    setTotalSoldCoin(value);
+    setValue('totalSoldCoin', value, { shouldValidate: true })
+  };
 
   return (
     <>
+      <br/>
       <FormControl component="fieldset">
 
         <label className={classes.formControlLabel}>Total Sold Coin</label>
@@ -33,10 +35,7 @@ function TotalCoinSold(props: any) {
           placeholder="Please enter a number"
           value={totalSoldCoin}
           decimalsLimit={2}
-          onValueChange={(value: any, name: any) => {
-            setTotalSoldCoin(value);
-            setValue('totalSoldCoin', value, { shouldValidate: true })
-          }}
+          onValueChange={handleChange}
           className={`${classes.formInputBox}`}
         />
         <input

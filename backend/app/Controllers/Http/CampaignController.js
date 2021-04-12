@@ -367,16 +367,7 @@ class CampaignController {
       'min_tier', 'tier_configuration',
     ]);
 
-    const tiers = (params.tier_configuration || []).map((item) => {
-      return {
-        name: item.name,
-        start_time: item.startTime,
-        end_time: item.endTime,
-        max_buy: item.maxBuy,
-      };
-    });
-
-    const createData = {
+    const data = {
       'title': params.title,
       'description': params.description,
       'token': params.token,
@@ -396,18 +387,16 @@ class CampaignController {
       'buy_type': params.buy_type,
       'pool_type': params.pool_type,
       'min_tier': params.min_tier,
-
-      // 'tiers': JSON.stringify(tiers),
     };
 
-    console.log('Create Pool with data: ', createData);
+    console.log('Create Pool with data: ', data);
 
     try {
       const campaign = new CampaignModel();
-      campaign.fill(createData);
+      campaign.fill(data);
       await campaign.save();
 
-      const tiers = (params.tier_configuration || []).map((item) => {
+      const tiers = (params.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
           name: item.name,
@@ -428,26 +417,83 @@ class CampaignController {
     }
   }
 
+  async updatePool({ request, auth, params }) {
+    const inputParams = request.only([
+      'register_by',
+      'title', 'banner', 'description', 'address_receiver',
+      'token', 'token_by_eth', 'token_images', 'total_sold_coin',
+      'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
+      'accept_currency', 'network_available', 'buy_type', 'pool_type',
+      'min_tier', 'tier_configuration',
+    ]);
+
+    const data = {
+      'title': inputParams.title,
+      'description': inputParams.description,
+      'token': inputParams.token,
+      'start_time': inputParams.start_time,
+      'finish_time': inputParams.finish_time,
+      'ether_conversion_rate': inputParams.token_by_eth,
+
+      'banner': inputParams.banner,
+      'address_receiver': inputParams.address_receiver,
+      'token_images': inputParams.token_images,
+      'total_sold_coin': inputParams.total_sold_coin,
+      'release_time': inputParams.release_time,
+      'start_join_pool_time': inputParams.start_join_pool_time,
+      'end_join_pool_time': inputParams.end_join_pool_time,
+      'accept_currency': inputParams.accept_currency,
+      'network_available': inputParams.network_available,
+      'buy_type': inputParams.buy_type,
+      'pool_type': inputParams.pool_type,
+      'min_tier': inputParams.min_tier,
+    };
+
+    console.log('Update Pool with data: ', data, params);
+
+    try {
+      const campaign = await CampaignModel.query().where('id', params.id).first();
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+      await CampaignModel.query().where('id', params.id).update(data);
+
+      const tiers = (inputParams.tier_configuration || []).map((item) => {
+        const tierObj = new Tier();
+        tierObj.fill({
+          name: item.name,
+          start_time: item.startTime,
+          end_time: item.endTime,
+          max_buy: item.maxBuy,
+        });
+        return tierObj;
+      });
+      const campaignUpdated = await CampaignModel.query().where('id', params.id).first();
+      await campaignUpdated.tiers().delete();
+      await campaignUpdated.tiers().saveMany(tiers);
+
+      return HelperUtils.responseSuccess(campaign);
+    } catch (e) {
+      console.log('ERROR', e);
+      return ErrorFactory.internal('error')
+    }
+  }
 
   async getPool({ request, auth, params }) {
-
-    console.log('params========>', params);
-
     const pool = await CampaignModel.query()
-      // .whereNotNull('campaign_hash')
       .with('tiers')
-      // .where('is_pause', Const.ACTIVE)
+      // .with('winners')
+      // .with('whitelistUsers')
       .where('id', params.id)
+      // .where('is_pause', Const.ACTIVE)
       // .orderBy('created_at', 'desc')
       .first();
 
     return {
       status: 200,
-      data: pool
+      data: pool,
     }
   }
-
-
 }
 
 module.exports = CampaignController

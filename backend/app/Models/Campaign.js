@@ -14,9 +14,18 @@ class Campaign extends Model {
     return this.hasMany('App/Models/AffiliateCampaign', 'id', 'campaign_id');
   }
 
-  tiers () {
+  tiers() {
     return this.hasMany('App/Models/Tier')
   }
+
+  winners() {
+    return this.hasMany('App/Models/WinnerListUser')
+  }
+
+  whitelistUsers() {
+    return this.hasMany('App/Models/WhitelistUser')
+  }
+
 }
 
 module.exports = Campaign;

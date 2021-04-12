@@ -58,7 +58,7 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                // required: true
+                required: true
               }}
               name="start_join_pool_time"
               render={(field) => {
@@ -91,7 +91,7 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                // required: true
+                required: true
               }}
               name="end_join_pool_time"
               render={(field) => {
@@ -126,7 +126,7 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                // required: true
+                required: true
               }}
               name="start_time"
               render={(field) => {
@@ -158,7 +158,7 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                // required: true
+                required: true
               }}
               name="finish_time"
               render={(field) => {
@@ -213,7 +213,7 @@ function DurationTime(props: any) {
           <Controller
             control={control}
             rules={{
-              // required: true
+              required: true
             }}
             name="release_time"
             render={(field) => {
