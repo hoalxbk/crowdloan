@@ -4,10 +4,10 @@ pragma solidity ^0.7.0;
 import "openzeppelin-solidity/contracts/cryptography/ECDSA.sol";
 
 // Signature Verification
-/// @title Red Kite Whitelists - Implement off-chain whitelist and on-chain verification
+/// @title PolkaFoundry Whitelists - Implement off-chain whitelist and on-chain verification
 /// @author Thang Nguyen Quy <thang.nguyen5@sotatek.com>
 
-contract RedKiteWhitelist {
+contract PKFWhitelist {
     // Using Openzeppelin ECDSA cryptography library
     function getMessageHash(
         address _candidate,

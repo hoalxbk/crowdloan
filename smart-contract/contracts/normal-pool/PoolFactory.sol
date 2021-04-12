@@ -8,12 +8,6 @@ import "../libraries/Pausable.sol";
 import "../libraries/Initializable.sol";
 
 contract PoolFactory is Ownable, Pausable, Initializable {
-    // SotaTier contract
-    address private tier;
-
-    // Max tier
-    uint256 constant MAX_NUM_TIERS = 10;
-
     // Array of created Pools Address
     address[] public allPools;
     // Mapping from User token. From tokens to array of created Pools for token
@@ -26,20 +20,9 @@ contract PoolFactory is Ownable, Pausable, Initializable {
         uint256 poolId
     );
 
-    function initialize(address _tier) external initializer {
-        require(_tier != address(0), "POOL::ZERO_TIER_ADDRESS");
-
+    function initialize() external initializer {
         paused = false;
         owner = msg.sender;
-        tier = _tier;
-    }
-
-    /**
-     * @notice Get the address of Tier contract
-     * @return Return address of Tier contract
-     */
-    function getTier() public view returns (address) {
-        return tier;
     }
 
     /**

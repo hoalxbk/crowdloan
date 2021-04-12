@@ -7,9 +7,9 @@ import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../libraries/SafeMath.sol";
 import "../libraries/Pausable.sol";
-import "../extensions/RedKiteWhitelist.sol";
+import "../extensions/PKFWhitelist.sol";
 
-contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
+contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
     using SafeMath for uint256;
 
     uint256 constant MAX_NUM_TIERS = 10;
