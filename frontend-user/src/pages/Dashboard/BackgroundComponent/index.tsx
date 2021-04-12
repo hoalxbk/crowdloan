@@ -11,20 +11,9 @@ const BackgroundComponent = (props: any) => {
 
   const [showAlert, setShowAlert] = useState(true)
 
-  const handleChangeNetwork = () => {
-    console.log('handleChangeNetwork')
-  }
-
   return (
     <div className={styles.backgroundComponent}>
       <img src={backgroundImage}/>
-      {showAlert && <div className={styles.wrongNetwork}>
-        <img src={warningIcon}/>
-        <p>&nbsp;App network (1) doesn't mach to network selected in wallet: 4. Learn how to 
-          <a href="#">&nbsp;change network in wallet&nbsp;</a>or&nbsp;</p>
-        <button onClick={handleChangeNetwork} className="btn btn-change-network">Change App network</button>
-        <img src={closeIcon} className="btn btn-close" onClick={() => setShowAlert(false)}/>
-      </div>}
       <div className={styles.mainContent}>
         <h1 className="title">Decentralize the way your ideas raise capital.</h1>
         <p className="description">Be the first to join Polkastarter, a Protocol built for cross-chain token pools and auctions, enabling projects to raise capital on a decentralized and interoperable environment based on Polkadot.</p>

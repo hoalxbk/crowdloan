@@ -1,6 +1,6 @@
 import React from 'react';
 import useStyles from './style';
-import { ClipLoader } from "react-spinners";
+import { BeatLoader } from "react-spinners";
 
 type ButtonPropsType = {
   backgroundColor?: string;
@@ -18,7 +18,7 @@ const Button: React.FC<ButtonPropsType> = (props: ButtonPropsType) => {
   return (
     <button style={{ backgroundColor }} className={styles.button} disabled={disabled || loading} onClick={onClick}>
       {
-        loading ? <ClipLoader color={'white'} size={16} /> : `${text}`
+        loading ? <BeatLoader color={'white'} size={8} /> : `${text}`
       }
     </button>
   )

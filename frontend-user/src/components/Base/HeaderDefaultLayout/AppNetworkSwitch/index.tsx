@@ -1,9 +1,11 @@
+import { useContext } from 'react';
 import { withStyles, Theme, createStyles, WithStyles } from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import Typography from '@material-ui/core/Typography';
 import { APP_NETWORKS, appNetworkType } from '../../../../constants/network';
+import { AppContext } from '../../../../AppContext';
 import ConnectWalletBox from '../ConnectWalletBox';
 
 import useStyles from './style';
@@ -45,7 +47,6 @@ export interface DialogTitleProps extends WithStyles<typeof styles> {
 export interface ComponentProps {
   opened: boolean,
   handleClose: () => void;
-  appNetworkLoading: boolean
 }
 
 const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
@@ -73,7 +74,8 @@ const DialogContent = withStyles((theme: Theme) => ({
 
 const AppNetworkSwitch: React.FC<ComponentProps> = (props: ComponentProps) => {
   const styles = useStyles();
-  const { opened, handleClose, appNetworkLoading } = props;
+  const { opened, handleClose } = props;
+  const { appNetworkLoading } = useContext(AppContext);
 
   return (
     <Dialog open={opened} onClose={handleClose} className={styles.dialog}>

@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react';
-import { SyncLoader } from "react-spinners";
+import { HashLoader } from "react-spinners";
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+//@ts-ignore
+import {CopyToClipboard} from 'react-copy-to-clipboard';
 
 import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
 import useAuth from '../../hooks/useAuth';
 import usePoolDetails from '../../hooks/usePoolDetails';
 import useTokenBalance from '../../hooks/useTokenBalance';
 import useTokenApprove from '../../hooks/useTokenApprove';
+import useTokenSoldProgress from './hooks/useTokenSoldProgress';
 
 import LotteryWinners from './LotteryWinners';
 import PoolAbout from './PoolAbout';
@@ -37,11 +40,11 @@ const BuyToken: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
+  const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
   const { id } = useParams() as any;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
-  console.log(poolDetails);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
   const tokenDetails = {
      decimals: 18, name: 'Dyrus', symbol: 'DYRUS', address: '0xb9d089545cc4bbbfcd3b5a9e4e52550960790693' 
@@ -49,8 +52,10 @@ const BuyToken: React.FC<any> = (props: any) => {
   /* const { tokenBalance } = useTokenBalance(poolDetails?.tokenDetails, connectedAccount); */
   const { tokenBalance } = useTokenBalance(tokenDetails, connectedAccount);
   const { approveToken, tokenApproveLoading } = useTokenApprove(tokenDetails, connectedAccount, "0x954e1498272113b759a65cb83380998fe80f5264")
+  const { tokenSold, totalSell, soldProgress } = useTokenSoldProgress("0x954e1498272113b759a65cb83380998fe80f5264", tokenDetails);
+  console.log(tokenSold, totalSell, soldProgress);
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
-  console.log(poolDetailsMapping);
+
 
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
@@ -72,7 +77,19 @@ const BuyToken: React.FC<any> = (props: any) => {
             <h2 className={styles.poolHeaderTitle}>{poolDetails?.title}</h2>
             <p className={styles.poolHeaderAddress}>
               {poolDetails?.tokenDetails?.address}
-              <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
+              <CopyToClipboard text={poolDetails?.tokenDetails.address}
+                onCopy={() => { 
+                  setCopiedAddress(true);
+                  setTimeout(() => {
+                    setCopiedAddress(false);
+                  }, 2000);
+                }}>
+                {
+                
+                  !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
+                  : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
+                }
+                </CopyToClipboard>
             </p>
           </div>
         </header>
@@ -82,9 +99,9 @@ const BuyToken: React.FC<any> = (props: any) => {
             {
               (loadingPoolDetail || wrongChain) ? (
                 <div className={styles.loader}>
+                  <HashLoader loading={true} color={'#3232DC'} />
                   <p className={styles.loaderText}>
-                    <span style={{ marginRight: 10 }}>Loading Pool Details</span>
-                    <SyncLoader loading={true} color={'white'} />
+                    <span style={{ marginRight: 10 }}>Loading Pool Details ...</span>
                   </p>
                 </div>
               ):  poolDetailsMapping && 
