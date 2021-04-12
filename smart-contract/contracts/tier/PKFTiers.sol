@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
+import "openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
+
 import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../token/ERC20.sol";
 
-contract RedKiteTier is Ownable, ReentrancyGuard {
+contract PKFTiers is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
     struct UserInfo {
@@ -125,7 +127,6 @@ contract RedKiteTier is Ownable, ReentrancyGuard {
         uint256 _rate
     ) external onlyOwner {
         ExternalToken storage token = externalToken[_id];
-        require(token.decimals != 0, "TIER::EXTERNAL_TOKEN_NOT_FOUND");
 
         token.decimals = _decimals;
         token.rate = _rate;
@@ -158,9 +159,15 @@ contract RedKiteTier is Ownable, ReentrancyGuard {
         uint256 length = externalToken.length;
         for (uint8 i = 0; i < length; i++) {
             ExternalToken storage token = externalToken[i];
-            totalStaked = totalStaked.add(
-                IERC20(token.contractAddress).balanceOf(_userAddress).mul(token.rate).div(10**token.decimals)
-            );
+            if (token.decimals == 0) {
+              totalStaked = totalStaked.add(
+                  IERC721(token.contractAddress).balanceOf(_userAddress).mul(token.rate).div(10**token.decimals)
+              );
+            } else {
+              totalStaked = totalStaked.add(
+                  IERC20(token.contractAddress).balanceOf(_userAddress).mul(token.rate).div(10**token.decimals)
+              );
+            }
         }
         for (uint8 i = 1; i <= MAX_NUM_TIERS; i++) {
             if (tierPrice[i] == 0 || totalStaked < tierPrice[i]) {
