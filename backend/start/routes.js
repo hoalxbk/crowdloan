@@ -92,7 +92,8 @@ Route.group(() => {
   Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
   Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
-  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['auth','checkSignature']);
+  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['auth', 'checkSignature']);
+  Route.post('deposit', 'CampaignController.deposit').middleware(['auth', 'checkSignature']);
   Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware('auth');
   Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);

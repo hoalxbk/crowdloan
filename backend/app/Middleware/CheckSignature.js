@@ -31,13 +31,12 @@ class CheckSignature {
       const wallet_address = Web3.utils.toChecksumAddress(params.wallet_address);
       console.log('recoverConvert: ', recoverConvert, wallet_address);
 
-      if (recoverConvert && recoverConvert === wallet_address) {
-        await next();
-      } else {
+      if (recoverConvert && recoverConvert !== wallet_address) {
         throw new ForbiddenException('Unauthorized!');
       }
+      await next();
     } catch (e) {
-      console.log(e);
+      console.log('ERROR: ', e);
       throw new ForbiddenException('Unauthorized!');
     }
   }
