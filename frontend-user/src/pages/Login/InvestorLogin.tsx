@@ -6,6 +6,8 @@ import {TextField} from '@material-ui/core';
 import {Link, withRouter} from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
 
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { disconnectWalletLayer2 } from '../../store/actions/wallet';
 import { login } from '../../store/actions/user';
 import useStyles from './style';
 import Button from '../../components/Base/Button';
@@ -24,7 +26,7 @@ const InvestorLogin: React.FC<any> = (props: any) => {
 
   const [loadingUserExists, setLoadingUserExists] = useState(false);
   const [userExists, setUserExists] = useState(false);
-  /* const { data: loginInvestor, loading: investorLoginLoading, error } = useSelector((state: any) => state.investor); */
+  const { loading: investorLoginLoading, data: investor } = useTypedSelector(state => state.investor);
   const { account:  connectedAccount, library } = useWeb3React();
 
   useEffect(() => {
@@ -36,24 +38,25 @@ const InvestorLogin: React.FC<any> = (props: any) => {
         setLoadingUserExists(false);
 
         setUserExists(userExists);
-      } else {
-
-      }
+      }     
     } 
 
-    connectedAccount ? checkUserExists(): history.push('/dashboard');
-  }, [connectedAccount]);
+    connectedAccount && checkUserExists(); 
+
+    return () => { 
+      !localStorage.getItem("investor_access_token") && dispatch(disconnectWalletLayer2()); 
+    }
+  }, [connectedAccount, investor]);
 
   const handleFormSubmit = (e: any) => {
     e.preventDefault();
-    connectedAccount && library && dispatch(login(connectedAccount, library));
+    connectedAccount && library && dispatch(login(connectedAccount, library, history));
   }
 
   const render = () => {
     if (loadingUserExists) {
       return (
         <div className="login__user-loading" style={{ height: 660, maxHeight: 660, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
-          {/* <CircularProgress size={75} thickness={4} value={100} /> */}
           <HashLoader color={'#3232DC'} />
           <p className="login__user-loading-text" style={{ textAlign: 'center', color: '#999999' }}>Loading Ethereum Wallet</p>
         </div>
@@ -74,6 +77,7 @@ const InvestorLogin: React.FC<any> = (props: any) => {
               label={'Sign in'}
               buttonType="primary"
               className={'login__form-cta'}
+              loading={investorLoginLoading}
             />
             <div className="signup">
               <span>Don't have an account?&nbsp;</span>

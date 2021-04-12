@@ -22,8 +22,6 @@ export const getTiers = () => {
         SmartContractMethod.Read
       );
 
-      console.log(contract)
-
       let result = await contract?.methods.getTiers().call();
 
       result = result.filter((e: any) => e != '0')

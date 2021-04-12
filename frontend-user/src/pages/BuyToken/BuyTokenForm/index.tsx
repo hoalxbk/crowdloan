@@ -7,6 +7,7 @@ import TransactionSubmitModal from '../../../components/Base/TransactionSubmitMo
 import Button from '../Button';
 import useStyles from './style';
 
+import { limitDecimalFormatter, formatMoneyWithoutDollarSign } from '../../../utils/currencyFormatter';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import getAccountBalance from '../../../utils/getAccountBalance';
 import { connectWalletSuccess } from '../../../store/actions/wallet';
@@ -125,7 +126,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
       <div className={styles.buyTokenInputForm}>
         <p className={styles.buyTokenInputLabel}>
           <span>Input</span>
-          <span>Your wallet balance: {balance} {tokenDetails?.symbol}</span>
+          <span>Your wallet balance:&nbsp;
+            {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(balance))} 
+            {tokenDetails?.symbol}
+          </span>
         </p>
         <div className={styles.buyTokenInputWrapper}>
           <input 

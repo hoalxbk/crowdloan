@@ -11,7 +11,7 @@ const ClaimToken: React.FC<any> = (props: any) => {
         <span>{'Token can claim from'}</span>
         <strong>{new Date().toString() }</strong>
       </p>
-      <Countdown startDate={new Date(1618218340 * 1000)} />
+      <Countdown startDate={new Date(1618338380 * 1000)} />
       <div className={styles.poolDetailClaimInfo}>
         <div className={styles.poolDetailClaimInfoBlock}>
           <span>You can claim</span>

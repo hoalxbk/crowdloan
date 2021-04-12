@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useTypedSelector } from '../hooks/useTypedSelector';
 import useFetch from './useFetch';
 import useTokenDetails, { TokenType } from './useTokenDetails';
 
@@ -10,6 +11,8 @@ export type PoolDetails = {
   type: string;
   tokenDetails: TokenType;
   title: string;
+  buyLimit: number[],
+  connectedAccountBuyLimit: number
 }
 
 export type PoolDetailsReturnType ={
@@ -20,10 +23,14 @@ export type PoolDetailsReturnType ={
 const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const [poolDetailDone, setPoolDetailDone] = useState<boolean>(false);
   const { loading, error, data }  = useFetch<any>(`/pool/${poolId}`);
-  const { tokenDetails } = useTokenDetails("0xb9d089545cc4bbbfcd3b5a9e4e52550960790693");
+  const { tokenDetails } = useTokenDetails(data && data.token);
+  const { data: connectedAccountTier } = useTypedSelector(state => state.userTier);
 
   const poolDetails = useMemo(() => {
     if (data && !loading && !error && tokenDetails && poolDetailDone)  {
+      console.log(data);
+      const buyLimit = data.tiers.map((tier: any) => tier.max_buy);
+
       return {
         method: data.buy_type,
         startTime: data.start_join_pool_time,
@@ -33,7 +40,9 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         amount: data.total_sold_coin,
         website: 'http://polkafoundry.com',
         tokenDetails,
-        title: data.title
+        title: data.title,
+        buyLimit,
+        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) || 0]
       }
     }
 

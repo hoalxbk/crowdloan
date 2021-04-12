@@ -1,6 +1,7 @@
 import {alertFailure, alertSuccess} from '../../store/actions/alert';
 import { ConnectorNames, connectorNames } from '../../constants/connectors';
 import { userActions } from '../constants/user';
+import { walletActions } from '../constants/wallet';
 import { alertActions } from '../constants/alert';
 import { BaseRequest } from '../../request/Request';
 import { getWeb3Instance } from '../../services/web3';
@@ -12,6 +13,8 @@ type UserRegisterProps = {
   username: string;
   email: string;
   password: string;
+  address: string;
+  library: Web3Provider;
 }
 
 type UserProfileProps = {
@@ -91,7 +94,7 @@ export const clearUserProfileUpdate = () => {
   }
 }
 
-export const login = (connectedAccount: string, library: Web3Provider) => {
+export const login = (connectedAccount: string, library: Web3Provider, history: any) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     try {
       dispatch({
@@ -100,13 +103,11 @@ export const login = (connectedAccount: string, library: Web3Provider) => {
 
       const baseRequest = new BaseRequest();
       const connector = getState().connector.data;
-      console.log(connector);
       const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
-      console.log(paramsWithConnector);
 
       if (connectedAccount && library && paramsWithConnector) {
         const provider = library.provider;
-        provider && (provider as any).sendAsync({
+        provider && await (provider as any).sendAsync({
             method: paramsWithConnector.method,
             params: paramsWithConnector.params
         }, async function(err: Error, result: any) {
@@ -127,10 +128,14 @@ export const login = (connectedAccount: string, library: Web3Provider) => {
 
               localStorage.setItem('investor_access_token', token.token);
 
+              dispatch({ type: walletActions.WALLET_CONNECT_LAYER2_SUCCESS });
+
               dispatch({
                 type: userActions.INVESTOR_LOGIN_SUCCESS,
                 payload: user
               });
+
+              history.push('/dashboard');
             }
 
             if (resObj.status && resObj.status !== 200) {
@@ -156,22 +161,22 @@ export const login = (connectedAccount: string, library: Web3Provider) => {
   }
 }
 
-export const register = ({ username, email, password }: UserRegisterProps) => {
-  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+export const register = ({ username, email, password, address: connectedAccount, library }: UserRegisterProps) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({
       type: userActions.INVESTOR_REGISTER_LOADING
     });
     try {
       const baseRequest = new BaseRequest();
-      const windowObj = window as any;
-      const { ethereum } = windowObj;
-      const ethAddress = await getCurrentAccount();
 
-      if (ethAddress) {
-        await ethereum.sendAsync({
-            method: 'eth_signTypedData',
-            params: [getMessageParams(), ethAddress],
-            from: ethAddress,
+      const connector = getState().connector.data;
+      const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
+
+      if (connectedAccount && library && paramsWithConnector) {
+        const provider = library.provider;
+        provider && await (provider as any).sendAsync({
+            method: paramsWithConnector.method,
+            params: paramsWithConnector.params
         }, async function(err: Error, result: any) {
           if (err || result.error) {
              const errMsg = err.message || result.error.message
@@ -184,7 +189,7 @@ export const register = ({ username, email, password }: UserRegisterProps) => {
             username,
             email,
             password,
-            wallet_address: ethAddress,
+            wallet_address: connectedAccount,
             signature: result.result,
             // message: baseRequest.getSignatureMessage(isInvestor),
           }) as any;

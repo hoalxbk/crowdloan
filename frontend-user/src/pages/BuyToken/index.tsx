@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
+
 import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
 import useAuth from '../../hooks/useAuth';
 import usePoolDetails from '../../hooks/usePoolDetails';
@@ -12,6 +13,7 @@ import useTokenBalance from '../../hooks/useTokenBalance';
 import useTokenApprove from '../../hooks/useTokenApprove';
 import useTokenSoldProgress from './hooks/useTokenSoldProgress';
 
+import Tiers from '../Account/Tiers';
 import LotteryWinners from './LotteryWinners';
 import PoolAbout from './PoolAbout';
 import ClaimToken from './ClaimToken';
@@ -19,7 +21,7 @@ import BuyTokenForm from './BuyTokenForm';
 import Button from './Button';
 import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
-import Tiers from '../Account/Tiers';
+import { limitDecimalFormatter, formatMoneyWithoutDollarSign } from '../../utils/currencyFormatter';
 
 import { getTiers, getUserInfo, getUserTier } from '../../store/actions/sota-tiers';
 
@@ -46,16 +48,16 @@ const BuyToken: React.FC<any> = (props: any) => {
   const { id } = useParams() as any;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
+  /* const tokenDetails = poolDetails?.tokenDetails || undefined; */
   const tokenDetails = {
      decimals: 18, name: 'Dyrus', symbol: 'DYRUS', address: '0xb9d089545cc4bbbfcd3b5a9e4e52550960790693' 
   }
-  /* const { tokenBalance } = useTokenBalance(poolDetails?.tokenDetails, connectedAccount); */
   const { tokenBalance } = useTokenBalance(tokenDetails, connectedAccount);
-  const { approveToken, tokenApproveLoading } = useTokenApprove(tokenDetails, connectedAccount, "0x954e1498272113b759a65cb83380998fe80f5264")
+  // Should replace hard string by pool address
+  const { approveToken, tokenApproveLoading } = useTokenApprove(tokenDetails, connectedAccount, "0x954e1498272113b759a65cb83380998fe80f5264");
   const { tokenSold, totalSell, soldProgress } = useTokenSoldProgress("0x954e1498272113b759a65cb83380998fe80f5264", tokenDetails);
-  console.log(tokenSold, totalSell, soldProgress);
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
-
+  const userBuyLimit = poolDetails?.connectedAccountBuyLimit || 0;
 
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
@@ -85,7 +87,6 @@ const BuyToken: React.FC<any> = (props: any) => {
                   }, 2000);
                 }}>
                 {
-                
                   !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
                   : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
                 }
@@ -140,23 +141,28 @@ const BuyToken: React.FC<any> = (props: any) => {
             <div className={styles.poolDetailTier}>
               <Tiers 
                 showMoreInfomation 
-                tiersBuyLimit={[500, 1000, 2000, 3000, 4000]} 
+                tiersBuyLimit={poolDetails?.buyLimit || [] }
                 tokenSymbol={`PKF`}
               />
-              <p className={styles.poolDetailMaxBuy}>*Max bought: 500 PKF</p>
+              <p className={styles.poolDetailMaxBuy}>*Max bought: {userBuyLimit} PKF</p>
               <div className={styles.poolDetailProgress}>
                 <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
                 <div className={styles.poolDetailProgressStat}>
-                  <span className={styles.poolDetailProgressPercent}>30%</span>
-                  <span>180.000.000/600.000.000</span>
+                  <span className={styles.poolDetailProgressPercent}>
+                    {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(soldProgress))}%
+                  </span>
+                  <span>
+                    {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(tokenSold))} /
+                    {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(totalSell))}
+                  </span>
                 </div>
                 <div className={styles.progress}>
-                  <div className={styles.achieved}></div>
+                  <div className={styles.achieved} style={{ width: `${soldProgress}%` }}></div>
                 </div>
               </div>
               <div className={styles.poolDetailStartTime}>
                 <span className={styles.poolDetailStartTimeTitle}>Start in</span>
-                <Countdown startDate={new Date(1618218340 * 1000)} />
+                <Countdown startDate={new Date(1618338380 * 1000)} />
               </div>
             </div> 
           </div>
@@ -174,13 +180,13 @@ const BuyToken: React.FC<any> = (props: any) => {
               {
                 activeNav === HeaderType.Main && ( 
                     <BuyTokenForm 
-                      tokenDetails={tokenDetails} 
+                      tokenDetails={poolDetails?.tokenDetails} 
                       balance={tokenBalance} 
                       approveToken={approveToken}
                       tokenApproveLoading={tokenApproveLoading}
                       rate={100}
                       poolAddress={"0x954e1498272113b759a65cb83380998fe80f5264"}
-                      maximumBuy={5000}
+                      maximumBuy={userBuyLimit}
                     /> 
                )
               }

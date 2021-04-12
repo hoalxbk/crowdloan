@@ -27,7 +27,7 @@ const useProviderConnect = (
   const dispatch = useDispatch();
 
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
-  const { twoFactor } = useTypedSelector(state => state.wallet);
+  const { twoFactor, walletConnect } = useTypedSelector(state => state.wallet);
   const [account, setAccount] = useState<string | undefined>(undefined);
 
   const [appNetworkLoading, setAppNetworkLoading] = useState(false);
@@ -207,8 +207,13 @@ const useProviderConnect = (
 
   useEffect(() => {
     const getAccountDetails = async () => {
-      if (appChainID && !twoFactor && connectedAccount && walletNameSuccess) {
+      const investorToken = localStorage.getItem("investor_access_token") || "";
+
+      if (appChainID && !twoFactor && connectedAccount && walletNameSuccess && connectedAccount) {
         const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, walletNameSuccess);
+
+        setOpenConnectDialog && setOpenConnectDialog(false);
+        setConnectWalletLoading(false);
 
         dispatch(
           connectWalletSuccess(
@@ -222,13 +227,13 @@ const useProviderConnect = (
 
         history.push('/login');
       } 
-      // else if (twoFactor === TwoFactors.Layer1) {
-      //   handleLogout && handleLogout();
-      //   handleConnectorDisconnect();
-      // }
+      else if (twoFactor === TwoFactors.Layer1 && walletNameSuccess && !walletConnect && !investorToken) {
+        handleLogout && handleLogout();
+        handleConnectorDisconnect();
+      }
     } 
     getAccountDetails();
-  }, [walletNameSuccess, connectedAccount, appChainID, walletChainID, loginError, twoFactor]);
+  }, [walletNameSuccess, connectedAccount, appChainID, walletChainID, loginError, twoFactor, walletConnect, connectedAccount]);
 
   const handleConnectorDisconnect = useCallback(() => {
     if (walletNameSuccess === ConnectorNames.WalletConnect) {
@@ -240,6 +245,7 @@ const useProviderConnect = (
     setWalletName([]);
     setWalletNameSuccess(undefined);
     setCurrentConnector(undefined);
+    setConnectWalletLoading(false);
     setLoginError('');
 
   }, [walletNameSuccess]);

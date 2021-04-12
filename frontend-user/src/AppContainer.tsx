@@ -90,12 +90,11 @@ const AppContainer = (props: any) => {
     const { ethereum } = windowObj;
 
     if (ethereum) {
-      web3Instance?.eth.getAccounts().then(accounts => {
-          accounts[0] && dispatch({
-            type: userActions.USER_CONNECT_WALLET_SUCCESS,
-            payload: accounts[0]
-          });
-      });
+      /* web3Instance?.eth.getAccounts().then(accounts => { */
+      /*     accounts[0] && dispatch({ */
+      /*       type: userActions.USER_CONNECT_WALLET_SUCCESS, payload: accounts[0] */
+      /*     }); */
+      /* }); */
 
       ethereum.on('accountsChanged', function (accounts: any) {
         // console.log('accountsChanged');

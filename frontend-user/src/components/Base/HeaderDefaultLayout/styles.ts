@@ -129,10 +129,13 @@ const useStyles = makeStyles((theme) => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      fontWeight: 500
+      fontWeight: 50,
+      zIndex: 100000
     },
     loginErrorBannerText: {
-      marginLeft: 10
+      marginLeft: 10,
+      color: 'white',
+      fontWeight: 500
     },
     loginErrorGuide: {
       color: 'white',

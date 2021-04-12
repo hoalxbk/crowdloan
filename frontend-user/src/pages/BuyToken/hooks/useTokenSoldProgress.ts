@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { ethers } from 'ethers';
 import BigNumber from 'bignumber.js';
 
@@ -8,7 +8,7 @@ import ERC20_ABI from '../../../abi/Erc20.json';
 import Pool_ABI from '../../../abi/Pool.json';
 import { getContractInstance, SmartContractMethod } from '../../../services/web3';
 
-const useTokenSoldProgress = (poolAddress: string, token: TokenType) => {
+const useTokenSoldProgress = (poolAddress: string | undefined, token: TokenType | undefined) => {
   const [soldProgress, setSoldProgress] = useState<number>(0);
   const [tokenSold, setTokenSold] = useState<number>(0);
   const [totalSell, setTotalSell] = useState<number>(0);
@@ -18,7 +18,7 @@ const useTokenSoldProgress = (poolAddress: string, token: TokenType) => {
 
   useEffect(() => {
     const calSoldProgress = async () => {
-      if (ethers.utils.isAddress(poolAddress)) {
+      if (poolAddress && token && ethers.utils.isAddress(poolAddress)) {
         const poolContract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read);
         const tokenContract = getContractInstance(ERC20_ABI, token.address, connector, appChainID, SmartContractMethod.Read);
 
