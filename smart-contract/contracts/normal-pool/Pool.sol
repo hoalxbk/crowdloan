@@ -89,7 +89,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     }
 
     // -----------------------------------------
-    // Lauchpad Starter external interface
+    // Red Kite external interface
     // -----------------------------------------
 
     /**
@@ -354,7 +354,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
      */
     function _deliverTokens(address _beneficiary, uint256 _tokenAmount)
         internal
-    {   
+    {
         token.transfer(_beneficiary, _tokenAmount);
         userPurchased[_beneficiary] = userPurchased[_beneficiary].add(
             _tokenAmount

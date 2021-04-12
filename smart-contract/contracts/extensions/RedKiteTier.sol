@@ -13,44 +13,39 @@ contract RedKiteTier is Ownable, ReentrancyGuard {
         uint256 stakedTime;
     }
 
+    struct ExternalToken {
+        address contractAddress;
+        uint256 decimals;
+        uint256 rate;
+    }
+
     uint256 constant MAX_NUM_TIERS = 10;
     uint8 currentMaxTier = 4;
 
-    address penaltyWallet;
+    address public penaltyWallet;
 
     ERC20 public PKF;
-    ERC20 public MANTRA_PKF;
-    ERC20 public NFT_PKF;
-    ERC20 public UNI_PKF_LP;
-    ERC20 public sPKF;
 
     mapping(address => UserInfo) public userInfo;
     uint256[MAX_NUM_TIERS] tierPrice;
 
     uint256[] public withdrawFeePercent;
-    mapping(address => address) public token;
+    ExternalToken[] public externalToken;
 
     bool public canEmergencyWithdraw;
 
     event Staked(address indexed user, uint256 amount);
     event Withdrawn(address indexed user, uint256 indexed amount, uint256 fee);
     event EmergencyWithdrawn(address indexed user, uint256 amount);
+    event AddExternalToken(address indexed token, uint256 decimals, uint256 rate);
+    event ExternalTokenStatsChange(address indexed token, uint256 decimals, uint256 rate);
+    event ChangePenaltyWallet(address indexed penaltyWallet);
 
-    constructor(
-        address _penaltyWallet,
-        address _pkf,
-        address _mantraPkf,
-        address _nftPkf,
-        address _uniPkfLp,
-        address _sPkf
-    ) {
+    constructor(address _pkf, address _penaltyWallet) {
+        owner = msg.sender;
         penaltyWallet = _penaltyWallet;
 
         PKF = ERC20(_pkf);
-        MANTRA_PKF = ERC20(_mantraPkf);
-        NFT_PKF = ERC20(_nftPkf);
-        UNI_PKF_LP = ERC20(_uniPkfLp);
-        sPKF = ERC20(_sPkf);
 
         tierPrice[1] = 2000e18;
         tierPrice[2] = 5000e18;
@@ -89,6 +84,13 @@ contract RedKiteTier is Ownable, ReentrancyGuard {
         emit Withdrawn(msg.sender, _amount, toPunish);
     }
 
+    function setPenaltyWallet(address _penaltyWallet) external onlyOwner {
+		    require(penaltyWallet != _penaltyWallet, "TIER::ALREADY_PENALTY_WALLET");
+        penaltyWallet = _penaltyWallet;
+
+        emit ChangePenaltyWallet(_penaltyWallet);
+    }
+
     function updateEmergencyWithdrawStatus(bool _status) external onlyOwner {
         canEmergencyWithdraw = _status;
     }
@@ -103,6 +105,32 @@ contract RedKiteTier is Ownable, ReentrancyGuard {
 
         PKF.transfer(msg.sender, _amount);
         emit EmergencyWithdrawn(msg.sender, _amount);
+    }
+
+    function addExternalToken(
+        address _token,
+        uint256 _decimals,
+        uint256 _rate
+    ) external onlyOwner {
+        externalToken.push(
+            ExternalToken({contractAddress: _token, decimals: _decimals, rate: _rate})
+        );
+
+        emit AddExternalToken(_token, _decimals, _rate);
+    }
+
+    function setExternalToken(
+        uint256 _id,
+        uint256 _decimals,
+        uint256 _rate
+    ) external onlyOwner {
+        ExternalToken storage token = externalToken[_id];
+        require(token.decimals != 0, "TIER::EXTERNAL_TOKEN_NOT_FOUND");
+
+        token.decimals = _decimals;
+        token.rate = _rate;
+
+        emit ExternalTokenStatsChange(token.contractAddress, _decimals, _rate);
     }
 
     function updateTier(uint8 _tierId, uint256 _amount) external onlyOwner {
@@ -126,19 +154,16 @@ contract RedKiteTier is Ownable, ReentrancyGuard {
         view
         returns (uint8 res)
     {
-        uint256 totalStaked =
-            userInfo[_userAddress]
-                .staked
-                .add(MANTRA_PKF.balanceOf(_userAddress).mul(7))
-                .add(NFT_PKF.balanceOf(_userAddress).mul(13))
-                .add(UNI_PKF_LP.balanceOf(_userAddress).mul(9))
-                .add(sPKF.balanceOf(_userAddress).mul(8))
-                .div(10);
+        uint256 totalStaked = userInfo[_userAddress].staked;
+        uint256 length = externalToken.length;
+        for (uint8 i = 0; i < length; i++) {
+            ExternalToken storage token = externalToken[i];
+            totalStaked = totalStaked.add(
+                IERC20(token.contractAddress).balanceOf(_userAddress).mul(token.rate).div(10**token.decimals)
+            );
+        }
         for (uint8 i = 1; i <= MAX_NUM_TIERS; i++) {
-            if (
-                tierPrice[i] == 0 ||
-                totalStaked < tierPrice[i]
-            ) {
+            if (tierPrice[i] == 0 || totalStaked < tierPrice[i]) {
                 return res;
             }
 
