@@ -5,8 +5,8 @@ const Tier = use('App/Models/Tier');
 const CampaignService = use('App/Services/CampaignService');
 const WalletService = use('App/Services/WalletAccountService');
 const TierService = use('App/Services/TierService');
+const WinnerListService = use('App/Services/WinnerListUserService');
 const Const = use('App/Common/Const');
-const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
 
 const CONFIGS_FOLDER = '../../../blockchain_configs/';
@@ -24,8 +24,8 @@ const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
-const privateKey = process.env.OWNER_POOL_PRIVATE_KEY
-const tierSmartContract = process.env.TIER_SMART_CONTRACT
+const tierSmartContract = process.env.TIER_SMART_CONTRACT;
+const SMART_CONTRACT_USDT_ADDRESS =  process.env.SMART_CONTRACT_USDT_ADDRESS;
 
 class CampaignController {
   async campaignList ({request}) {
@@ -289,7 +289,13 @@ class CampaignController {
       if (userWalletAddress == null) {
         return HelperUtils.responseBadRequest("User don't have a valid wallet");
       }
-      // TODO check winner
+      // check if exist in winner list
+      const winnerListService = new WinnerListService();
+      const winner = await winnerListService.findByWalletAddress({'wallet_address': userWalletAddress});
+      if (winner == null) {
+        return ErrorFactory.badRequest("You're not in winner list");
+      }
+
       // TODO list reserved
       // check user tier
       const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
@@ -303,28 +309,29 @@ class CampaignController {
       };
       const tier = await tierService.findByLevelAndCampaign(tierParams);
       if (tier == null) {
-        return ErrorFactory.badRequest("Error");
+        return ErrorFactory.badRequest("You're not get tier required to join this campaign");
       }
       const filterParams = {
-        'campaign_id': params.campaign_id,
+        'campaign_id': params.campaign_id
       };
       // call to db get campaign info
-      // TODO check start and end time
       const campaignService = new CampaignService();
       const camp = await campaignService.findByCampaignId(params.campaign_id)
       if (camp == null) {
+        console.log(`Do not found campaign with id ${params.campaign_id}`);
         return ErrorFactory.badRequest("Error");
       }
       // get private key from db
       const walletService = new WalletService();
       const wallet = await walletService.findByCampaignId(filterParams);
       if (wallet == null) {
+        console.log(`Do not found wallet for campaign ${params.campaign_id}`);
         return ErrorFactory.badRequest("Error");
       }
       // call to SC to get sign hash
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
       // get convert rate usdt -> token
-      const rate = await poolContract.methods.getErc20TokenConversionRate('0x46dF195bc34f80059fC8Da6F91C88d7ca9Fd0b4b').call();
+      const rate = await poolContract.methods.getErc20TokenConversionRate(SMART_CONTRACT_USDT_ADDRESS).call();
       const maxTokenAmount = web3.utils.toWei((tier.max_buy * rate).toString(), "ether");
       console.log(rate, maxTokenAmount, userWalletAddress, camp.start_time);
       const messageHash = await poolContract.methods.getMessageHash(userWalletAddress, maxTokenAmount, camp.start_time).call();
