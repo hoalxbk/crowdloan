@@ -169,6 +169,57 @@ const useStyles = makeStyles(theme => ({
       outline: 'none'
     }
   },
+
+  formButtonDeploy: {
+    backgroundColor: '#FFCC00',
+    boxShadow: '0px 0px 30px rgba(243, 203, 25, 0.15)',
+    borderRadius: 10,
+    padding: '14px 0px',
+    border: 'none',
+    display: 'inline-block',
+    // width: '50%',
+    color: 'white',
+    fontWeight: 600,
+    fontSize: 14,
+    marginTop: 25,
+    marginBottom: 60,
+    cursor: 'pointer',
+    transition: '.2s all ease-in',
+
+    '&:hover': {
+      boxShadow: '0px 15px 20px rgba(0, 0, 0, .1)',
+      transform: 'translateY(-7px)'
+    },
+    '&:focus': {
+      outline: 'none'
+    }
+  },
+
+  formButtonUpdatePool: {
+    backgroundColor: '#FFCC00',
+    boxShadow: '0px 0px 30px rgba(243, 203, 25, 0.15)',
+    borderRadius: 10,
+    padding: '14px 0px',
+    border: 'none',
+    display: 'inline-block',
+    // width: '50%',
+    color: 'white',
+    fontWeight: 600,
+    fontSize: 14,
+    marginTop: 25,
+    marginBottom: 60,
+    cursor: 'pointer',
+    transition: '.2s all ease-in',
+
+    '&:hover': {
+      boxShadow: '0px 15px 20px rgba(0, 0, 0, .1)',
+      transform: 'translateY(-7px)'
+    },
+    '&:focus': {
+      outline: 'none'
+    }
+  },
+
   formErrorMessage: {
     marginTop: 7,
     color: 'red',

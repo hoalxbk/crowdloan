@@ -30,3 +30,12 @@ export const getPoolDetail = async (id: any) => {
   return resObject;
 };
 
+export const updateDeploySuccess = async (data: any) => {
+  const baseRequest = new BaseRequest();
+  let url = apiRoute(`/pool/${data.poolId}/deploy-success`);
+
+  const response = await baseRequest.post(url, {}) as any;
+  const resObject = await response.json();
+  return resObject;
+};
+

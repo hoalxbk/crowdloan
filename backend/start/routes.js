@@ -62,9 +62,10 @@ Route.group(() => {
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.post('upload-avatar', 'FileController.uploadAvatar');
 
-  Route.post('pool/create', 'PoolController.createPool')
-  Route.post('pool/:campaignId/update', 'PoolController.updatePool')
-  Route.get('pool/:campaignId', 'PoolController.getPool')
+  Route.post('pool/create', 'PoolController.createPool');
+  Route.post('pool/:campaignId/update', 'PoolController.updatePool');
+  Route.get('pool/:campaignId', 'PoolController.getPool');
+  Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
 
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
 

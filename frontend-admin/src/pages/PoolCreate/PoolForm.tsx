@@ -19,15 +19,16 @@ import PoolDescription from "./Components/PoolDescription";
 import AddressReceiveMoney from "./Components/AddressReceiveMoney";
 import ExchangeRate from "./Components/ExchangeRate";
 import {CircularProgress, Grid} from "@material-ui/core";
-import {TokenType} from "../../utils/token";
+import {getTokenInfo, TokenType} from "../../utils/token";
 import {isFactorySuspended} from "../../utils/campaignFactory";
-import {createPool, updatePool} from "../../request/pool";
+import {createPool, updateDeploySuccess, updatePool} from "../../request/pool";
 import {alertFailure, alertSuccess} from "../../store/actions/alert";
 import {adminRoute} from "../../utils";
 import {withRouter} from "react-router-dom";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
 import {renderErrorCreatePool} from "../../utils/validate";
+import {createCampaign, createPoolAction} from "../../store/actions/campaign";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -108,8 +109,8 @@ function PoolForm(props: any) {
       setLoading(false);
 
       if (response?.status === 200) {
-        dispatch(alertSuccess('Successful!'));
-        history.push(adminRoute('/campaigns'));
+        dispatch(alertSuccess('Update Pool Successful!'));
+        // history.push(adminRoute('/campaigns'));
       } else {
         dispatch(alertFailure('Fail!'));
       }
@@ -121,6 +122,92 @@ function PoolForm(props: any) {
 
   const handleCampaignCreate = () => {
     handleSubmit(handleFormSubmit)();
+  };
+
+  const handleDeloySubmit = async (data: any) => {
+    if (poolDetail.is_deploy) {
+      alert('Pool is deployed !!!');
+      return false;
+    }
+    // eslint-disable-next-line no-restricted-globals
+    if (!confirm('Do you want save and deploy this Pool')) {
+      return false;
+    }
+
+    setLoading(true);
+    try {
+      // Save data before deploy
+      await handleFormSubmit(data);
+
+      const erc20Token = await getTokenInfo(data.token);
+      let tokenInfo = {};
+      if (erc20Token) {
+        const { name, symbol, decimals, address } = erc20Token;
+        tokenInfo = {
+          name,
+          symbol,
+          decimals,
+          address
+        }
+      }
+
+      const history = props.history;
+      let tierConfiguration = data.tierConfiguration || '[]';
+      tierConfiguration = JSON.parse(tierConfiguration);
+      tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
+        return {
+          ...currency,
+          currency: data.acceptCurrency,
+        };
+      });
+      const submitData = {
+        register_by: '',
+
+        // Pool general
+        title: data.title,
+        banner: data.banner,
+        description: data.description,
+        address_receiver: data.addressReceiver,
+
+        // Token
+        token: data.token,
+        token_by_eth: data.tokenByETH,
+        token_images: data.tokenImages,
+        total_sold_coin: data.totalSoldCoin,
+
+        // Time
+        start_time: data.start_time && data.start_time.unix(),
+        finish_time: data.finish_time && data.finish_time.unix(),
+        release_time: data.release_time && data.release_time.unix(),
+        start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
+        end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
+
+        // Types
+        accept_currency: data.acceptCurrency,
+        network_available: data.networkAvailable,
+        buy_type: data.buyType,
+        pool_type: data.poolType,
+
+        // Tier
+        min_tier: data.minTier,
+        tier_configuration: tierConfiguration,
+
+        tokenInfo,
+      };
+
+      await dispatch(createPoolAction(submitData, history));
+      setLoading(false);
+
+      // Update status is_deploy = true
+      await updateDeploySuccess({ poolId: poolDetail.id });
+
+    } catch (e) {
+      setLoading(false);
+      console.log('ERROR: ', e);
+    }
+  };
+  const handlerDeploy = () => {
+    handleSubmit(handleDeloySubmit)();
   };
 
   const renderError = renderErrorCreatePool;
@@ -307,11 +394,32 @@ function PoolForm(props: any) {
             />
 
 
+
+
+            {/*<Grid container spacing={2}>*/}
+            {/*  <Grid item xs={6}>*/}
+            {poolDetail && poolDetail.id && !poolDetail.is_deploy &&
+              <button disabled={loading} className={classes.formButton} onClick={handlerDeploy}>
+                {
+                  loading ? <CircularProgress size={25} />: "Deploy"
+                }
+              </button>
+            }
+              {/*</Grid>*/}
+
+              {/*<Grid item xs={6}>*/}
+
             <button disabled={loading} className={classes.formButton} onClick={handleCampaignCreate}>
               {
-                loading ? <CircularProgress size={25} />: "Create New"
+                loading ? <CircularProgress size={25} />: "Create / Update"
               }
             </button>
+              {/*</Grid>*/}
+            {/*</Grid>*/}
+
+
+
+
 
           </div>
 
