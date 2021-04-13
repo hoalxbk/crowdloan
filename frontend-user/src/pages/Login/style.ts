@@ -9,6 +9,10 @@ const useStyles = makeStyles((theme: any) => {
         marginTop: 20,
         width: '100%'
       },
+
+      '& .login__user-loading': {
+        textAlign: 'center'
+      },
   
       '& .login__form-field input': {
         color: '#0A0A16',

@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { withStyles, Theme, createStyles, WithStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
 import Dialog from '@material-ui/core/Dialog';
@@ -5,6 +6,7 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import Typography from '@material-ui/core/Typography';
 import { ETH_CHAIN_ID } from '../../../../constants/network';
+import { AppContext } from '../../../../AppContext';
 
 import useStyles from './style';
 
@@ -46,7 +48,6 @@ export interface ComponentProps {
   opened: boolean,
   handleClose: () => void;
   currentWallet: any;
-  disconnectWallet: () => void;
 }
 
 const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
@@ -75,8 +76,9 @@ const DialogContent = withStyles((theme: Theme) => ({
 
 const WalletDisconnect: React.FC<ComponentProps> = (props: ComponentProps) => {
   const styles = useStyles();
+  const { logout: disconnectWallet } = useContext(AppContext);
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
-  const { opened, handleClose, currentWallet, disconnectWallet } = props;
+  const { opened, handleClose, currentWallet } = props;
 
   const walletName = currentWallet && currentWallet.title;
   const address = currentWallet ? currentWallet.addresses[0] : '';
@@ -87,7 +89,7 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: ComponentProps) => {
 
   const handleAccountLogout = () => {
     handleClose();
-    disconnectWallet();
+    disconnectWallet && disconnectWallet();
   }
 
   return (
