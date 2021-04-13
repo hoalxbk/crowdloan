@@ -56,7 +56,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
     // -----------------------------------------
     // Lauchpad Starter's event
     // -----------------------------------------
-    event PoolCreated(
+    event PresalePoolCreated(
         address token,
         uint256 openTime,
         uint256 closeTime,
@@ -143,7 +143,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
             decimals: _offeredCurrencyDecimals
         });
 
-        emit PoolCreated(
+        emit PresalePoolCreated(
             _token,
             _openTime,
             closeTime,

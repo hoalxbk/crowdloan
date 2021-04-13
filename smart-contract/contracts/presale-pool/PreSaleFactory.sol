@@ -13,7 +13,7 @@ contract PreSaleFactory is Ownable, Pausable, Initializable {
     // Mapping from User token. From tokens to array of created Pools for token
     mapping(address => mapping(address => address[])) public getPools;
 
-    event PoolCreated(
+    event PresalePoolCreated(
         address registedBy,
         address indexed token,
         address indexed pool,
@@ -108,6 +108,6 @@ contract PreSaleFactory is Ownable, Pausable, Initializable {
         getPools[msg.sender][_token].push(pool);
         allPools.push(pool);
 
-        emit PoolCreated(msg.sender, _token, pool, allPools.length - 1);
+        emit PresalePoolCreated(msg.sender, _token, pool, allPools.length - 1);
     }
 }
