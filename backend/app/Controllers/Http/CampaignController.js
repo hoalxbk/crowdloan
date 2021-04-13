@@ -316,11 +316,12 @@ class CampaignController {
       const tierService = new TierService();
       const tierParams = {
         'campaign_id': params.campaign_id,
-        'level': userTier
+        'level': userTier,
+        'current_time': Date.now()/1000
       };
       const tier = await tierService.findByLevelAndCampaign(tierParams);
       if (tier == null) {
-        return ErrorFactory.badRequest("You're not get tier required to join this campaign");
+        return ErrorFactory.badRequest("You're not get tier required to join this campaign or you're early to deposit");
       }
       const filterParams = {
         'campaign_id': params.campaign_id
@@ -341,7 +342,7 @@ class CampaignController {
       }
       // call to SC to get sign hash
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
-      // get convert rate usdt -> token
+      // get convert rate token erc20 -> our token
       const rate = await poolContract.methods.getErc20TokenConversionRate(SMART_CONTRACT_USDT_ADDRESS).call();
       const maxTokenAmount = web3.utils.toWei((tier.max_buy * rate).toString(), "ether");
       console.log(rate, maxTokenAmount, userWalletAddress, camp.start_time);
@@ -357,7 +358,7 @@ class CampaignController {
       const signature = await web3.eth.sign(messageHash, accAddress);
       console.log(`signature ${signature}`);
       const response = {
-        'max_buy': tier.max_buy,
+        'max_buy': maxTokenAmount,
         'signature': signature,
         'dead_line': camp.start_time
       }
