@@ -5,9 +5,9 @@ import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../token/ERC20/ERC20.sol";
 import "../token/ERC721/IERC721.sol";
-import "../token/ERC1155/IERC1155.sol";
+import "../token/ERC721/IERC721Receiver.sol";
 
-contract PKFTiers is Ownable, ReentrancyGuard {
+contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
     struct UserInfo {
@@ -31,7 +31,7 @@ contract PKFTiers is Ownable, ReentrancyGuard {
     address public PKF;
 
     mapping(address => mapping(address => UserInfo)) public userInfo;
-    mapping(address => uint256) userExternalStaked;
+    mapping(address => uint256) public userExternalStaked;
     uint256[MAX_NUM_TIERS] tierPrice;
 
     uint256[] public withdrawFeePercent;
@@ -368,4 +368,7 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         }
     }
 
+    function onERC721Received(address, address, uint256, bytes memory) public virtual override returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
 }

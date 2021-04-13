@@ -5,10 +5,10 @@ async function main() {
   const penaltyWallet = "0x1BaB8030249382A887F967FcAa7FE0be7B390728";
 
   const PKFTiers = await hre.ethers.getContractFactory("contracts/tier/PKFTiers.sol:PKFTiers");
-  const pkfTiers = await PKFTiers.deploy(PKF, penaltyWallet);
-  // const pkfTiers = await PKFTiers.attach("0x64d2C26fc13b062D545C09a3E80A61832B18b172");
+//   const pkfTiers = await PKFTiers.deploy(PKF, penaltyWallet);
+  const pkfTiers = await PKFTiers.attach("0xF04E3520640cEd805319B915e3095F1226C8762B");
 
-  await pkfTiers.deployed();
+//   await pkfTiers.deployed();
 
   console.log("PKFTiers deployed to:", pkfTiers.address);
   console.log(
