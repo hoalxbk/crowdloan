@@ -1,16 +1,17 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
-import "openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
-
 import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
-import "../token/ERC20.sol";
+import "../token/ERC20/ERC20.sol";
+import "../token/ERC721/IERC721.sol";
+import "../token/ERC1155/IERC1155.sol";
 
 contract PKFTiers is Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
     struct UserInfo {
+        address token;
         uint256 staked;
         uint256 stakedTime;
     }
@@ -19,6 +20,8 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         address contractAddress;
         uint256 decimals;
         uint256 rate;
+        bool isERC721;
+        bool isERC1155;
     }
 
     uint256 constant MAX_NUM_TIERS = 10;
@@ -26,9 +29,9 @@ contract PKFTiers is Ownable, ReentrancyGuard {
 
     address public penaltyWallet;
 
-    ERC20 public PKF;
+    address public PKF;
 
-    mapping(address => UserInfo) public userInfo;
+    mapping(address => mapping(address => UserInfo)) public userInfo;
     uint256[MAX_NUM_TIERS] tierPrice;
 
     uint256[] public withdrawFeePercent;
@@ -36,7 +39,7 @@ contract PKFTiers is Ownable, ReentrancyGuard {
 
     bool public canEmergencyWithdraw;
 
-    event Staked(address indexed user, uint256 amount);
+    event Staked(address indexed user, address token, uint256 amount);
     event Withdrawn(address indexed user, uint256 indexed amount, uint256 fee);
     event EmergencyWithdrawn(address indexed user, uint256 amount);
     event AddExternalToken(address indexed token, uint256 decimals, uint256 rate);
@@ -47,7 +50,7 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         owner = msg.sender;
         penaltyWallet = _penaltyWallet;
 
-        PKF = ERC20(_pkf);
+        PKF = _pkf;
 
         tierPrice[1] = 2000e18;
         tierPrice[2] = 5000e18;
@@ -62,13 +65,15 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         withdrawFeePercent.push(0);
     }
 
-    function deposit(uint256 _amount) external nonReentrant() {
-        PKF.transferFrom(msg.sender, address(this), _amount);
+    function depositERC20(address _token, uint256 _amount) external nonReentrant() {
+        require(_validDeposit(), "TIERS::INVALID_DEPOSIT");
+
+        IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
         userInfo[msg.sender].staked = userInfo[msg.sender].staked.add(_amount);
         userInfo[msg.sender].stakedTime = block.timestamp;
 
-        emit Staked(msg.sender, _amount);
+        emit Staked(msg.sender, address _token, _amount);
     }
 
     function withdraw(uint256 _amount) external nonReentrant() {
@@ -223,5 +228,11 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         }
 
         return buf;
+    }
+
+    // @return true if the transaction can deposit tokens
+    function _validDeposit(address _token) internal view returns (bool) {
+        bool validDeposit = false;
+        return validDeposit;
     }
 }
