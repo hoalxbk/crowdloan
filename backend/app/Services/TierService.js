@@ -18,6 +18,10 @@ class TierService {
     if (params.campaign_id) {
       builder = builder.where('campaign_id', params.campaign_id);
     }
+    if(params.current_time) {
+      builder = builder.where('start_time', '<=', params.current_time)
+        .where('end_time', '>=', params.current_time)
+    }
     return builder;
   }
 
