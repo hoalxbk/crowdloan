@@ -2,341 +2,179 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: any) => {
   return {
-    errorBanner: {
-      color: 'white',
-      backgroundColor: '#FF4C00',
-      textAlign: 'center',
-      padding: 12,
-      marginBottom: 0,
-      flex: 1,
+    poolDetailContainer: {
+      padding: '40px 120px 80px 120px'
     },
-    withBanner: {
-      marginTop: 13,
-      marginBottom: '18px !important',
+    poolDetailHeader: {
+      display: 'flex',
+      alignItems: 'center',
+      paddingBottom: 20,
+      borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
     },
-    loginWithBanner: {
-      top: '60px !important',
-    },
+    poolHeaderImage: {
 
-    buyToken: {
-      backgroundColor: theme.custom.colors.mainBackground,
-      minHeight: '100vh',
+    },
+    poolHeaderInfo: {
+      color: 'white',
+      marginLeft: 12,
+    },
+    poolHeaderTitle: {
+      fontWeight: 700,
+      fontSize: 28
+    },
+    poolHeaderAddress: {
+      fontSize: 14,
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: 5
+    },
+    poolHeaderCopy: {
+      marginLeft: 10,
+      display: 'inline-block',
+      cursor: 'pointer'
+    },
+    poolDetailInfo: {
+      background: 'transparent',
+    },
+    poolDetailIntro: {
+      color: 'white',
+      minWidth: 340,
+      marginRight: 120
+    },
+    poolDetailBasic: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+
+      '&:not(:first-child)': {
+        marginTop: 30
+      }
+    },
+    poolDetailBasicLabel: {
+      color: '#999999',
+      fontSize: 15,
+      fontWeight: 400
+    },
+    poolsDetailBasicText: {
+      fontWeight: 600,
+      color: 'white',
+      fontSize: 16,
+      display: 'flex',
+      alignItems: 'center'
+    },
+    poolDetailUtil: {
+      marginLeft: 10,
+      display: 'inline-block',
+      cursor: 'pointer',
+    },
+    poolDetailTierWrapper: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      textAlign: 'left',
-      '&__form-claimable': {
-        '& > p': {
-          fontSize: 14
-        },
-        '& > p:not(:first-child)': {
-          marginTop: 20,
-        }
-      },
-      '&__not-purchasable': {
-        fontSize: 16,
-        fontWeight: 500,
-        color: '#f07f7f',
-        marginBottom: 20
-      },
-      '&__logout': {
+      marginTop: 30
+    },
+    poolDetailTier: {
+      padding: '28px 40px',
+      background: 'rgba(255, 255, 255, 0.06)',
+      borderRadius: 8
+    },
+    poolDetailMaxBuy: {
+      marginTop: 15,
+      color: '#999999'
+    },
+    poolDetailProgress: {
+      color: 'white',
+      marginTop: 32
+    },
+    poolDetailProgressTitle: {
+      fontWeight: 700,
+      fontSize: 15
+    },
+    poolDetailProgressStat: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      margin: '12px 0px 5px 0px',
+      color: '#999999'
+    },
+    poolDetailProgressPercent: {
+      fontWeight: 600,
+      fontSize: 17,
+      color: 'white'
+    },
+    progress: {
+      width: '100%',
+      height: 5,
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      position: 'relative'
+    },
+    achieved: {
+      width: '30%',
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      height: '100%',
+      backgroundColor: '#232394',
+      borderRadius: '0px 20px 20px 0px'
+    },
+    poolDetailStartTime: {
+      marginTop: 28
+    },
+    poolDetailStartTimeTitle: {
+      color: '#999999',
+      fontWeight: 700,
+      fontSize: 14
+    },
+    btnGroup: {
+      marginTop: 40,
+
+      '& button:first-child': {
+        marginRight: 10
+      }
+    },
+    poolDetailBuy: {
+      color: 'white'
+    },
+    poolDetailBuyNav: {
+      marginTop: 100
+    },
+    poolDetailLink: {
+      marginRight: 120,
+      fontWeight: 'bold',
+      fontSize: 15,
+      color: '#999999',
+      cursor: 'pointer',
+      paddingBottom: 12,
+      position: 'relative'
+    },
+    poolDetailLinkActive: {
+      '&::before': {
+        content: '""',
         position: 'absolute',
-        right: 30,
-        top: 20,
-        padding: '10px 30px',
-        color: 'white',
-        backgroundColor: '#FFCC00',
-        cursor: 'pointer',
-        fontWeight: 700,
-        borderRadius: 5,
-
-        '&:focus': {
-          outline: 'none'
-        }
-      },
-      '&__logo': {
-        textAlign: 'center',
-        marginBottom: '42px',
-      },
-      '&__wrapper': {
-        width: '545px',
-        maxWidth: '100%',
-      },
-      '&__campaign': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
-      },
-      '&__campaign-duration': {
-        fontSize: '16px',
-        fontWeight: '500',
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '5px',
-        '& span': {
-          marginLeft: '9px',
-          position: 'relative',
-          top: '-2px',
-        }
-      },
-      '&__campaign-title': {
-        fontSize: '20px',
-        fontWeight: 'bold',
-        letterSpacing: '0.15px',
-        lineHeight: '30px',
-        marginBottom: '10px',
-      },
-      '&__campaign-title--wordBreak': {
+        height: 3,
+        left: 0,
+        backgroundColor: '#6398FF',
+        bottom: 0,
         width: '100%',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-        overflow: 'hidden'
-      },
-      '&__campaign-total': {
-        letterSpacing: '0.15px',
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '15px',
-        '& .total': {
-          fontFamily: 'Poppins, sans-serif',
-          fontWeight: 'bold',
-          fontSize: '30px',
-        },
-        '& .unit': {
-          fontSize: '16px',
-          marginLeft: '10px',
-        }
-      },
-
-      '&__campaign-progress': {
-        marginBottom: '20px',
-      },
-      '&__campaign-explication': {
-        display: 'flex',
-        justifyContent: 'space-between',
-      },
-
-      '&__form-wrapper': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
-      },
-      '&__input-wrapper': {
-        height: '70px',
-        border: '1px solid #DFDFDF',
-        padding: '12px 15px',
-        borderRadius: '5px',
-      },
-
-      '&__input-label': {
-        display: 'block',
-        fontSize: '12px',
-        letterSpacing: '0.4px',
-        color: '#9A9A9A',
-      },
-
-      '&__input': {
-        width: '100%',
-        height: '30px',
-        maxWidth: '100%',
-        letterSpacing: '0.4px',
-        color: theme.custom.colors.secondaryText,
-        border: 0,
-        outline: 'none',
-        fontWeight: 'bold',
-        fontSize: '20px',
-      },
-      '&__input-error': {
-        marginTop: '5px',
-      },
-
-      '&__form-amount-unit': {
-        display: 'flex',
-      },
-      '&__form-token-convert-unit-wrap': {
-        display: 'flex',
-      },
-      '&__form-token-convert': {
-        flexGrow: 1,
-      },
-
-      '&__form-amount': {
-        flexGrow: 1,
-        marginBottom: '12px',
-      },
-      '&__form-exchange': {
-        marginBottom: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        fontWeight: 'bold',
-        fontSize: '12px',
-        color: theme.custom.colors.secondary,
-        '& span': {
-          marginLeft: '5px',
-        }
-      },
-      '&__loading': {
-        textAlign: 'center',
-        '& svg': {
-          color: theme.custom.colors.primary,
-        }
-      },
-      '&__loading--blue': {
-        textAlign: 'center',
-        '& svg': {
-          color: 'blue !important' as any
-        }
-      },
-      '&__campaign-not-found': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
-      },
-      '&__form-reason-not-show-button': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '15px 60px',
-        marginBottom: '20px',
-        color: 'red',
-        textAlign: 'center',
-      },
-      '&__form-reason-sold-out': {
-        fontSize: 16,
-        fontWeight: 500,
-        color: '#f07f7f',
-        marginTop: 11,
-        marginBottom: 20,
-        textAlign: 'center',
-      },
-      '&__balance': {
-        marginBottom: '30px',
-      },
-      '&__balance-title': {
-        fontSize: '20px',
-        fontWeight: 'bold',
-        marginBottom: '5px',
-      },
-      '&__balance-content': {
-        display: 'flex',
-      },
-      '&__balance-item': {
-        fontSize: '16px',
-        fontWeight: 500,
-        '& span': {
-          color: theme.custom.colors.secondary,
-        },
-        '&.usdt': {
-          marginLeft: '30px',
-        }
-      },
-
-      '& .login__form': {
-        marginTop: 20,
-      },
-
-      '& .login__form-field': {
-        marginTop: 20,
-        width: '100%'
-      },
-
-      '& .MuiInputBase-input': {
-        color: 'white'
-      },
-
-      '& .MuiFormLabel-root': {
-        color: 'white'
-      },
-
-      '& .MuiInput-underline:before': {
-        borderColor: 'white'
-      },
-
-      '&__title': {
-        color: 'white',
-        fontSize: 30,
-        fontWeight: 600,
-        textAlign: 'left',
-        marginTop: 20
-      },
-
-      '& .login__form-privacy': {
-        textAlign: 'left'
-      },
-
-      '& .login__form-privacy a': {
-        color: '#337ab7'
-      },
-
-      '& .login__form-cta': {
-        padding: '15px 30px',
-        backgroundColor: '#FFCC00',
-        border: 'none',
-        marginTop: 30,
-        color: 'white',
-        fontWeight: 700,
-        width: '100%',
-        fontSize: 16,
-        borderRadius: 5,
-        cursor: 'pointer',
-
-        '&:focus': {
-          outline: 'none'
-        }
-      },
-
-      '& .login__form-desc': {
-        color: '#968f8f',
-        marginTop: 20,
-        fontSize: 16
-      },
-
-      '& .login__form-desc-link': {
-        color: '#FFCC00',
-        cursor: 'pointer'
-      },
-
-      '& .login__user-loading-text': {
-        color: 'white',
-        marginTop: 30,
-        fontSize: 20,
-        fontWeight: 700
-      },
-
-      '& .login__form-error-message': {
-        marginTop: 7,
-        color: 'red',
-        textAlign: 'left'
-      },
-
-      '& .login__form-forgot-password': {
-        cursor: 'pointer',
-        fontWeight: '700',
-        fontSize: 15,
-        textAlign: 'left',
-        color: '#FFCC00',
-        display: 'block'
-      },
-
-      '& .login__form-redirect': {
-        cursor: 'pointer',
-        fontWeight: '700',
-        fontSize: 15.5,
-        color: '#FFCC00',
-        display: 'block',
-        textAlign: 'center',
-        marginTop: 20
-      },
+        borderRadius: 20
+      }
+    },
+    poolDetailLinks: {
+      display: 'flex',
+      borderBottom: '1px solid rgba(255, 255, 255, .1)'
+    },
+    poolDetailBuyForm: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start'
+    },
+    loader: {
+      '& .css-1isorwc': {
+        top: '50%',
+        transform: 'translateY(-50%)'
+      }
+    },
+    loaderText: {
+      fontWeight: 700,
+      marginTop: 20
     }
   };
 });

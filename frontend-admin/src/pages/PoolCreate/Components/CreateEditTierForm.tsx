@@ -7,16 +7,18 @@ import {DatePicker} from 'antd';
 import moment from "moment";
 import CurrencyInputWithValidate from "./CurrencyInputWithValidate";
 import {DATETIME_FORMAT} from "../../../constants";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function CreateEditTierForm(props: any) {
   const classes = useStyles();
   const {
-    isOpenEditPopup, setIsOpenEditPopup, renderError, editData, isEdit,
+    isOpenEditPopup, setIsOpenEditPopup, editData, isEdit,
     handleCreateUpdateData,
   } = props;
+  const renderError = renderErrorCreatePool;
 
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
+    register, setValue, getValues, clearErrors, errors, handleSubmit, control,
     formState: { touched, isValid }
   } = useForm({
     mode: "onChange",
@@ -63,6 +65,12 @@ function CreateEditTierForm(props: any) {
           <label className={classes.formControlLabel}>Name</label>
           <input
             type="text"
+            value={editData.name}
+            className={classes.formControlInput}
+            disabled={true}
+          />
+          <input
+            type="hidden"
             name="name"
             ref={register({ required: true })}
             maxLength={255}
@@ -81,7 +89,9 @@ function CreateEditTierForm(props: any) {
           <div >
             <Controller
               control={control}
-              rules={{ required: true }}
+              rules={{
+                required: true,
+              }}
               name="startTime"
               render={(field) => {
                 return (
@@ -113,7 +123,19 @@ function CreateEditTierForm(props: any) {
           <div >
             <Controller
               control={control}
-              rules={{ required: true }}
+              rules={{
+                required: true,
+                validate: {
+                  greateOrEqualStartTime: value => {
+                    const startTime = getValues('startTime');
+                    const valueUnix = moment(value).unix();
+                    const startTimeUnix = moment(startTime).unix();
+                    console.log('Validate Finish Time', valueUnix, startTimeUnix);
+
+                    return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
+                  }
+                }
+              }}
               name="endTime"
               render={(field) => {
                 return (
@@ -143,7 +165,6 @@ function CreateEditTierForm(props: any) {
 
         <FormControl component="fieldset">
           <label className={classes.formControlLabel}>Max Buy</label>
-
 
           <CurrencyInputWithValidate
             register={register}

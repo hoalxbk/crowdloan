@@ -2,341 +2,100 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: any) => {
   return {
-    errorBanner: {
-      color: 'white',
-      backgroundColor: '#FF4C00',
-      textAlign: 'center',
-      padding: 12,
-      marginBottom: 0,
-      flex: 1,
-    },
-    withBanner: {
-      marginTop: 13,
-      marginBottom: '18px !important',
-    },
-    loginWithBanner: {
-      top: '60px !important',
-    },
+    listPools: {
+      padding: '0 80px',
+      marginTop: '120px',
 
-    buyToken: {
-      backgroundColor: theme.custom.colors.mainBackground,
-      minHeight: '100vh',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      textAlign: 'left',
-      '&__form-claimable': {
-        '& > p': {
-          fontSize: 14
-        },
-        '& > p:not(:first-child)': {
-          marginTop: 20,
-        }
-      },
-      '&__not-purchasable': {
-        fontSize: 16,
-        fontWeight: 500,
-        color: '#f07f7f',
-        marginBottom: 20
-      },
-      '&__logout': {
-        position: 'absolute',
-        right: 30,
-        top: 20,
-        padding: '10px 30px',
-        color: 'white',
-        backgroundColor: '#FFCC00',
-        cursor: 'pointer',
-        fontWeight: 700,
-        borderRadius: 5,
-
-        '&:focus': {
-          outline: 'none'
-        }
-      },
-      '&__logo': {
+      '& h2': {
         textAlign: 'center',
-        marginBottom: '42px',
-      },
-      '&__wrapper': {
-        width: '545px',
-        maxWidth: '100%',
-      },
-      '&__campaign': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
-      },
-      '&__campaign-duration': {
-        fontSize: '16px',
-        fontWeight: '500',
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '5px',
-        '& span': {
-          marginLeft: '9px',
-          position: 'relative',
-          top: '-2px',
-        }
-      },
-      '&__campaign-title': {
-        fontSize: '20px',
-        fontWeight: 'bold',
-        letterSpacing: '0.15px',
-        lineHeight: '30px',
-        marginBottom: '10px',
-      },
-      '&__campaign-title--wordBreak': {
-        width: '100%',
-        whiteSpace: 'nowrap',
-        textOverflow: 'ellipsis',
-        overflow: 'hidden'
-      },
-      '&__campaign-total': {
-        letterSpacing: '0.15px',
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '15px',
-        '& .total': {
-          fontFamily: 'Poppins, sans-serif',
-          fontWeight: 'bold',
-          fontSize: '30px',
-        },
-        '& .unit': {
-          fontSize: '16px',
-          marginLeft: '10px',
-        }
-      },
-
-      '&__campaign-progress': {
-        marginBottom: '20px',
-      },
-      '&__campaign-explication': {
-        display: 'flex',
-        justifyContent: 'space-between',
-      },
-
-      '&__form-wrapper': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
-      },
-      '&__input-wrapper': {
-        height: '70px',
-        border: '1px solid #DFDFDF',
-        padding: '12px 15px',
-        borderRadius: '5px',
-      },
-
-      '&__input-label': {
-        display: 'block',
-        fontSize: '12px',
-        letterSpacing: '0.4px',
-        color: '#9A9A9A',
-      },
-
-      '&__input': {
-        width: '100%',
-        height: '30px',
-        maxWidth: '100%',
-        letterSpacing: '0.4px',
-        color: theme.custom.colors.secondaryText,
-        border: 0,
-        outline: 'none',
-        fontWeight: 'bold',
-        fontSize: '20px',
-      },
-      '&__input-error': {
-        marginTop: '5px',
-      },
-
-      '&__form-amount-unit': {
-        display: 'flex',
-      },
-      '&__form-token-convert-unit-wrap': {
-        display: 'flex',
-      },
-      '&__form-token-convert': {
-        flexGrow: 1,
-      },
-
-      '&__form-amount': {
-        flexGrow: 1,
-        marginBottom: '12px',
-      },
-      '&__form-exchange': {
-        marginBottom: '12px',
-        display: 'flex',
-        alignItems: 'center',
-        fontWeight: 'bold',
-        fontSize: '12px',
-        color: theme.custom.colors.secondary,
-        '& span': {
-          marginLeft: '5px',
-        }
-      },
-      '&__loading': {
-        textAlign: 'center',
-        '& svg': {
-          color: theme.custom.colors.primary,
-        }
-      },
-      '&__loading--blue': {
-        textAlign: 'center',
-        '& svg': {
-          color: 'blue !important' as any
-        }
-      },
-      '&__campaign-not-found': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
-      },
-      '&__form-reason-not-show-button': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '15px 60px',
-        marginBottom: '20px',
-        color: 'red',
-        textAlign: 'center',
-      },
-      '&__form-reason-sold-out': {
-        fontSize: 16,
-        fontWeight: 500,
-        color: '#f07f7f',
-        marginTop: 11,
-        marginBottom: 20,
-        textAlign: 'center',
-      },
-      '&__balance': {
         marginBottom: '30px',
-      },
-      '&__balance-title': {
-        fontSize: '20px',
+        fontFamily: 'DM Sans',
+        fontStyle: 'normal',
         fontWeight: 'bold',
-        marginBottom: '5px',
-      },
-      '&__balance-content': {
-        display: 'flex',
-      },
-      '&__balance-item': {
-        fontSize: '16px',
-        fontWeight: 500,
-        '& span': {
-          color: theme.custom.colors.secondary,
-        },
-        '&.usdt': {
-          marginLeft: '30px',
-        }
+        fontSize: '28px',
+        lineHeight: '32px',
+        color: '#FFFFFF',
       },
 
-      '& .login__form': {
-        marginTop: 20,
+      '& .pools': {
+        display: 'Grid',
+        gridTemplateColumns: '1fr 1fr 1fr 1fr',
+        gap: '20px'
       },
 
-      '& .login__form-field': {
-        marginTop: 20,
-        width: '100%'
-      },
-
-      '& .MuiInputBase-input': {
-        color: 'white'
-      },
-
-      '& .MuiFormLabel-root': {
-        color: 'white'
-      },
-
-      '& .MuiInput-underline:before': {
-        borderColor: 'white'
-      },
-
-      '&__title': {
-        color: 'white',
-        fontSize: 30,
-        fontWeight: 600,
-        textAlign: 'left',
-        marginTop: 20
-      },
-
-      '& .login__form-privacy': {
-        textAlign: 'left'
-      },
-
-      '& .login__form-privacy a': {
-        color: '#337ab7'
-      },
-
-      '& .login__form-cta': {
-        padding: '15px 30px',
-        backgroundColor: '#FFCC00',
+      '& .btn': {
+        height: '42px',
+        fontFamily: 'DM Sans',
+        fontStyle: 'normal',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        lineHeight: '18px',
+        color: '#FFFFFF',
         border: 'none',
-        marginTop: 30,
-        color: 'white',
-        fontWeight: 700,
+        outline: 'none',
+        padding: '0 27px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '60px',
+        backgroundColor: '#D01F36',
+        margin: '40px auto 0'
+      }
+    },
+    getAlert: {
+      padding: '118px 80px 94px 80px',
+      position: 'relative',
+
+      '& > img': {
         width: '100%',
-        fontSize: 16,
-        borderRadius: 5,
-        cursor: 'pointer',
-
-        '&:focus': {
-          outline: 'none'
-        }
       },
 
-      '& .login__form-desc': {
-        color: '#968f8f',
-        marginTop: 20,
-        fontSize: 16
+      '& .content': {
+        position: 'absolute',
+        zIndex: 1,
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)'
       },
 
-      '& .login__form-desc-link': {
-        color: '#FFCC00',
-        cursor: 'pointer'
+      '& h2': {
+        fontFamily: 'DM Sans',
+        fontStyle: 'normal',
+        fontWeight: 'normal',
+        fontSize: '48px',
+        lineHeight: '66px',
+        color: '#FFFFFF',
+        textAlign: 'center'
       },
 
-      '& .login__user-loading-text': {
-        color: 'white',
-        marginTop: 30,
-        fontSize: 20,
-        fontWeight: 700
+      '& p': {
+        fontFamily: 'Helvetica',
+        fontStyle: 'normal',
+        fontWeight: 'normal',
+        fontSize: '14px',
+        lineHeight: '24px',
+        color: '#999999',
+        textAlign: 'center'
       },
 
-      '& .login__form-error-message': {
-        marginTop: 7,
-        color: 'red',
-        textAlign: 'left'
-      },
-
-      '& .login__form-forgot-password': {
-        cursor: 'pointer',
-        fontWeight: '700',
-        fontSize: 15,
-        textAlign: 'left',
-        color: '#FFCC00',
-        display: 'block'
-      },
-
-      '& .login__form-redirect': {
-        cursor: 'pointer',
-        fontWeight: '700',
-        fontSize: 15.5,
-        color: '#FFCC00',
-        display: 'block',
-        textAlign: 'center',
-        marginTop: 20
-      },
+      '& .btn': {
+        backgroundColor: '#3232DC',
+        height: '42px',
+        fontFamily: 'DM Sans',
+        fontStyle: 'normal',
+        fontWeight: 'bold',
+        fontSize: '14px',
+        lineHeight: '18px',
+        color: '#FFFFFF',
+        border: 'none',
+        outline: 'none',
+        padding: '0 27px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderRadius: '60px',
+        margin: '40px auto 0'
+      }
     }
   };
 });

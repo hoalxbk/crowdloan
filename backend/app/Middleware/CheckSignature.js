@@ -6,33 +6,39 @@ const Web3 = require('web3')
 const Const = use('App/Common/Const');
 
 class CheckSignature {
-  async handle({request,}, next) {
-    const params = request.all();
-    const type = request.params.type;
-    console.log('Check Signature with: ', params);
-    const isAdmin = type == Const.USER_TYPE_PREFIX.ICO_OWNER;
+  async handle({ request, }, next) {
+    try {
+      // const type = request.params.type;
+      // const isAdmin = type == Const.USER_TYPE_PREFIX.ICO_OWNER;
+      // const message = isAdmin ? process.env.MESSAGE_SIGNATURE : process.env.MESSAGE_INVESTOR_SIGNATURE;
 
-    const signature = params.signature
-    const wallet_address = Web3.utils.toChecksumAddress(params.wallet_address);
-    const message = isAdmin ? process.env.MESSAGE_SIGNATURE : process.env.MESSAGE_INVESTOR_SIGNATURE;
-    console.log('Message: ', message);
+      const params = request.all();
+      const headers = request.headers();
+      const signature = params.signature;
+      const message = headers.msgsignature;
+      console.log('Check Signature with: ', params);
+      console.log('Message: ', message);
 
-    const mes = [
-      {
-        type: 'string',
-        name: 'Message',
-        value: message,
+      const mes = [
+        {
+          type: 'string',
+          name: 'Message',
+          value: message,
+        }
+      ];
+      const recover = await sigUtil.recoverTypedSignatureLegacy({data: mes, sig: signature})
+      const recoverConvert = Web3.utils.toChecksumAddress(recover);
+      const wallet_address = Web3.utils.toChecksumAddress(params.wallet_address);
+      console.log('recoverConvert: ', recoverConvert, wallet_address);
+
+      if (recoverConvert && recoverConvert !== wallet_address) {
+        throw new ForbiddenException('Unauthorized!');
       }
-    ];
-    const recover = await sigUtil.recoverTypedSignatureLegacy({data: mes, sig: signature})
-    const recoverConvert = Web3.utils.toChecksumAddress(recover)
-
-    console.log('recoverConvert: ', recoverConvert, wallet_address);
-
-    if (recoverConvert && recoverConvert !== wallet_address) {
+      await next();
+    } catch (e) {
+      console.log('ERROR: ', e);
       throw new ForbiddenException('Unauthorized!');
     }
-    await next();
   }
 }
 

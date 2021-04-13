@@ -1,6 +1,6 @@
 module.exports = {
-  // WEB3_API_URL: 'https://rinkeby.infura.io/v3/c745d07314904c539668b553dbd6b670',
-  WEB3_API_URL: 'https://rinkeby-rpc.sotatek.com',
+  WEB3_API_URL: 'https://goerli.infura.io/v3/c745d07314904c539668b553dbd6b670',
+  // WEB3_API_URL: 'https://rinkeby-rpc.sotatek.com',
   AVERAGE_BLOCK_TIME: 15000,
   REQUIRED_CONFIRMATION: 3,
   CHAIN_ID: 9876,

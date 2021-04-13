@@ -79,5 +79,20 @@ module.exports = Object.freeze({
       ADDRESS_NOT_EXIST: 'AUTH_ERROR.ADDRESS_NOT_EXIST',
       PASSWORD_NOT_MATCH: 'AUTH_ERROR.PASSWORD_NOT_MATCH',
     },
+  },
+  CRAWLER_EVENT: {
+    POOL_CREATED: 'PoolCreated',
+    ICO_CAMPAIGN_CREATED: 'IcoCampaignCreated',
+    ICO_CAMPAIGN_CREATED_WITH_ETH_LINK: 'IcoCampaignCreatedWithEthLink',
+    TOKEN_PURCHASE_BY_ETHER_WITH_ETH_LINK: 'TokenPurchaseByEtherWithEthLink',
+    TOKEN_PURCHASE_BY_ETHER: 'TokenPurchaseByEther',
+    TOKEN_PURCHASE_BY_TOKEN: 'TokenPurchaseByToken',
+    PAUSE: 'Pause',
+    UNPAUSE: 'Unpause',
+    BUY_WITH_ETHER: 'buyWithEther',
+    BUY_WITH_TOKEN: 'buyWithToken',
+    BUY_WITH_ETHER_WITH_ETH_LINK: 'buyWithEtherWithETHLink',
+    REFUND: 'Refund',
+    TOKEN_CLAIMED: 'TokenClaimed',
   }
 });

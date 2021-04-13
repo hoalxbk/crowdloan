@@ -20,7 +20,7 @@ import InvestorForgotPassword from "./pages/ForgotPassword/InvestorForgotPasswor
 import InvestorResetPassword from "./pages/ResetPassword/InvestorResetPassword";
 import InvestorLogin from "./pages/Login/InvestorLogin";
 
-// import Account from "./pages/Account";
+import Account from "./pages/Account";
 
 //@ts-ignore
 import { NotificationContainer, NotificationManager } from 'react-notifications'
@@ -57,7 +57,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
           render={() => <Redirect to={`${'/dashboard'}`} />}
         />
         <Route exact path={`${'/dashboard'}`} component={Dashboard} />
-        <Route path={`${'/buy-token'}`} component={BuyToken} />
+        <Route path={`${'/buy-token/:id'}`} component={BuyToken} />
         <Route path={'/register'} component={InvestorRegister} />
         <Route path={'/login'} component={InvestorLogin} />
         <Route path={'/forgot-password/investor'} exact component={InvestorForgotPassword} />
@@ -65,7 +65,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         <Route path={'/confirm-email/:role?/:token'} component={ConfirmEmail} />
         <Route path={'/network-change'} component={NetworkChange} />
         <Route path={'/change-password/:role?'} component={ChangePassword} />
-        {/* <Route path={'/account'} component={Account} /> */}
+        <Route path={'/account'} component={Account} />
 
         <Route path={'/coming-soon'} component={ComingSoon} />
         <Route component={NotFoundPage} />

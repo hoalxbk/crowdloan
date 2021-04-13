@@ -5,6 +5,10 @@ const useStyles = makeStyles(theme => ({
     maxWidth: 720,
     margin: '0 auto',
   },
+  containerCreateEdit: {
+    maxWidth: 720,
+    // margin: '0 auto',
+  },
   form: {
     backgroundColor: 'white',
     boxShadow: `0px 0px 15px rgba(0, 0, 0, 0.1)`,
