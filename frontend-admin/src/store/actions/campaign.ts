@@ -16,6 +16,7 @@ import { isReferral, isOwnerOfReferral } from '../../utils/affiliateCampaign';
 import { getDigitsAfterDecimals } from '../../utils/formatNumber';
 import { TokenType } from '../../utils/token';
 import {adminRoute} from "../../utils";
+import {updateDeploySuccess} from "../../request/pool";
 const queryString = require('query-string');
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
 const USDT_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS || "";
@@ -548,6 +549,115 @@ export const createCampaign = (campaign: campaignCreateProps, history: any) => {
 
             dispatch({ type: alertActions.SUCCESS_MESSAGE, payload: 'Create Campaign Successful!'});
           })
+        }
+      }
+    } catch (err) {
+      dispatch({
+        type: campaignActions.MY_CAMPAIGN_CREATE_FAIL,
+        payload: err.message
+      });
+
+      dispatch({
+        type: alertActions.ERROR_MESSAGE,
+        payload: err.message
+      });
+    }
+  }
+}
+
+export const deployPool = (campaign: any, history: any) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
+    try {
+      dispatch({ type: campaignActions.MY_CAMPAIGN_CREATE_REQUEST });
+
+      const baseRequest = new BaseRequest();
+      const factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || "");
+
+      const { title, affiliate, start_time, finish_time, release_time, token, address_receiver, token_by_eth, tokenInfo, tier_configuration } = campaign;
+      const releaseTimeUnix = release_time;
+      const startTimeUnix = start_time;
+      const finishTimeUnix = finish_time;
+
+      const durationTime = finishTimeUnix - startTimeUnix;
+
+      const tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals || 0)).dividedBy(Math.pow(10, 18));
+      const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
+      const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
+
+      const tiers = tier_configuration.map((tier: any, index: number) => {
+        let decimal = 18;
+        // let decimal = 6;
+        // if (campaign.accept_currency == 'eth') {
+        //   decimal = 18;
+        // }
+        return (new BigNumber(tier.maxBuy || 0)).multipliedBy(Math.pow(10, decimal)).toString();
+      });
+
+      for (let i = 0; i < 5; i++) {
+        tiers.push(0);
+      }
+
+      if (factorySmartContract) {
+        let createdCampaign;
+        const userWalletAddress = getState().user.data.wallet_address;
+
+        createdCampaign = await factorySmartContract.methods.registerPool(
+          title, token, durationTime,
+          startTimeUnix, // releaseTimeUnix,
+          tokenByEthSendToBlock, tokenByEthDecimals,
+          tiers,
+          address_receiver
+        ).send({
+          from: userWalletAddress,
+        });
+
+        console.log('Deploy Response: ', createdCampaign);
+        if (createdCampaign) {
+          dispatch({ type: alertActions.SUCCESS_MESSAGE, payload: 'Deploy Pool Successful!'});
+
+          let campaignHash = '';
+          if (createdCampaign?.events && createdCampaign?.events && createdCampaign?.events[0]) {
+            campaignHash = createdCampaign?.events[0].address;
+          }
+
+          await updateDeploySuccess({
+            poolId: campaign.id,
+            campaignHash: campaignHash,
+            tokenSymbol: token,
+          });
+
+          // await createdCampaign
+          //   .on('transactionHash', async (transactionHash: string) => {
+          //     const loginUser = getState().user.data.wallet_address;
+          //
+          //     const isAffiliate = affiliate === 'yes'? 1: 0;
+          //
+          //     if (tokenInfo) {
+          //       const { name, symbol, decimals } = tokenInfo;
+          //       await baseRequest.post('/campaign-create', {
+          //         title,
+          //         affiliate: isAffiliate,
+          //         start_time: startTimeUnix,
+          //         finish_time: finishTimeUnix,
+          //         addressReceiver: address_receiver,
+          //         tokenByETH,
+          //         owner: loginUser,
+          //         token,
+          //         name,
+          //         symbol,
+          //         decimals,
+          //         transactionHash
+          //       });
+          //     }
+          //
+          //     dispatch({ type: campaignActions.MY_CAMPAIGN_CREATE_SUCCESS });
+          //
+          //     history.push(adminRoute('/campaigns'));
+          //
+          //     dispatch({ type: alertActions.SUCCESS_MESSAGE, payload: 'Create Campaign Successful!'});
+          //   })
+
+
         }
       }
     } catch (err) {

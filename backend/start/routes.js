@@ -62,9 +62,10 @@ Route.group(() => {
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.post('upload-avatar', 'FileController.uploadAvatar');
 
-  Route.post('pool/create', 'PoolController.createPool')
-  Route.post('pool/:campaignId/update', 'PoolController.updatePool')
-  Route.get('pool/:campaignId', 'PoolController.getPool')
+  Route.post('pool/create', 'PoolController.createPool');
+  Route.post('pool/:campaignId/update', 'PoolController.updatePool');
+  Route.get('pool/:campaignId', 'PoolController.getPool');
+  Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
 
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
 
@@ -115,7 +116,7 @@ Route.group(() => {
 }).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
 
 // Public API:
-Route.get('pool/:campaignId/participants', 'WhiteListUserController.getWhiteList')
+Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants')
 Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
 // Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');

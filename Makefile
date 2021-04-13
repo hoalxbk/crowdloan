@@ -38,7 +38,7 @@ build-frontend-admin:
 	make cd-server-sotatek-starter && cd ./frontend-admin && cp .env.sotatek.example .env && yarn && yarn build && pm2 restart SotatekStarterFrontEndAdmin
 
 build-backend:
-	make cd-server-sotatek-starter && cd ./backend && npm i && adonis migration:run && pm2 restart app.json
+	make cd-server-sotatek-starter && cd ./backend && cp .env.sotatek.example .env && npm i && adonis migration:run && pm2 restart app.json
 
 build-crawler:
 	make cd-server-sotatek-starter && cd ./crawler && cp .env.sotatek.example .env && npm i && make build && pm2 restart app.json

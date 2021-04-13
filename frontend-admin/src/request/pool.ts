@@ -10,7 +10,6 @@ export const createPool = async (data: any) => {
   return resObject;
 };
 
-
 export const updatePool = async (data: any, id: any) => {
   const baseRequest = new BaseRequest();
   let url = apiRoute(`/pool/${id}/update`);
@@ -27,6 +26,18 @@ export const getPoolDetail = async (id: any) => {
   const response = await baseRequest.get(url) as any;
   const resObject = await response.json();
 
+  return resObject;
+};
+
+export const updateDeploySuccess = async (data: any) => {
+  const baseRequest = new BaseRequest();
+  let url = apiRoute(`/pool/${data.poolId}/deploy-success`);
+
+  const response = await baseRequest.post(url, {
+    campaign_hash: data.campaignHash,
+    token_symbol: data.tokenSymbol,
+  }) as any;
+  const resObject = await response.json();
   return resObject;
 };
 
