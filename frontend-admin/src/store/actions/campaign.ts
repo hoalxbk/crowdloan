@@ -16,6 +16,7 @@ import { isReferral, isOwnerOfReferral } from '../../utils/affiliateCampaign';
 import { getDigitsAfterDecimals } from '../../utils/formatNumber';
 import { TokenType } from '../../utils/token';
 import {adminRoute} from "../../utils";
+import {updateDeploySuccess} from "../../request/pool";
 const queryString = require('query-string');
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
 const USDT_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS || "";
@@ -564,7 +565,7 @@ export const createCampaign = (campaign: campaignCreateProps, history: any) => {
   }
 }
 
-export const createPoolAction = (campaign: any, history: any) => {
+export const deployPool = (campaign: any, history: any) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     try {
       dispatch({ type: campaignActions.MY_CAMPAIGN_CREATE_REQUEST });
@@ -610,8 +611,20 @@ export const createPoolAction = (campaign: any, history: any) => {
           from: userWalletAddress,
         });
 
+        console.log('Deploy Response: ', createdCampaign);
         if (createdCampaign) {
           dispatch({ type: alertActions.SUCCESS_MESSAGE, payload: 'Deploy Pool Successful!'});
+
+          let campaignHash = '';
+          if (createdCampaign?.events && createdCampaign?.events && createdCampaign?.events[0]) {
+            campaignHash = createdCampaign?.events[0].address;
+          }
+
+          await updateDeploySuccess({
+            poolId: campaign.id,
+            campaignHash: campaignHash,
+            tokenSymbol: token,
+          });
 
           // await createdCampaign
           //   .on('transactionHash', async (transactionHash: string) => {
@@ -643,6 +656,8 @@ export const createPoolAction = (campaign: any, history: any) => {
           //
           //     dispatch({ type: alertActions.SUCCESS_MESSAGE, payload: 'Create Campaign Successful!'});
           //   })
+
+
         }
       }
     } catch (err) {

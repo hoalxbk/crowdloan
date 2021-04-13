@@ -116,7 +116,7 @@ Route.group(() => {
 }).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
 
 // Public API:
-Route.get('pool/:campaignId/participants', 'WhiteListUserController.getWhiteList')
+Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants')
 Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
 // Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');

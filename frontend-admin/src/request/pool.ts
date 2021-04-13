@@ -33,7 +33,10 @@ export const updateDeploySuccess = async (data: any) => {
   const baseRequest = new BaseRequest();
   let url = apiRoute(`/pool/${data.poolId}/deploy-success`);
 
-  const response = await baseRequest.post(url, {}) as any;
+  const response = await baseRequest.post(url, {
+    campaign_hash: data.campaignHash,
+    token_symbol: data.tokenSymbol,
+  }) as any;
   const resObject = await response.json();
   return resObject;
 };

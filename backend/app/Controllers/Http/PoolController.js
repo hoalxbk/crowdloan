@@ -168,15 +168,11 @@ class PoolController {
   }
 
   async updateDeploySuccess({ request, auth, params }) {
-    // const inputParams = request.only([
-    //   'is_deploy',
-    // ]);
-    //
-    // const data = {
-    //   'is_deploy': inputParams.is_deploy,
-    // };
-    // console.log('Update Pool with data: ', data, params);
+    const inputParams = request.only([
+      'campaign_hash', 'token_symbol',
+    ]);
 
+    console.log('Update Deploy Success with data: ', inputParams);
     const campaignId = params.campaignId;
     try {
       const campaign = await CampaignModel.query().where('id', campaignId).first();
@@ -185,6 +181,8 @@ class PoolController {
       }
       await CampaignModel.query().where('id', campaignId).update({
         is_deploy: true,
+        campaign_hash: inputParams.campaign_hash,
+        token_symbol: inputParams.token_symbol,
       });
 
       // Delete cache

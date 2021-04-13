@@ -14,7 +14,7 @@ class CampaignSchema extends Schema {
       table.string('campaign_hash')
       table.bigInteger('campaign_id')
       table.string('funding_wallet_address')
-      table.boolean('affiliate')
+      // table.boolean('affiliate')
       table.string('start_time')
       table.string('finish_time')
       table.string('token_conversion_rate')
@@ -33,6 +33,25 @@ class CampaignSchema extends Schema {
       table.string('name')
       table.string('symbol')
       table.text('description')
+
+      // alter table
+      table.string('banner').nullable();
+      table.string('address_receiver').nullable();
+      table.string('token_images').nullable();
+      table.string('total_sold_coin').nullable();
+
+      table.string('release_time').nullable();
+      table.string('start_join_pool_time').nullable();
+      table.string('end_join_pool_time').nullable();
+
+      table.string('accept_currency').nullable();
+      table.string('network_available').nullable();
+      table.string('buy_type').nullable();
+      table.string('pool_type').nullable();
+      table.integer('min_tier').nullable().defaultTo(1);
+      table.boolean('is_deploy').notNullable().defaultTo(0);
+      table.boolean('is_display').notNullable().defaultTo(0); // Display in dashboard
+
       table.timestamps()
     })
   }
