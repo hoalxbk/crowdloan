@@ -52,11 +52,11 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         label: 'Exchange Rate'
       },
       [PoolDetailKey.method]: { 
-        display: method === 'whitelist' ? 'Whitelist/Lottery - FCFS': '',
+        display: method === 'whitelist' ? 'Whitelist/Lottery': 'FCFS',
         label: 'Method'
       },
       [PoolDetailKey.type]: { 
-        display: type ===  'swap' ? 'Swap - Claimable': '',
+        display: type ===  'swap' ? 'Swap': 'Claimable',
         label: 'Type'
       }
     }

@@ -5,13 +5,13 @@ import { useParams } from 'react-router-dom';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 
-
 import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
 import useAuth from '../../hooks/useAuth';
 import usePoolDetails from '../../hooks/usePoolDetails';
 import useTokenBalance from '../../hooks/useTokenBalance';
-import useTokenApprove from '../../hooks/useTokenApprove';
 import useTokenSoldProgress from './hooks/useTokenSoldProgress';
+import usePoolJoinAction from './hooks/usePoolJoinAction';
+import useFetch from '../../hooks/useFetch';
 
 import Tiers from '../Account/Tiers';
 import LotteryWinners from './LotteryWinners';
@@ -38,26 +38,66 @@ enum HeaderType {
 
 const headers = [HeaderType.Main, HeaderType.About, HeaderType.Participants];
 
+const ETHERSCAN_BASE_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL;
+
 const BuyToken: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
+  const [isParticipated, setIsParticipated] = useState(false);
+  const [isWinner, setIsWinner] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
   const { id } = useParams() as any;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
-  /* const tokenDetails = poolDetails?.tokenDetails || undefined; */
-  const tokenDetails = {
-     decimals: 18, name: 'Dyrus', symbol: 'DYRUS', address: '0xb9d089545cc4bbbfcd3b5a9e4e52550960790693' 
-  }
+  const tokenDetails = poolDetails?.tokenDetails || undefined;
   const { tokenBalance } = useTokenBalance(tokenDetails, connectedAccount);
   // Should replace hard string by pool address
-  const { approveToken, tokenApproveLoading } = useTokenApprove(tokenDetails, connectedAccount, "0x954e1498272113b759a65cb83380998fe80f5264");
-  const { tokenSold, totalSell, soldProgress } = useTokenSoldProgress("0x954e1498272113b759a65cb83380998fe80f5264", tokenDetails);
+  const { tokenSold, totalSell, soldProgress } = useTokenSoldProgress(poolDetails?.poolAddress, tokenDetails);
+  const { joinPool, poolJoinLoading } = usePoolJoinAction({ poolId: poolDetails?.id });
+  const { data: winners } = useFetch<Array<any>>(`/pool/${poolDetails?.id}/winners`);
+  const { data: participants } = useFetch<Array<any>>(`/pool/${poolDetails?.id}/participants`);
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
+
   const userBuyLimit = poolDetails?.connectedAccountBuyLimit || 0;
+
+  // With Whitelist situation, Enable when join time < current < end join time
+  // With FCFS, always disable join button
+  const joinTimeInDate = new Date(Number(poolDetails?.joinTime) * 1000);
+  const endJoinTimeInDate = new Date(Number(poolDetails?.endJoinTime) * 1000);
+  const availablePurchase = 
+    poolDetails?.method === 'whitelist' 
+    ? new Date() >= joinTimeInDate && new Date() <= endJoinTimeInDate
+    : false;
+
+  useEffect(() => {
+    // Check if user is winning ticket or not
+    if (poolDetails?.method === "whitelist" && winners && winners.length > 0) {
+      let isFound = false;
+
+      winners.forEach(winner => {
+        if (winner.wallet_address === connectedAccount && !isFound) {
+          console.log(`Account ${connectedAccount} won ticket`);
+          setIsWinner(true);
+        }
+      });
+    }
+  }, [poolDetails, winners]);
+
+  useEffect(() => {
+    if (poolDetails?.method === "whitelist" && participants && participants.length > 0) {
+      let isFound = false;
+
+      participants.forEach(participant => {
+        if (participant.wallet_address === connectedAccount && !isFound) {
+          setIsParticipated(true);
+        }
+      });
+    }
+  }, [poolDetails, participants]);
+
 
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
@@ -72,27 +112,42 @@ const BuyToken: React.FC<any> = (props: any) => {
     <DefaultLayout>
       <div className={styles.poolDetailContainer}>
         <header className={styles.poolDetailHeader}> 
-          <div className={styles.poolHeaderImage}>
-            <img src={poolImage} alt="pool-image" />
-          </div>
-          <div className={styles.poolHeaderInfo}>
+          <div className={styles.poolHeaderWrapper}>
+            <div className={styles.poolHeaderImage}>
+              <img src={poolImage} alt="pool-image" />
+            </div>
+            <div className={styles.poolHeaderInfo}>
             <h2 className={styles.poolHeaderTitle}>{poolDetails?.title}</h2>
-            <p className={styles.poolHeaderAddress}>
-              {poolDetails?.tokenDetails?.address}
-              <CopyToClipboard text={poolDetails?.tokenDetails.address}
+              <p className={styles.poolHeaderAddress}>
+              {poolDetails?.poolAddress}
+              <CopyToClipboard text={poolDetails?.poolAddress}
                 onCopy={() => { 
                   setCopiedAddress(true);
                   setTimeout(() => {
                     setCopiedAddress(false);
                   }, 2000);
-                }}>
+                }}
+              >
                 {
                   !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
                   : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
                 }
-                </CopyToClipboard>
-            </p>
+              </CopyToClipboard>
+              </p>
+            </div>
           </div>
+          {isWinner && 
+            <p className={styles.poolTicketWinner}>
+              {
+                [...Array(3)].map(num => (
+                  <img src="/images/fire-cracker.svg" alt="file-cracker" />
+                ))
+              }
+              <span style={{ marginLeft: 14 }}>
+                Congratulations on your purchase of the lottery ticket at this pool !
+              </span>
+            </p>
+          }
         </header>
         <main className={styles.poolDetailInfo}>
           <div className={styles.poolDetailTierWrapper}>
@@ -131,8 +186,22 @@ const BuyToken: React.FC<any> = (props: any) => {
                       )})
                   }
                   <div className={styles.btnGroup}>
-                    <Button text={'Join Pool'} backgroundColor={'#D01F36'} disabled={new Date(1618218340 * 1000) > new Date()} />
-                    <Button text={'Etherscan'} backgroundColor={'#3232DC'}/>
+                    {
+                      <Button 
+                        text={'Join Pool'} 
+                        backgroundColor={'#D01F36'} 
+                        disabled={!availablePurchase || isParticipated} 
+                        loading={poolJoinLoading}
+                        onClick={joinPool}
+                      />
+                    }
+                    <Button 
+                      text={'Etherscan'} 
+                      backgroundColor={'#3232DC'} 
+                      onClick={() => {
+                        poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails.poolAddress}` as string, '_blank')
+                      }} 
+                    />
                   </div>
                 </>
               )
@@ -162,7 +231,7 @@ const BuyToken: React.FC<any> = (props: any) => {
               </div>
               <div className={styles.poolDetailStartTime}>
                 <span className={styles.poolDetailStartTimeTitle}>Start in</span>
-                <Countdown startDate={new Date(1618338380 * 1000)} />
+                <Countdown startDate={poolDetails?.joinTime ? new Date(Number(poolDetails?.joinTime) *  1000): undefined} />
               </div>
             </div> 
           </div>
@@ -182,11 +251,13 @@ const BuyToken: React.FC<any> = (props: any) => {
                     <BuyTokenForm 
                       tokenDetails={poolDetails?.tokenDetails} 
                       balance={tokenBalance} 
-                      approveToken={approveToken}
-                      tokenApproveLoading={tokenApproveLoading}
-                      rate={100}
-                      poolAddress={"0x954e1498272113b759a65cb83380998fe80f5264"}
+                      rate={poolDetails?.ethRate}
+                      poolAddress={poolDetails?.poolAddress}
                       maximumBuy={userBuyLimit}
+                      purchasableCurrency={poolDetails?.purchasableCurrency?.toUpperCase()}
+                      poolId={poolDetails?.id}
+                      joinTime={poolDetails?.joinTime}
+                      method={poolDetails?.method}
                     /> 
                )
               }

@@ -38,7 +38,7 @@ const useProviderConnect = (
   const [loginError, setLoginError] = useState('');
 
   const history = useHistory();
-  const {activate, active, connector, chainId, error, account: connectedAccount} = useWeb3React();
+  const {activate, active, connector, chainId, error, account: connectedAccount, library} = useWeb3React();
 
   const previousAccount = usePrevious(account);
   const activePrevious = usePrevious(active);
@@ -225,7 +225,7 @@ const useProviderConnect = (
           )
         );
 
-        history.push('/login');
+        !investorToken && history.push('/login');
       } 
       else if (twoFactor === TwoFactors.Layer1 && walletNameSuccess && !walletConnect && !investorToken) {
         handleLogout && handleLogout();
@@ -236,10 +236,6 @@ const useProviderConnect = (
   }, [walletNameSuccess, connectedAccount, appChainID, walletChainID, loginError, twoFactor, walletConnect, connectedAccount]);
 
   const handleConnectorDisconnect = useCallback(() => {
-    if (walletNameSuccess === ConnectorNames.WalletConnect) {
-      localStorage.removeItem("walletconnect");
-    }
-
     dispatch(disconnectWallet());
     dispatch(settingCurrentConnector(undefined));
     setWalletName([]);
@@ -247,7 +243,6 @@ const useProviderConnect = (
     setCurrentConnector(undefined);
     setConnectWalletLoading(false);
     setLoginError('');
-
   }, [walletNameSuccess]);
   
   return {

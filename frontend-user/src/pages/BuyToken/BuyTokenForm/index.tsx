@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, Dispatch, SetStateAction } from 'react';
 import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
@@ -15,23 +15,28 @@ import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import useTokenAllowance from '../../../hooks/useTokenAllowance';
 import useUserPurchased from '../hooks/useUserPurchased';
 import usePoolDepositAction from '../hooks/usePoolDepositAction';
+import useUserPurchaseSignature from '../hooks/useUserPurchaseSignature';
+import useTokenApprove from '../../../hooks/useTokenApprove';
 
 type BuyTokenFormProps = {
   tokenDetails: TokenType | undefined,
   balance: number,
-  approveToken: () => void;
-  tokenApproveLoading: boolean,
-  rate: number,
-  poolAddress: string;
-  maximumBuy: number
+  rate: number | undefined,
+  poolAddress: string | undefined;
+  maximumBuy: number;
+  purchasableCurrency: string | undefined;
+  poolId: number | undefined;
+  joinTime: string | undefined;
+  method: string | undefined;
 }
 
 const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
-  const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [input, setInput] = useState("");
+  const [openApproveModal, setApproveModal] = useState(false);
+  const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [transactionFee, setTransactionFee] = useState<number>(0);
   const [estimateTokens, setEstimateTokens] = useState<number>(0);
   const [tokenAllowance, setTokenAllowance] = useState<number>(0);
@@ -43,12 +48,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     rate, 
     poolAddress, 
     maximumBuy, 
-    approveToken, 
-    tokenApproveLoading 
+    purchasableCurrency,
+    poolId,
+    joinTime,
+    method
   } = props;
 
-  const { retrieveTokenAllowance } = useTokenAllowance();
-  const { retrieveUserPurchased } = useUserPurchased(tokenDetails);
   const { 
     deposit, 
     estimateFee, 
@@ -60,6 +65,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   const { account: connectedAccount } = useWeb3React();
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
   const connector = useTypedSelector(state => state.connector).data;
+
+  const { retrieveTokenAllowance } = useTokenAllowance();
+  const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress);
+  const { approveToken, tokenApproveLoading, transactionHash, setTokenApproveLoading } = useTokenApprove(tokenDetails, connectedAccount, poolAddress);
+
+  useUserPurchaseSignature(connectedAccount, poolId);
 
   const fetchUserBalance = useCallback(async () => {
       if (appChainID && connectedAccount && connector) {
@@ -92,7 +103,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     const val = e.target.value;
     setInput(val);
 
-    if (!isNaN(val) && val) {
+    if (!isNaN(val) && val && rate) {
       const tokens = new BigNumber(val).multipliedBy(rate).toNumber()
       setEstimateTokens(tokens);
       const estimatedFee = await estimateFee(val) 
@@ -111,12 +122,24 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
       await deposit(input);
       await fetchUserBalance();
 
+      if (tokenDetails && poolAddress && connectedAccount) {
+        await retrieveTokenAllowance(tokenDetails, connectedAccount, poolAddress);
+      }
       //  Clear input field and additional information field below and close modal
       setInput("");
       setEstimateTokens(0);
       setTransactionFee(0);
     } catch (err) {
       setOpenSubmitModal(false);
+    }
+  }
+
+  const handleTokenApprove = async () => {
+    try {
+      setApproveModal(true);
+      await approveToken();
+    } catch (err) {
+      setApproveModal(false);
     }
   }
 
@@ -127,8 +150,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
         <p className={styles.buyTokenInputLabel}>
           <span>Input</span>
           <span>Your wallet balance:&nbsp;
-            {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(balance))} 
-            {tokenDetails?.symbol}
+            {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(balance))} &nbsp;
+            {purchasableCurrency}
           </span>
         </p>
         <div className={styles.buyTokenInputWrapper}>
@@ -139,7 +162,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
             onChange={handleInputChange} 
             value={input} 
           />
-          <span>{tokenDetails?.symbol}</span>
+          <span>{purchasableCurrency}</span>
         </div>
       </div>
       <p className={styles.buyTokenFee}>
@@ -155,14 +178,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
         <Button 
         text={'Approve'} 
         backgroundColor={'#29C08A'} 
-        disabled={tokenAllowance > 0} 
-        onClick={approveToken} 
+        disabled={tokenAllowance > 0 || new Date(Number(joinTime) * 1000) > new Date()} 
+        onClick={handleTokenApprove} 
         loading={tokenApproveLoading} 
         />
         <Button 
           text={'Deposit'} 
           backgroundColor={'#D01F36'} 
-          disabled={(tokenAllowance <= 0 || estimateErr !== "")} 
+          disabled={(tokenAllowance <= 0 || estimateErr !== "" || method === "fcfs")} 
           onClick={handleTokenDeposit}
           loading={tokenDepositLoading} 
         />
@@ -171,6 +194,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
         opened={openSubmitModal} 
         handleClose={() => { setOpenSubmitModal(false); setTokenDepositLoading(false)}} 
         transactionHash={tokenDepositTransaction}
+      />
+      <TransactionSubmitModal 
+        opened={openApproveModal} 
+        handleClose={() => { setApproveModal(false); setTokenApproveLoading(false)}} 
+        transactionHash={transactionHash}
       />
     </div>
   )

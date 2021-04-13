@@ -12,7 +12,12 @@ export type PoolDetails = {
   tokenDetails: TokenType;
   title: string;
   buyLimit: number[],
-  connectedAccountBuyLimit: number
+  connectedAccountBuyLimit: number,
+  poolAddress: string;
+  joinTime: string;
+  endJoinTime: string;
+  id: number;
+  purchasableCurrency: string;
 }
 
 export type PoolDetailsReturnType ={
@@ -28,8 +33,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
 
   const poolDetails = useMemo(() => {
     if (data && !loading && !error && tokenDetails && poolDetailDone)  {
-      console.log(data);
-      const buyLimit = data.tiers.map((tier: any) => tier.max_buy);
+      const buyLimit = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.max_buy): [0,0,0,0,0];
 
       return {
         method: data.buy_type,
@@ -42,7 +46,13 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         tokenDetails,
         title: data.title,
         buyLimit,
-        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) || 0]
+        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) || 0],
+        poolAddress: data.campaign_hash,
+        joinTime: data.start_join_pool_time,
+        endJoinTime: data.end_join_pool_time,
+        banner: data.token_images,
+        purchasableCurrency: data.accept_currency,
+        id: data.id
       }
     }
 

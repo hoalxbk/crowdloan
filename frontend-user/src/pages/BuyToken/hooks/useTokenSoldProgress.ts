@@ -28,7 +28,11 @@ const useTokenSoldProgress = (poolAddress: string | undefined, token: TokenType 
 
           setTokenSold(tokensSold.div(new BigNumber(10).pow(18)).toNumber());
           setTotalSell(totalTokens.div(new BigNumber(10).pow(18)).toNumber());
-          setSoldProgress(tokensSold.div(totalTokens).multipliedBy(100).toNumber());
+          setSoldProgress(
+            !tokensSold.eq(new BigNumber(0)) ? 
+            tokensSold.div(totalSell).multipliedBy(100).toNumber(): 
+            new BigNumber(0).toNumber()
+         );
         }
       }
     }

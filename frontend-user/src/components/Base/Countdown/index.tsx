@@ -5,7 +5,7 @@ type CountDownProps = {
   startDate?: Date
 }
 
-const Countdown: React.FC<CountDownProps> = ({ startDate = new Date() }: CountDownProps) => {
+const Countdown: React.FC<CountDownProps> = ({ startDate }: CountDownProps) => {
   const styles = useStyles();
   const [second, setSecond] = useState('0');
   const [minute, setMinute] = useState('0');
@@ -13,17 +13,20 @@ const Countdown: React.FC<CountDownProps> = ({ startDate = new Date() }: CountDo
   const [day, setDay] = useState('0');
 
   useEffect(() => {
-    (function () {
-    const second = 1000,
-          minute = second * 60,
-          hour = minute * 60,
-          day = hour * 24;
+    let countDownInterval = undefined as any; 
 
-        let countDown = startDate.getTime();
-        let countDownInterval = setInterval(function() {    
+    if (startDate) {
+      const second = 1000,
+      minute = second * 60,
+      hour = minute * 60,
+      day = hour * 24;
 
-          let now = new Date().getTime(), distance = countDown - now;
+      let countDown = startDate.getTime();
+      countDownInterval = setInterval(function() {    
 
+        let now = new Date().getTime(), distance = countDown - now;
+        
+        if (distance >= 0) {
           const currentDay = Math.floor(distance / (day));
           const currentHour = Math.floor((distance % (day)) / (hour))
           const currentMinute = Math.floor((distance % (hour)) / (minute));
@@ -33,15 +36,26 @@ const Countdown: React.FC<CountDownProps> = ({ startDate = new Date() }: CountDo
           setHour(currentHour < 10 ? `0${currentHour}`: `${currentHour}`);
           setMinute(currentMinute < 10 ? `0${currentMinute}`: `${currentMinute}`);
           setSecond(currentSecond < 10 ? `0${currentSecond}`: `${currentSecond}`);
+        }
 
-          //do something later when date is reached
-          if (distance <= 0) {
-            clearInterval(countDownInterval);
-          }
-          //seconds
-        }, 0)
-    }());
-  }, []);
+
+        //do something later when date is reached
+        if (distance <= 0) {
+          countDownInterval && clearInterval(countDownInterval);
+        }
+        //seconds
+      }, 0);
+    } else {
+      setSecond("00");
+      setMinute("00");
+      setHour("00");
+      setDay("00");
+    }
+
+    return () => {
+      clearInterval(countDownInterval);
+    }
+  }, [startDate]);
 
   return (
     <div id="countdown">

@@ -94,7 +94,7 @@ const TransactionSubmitModal: React.FC<any> = (props: any) => {
                 <span>TXn Hash</span>
                 <input value={transactionHash} className={styles.dialogInput} disabled={true} />
                 <a 
-                  href={`${ETHERSCAN_URL}tx/${transactionHash}`} 
+                  href={`${ETHERSCAN_URL}/tx/${transactionHash}`} 
                   className={styles.dialogButton} 
                   target="_blank"
                 >

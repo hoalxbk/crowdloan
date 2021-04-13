@@ -152,8 +152,8 @@ const InvestorRegister: React.FC<any> = (props: any) => {
                 label={'Sign up'}
                 buttonType="primary"
                 className={'login__form-cta'}
-                loading={userRegisterLoading || investorLoginLoading}
-                disabled={userRegisterLoading || investorLoginLoading}
+                loading={investorLoginLoading}
+                disabled={investorLoginLoading}
               />
               <div className="signup">
                 <span>Have an account ?&nbsp;</span>

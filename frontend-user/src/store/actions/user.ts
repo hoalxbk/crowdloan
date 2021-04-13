@@ -10,9 +10,7 @@ import { ThunkDispatch } from 'redux-thunk';
 import { Web3Provider } from '@ethersproject/providers'
 
 type UserRegisterProps = {
-  username: string;
   email: string;
-  password: string;
   address: string;
   library: Web3Provider;
 }
@@ -37,7 +35,7 @@ const getMessageParams = () => {
   }]
 }
 
-const getParamsWithConnector = (connectedAccount: string) => ({
+export const getParamsWithConnector = (connectedAccount: string) => ({
   [ConnectorNames.BSC]: {
     method: 'eth_sign',
     params: [connectedAccount, MESSAGE_INVESTOR_SIGNATURE]
@@ -161,7 +159,7 @@ export const login = (connectedAccount: string, library: Web3Provider, history: 
   }
 }
 
-export const register = ({ username, email, password, address: connectedAccount, library }: UserRegisterProps) => {
+export const register = ({ email, address: connectedAccount, library }: UserRegisterProps) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({
       type: userActions.INVESTOR_REGISTER_LOADING
@@ -186,12 +184,9 @@ export const register = ({ username, email, password, address: connectedAccount,
           }
 
           const response = await baseRequest.post(`/user/register/`, {
-            username,
             email,
-            password,
             wallet_address: connectedAccount,
             signature: result.result,
-            // message: baseRequest.getSignatureMessage(isInvestor),
           }) as any;
 
           const resObj = await response.json();
@@ -314,7 +309,7 @@ export const updateUserProfile = (updatedUser: UserProfileProps) => {
       if (ethAddress) {
         const windowObj = window as any;
         const { ethereum } = windowObj;
-        const { firstName, lastName, avatar } = updatedUser;
+        const { avatar } = updatedUser;
        await ethereum.sendAsync({
             method: 'eth_signTypedData',
             params: [getMessageParams(), ethAddress],
@@ -325,8 +320,6 @@ export const updateUserProfile = (updatedUser: UserProfileProps) => {
               dispatchErrorWithMsg(dispatch, userActions.USER_PROFILE_UPDATE_FAILURE, errMsg);
           } else {
             const response = await baseRequest.post(`/user/update-profile`, {
-              firstname: firstName,
-              lastname: lastName,
               avatar,
               signature: result.result
             }) as any;
