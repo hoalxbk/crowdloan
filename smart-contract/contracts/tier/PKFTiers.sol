@@ -1,13 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.0;
 
-import "openzeppelin-solidity/contracts/token/ERC721/IERC721.sol";
-
 import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
-import "../token/ERC20.sol";
+import "../token/ERC20/ERC20.sol";
+import "../token/ERC721/IERC721.sol";
+import "../token/ERC721/IERC721Receiver.sol";
 
-contract PKFTiers is Ownable, ReentrancyGuard {
+contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
     struct UserInfo {
@@ -19,6 +19,8 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         address contractAddress;
         uint256 decimals;
         uint256 rate;
+        bool isERC721;
+        bool isERC1155;
     }
 
     uint256 constant MAX_NUM_TIERS = 10;
@@ -26,20 +28,29 @@ contract PKFTiers is Ownable, ReentrancyGuard {
 
     address public penaltyWallet;
 
-    ERC20 public PKF;
+    address public PKF;
 
-    mapping(address => UserInfo) public userInfo;
+    mapping(address => mapping(address => UserInfo)) public userInfo;
+    mapping(address => uint256) public userExternalStaked;
     uint256[MAX_NUM_TIERS] tierPrice;
 
     uint256[] public withdrawFeePercent;
-    ExternalToken[] public externalToken;
+    mapping(address => ExternalToken) public externalToken;
 
     bool public canEmergencyWithdraw;
 
-    event Staked(address indexed user, uint256 amount);
-    event Withdrawn(address indexed user, uint256 indexed amount, uint256 fee);
-    event EmergencyWithdrawn(address indexed user, uint256 amount);
-    event AddExternalToken(address indexed token, uint256 decimals, uint256 rate);
+    event StakedERC20(address indexed user, address token, uint256 amount);
+    event StakedSingleERC721(address indexed user, address token, uint128 tokenId);
+    event StakedBatchERC721(address indexed user, address token, uint128[] tokenIds);
+    // event StakedERC1155(address indexed user, address token, uint256 amount);
+    event WithdrawnERC20(address indexed user, address token, uint256 indexed amount, uint256 fee);
+    event WithdrawnSingleERC721(address indexed user, address token, uint128 tokenId);
+    event WithdrawnBatchERC721(address indexed user, address token, uint128[] tokenIds);
+    // event WithdrawnERC1155(address indexed user, address token, uint256 indexed amount);
+    event EmergencyWithdrawnERC20(address indexed user, address token, uint256 amount);
+    event EmergencyWithdrawnERC721(address indexed user, address token, uint128[] tokenIds);
+    // event EmergencyWithdrawnERC1155(address indexed user, address token, uint256 amount);
+    event AddExternalToken(address indexed token, uint256 decimals, uint256 rate, bool isERC721, bool isERC1155);
     event ExternalTokenStatsChange(address indexed token, uint256 decimals, uint256 rate);
     event ChangePenaltyWallet(address indexed penaltyWallet);
 
@@ -47,7 +58,7 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         owner = msg.sender;
         penaltyWallet = _penaltyWallet;
 
-        PKF = ERC20(_pkf);
+        PKF = _pkf;
 
         tierPrice[1] = 2000e18;
         tierPrice[2] = 5000e18;
@@ -62,32 +73,123 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         withdrawFeePercent.push(0);
     }
 
-    function deposit(uint256 _amount) external nonReentrant() {
-        PKF.transferFrom(msg.sender, address(this), _amount);
+    function depositERC20(address _token, uint256 _amount) external nonReentrant() {
+        if (_token == PKF) {
+            IERC20(PKF).transferFrom(msg.sender, address(this), _amount);
+        } else {
+            require(_token == externalToken[_token].contractAddress, "TIER::INVALID_TOKEN_DEPOSIT");
+            IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
-        userInfo[msg.sender].staked = userInfo[msg.sender].staked.add(_amount);
-        userInfo[msg.sender].stakedTime = block.timestamp;
-
-        emit Staked(msg.sender, _amount);
-    }
-
-    function withdraw(uint256 _amount) external nonReentrant() {
-        UserInfo storage user = userInfo[msg.sender];
-        require(user.staked >= _amount, "not enough amount to withdraw");
-
-        uint256 toPunish = calculateWithdrawFee(msg.sender, _amount);
-        user.staked = user.staked.sub(_amount);
-
-        if (toPunish > 0) {
-            PKF.transfer(penaltyWallet, toPunish);
+            ExternalToken storage token = externalToken[_token];
+            userExternalStaked[msg.sender] = userExternalStaked[msg.sender].add(_amount.mul(token.rate).div(10**token.decimals));
         }
 
-        PKF.transfer(msg.sender, _amount.sub(toPunish));
-        emit Withdrawn(msg.sender, _amount, toPunish);
+        userInfo[msg.sender][_token].staked = userInfo[msg.sender][_token].staked.add(_amount);
+        userInfo[msg.sender][_token].stakedTime = block.timestamp;
+
+        emit StakedERC20(msg.sender, _token, _amount);
     }
 
+    function depositSingleERC721(address _token, uint128 _tokenId) external nonReentrant() {
+        require(_token == externalToken[_token].contractAddress, "TIER::INVALID_TOKEN_DEPOSIT");
+        IERC721(_token).safeTransferFrom(msg.sender, address(this), _tokenId);
+
+        ExternalToken storage token = externalToken[_token];
+        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].add(token.rate);
+
+        userInfo[msg.sender][_token].staked = userInfo[msg.sender][_token].staked.add(1);
+        userInfo[msg.sender][_token].stakedTime = block.timestamp;
+
+        emit StakedSingleERC721(msg.sender, _token, _tokenId);
+    }
+
+    function depositBatchERC721(address _token, uint128[] memory _tokenIds) external nonReentrant() {
+        require(_token == externalToken[_token].contractAddress, "TIER::INVALID_TOKEN_DEPOSIT");
+        _batchSafeTransferFrom(_token, msg.sender, address(this), _tokenIds);
+
+        uint256 amount = _tokenIds.length;
+        ExternalToken storage token = externalToken[_token];
+        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].add(amount.mul(token.rate));
+
+        userInfo[msg.sender][_token].staked = userInfo[msg.sender][_token].staked.add(amount);
+        userInfo[msg.sender][_token].stakedTime = block.timestamp;
+
+        emit StakedBatchERC721(msg.sender, _token, _tokenIds);
+    }
+
+    // function depositERC1155(address _token, uint256 _ids, uint256 _amount, bytes calldata data) external nonReentrant() {
+    //     require(_token == externalToken[_token].contractAddress, "TIER::INVALID_TOKEN_DEPOSIT");
+    //     IERC1155(_token).safeTransferFrom(msg.sender, address(this), _amount, data);
+
+    //     ExternalToken storage token = externalToken[_token];
+    //     userExternalStaked[msg.sender] = userExternalStaked[msg.sender].add(_amount.mul(token.rate).div(10**token.decimals));
+
+    //     userInfo[msg.sender][_token].staked = userInfo[msg.sender][_token].staked.add(_amount);
+    //     userInfo[msg.sender][_token].stakedTime = block.timestamp;
+
+    //     emit StakedERC1155(msg.sender, _token, _amount);
+    // }
+
+    function withdrawERC20(address, address _token, uint256 _amount) external nonReentrant() {
+        UserInfo storage user = userInfo[msg.sender][_token];
+        require(user.staked >= _amount, "not enough amount to withdraw");
+
+        uint256 toPunish = calculateWithdrawFee(msg.sender, _token, _amount);
+        user.staked = user.staked.sub(_amount);
+
+        ExternalToken storage token = externalToken[_token];
+        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(_amount.mul(10**token.decimals).div(token.rate));
+
+        if (toPunish > 0) {
+            IERC20(_token).transfer(penaltyWallet, toPunish);
+        }
+
+        IERC20(_token).transfer(msg.sender, _amount.sub(toPunish));
+        emit WithdrawnERC20(msg.sender, _token, _amount, toPunish);
+    }
+
+    function withdrawSingleERC721(address _token, uint128 _tokenId) external nonReentrant() {
+        UserInfo storage user = userInfo[msg.sender][_token];
+        require(user.staked >= 1, "not enough amount to withdraw");
+
+        user.staked = user.staked.sub(1);
+
+        ExternalToken storage token = externalToken[_token];
+        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(token.rate);
+
+        IERC721(_token).safeTransferFrom(address(this), msg.sender, _tokenId);
+        emit WithdrawnSingleERC721(msg.sender, _token, _tokenId);
+    }
+
+    function withdrawBatchERC721(address _token, uint128[] memory _tokenIds) external nonReentrant() {
+        UserInfo storage user = userInfo[msg.sender][_token];
+        uint256 amount = _tokenIds.length;
+        require(user.staked >= amount, "not enough amount to withdraw");
+
+        user.staked = user.staked.sub(amount);
+
+        ExternalToken storage token = externalToken[_token];
+        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(amount.mul(token.rate));
+
+        _batchSafeTransferFrom(_token, address(this), msg.sender, _tokenIds);
+        emit WithdrawnBatchERC721(msg.sender, _token, _tokenIds);
+    }
+
+    // function withdrawERC1155(address _token, uint256 _amount) external nonReentrant() {
+    //     UserInfo storage user = userInfo[msg.sender][_token];
+    //     require(user.staked >= _amount, "not enough amount to withdraw");
+
+    //     user.staked = user.staked.sub(_amount);
+
+    //     ExternalToken storage token = externalToken[_token];
+    //     userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(_amount.mul(10**token.decimals).div(token.rate));
+
+    //     IERC1155(_token).transfer(msg.sender, _amount);
+    //     emit WithdrawnERC1155(msg.sender, _token, _amount);
+    // }
+
     function setPenaltyWallet(address _penaltyWallet) external onlyOwner {
-		    require(penaltyWallet != _penaltyWallet, "TIER::ALREADY_PENALTY_WALLET");
+        require(penaltyWallet != _penaltyWallet, "TIER::ALREADY_PENALTY_WALLET");
         penaltyWallet = _penaltyWallet;
 
         emit ChangePenaltyWallet(_penaltyWallet);
@@ -97,41 +199,83 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         canEmergencyWithdraw = _status;
     }
 
-    function emergencyWithdraw() external {
+    function emergencyWithdrawERC20(address _token) external {
         require(canEmergencyWithdraw, "function disabled");
-        UserInfo storage user = userInfo[msg.sender];
+        UserInfo storage user = userInfo[msg.sender][_token];
         require(user.staked > 0, "nothing to withdraw");
 
         uint256 _amount = user.staked;
         user.staked = 0;
 
-        PKF.transfer(msg.sender, _amount);
-        emit EmergencyWithdrawn(msg.sender, _amount);
+        ExternalToken storage token = externalToken[_token];
+        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(_amount.mul(10**token.decimals).div(token.rate));
+
+        IERC20(_token).transfer(msg.sender, _amount);
+        emit EmergencyWithdrawnERC20(msg.sender, _token, _amount);
     }
+
+    function emergencyWithdrawERC721(address _token, uint128[] memory _tokenIds) external {
+        require(canEmergencyWithdraw, "function disabled");
+        UserInfo storage user = userInfo[msg.sender][_token];
+        require(user.staked > 0, "nothing to withdraw");
+
+        uint256 _amount = user.staked;
+        user.staked = 0;
+
+        ExternalToken storage token = externalToken[_token];
+        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(_amount.mul(10**token.decimals).div(token.rate));
+
+        if (_amount == 1) {
+            IERC721(_token).safeTransferFrom(address(this), msg.sender, _tokenIds[0]);
+        } else {
+            _batchSafeTransferFrom(_token, address(this), msg.sender, _tokenIds);
+        }
+        emit EmergencyWithdrawnERC721(msg.sender, _token, _tokenIds);
+    }
+
+    // function emergencyWithdrawERC1155(address _token) external {
+    //     require(canEmergencyWithdraw, "function disabled");
+    //     UserInfo storage user = userInfo[msg.sender][_token];
+    //     require(user.staked > 0, "nothing to withdraw");
+
+    //     uint256 _amount = user.staked;
+    //     user.staked = 0;
+
+    //     IERC1155(_token).transfer(msg.sender, _amount);
+    //     emit EmergencyWithdrawnERC1155(msg.sender, _token, _amount);
+    // }
 
     function addExternalToken(
         address _token,
         uint256 _decimals,
-        uint256 _rate
+        uint256 _rate,
+        bool _isERC721,
+        bool _isERC1155
     ) external onlyOwner {
-        externalToken.push(
-            ExternalToken({contractAddress: _token, decimals: _decimals, rate: _rate})
-        );
+        ExternalToken storage token = externalToken[_token];
 
-        emit AddExternalToken(_token, _decimals, _rate);
+        token.contractAddress = _token;
+        token.decimals = _decimals;
+        token.rate = _rate;
+        token.isERC721 = _isERC721;
+        token.isERC1155 = _isERC1155;
+
+        emit AddExternalToken(_token, _decimals, _rate, _isERC721, _isERC1155);
     }
 
     function setExternalToken(
-        uint256 _id,
+        address _token,
         uint256 _decimals,
         uint256 _rate
     ) external onlyOwner {
-        ExternalToken storage token = externalToken[_id];
+        ExternalToken storage token = externalToken[_token];
+
+        require(token.contractAddress == _token, "TIER::TOKEN_NOT_EXISTS");
 
         token.decimals = _decimals;
         token.rate = _rate;
 
-        emit ExternalTokenStatsChange(token.contractAddress, _decimals, _rate);
+        emit ExternalTokenStatsChange(_token, _decimals, _rate);
     }
 
     function updateTier(uint8 _tierId, uint256 _amount) external onlyOwner {
@@ -155,20 +299,8 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         view
         returns (uint8 res)
     {
-        uint256 totalStaked = userInfo[_userAddress].staked;
-        uint256 length = externalToken.length;
-        for (uint8 i = 0; i < length; i++) {
-            ExternalToken storage token = externalToken[i];
-            if (token.decimals == 0) {
-              totalStaked = totalStaked.add(
-                  IERC721(token.contractAddress).balanceOf(_userAddress).mul(token.rate).div(10**token.decimals)
-              );
-            } else {
-              totalStaked = totalStaked.add(
-                  IERC20(token.contractAddress).balanceOf(_userAddress).mul(token.rate).div(10**token.decimals)
-              );
-            }
-        }
+        uint256 totalStaked = userInfo[_userAddress][PKF].staked.add(userExternalStaked[_userAddress]);
+
         for (uint8 i = 1; i <= MAX_NUM_TIERS; i++) {
             if (tierPrice[i] == 0 || totalStaked < tierPrice[i]) {
                 return res;
@@ -178,12 +310,12 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         }
     }
 
-    function calculateWithdrawFee(address _userAddress, uint256 _amount)
+    function calculateWithdrawFee(address _userAddress, address _token, uint256 _amount)
         public
         view
         returns (uint256)
     {
-        UserInfo storage user = userInfo[_userAddress];
+        UserInfo storage user = userInfo[_userAddress][_token];
         require(user.staked >= _amount, "not enough amount to withdraw");
 
         if (block.timestamp < user.stakedTime.add(10 days)) {
@@ -223,5 +355,20 @@ contract PKFTiers is Ownable, ReentrancyGuard {
         }
 
         return buf;
+    }
+
+    function _batchSafeTransferFrom(
+        address _token,
+        address _from,
+        address _recepient,
+        uint128[] memory _tokenIds
+    ) internal {
+        for (uint256 i = 0; i != _tokenIds.length; i++) {
+            IERC721(_token).safeTransferFrom(_from, _recepient, _tokenIds[i]);
+        }
+    }
+
+    function onERC721Received(address, address, uint256, bytes memory) public virtual override returns (bytes4) {
+        return this.onERC721Received.selector;
     }
 }

@@ -3,7 +3,7 @@
 pragma solidity ^0.7.1;
 
 import "./ERC20.sol";
-import "../libraries/Ownable.sol";
+import "../../libraries/Ownable.sol";
 
 /**
  * @dev Extension of {ERC20} that adds a set of accounts with the {MinterRole},

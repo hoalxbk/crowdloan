@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.7.1;
 
-import "./Context.sol";
+import "../utils/Context.sol";
 import "./ERC20.sol";
-import "../libraries/SafeMath.sol";
+import "../../libraries/SafeMath.sol";
 
 /**
  * @dev Extension of {ERC20} that allows token holders to destroy both their own
