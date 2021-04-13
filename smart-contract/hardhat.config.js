@@ -42,7 +42,7 @@ module.exports = {
       url: 'http://127.0.0.1:8545',
     },
     goerli: {
-      url: `https://eth-goerli.alchemyapi.io/v2/${alchemyKey}`,
+      url: `https://goerli.infura.io/v3/d5b0b1695ced49f39207480b43a346b2`,
       accounts: [privateKey],
     },
     testnet: {

@@ -17,7 +17,7 @@ const main = async () => {
     'PoolFactory',
   );
   // Deploy contract proxy
-  const poolFactory = await upgrades.deployProxy(PoolFactory, [sotaTier.address]);
+  const poolFactory = await upgrades.deployProxy(PoolFactory, []);
   // Log the address
   console.log('poolFactory deployed at', poolFactory.address);
   // Wait for Pool factory deploy success
