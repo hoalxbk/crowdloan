@@ -2,8 +2,18 @@ import React, {useEffect, useState} from 'react';
 import useStyles from "./style";
 import {useCommonStyle} from "../../styles";
 import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
 
-import {useDispatch, useSelector} from "react-redux";
+import {CircularProgress, Grid} from "@material-ui/core";
+import {getTokenInfo, TokenType} from "../../utils/token";
+import {isFactorySuspended} from "../../utils/campaignFactory";
+import {createPool, updatePool} from "../../request/pool";
+import {alertFailure, alertSuccess} from "../../store/actions/alert";
+import {withRouter} from "react-router-dom";
+import {renderErrorCreatePool} from "../../utils/validate";
+import {deployPool} from "../../store/actions/campaign";
+import {adminRoute} from "../../utils";
+
 import PoolBanner from "./Components/PoolBanner";
 import TokenAddress from "./Components/TokenAddress";
 import TotalCoinSold from "./Components/TotalCoinSold";
@@ -18,20 +28,10 @@ import AcceptCurrency from "./Components/AcceptCurrency";
 import PoolDescription from "./Components/PoolDescription";
 import AddressReceiveMoney from "./Components/AddressReceiveMoney";
 import ExchangeRate from "./Components/ExchangeRate";
-import {CircularProgress, Grid} from "@material-ui/core";
-import {getTokenInfo, TokenType} from "../../utils/token";
-import {isFactorySuspended} from "../../utils/campaignFactory";
-import {createPool, updateDeploySuccess, updatePool} from "../../request/pool";
-import {alertFailure, alertSuccess} from "../../store/actions/alert";
-import {adminRoute} from "../../utils";
-import {withRouter} from "react-router-dom";
+import DisplaySwitch from "./Components/DisplaySwitch";
+import PoolHash from "./Components/PoolHash";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
-import {renderErrorCreatePool} from "../../utils/validate";
-import {createCampaign, deployPool} from "../../store/actions/campaign";
-import DisplaySwitch from "./Components/DisplaySwitch";
-import {isCreate} from "hardhat/internal/hardhat-network/stack-traces/opcodes";
-import PoolHash from "./Components/PoolHash";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -119,7 +119,7 @@ function PoolForm(props: any) {
       const response = await createUpdatePool(data);
       if (response?.status === 200) {
         dispatch(alertSuccess('Update Pool Successful!'));
-        // history.push(adminRoute('/campaigns'));
+        history.push(adminRoute('/campaigns'));
       } else {
         dispatch(alertFailure('Fail!'));
       }
@@ -236,7 +236,6 @@ function PoolForm(props: any) {
                   register={register}
                   setValue={setValue}
                   errors={errors}
-                  clearErrors={clearErrors}
                   control={control}
                 />
               }
@@ -246,29 +245,15 @@ function PoolForm(props: any) {
                 register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
               />
               {!!poolDetail?.is_deploy &&
-                <PoolHash
-                  poolDetail={poolDetail}
-                  register={register}
-                  setValue={setValue}
-                  errors={errors}
-                  clearErrors={clearErrors}
-                  renderError={renderError}
-                  control={control}
-                />
+                <PoolHash poolDetail={poolDetail} />
               }
               <PoolBanner
                 poolDetail={poolDetail}
                 register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
               />
             </div>
 
@@ -280,29 +265,6 @@ function PoolForm(props: any) {
                 setToken={setToken}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                watch={watch}
-              />
-
-              <TotalCoinSold
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-              />
-
-              <TokenLogo
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
               />
 
               <AddressReceiveMoney
@@ -310,8 +272,19 @@ function PoolForm(props: any) {
                 register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
+              />
+
+              <TotalCoinSold
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+              />
+
+              <TokenLogo
+                poolDetail={poolDetail}
+                register={register}
+                errors={errors}
               />
 
             </div>
@@ -319,43 +292,32 @@ function PoolForm(props: any) {
             <div className={classes.exchangeRate}>
               <BuyType
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
 
               <PoolType
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
 
               <NetworkAvailable
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
 
               <AcceptCurrency
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
+
             </div>
 
             <div className={classes.exchangeRate}>
@@ -366,8 +328,6 @@ function PoolForm(props: any) {
                 setToken={setToken}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
                 getValues={getValues}
               />
@@ -377,25 +337,20 @@ function PoolForm(props: any) {
             <div className={classes.exchangeRate}>
               <MinTier
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
 
               <TierTable
                 poolDetail={poolDetail}
                 register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                // renderError={renderError}
-                control={control}
+                // setValue={setValue}
+                // errors={errors}
+                // clearErrors={clearErrors}
+                // control={control}
               />
             </div>
-
 
             <div className={classes.exchangeRate}>
               <PoolDescription
@@ -403,11 +358,7 @@ function PoolForm(props: any) {
                 register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
               />
-
             </div>
 
 
@@ -417,7 +368,6 @@ function PoolForm(props: any) {
               token={token}
               setValue={setValue}
               errors={errors}
-              clearErrors={clearErrors}
             />
 
             <button
@@ -435,7 +385,6 @@ function PoolForm(props: any) {
                 (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
               }
             </button>
-
 
           </div>
         </Grid>

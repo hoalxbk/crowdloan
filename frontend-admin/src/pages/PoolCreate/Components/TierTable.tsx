@@ -37,7 +37,7 @@ function TierTable(props: any) {
   const classes = useStyles();
   const classesTable = useStylesTable();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
+    register,
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;

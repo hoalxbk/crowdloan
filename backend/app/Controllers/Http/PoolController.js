@@ -182,7 +182,7 @@ class PoolController {
       await CampaignModel.query().where('id', campaignId).update({
         is_deploy: true,
         campaign_hash: inputParams.campaign_hash,
-        token_symbol: inputParams.token_symbol,
+        token: inputParams.token_symbol,
       });
 
       // Delete cache

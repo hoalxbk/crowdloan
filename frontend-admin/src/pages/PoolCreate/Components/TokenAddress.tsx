@@ -3,16 +3,18 @@ import {getTokenInfo} from "../../../utils/token";
 import {CircularProgress, Tooltip} from "@material-ui/core";
 import useStyles from "../style";
 import {debounce} from "lodash";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function TokenAddress(props: any) {
   const classes = useStyles();
   const [loadingToken, setLoadingToken] = useState(false);
 
   const {
-    register, setValue, clearErrors, errors, handleSubmit, watch,
+    register, setValue, errors,
     poolDetail,
-    renderError, token, setToken,
+    token, setToken,
   } = props;
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.token) {

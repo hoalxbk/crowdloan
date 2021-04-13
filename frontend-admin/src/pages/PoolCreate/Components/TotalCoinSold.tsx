@@ -3,15 +3,16 @@ import useStyles from "../style";
 import FormControl from '@material-ui/core/FormControl';
 // @ts-ignore
 import CurrencyInput from 'react-currency-input-field';
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function TotalCoinSold(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    register, setValue, errors,
+    poolDetail
   } = props;
   const [totalSoldCoin, setTotalSoldCoin] = useState('');
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.total_sold_coin) {

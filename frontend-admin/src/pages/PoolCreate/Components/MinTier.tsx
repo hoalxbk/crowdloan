@@ -5,14 +5,15 @@ import { Controller, useForm } from "react-hook-form";
 import { TextField, Select, RadioGroup, Radio, MenuItem } from "@material-ui/core";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import {imageRoute} from "../../../utils";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function MinTier(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    setValue, errors, control,
+    poolDetail
   } = props;
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.min_tier) {

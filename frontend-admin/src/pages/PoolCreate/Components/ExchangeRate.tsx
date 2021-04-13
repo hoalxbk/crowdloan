@@ -14,7 +14,7 @@ function ExchangeRate(props: any) {
   const commonStyle = useCommonStyle();
 
   const {
-    register, setValue, clearErrors, errors, handleSubmit,
+    register, setValue, errors,
     poolDetail,
     token
   } = props;

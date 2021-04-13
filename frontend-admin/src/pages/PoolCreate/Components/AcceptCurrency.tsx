@@ -7,14 +7,15 @@ import FormControl from '@material-ui/core/FormControl';
 import { Controller } from "react-hook-form";
 import {getParticipantUser} from "../../../request/participants";
 import {getTiers} from "../../../request/tier";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function AcceptCurrency(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    setValue, errors, control,
+    poolDetail
   } = props;
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.accept_currency) {

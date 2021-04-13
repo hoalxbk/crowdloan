@@ -6,17 +6,17 @@ import ImageUploading from 'react-images-uploading';
 import {uploadFile} from "../../../request/upload";
 import Button from '@material-ui/core/Button';
 import {imageRoute} from "../../../utils";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 // https://codesandbox.io/s/react-images-uploading-demo-u0khz?file=/src/index.js
 function TokenLogo(props: any) {
   const classes = useStyles();
   const classesComponent = useComponentStyles();
   const {
-    register, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    register, errors,
+    poolDetail
   } = props;
-
+  const renderError = renderErrorCreatePool;
   const maxNumber = 69;
   const [images, setImages] = React.useState([]);
   const [imageUploaded, setImageUploaded] = useState('');
