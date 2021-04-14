@@ -31,6 +31,18 @@ class WhitelistUserService {
     // return all result
     return await builder.fetch();
   }
+
+  async countByCampaignId(campaign_id) {
+    return await WhitelistModel.query().
+      where('campaign_id', campaign_id).getCount();
+  }
+
+  async checkExisted(wallet_address, campaign_id) {
+    const wl = await WhitelistModel.query().
+    where('campaign_id', campaign_id).
+    where('wallet_address', wallet_address).first();
+    return wl != null ? true : false;
+  }
 }
 
 module.exports = WhitelistUserService
