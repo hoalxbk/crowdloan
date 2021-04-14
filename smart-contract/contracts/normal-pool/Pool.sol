@@ -12,8 +12,6 @@ import "../extensions/PKFWhitelist.sol";
 contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
     using SafeMath for uint256;
 
-    uint256 constant MAX_NUM_TIERS = 10;
-
     struct OfferedCurrency {
         uint256 decimals;
         uint256 rate;
@@ -175,7 +173,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @param _decimals Fixed number of ether rate decimals
      */
     function setOfferedCurrencyRateAndDecimals(address _token, uint256 _rate, uint256 _decimals)
-        public
+        external
         onlyOwner
     {
         offeredCurrencies[_token].rate = _rate;
@@ -187,7 +185,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @notice Owner can set the offered token conversion rate. Receiver tokens = tradeTokens * tokenRate / 10 ** etherConversionRateDecimals
      * @param _rate Fixed number of rate
      */
-    function setOfferedCurrencyRate(address _token, uint256 _rate) public onlyOwner {
+    function setOfferedCurrencyRate(address _token, uint256 _rate) external onlyOwner {
         require(offeredCurrencies[_token].rate != _rate, "POOL::RATE_INVALID");
         offeredCurrencies[_token].rate = _rate;
         emit PoolStatsChanged();
@@ -197,7 +195,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @notice Owner can set the offered token conversion rate. Receiver tokens = tradeTokens * tokenRate / 10 ** etherConversionRateDecimals
      * @param _decimals Fixed number of decimals
      */
-    function setOfferedCurrencyDecimals(address _token, uint256 _decimals) public onlyOwner {
+    function setOfferedCurrencyDecimals(address _token, uint256 _decimals) external onlyOwner {
         require(offeredCurrencies[_token].decimals != _decimals, "POOL::RATE_INVALID");
         offeredCurrencies[_token].decimals = _decimals;
         emit PoolStatsChanged();
@@ -207,7 +205,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @notice Owner can set the close time (time in seconds). User can buy before close time.
      * @param _closeTime Value in uint256 determine when we stop user to by tokens
      */
-    function setCloseTime(uint256 _closeTime) public onlyOwner() {
+    function setCloseTime(uint256 _closeTime) external onlyOwner() {
         require(_closeTime >= block.timestamp, "POOL::INVALID_TIME");
         closeTime = _closeTime;
         emit PoolStatsChanged();
@@ -217,7 +215,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @notice Owner can set the open time (time in seconds). User can buy after open time.
      * @param _openTime Value in uint256 determine when we allow user to by tokens
      */
-    function setOpenTime(uint256 _openTime) public onlyOwner() {
+    function setOpenTime(uint256 _openTime) external onlyOwner() {
         openTime = _openTime;
         emit PoolStatsChanged();
     }
@@ -226,7 +224,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @notice Owner can set extentions.
      * @param _whitelist Value in bool. True if using whitelist
      */
-    function setPoolExtentions(bool _whitelist) public onlyOwner() {
+    function setPoolExtentions(bool _whitelist) external onlyOwner() {
         useWhitelist = _whitelist;
         emit PoolStatsChanged();
     }
@@ -235,6 +233,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         address _beneficiary,
         address _candidate,
         uint256 _maxAmount,
+        uint256 _minAmount,
         bytes memory _signature
     ) public payable whenNotPaused nonReentrant {
         uint256 weiAmount = msg.value;
@@ -244,12 +243,13 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         _preValidatePurchase(_beneficiary, weiAmount);
 
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature));
 
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
 
-        require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
+        require(tokens >= _minAmount || userPurchased[_beneficiary].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
+        require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -265,11 +265,12 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         uint256 _amount,
         address _candidate,
         uint256 _maxAmount,
+        uint256 _minAmount,
         bytes memory _signature
     ) public whenNotPaused nonReentrant {
         require(offeredCurrencies[_token].rate != 0, "POOL::PURCHASE_METHOD_NOT_ALLOWED");
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature));
 
         _verifyAllowance(msg.sender, _token, _amount);
 
@@ -277,6 +278,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
 
         uint256 tokens = _getOfferedCurrencyToTokenAmount(_token, _amount);
 
+        require(tokens >= _minAmount || userPurchased[_beneficiary].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
         require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _deliverTokens(_beneficiary, tokens);
@@ -429,13 +431,21 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         require(allowance >= _amount, "POOL::TOKEN_NOT_APPROVED");
     }
 
+    /**
+     * @dev Verify permission of purchase
+     * @param _candidate Address of buyer
+     * @param _maxAmount max token can buy
+     * @param _minAmount min token can buy
+     * @param _signature Signature of signers
+     */
     function _verifyWhitelist(
         address _candidate,
         uint256 _maxAmount,
+        uint256 _minAmount,
         bytes memory _signature
     ) private view returns (bool) {
         if (useWhitelist) {
-            return (verify(signer, _candidate, _maxAmount, _signature));
+            return (verify(signer, _candidate, _maxAmount, _minAmount, _signature));
         }
         return true;
     }

@@ -34,9 +34,10 @@ describe('Pool Factory', function () {
 
     // Deploy Tier Contract
     const SotaTier = await hardhat.ethers.getContractFactory(
-      'SotaTier',
+      'PKFTiers'
     );
-    const deployedTierContract = await SotaTier.deploy(tierToken);
+
+    const deployedTierContract = await SotaTier.deploy(tierToken, owner);
     await deployedTierContract.deployed();
     tierContract = deployedTierContract.address;
 

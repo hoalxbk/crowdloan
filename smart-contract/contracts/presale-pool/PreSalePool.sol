@@ -41,6 +41,9 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
     // Amount of token sold
     uint256 public tokenSold = 0;
 
+    // Amount of token sold
+    uint256 public totalUnclaimed = 0;
+
     // Number of token user purchased
     mapping(address => uint256) public userPurchased;
 
@@ -79,6 +82,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         uint256 value,
         uint256 amount
     );
+
     event TokenClaimed(address user, uint256 amount);
     event RefundedIcoToken(address wallet, uint256 amount);
     event PoolStatsChanged();
@@ -172,6 +176,14 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
     }
 
     /**
+     * @notice Return the available tokens for purchase
+     * @return availableTokens Number of total available
+     */
+    function getAvailableTokensForSale() public view returns (uint256 availableTokens) {
+        return token.balanceOf(address(this)).add(totalUnclaimed).sub(tokenSold);
+    }
+
+    /**
      * @notice Owner can set the offered token conversion rate. Receiver tokens = tradeTokens * tokenRate / 10 ** etherConversionRateDecimals
      * @param _rate Fixed number of ether rate
      * @param _decimals Fixed number of ether rate decimals
@@ -237,6 +249,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         address _beneficiary,
         address _candidate,
         uint256 _maxAmount,
+        uint256 _minAmount,
         bytes memory _signature
     ) public payable whenNotPaused nonReentrant {
         uint256 weiAmount = msg.value;
@@ -246,11 +259,12 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         _preValidatePurchase(_beneficiary, weiAmount);
 
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature));
 
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
 
+        require(tokens >= _minAmount || userPurchased[_beneficiary].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
         require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _forwardFunds(weiAmount);
@@ -268,11 +282,12 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         uint256 _amount,
         address _candidate,
         uint256 _maxAmount,
+        uint256 _minAmount,
         bytes memory _signature
     ) public whenNotPaused nonReentrant {
         require(offeredCurrencies[_token].rate != 0, "POOL::PURCHASE_METHOD_NOT_ALLOWED");
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature));
 
         _verifyAllowance(msg.sender, _token, _amount);
 
@@ -280,6 +295,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
 
         uint256 tokens = _getOfferedCurrencyToTokenAmount(_token, _amount);
 
+        require(tokens >= _minAmount || userPurchased[_beneficiary].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
         require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _forwardTokenFunds(_token, _amount);
@@ -330,7 +346,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
 
         uint256 claimableAmount = userPurchased[msg.sender];
         _deliverTokens(msg.sender, claimableAmount);
-
+        totalUnclaimed = totalUnclaimed.sub(claimableAmount);
         userPurchased[msg.sender] = 0;
         emit TokenClaimed(msg.sender, claimableAmount);
     }
@@ -400,6 +416,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         weiRaised = weiRaised.add(_weiAmount);
         tokenSold = tokenSold.add(_tokens);
         userPurchased[_beneficiary] = userPurchased[_beneficiary].add(_tokens);
+        totalUnclaimed = totalUnclaimed.add(_tokens);
     }
 
     // @return true if the transaction can buy tokens
@@ -440,15 +457,17 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @dev Verify permission of purchase
      * @param _candidate Address of buyer
      * @param _maxAmount max token can buy
+     * @param _minAmount min token can buy
      * @param _signature Signature of signers
      */
     function _verifyWhitelist(
         address _candidate,
         uint256 _maxAmount,
+        uint256 _minAmount,
         bytes memory _signature
     ) private view returns (bool) {
         if (useWhitelist) {
-            return (verify(signer, _candidate, _maxAmount, _signature));
+            return (verify(signer, _candidate, _maxAmount, _minAmount, _signature));
         }
         return true;
     }

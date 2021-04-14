@@ -11,9 +11,10 @@ contract PKFWhitelist {
     // Using Openzeppelin ECDSA cryptography library
     function getMessageHash(
         address _candidate,
-        uint256 _maxAmount
+        uint256 _maxAmount,
+        uint256 _minAmount
     ) public pure returns (bytes32) {
-        return keccak256(abi.encodePacked(_candidate, _maxAmount));
+        return keccak256(abi.encodePacked(_candidate, _maxAmount, _minAmount));
     }
 
     // Verify signature function
@@ -21,9 +22,10 @@ contract PKFWhitelist {
         address _signer,
         address _candidate,
         uint256 _maxAmount,
+        uint256 _minAmount,
         bytes memory signature
     ) public pure returns (bool) {
-        bytes32 messageHash = getMessageHash(_candidate, _maxAmount);
+        bytes32 messageHash = getMessageHash(_candidate, _maxAmount, _minAmount);
         bytes32 ethSignedMessageHash = getEthSignedMessageHash(messageHash);
 
         return getSignerAddress(ethSignedMessageHash, signature) == _signer;
