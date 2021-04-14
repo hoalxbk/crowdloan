@@ -195,6 +195,32 @@ class PoolController {
     }
   }
 
+  async changeDisplay({ request, auth, params }) {
+    const inputParams = request.only([
+      'is_display'
+    ]);
+
+    console.log('Update Change Display with data: ', inputParams);
+    const campaignId = params.campaignId;
+    try {
+      const campaign = await CampaignModel.query().where('id', campaignId).first();
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+      await CampaignModel.query().where('id', campaignId).update({
+        is_display: inputParams.is_display,
+      });
+
+      // Delete cache
+      RedisUtils.deleteRedisPoolDetail(campaignId);
+
+      return HelperUtils.responseSuccess();
+    } catch (e) {
+      console.log('ERROR', e);
+      return ErrorFactory.internal('error');
+    }
+  }
+
 
   async getPool({ request, auth, params }) {
     const poolId = params.campaignId;

@@ -237,11 +237,11 @@ export const getCampaignDetail = (id: string, isInvestor: boolean = false) => {
         const campaignOwner = await campaignContract.methods.owner().call();
         let isCampaignOwner = false;
 
-        if (!isInvestor) {
+        // if (!isInvestor) {
           isCampaignOwner = campaignOwner.toLowerCase() === loginUser.toLowerCase();
-        } else {
-          isCampaignOwner = campaignOwner.toLowerCase() === loginInvestor.toLowerCase();
-        }
+        // } else {
+        //   isCampaignOwner = campaignOwner.toLowerCase() === loginInvestor.toLowerCase();
+        // }
 
         const title = campaignContract.methods.name().call();
 

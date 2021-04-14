@@ -4,6 +4,10 @@ import FormControl from '@material-ui/core/FormControl';
 import {Controller} from "react-hook-form";
 import {renderErrorCreatePool} from "../../../utils/validate";
 import {Switch} from 'antd';
+import {changeDisplayStatus} from "../../../request/pool";
+import {alertSuccess} from "../../../store/actions/alert";
+import {withRouter} from "react-router";
+import {useDispatch} from "react-redux";
 
 function DisplaySwitch(props: any) {
   const classes = useStyles();
@@ -12,6 +16,7 @@ function DisplaySwitch(props: any) {
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (poolDetail && (poolDetail.is_display != undefined)) {
@@ -20,6 +25,18 @@ function DisplaySwitch(props: any) {
     }
   }, [poolDetail]);
 
+  const changeDisplay = async (value: any) => {
+    const res = await changeDisplayStatus({
+      poolId: poolDetail.id,
+      isDisplay: value,
+    });
+    console.log('Change display: Response: ', res);
+    if (res.status === 200) {
+      dispatch(alertSuccess('Change display setting successful!'));
+    }
+    return value;
+  };
+
   return (
     <>
       <FormControl component="fieldset">
@@ -27,9 +44,18 @@ function DisplaySwitch(props: any) {
         <Controller
           control={control}
           name="is_display"
-          render={({ value, onChange }) => (
-            <Switch onChange={onChange} checked={value} />
-          )}
+          render={({ value, onChange }) => {
+            return (
+              <Switch onChange={ async (value) => {
+                // eslint-disable-next-line no-restricted-globals
+                if (!confirm('Do you want change display ?')) {
+                  return false;
+                }
+                await onChange(value);
+                await changeDisplay(value);
+              }} checked={value} />
+            )
+          }}
         />
 
         <p className={classes.formErrorMessage}>
@@ -43,4 +69,4 @@ function DisplaySwitch(props: any) {
   );
 }
 
-export default DisplaySwitch;
+export default withRouter(DisplaySwitch);

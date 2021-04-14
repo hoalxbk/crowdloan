@@ -41,3 +41,15 @@ export const updateDeploySuccess = async (data: any) => {
   return resObject;
 };
 
+export const changeDisplayStatus = async (data: any) => {
+  const baseRequest = new BaseRequest();
+  let url = apiRoute(`/pool/${data.poolId}/change-display`);
+
+  const response = await baseRequest.post(url, {
+    is_display: data.isDisplay,
+  }) as any;
+
+  const resObject = await response.json();
+  return resObject;
+};
+

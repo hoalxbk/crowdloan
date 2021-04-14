@@ -209,6 +209,7 @@ function PoolForm(props: any) {
       await dispatch(deployPool(submitData, history));
       setLoadingDeploy(false);
       setDeployed(true);
+      window.location.reload();
     } catch (e) {
       setLoadingDeploy(false);
       console.log('ERROR: ', e);
