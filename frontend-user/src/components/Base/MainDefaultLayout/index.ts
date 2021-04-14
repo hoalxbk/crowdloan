@@ -1,3 +1,3 @@
-import RightDefaultLayout from './MainDefaultLayout';
+import MainDefaultLayout from './MainDefaultLayout';
 
-export default RightDefaultLayout;
+export default MainDefaultLayout;
