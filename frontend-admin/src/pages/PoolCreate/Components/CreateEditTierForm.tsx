@@ -168,11 +168,7 @@ function CreateEditTierForm(props: any) {
           <div>
             <CurrencyInputWithValidate
               register={register}
-              setValue={setValue}
               errors={errors}
-              clearErrors={clearErrors}
-              renderError={renderError}
-              control={control}
               initValue={editData.minBuy}
               controlName={'minBuy'}
             />
@@ -184,11 +180,7 @@ function CreateEditTierForm(props: any) {
           <div>
             <CurrencyInputWithValidate
               register={register}
-              setValue={setValue}
               errors={errors}
-              clearErrors={clearErrors}
-              renderError={renderError}
-              control={control}
               initValue={editData.maxBuy}
               controlName={'maxBuy'}
             />

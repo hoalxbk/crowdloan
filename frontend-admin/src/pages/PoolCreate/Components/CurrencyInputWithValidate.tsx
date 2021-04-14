@@ -1,14 +1,16 @@
 import React, {useState} from 'react';
 import CurrencyInput from "react-currency-input-field";
 import useStyles from "../style";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function CurrencyInputWithValidate(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control, renderError,
+    register, errors,
     initValue, controlName,
   } = props;
-  const [value, setMaxBuy] = useState(initValue);
+  const renderError = renderErrorCreatePool;
+  const [value, setValue] = useState(initValue);
 
   return (
     <>
@@ -17,7 +19,7 @@ function CurrencyInputWithValidate(props: any) {
         value={value}
         decimalsLimit={2}
         onValueChange={(value: any, name: any) => {
-          setMaxBuy(value);
+          setValue(value);
         }}
         className={`${classes.formInputBox}`}
       />
