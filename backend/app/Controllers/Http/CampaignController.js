@@ -6,6 +6,7 @@ const CampaignService = use('App/Services/CampaignService');
 const WalletService = use('App/Services/WalletAccountService');
 const TierService = use('App/Services/TierService');
 const WinnerListService = use('App/Services/WinnerListUserService');
+const WhitelistService = use('App/Services/WhitelistUserService');
 const Const = use('App/Common/Const');
 const HelperUtils = use('App/Common/HelperUtils');
 const RedisUtils = use('App/Common/RedisUtils');
@@ -275,11 +276,25 @@ class CampaignController {
     if (wallet_address == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }
-    // call to join campaign
-    const campaignService = new CampaignService();
     try {
+      // check user tier
+      const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
+      const userTier = await tierSc.methods.getUserTier(wallet_address).call();
+      console.log(`user tier is ${userTier}`);
+      // call to db to get tier info
+      const tierService = new TierService();
+      const tierParams = {
+        'campaign_id': params.campaign_id,
+        'level': userTier
+      };
+      const tier = await tierService.findByLevelAndCampaign(tierParams);
+      if (tier == null) {
+        return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign!");
+      }
+      // call to join campaign
+      const campaignService = new CampaignService();
       await campaignService.joinCampaign(params.campaign_id, wallet_address, email);
-      return HelperUtils.responseSuccess(null,"Join Campaign Successful !");
+      return HelperUtils.responseSuccess(null, "Join Campaign Successful !");
     } catch (e) {
       console.log("error", e)
       if (e instanceof BadRequestException) {
@@ -304,7 +319,7 @@ class CampaignController {
       const winnerListService = new WinnerListService();
       const winner = await winnerListService.findByWalletAddress({'wallet_address': userWalletAddress});
       if (winner == null) {
-        return ErrorFactory.badRequest("You're not in winner list");
+        return HelperUtils.responseBadRequest("You're not in winner list");
       }
 
       // TODO list reserved
@@ -316,12 +331,11 @@ class CampaignController {
       const tierService = new TierService();
       const tierParams = {
         'campaign_id': params.campaign_id,
-        'level': userTier,
-        'current_time': Date.now()/1000
+        'level': userTier
       };
       const tier = await tierService.findByLevelAndCampaign(tierParams);
       if (tier == null) {
-        return ErrorFactory.badRequest("You're not get tier required to join this campaign or you're early to deposit");
+        return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign or you're early to deposit");
       }
       const filterParams = {
         'campaign_id': params.campaign_id
@@ -331,14 +345,14 @@ class CampaignController {
       const camp = await campaignService.findByCampaignId(params.campaign_id)
       if (camp == null) {
         console.log(`Do not found campaign with id ${params.campaign_id}`);
-        return ErrorFactory.badRequest("Error");
+        return HelperUtils.responseBadRequest("Error");
       }
       // get private key from db
       const walletService = new WalletService();
       const wallet = await walletService.findByCampaignId(filterParams);
       if (wallet == null) {
         console.log(`Do not found wallet for campaign ${params.campaign_id}`);
-        return ErrorFactory.badRequest("Error");
+        return HelperUtils.responseBadRequest("Error");
       }
       // call to SC to get sign hash
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
@@ -363,6 +377,48 @@ class CampaignController {
         'dead_line': camp.start_time
       }
       return HelperUtils.responseSuccess(response);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
+  async countingJoinedCampaign({request}) {
+    const campaignId = request.params.campaignId;
+    try {
+      // get from redis cached
+      let redisKey = 'counting_' + campaignId;
+      if (await Redis.exists(redisKey)) {
+        console.log(`existed key ${redisKey} on redis`);
+        const cachedWL = await Redis.get(redisKey);
+        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      }
+      // if not existed on redis then get from db
+      const wlService = new WhitelistService();
+      let noOfParticipants = await wlService.countByCampaignId(campaignId);
+      if (noOfParticipants != null) {
+        noOfParticipants = 0;
+      }
+      // save to redis
+      await Redis.set(redisKey, JSON.stringify(noOfParticipants));
+      return HelperUtils.responseSuccess(noOfParticipants);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
+  async checkJoinedCampaign({request, auth}) {
+    const campaignId = request.params.campaignId;
+    // get user wallet
+    const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
+    if (userWalletAddress == null) {
+      return HelperUtils.responseBadRequest("User don't have a valid wallet");
+    }
+    try {
+      const wlService = new WhitelistService();
+      const existed = await wlService.checkExisted(userWalletAddress, campaignId);
+      return HelperUtils.responseSuccess(existed);
     } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal(e.message);

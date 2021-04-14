@@ -97,6 +97,8 @@ Route.group(() => {
   Route.post('deposit', 'CampaignController.deposit').middleware(['auth']);
   Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware('auth');
   Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
+  Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign').middleware('auth');
+  Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign').middleware('auth');
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
 
 Route.group(() => {
