@@ -1,14 +1,15 @@
 import React, {useEffect} from 'react';
 import useStyles from "../style";
 import {isValidAddress} from "../../../services/web3";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function AddressReceiveMoney(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit,
+    register, setValue, errors,
     poolDetail,
-    renderError
   } = props;
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.address_receiver) {

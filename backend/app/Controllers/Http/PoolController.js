@@ -147,6 +147,7 @@ class PoolController {
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
+          min_buy: item.minBuy,
           max_buy: item.maxBuy,
           currency: item.currency,
         });
@@ -182,13 +183,39 @@ class PoolController {
       await CampaignModel.query().where('id', campaignId).update({
         is_deploy: true,
         campaign_hash: inputParams.campaign_hash,
-        token_symbol: inputParams.token_symbol,
+        token: inputParams.token_symbol,
       });
 
       // Delete cache
       RedisUtils.deleteRedisPoolDetail(campaignId);
 
       return HelperUtils.responseSuccess(campaign);
+    } catch (e) {
+      console.log('ERROR', e);
+      return ErrorFactory.internal('error');
+    }
+  }
+
+  async changeDisplay({ request, auth, params }) {
+    const inputParams = request.only([
+      'is_display'
+    ]);
+
+    console.log('Update Change Display with data: ', inputParams);
+    const campaignId = params.campaignId;
+    try {
+      const campaign = await CampaignModel.query().where('id', campaignId).first();
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+      await CampaignModel.query().where('id', campaignId).update({
+        is_display: inputParams.is_display,
+      });
+
+      // Delete cache
+      RedisUtils.deleteRedisPoolDetail(campaignId);
+
+      return HelperUtils.responseSuccess();
     } catch (e) {
       console.log('ERROR', e);
       return ErrorFactory.internal('error');

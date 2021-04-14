@@ -10,11 +10,8 @@ import {renderErrorCreatePool} from "../../../utils/validate";
 function DurationTime(props: any) {
   const classes = useStyles();
   const commonStyle = useCommonStyle();
-  const [ startTime, setStartTime ] = useState<Date | null>(null);
-  const [ finishTime, setFinishTime ] = useState<Date | null>(null);
-  const [ releaseTime, setReleaseTime ] = useState<Date | null>(null);
   const {
-    register, setValue, getValues, clearErrors, errors, handleSubmit, control,
+    register, setValue, getValues, errors, control,
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
@@ -39,13 +36,6 @@ function DurationTime(props: any) {
     }
   }, [poolDetail]);
 
-  // const handleDatePicking = (datePicker: string, selectedDate: Date | Date[]) => {
-  //   if (selectedDate) {
-  //     clearErrors(datePicker);
-  //   };
-  //   setValue(datePicker, selectedDate);
-  // };
-
   return (
     <>
 
@@ -58,10 +48,10 @@ function DurationTime(props: any) {
               rules={{
                 required: true,
                 validate: {
-                  // greaterOrEqualToday: (value) => {
-                  //   console.log(value);
-                  //   return new Date(value) >= new Date();
-                  // },
+                  greaterOrEqualToday: (value) => {
+                    console.log(value);
+                    return new Date(value) >= new Date();
+                  },
                 }
               }}
               name="start_join_pool_time"

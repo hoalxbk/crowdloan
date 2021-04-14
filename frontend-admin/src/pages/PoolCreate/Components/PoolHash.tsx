@@ -10,7 +10,7 @@ function PoolHash(props: any) {
   return (
     <>
       <div className={classes.formControl}>
-        <label className={classes.formControlLabel}>Pool Hash</label>
+        <label className={classes.formControlLabel}>Pool Hash (Please deposit token to campaign smart contract address for ICO.)</label>
         <input
           type="text"
           name="title"

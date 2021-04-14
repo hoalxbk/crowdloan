@@ -4,16 +4,17 @@ import useStyles from "../style";
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 // @ts-ignore
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 // CSS in /src/index.css
 
 function PoolDescription(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    register, setValue, errors,
+    poolDetail
   } = props;
+  const renderError = renderErrorCreatePool;
 
   const defaultValue = '<p></p>';
   const [description, setDescription] = useState(defaultValue);

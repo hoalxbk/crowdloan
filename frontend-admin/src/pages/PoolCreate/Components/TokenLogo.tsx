@@ -5,18 +5,20 @@ import FormControl from '@material-ui/core/FormControl';
 import ImageUploading from 'react-images-uploading';
 import {uploadFile} from "../../../request/upload";
 import Button from '@material-ui/core/Button';
-import {imageRoute} from "../../../utils";
+import { imageRoute } from "../../../utils";
+import { renderErrorCreatePool } from "../../../utils/validate";
+import { EditFilled, DeleteFilled } from '@ant-design/icons';
+import { Image } from 'antd';
 
 // https://codesandbox.io/s/react-images-uploading-demo-u0khz?file=/src/index.js
 function TokenLogo(props: any) {
   const classes = useStyles();
   const classesComponent = useComponentStyles();
   const {
-    register, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    register, errors,
+    poolDetail
   } = props;
-
+  const renderError = renderErrorCreatePool;
   const maxNumber = 69;
   const [images, setImages] = React.useState([]);
   const [imageUploaded, setImageUploaded] = useState('');
@@ -74,16 +76,22 @@ function TokenLogo(props: any) {
                 </Button>
                 {imageList.map((image, index) => (
                   <div key={index} className={classesComponent.imageItem}>
-                    <img src={image['data_url']} alt="" width="100" />
+                    <Image
+                      width={100}
+                      src={image['data_url']}
+                    />
                     <div className={classesComponent.imageItemBtnWrapper}>
-                      <button
-                        onClick={() => onImageUpdate(index)}
+                      <EditFilled
                         className={classesComponent.btnUpdateItem}
-                      >Update</button>
-                      <button
-                        onClick={() => onImageRemove(index)}
+                        onClick={() => onImageUpdate(index)}
+                      /> Edit
+                      <DeleteFilled
                         className={classesComponent.btnUpdateRemove}
-                      >Remove</button>
+                        onClick={() => {
+                          setImageUploaded('');
+                          return onImageRemove(index);
+                        }}
+                      /> Remove
                     </div>
                   </div>
                 ))}

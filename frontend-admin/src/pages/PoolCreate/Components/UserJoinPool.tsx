@@ -13,9 +13,7 @@ function callback(key: any) {
 const UserJoinPool = (props: any) => {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError,
+    poolDetail
   } = props;
 
   const [winners, setWinners] = useState([]);

@@ -1,13 +1,14 @@
 import React from 'react';
 import useStyles from "../style";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function PoolName(props: any) {
   const classes = useStyles();
   const {
-    register, clearErrors, errors, handleSubmit, control,
+    register, errors,
     poolDetail,
-    renderError,
   } = props;
+  const renderError = renderErrorCreatePool;
 
   return (
     <>
