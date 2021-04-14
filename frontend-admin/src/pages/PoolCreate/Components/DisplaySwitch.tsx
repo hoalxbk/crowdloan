@@ -44,16 +44,20 @@ function DisplaySwitch(props: any) {
         <Controller
           control={control}
           name="is_display"
-          render={({ value, onChange }) => {
+          render={(field) => {
+            const { value, onChange } = field;
             return (
-              <Switch onChange={ async (value) => {
-                // eslint-disable-next-line no-restricted-globals
-                if (!confirm('Do you want change display ?')) {
-                  return false;
-                }
-                await onChange(value);
-                await changeDisplay(value);
-              }} checked={value} />
+              <Switch
+                onChange={ async (switchValue) => {
+                  // eslint-disable-next-line no-restricted-globals
+                  if (!confirm('Do you want change display ?')) {
+                    return false;
+                  }
+                  await onChange(switchValue);
+                  await changeDisplay(switchValue);
+                }}
+                checked={value}
+              />
             )
           }}
         />

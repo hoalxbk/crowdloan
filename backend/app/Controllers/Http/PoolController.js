@@ -81,7 +81,7 @@ class PoolController {
       });
       await campaign.tiers().saveMany(tiers);
 
-      console.log('params.tier_configuration', tiers);
+      console.log('params.tier_configuration', JSON.stringify(tiers));
 
       const campaignId = campaign.id;
       // Create Web3 Account

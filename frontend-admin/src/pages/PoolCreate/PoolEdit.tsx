@@ -8,6 +8,7 @@ import moment from "moment";
 import {DATETIME_FORMAT} from "../../constants";
 import BackButton from "../../components/Base/ButtonLink/BackButton";
 import {useDispatch, useSelector} from "react-redux";
+import {get} from 'lodash';
 import {getPoolBlockchainInfo} from "../../utils/blockchain";
 
 const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
@@ -15,10 +16,22 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
   const { match } = props;
   const dispatch = useDispatch();
   const { data: loginUser } = useSelector((state: any) => state.user);
+  const [poolDetail, setPoolDetail] = useState();
 
   // @ts-ignore
   const id = match.params?.id;
-  const [poolDetail, setPoolDetail] = useState();
+
+  const getPoolInfoInBlockchain = async (data: any) => {
+    if (!get(poolDetail, 'is_deploy')) {
+      return;
+    }
+    try {
+      const response = await getPoolBlockchainInfo(loginUser, data);
+      console.log('getPoolBlockchainInfo: ', response);
+    } catch (e) {
+      console.log('ERROR: ', e);
+    }
+  };
 
   useEffect(() => {
     getPoolDetail(id)
@@ -33,8 +46,8 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
           end_join_pool_time: moment.unix(data.end_join_pool_time).format(DATETIME_FORMAT),
         };
         setPoolDetail(newData);
-        const reponse = await getPoolBlockchainInfo(loginUser, newData);
-        console.log('getPoolBlockchainInfo: ', reponse);
+
+        await getPoolInfoInBlockchain(newData);
 
         return res.data;
       });

@@ -4,8 +4,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { Controller } from "react-hook-form";
-import {getParticipantUser} from "../../../request/participants";
+import {Controller} from "react-hook-form";
 import {getTiers} from "../../../request/tier";
 import {renderErrorCreatePool} from "../../../utils/validate";
 
