@@ -5,7 +5,6 @@ const useStyles = makeStyles((theme) => {
     mainLayout: {
       gridArea: 'main',
       width: '100%',
-      backgroundColor: '#030925',
     },
   };
 });
