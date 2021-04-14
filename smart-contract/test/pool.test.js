@@ -21,6 +21,7 @@ describe('Pool', function () {
     USDCToken = await StableTokenFactory.deploy("USD Coin", "USDC", 6);
 
     // Deploy Tier Token
+    
     const ERC20Token = await hardhat.ethers.getContractFactory(
       'ERC20Token',
     );
@@ -32,10 +33,10 @@ describe('Pool', function () {
       `5${'0'.repeat(27)}`
     );
 
-    await deployedTierToken.deployed();
-    tierToken = deployedTierToken.address;
+    // await deployedTierToken.deployed();
+    // tierToken = deployedTierToken.address;
 
-    // Deploy ICO Token
+    // // Deploy ICO Token
     const deployedIcoToken = await ERC20Token.deploy(
       "IcoToken",
       "ICO",
@@ -45,19 +46,19 @@ describe('Pool', function () {
     await deployedIcoToken.deployed();
     icoToken = deployedIcoToken;
 
-    // Deploy Tier Contract
-    const SotaTier = await hardhat.ethers.getContractFactory(
-      'SotaTier',
-    );
-    const deployedTierContract = await SotaTier.deploy(tierToken);
-    await deployedTierContract.deployed();
-    tierContract = deployedTierContract.address;
+    // // Deploy Tier Contract
+    // const SotaTier = await hardhat.ethers.getContractFactory(
+    //   'PKFTiers'
+    // );
+    // const deployedTierContract = await SotaTier.deploy(tierToken, owner);
+    // await deployedTierContract.deployed();
+    // tierContract = deployedTierContract.address;
 
     // Deploy Pool Factory
     const PoolFactory = await hardhat.ethers.getContractFactory(
       'PoolFactory',
     );
-    const deployedPoolFactory = await upgrades.deployProxy(PoolFactory, [tierContract]);
+    const deployedPoolFactory = await upgrades.deployProxy(PoolFactory, []);
     poolFactory = deployedPoolFactory;
 
     duration = 86400;
@@ -78,7 +79,7 @@ describe('Pool', function () {
       0,
     ];
     // Register new pool
-    await poolFactory.registerPool(icoToken.address, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet, wallet);
+    await poolFactory.registerPool(icoToken.address, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, wallet, wallet);
 
     const poolAddress = await poolFactory.allPools(0);
 
