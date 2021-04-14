@@ -12,7 +12,6 @@ const ManageTier = (props: any) => {
 
   const [openModalDeposit, setOpenModalDeposit] = useState(false)
   const [openModalWithdraw, setOpenModalWithdraw] = useState(false)
-  const [loadedWithdrawPercent, setLoadedWithdrawPercent] = useState(false)
   const [penaltyPercent, setPenaltyPercent] = useState(0)
 
   const { loading: depositing = {} } = useSelector((state: any) => state.deposit);
@@ -33,14 +32,11 @@ const ManageTier = (props: any) => {
   }
 
   useEffect(() => {
-    if(!loadedWithdrawPercent) {
-      /* dispatch(getWithdrawPercent()); */
-      setLoadedWithdrawPercent(true)
-    }
-  })
+      dispatch(getWithdrawPercent());
+  }, [])
 
   useEffect(() => {
-    // if(!_.isEmpty(userInfo) && !_.isEmpty(withdrawFee)) return
+    if(_.isEmpty(userInfo) || _.isEmpty(withdrawFee)) return
     dispatch(getWithdrawFee(loginInvestor.wallet_address, userInfo.staked));
     setPenaltyPercent(Math.round(parseFloat(withdrawFee) * 100 / parseFloat(userInfo.staked)))
   }, [withdrawFee, userInfo])
