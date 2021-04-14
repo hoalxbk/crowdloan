@@ -35,6 +35,7 @@ function CreateEditTierForm(props: any) {
       name: data.name,
       startTime: data.startTime.format(DATETIME_FORMAT),
       endTime: data.endTime.format(DATETIME_FORMAT),
+      minBuy: data.minBuy,
       maxBuy: data.maxBuy,
     };
     handleCreateUpdateData && handleCreateUpdateData(responseData);
@@ -162,21 +163,36 @@ function CreateEditTierForm(props: any) {
 
 
 
+        <div className={classes.formControl}>
+          <label className={classes.formControlLabel}>Min Buy</label>
+          <div>
+            <CurrencyInputWithValidate
+              register={register}
+              setValue={setValue}
+              errors={errors}
+              clearErrors={clearErrors}
+              renderError={renderError}
+              control={control}
+              initValue={editData.minBuy}
+              controlName={'minBuy'}
+            />
+          </div>
+        </div>
 
-        <FormControl component="fieldset">
+        <div className={classes.formControl}>
           <label className={classes.formControlLabel}>Max Buy</label>
-
-          <CurrencyInputWithValidate
-            register={register}
-            setValue={setValue}
-            errors={errors}
-            clearErrors={clearErrors}
-            renderError={renderError}
-            control={control}
-            initValue={editData.maxBuy}
-            controlName={'maxBuy'}
-          />
-
+          <div>
+            <CurrencyInputWithValidate
+              register={register}
+              setValue={setValue}
+              errors={errors}
+              clearErrors={clearErrors}
+              renderError={renderError}
+              control={control}
+              initValue={editData.maxBuy}
+              controlName={'maxBuy'}
+            />
+          </div>
 
           {/*<CurrencyInput*/}
           {/*  placeholder="Please enter a number"*/}
@@ -199,9 +215,7 @@ function CreateEditTierForm(props: any) {
           {/*    renderError(errors, 'maxBuy')*/}
           {/*  }*/}
           {/*</p>*/}
-
-        </FormControl>
-
+        </div>
 
 
       </ConfirmDialog>

@@ -147,6 +147,7 @@ class PoolController {
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
+          min_buy: item.minBuy,
           max_buy: item.maxBuy,
           currency: item.currency,
         });
