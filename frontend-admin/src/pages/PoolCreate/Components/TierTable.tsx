@@ -19,17 +19,17 @@ const useStylesTable = makeStyles({
   },
 });
 
-const createData = (name: string, startTime: string, endTime: string, maxBuy: number, isEdit: boolean) => {
-  return { name, startTime, endTime, maxBuy, isEdit };
+const createData = (name: string, startTime: string, endTime: string, minBuy: number, maxBuy: number, isEdit: boolean) => {
+  return { name, startTime, endTime, minBuy, maxBuy, isEdit };
 };
 
 const createDefaultTiers = () => {
   return [
-    createData('Tier 1', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 1000, false),
-    createData('Tier 2', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 2000, false),
-    createData('Tier 3', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 3000, false),
-    createData('Tier 4', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 4000, false),
-    createData('Tier 5', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 5000, false),
+    createData('Tier 1', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 1000, false),
+    createData('Tier 2', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 2000, false),
+    createData('Tier 3', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 3000, false),
+    createData('Tier 4', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 4000, false),
+    createData('Tier 5', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 5000, false),
   ];
 };
 
@@ -37,7 +37,7 @@ function TierTable(props: any) {
   const classes = useStyles();
   const classesTable = useStylesTable();
   const {
-    register,
+    register, watch,
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
@@ -54,6 +54,7 @@ function TierTable(props: any) {
           item.name,
           moment.unix(item.start_time).format(DATETIME_FORMAT),
           moment.unix(item.end_time).format(DATETIME_FORMAT),
+          item.min_buy,
           item.max_buy,
           false
         );
@@ -105,6 +106,8 @@ function TierTable(props: any) {
     setRows(newRows);
   };
 
+  const acceptCurrency = watch('acceptCurrency');
+
   return (
     <>
       {isOpenEditPopup &&
@@ -135,7 +138,9 @@ function TierTable(props: any) {
               <TableCell>Name</TableCell>
               <TableCell align="right">Start Buy Time</TableCell>
               <TableCell align="right">End Time</TableCell>
+              <TableCell align="right">Min Buy</TableCell>
               <TableCell align="right">Max Buy</TableCell>
+              <TableCell align="right">Currency</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -147,7 +152,9 @@ function TierTable(props: any) {
                 </TableCell>
                 <TableCell align="right">{row.startTime}</TableCell>
                 <TableCell align="right">{row.endTime}</TableCell>
+                <TableCell align="right">{row.minBuy || '0'}</TableCell>
                 <TableCell align="right">{row.maxBuy}</TableCell>
+                <TableCell align="right">{(acceptCurrency + '').toUpperCase()}</TableCell>
                 <TableCell align="right">
                   <Button
                     variant="contained"

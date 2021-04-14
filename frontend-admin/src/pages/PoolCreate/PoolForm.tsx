@@ -58,6 +58,7 @@ function PoolForm(props: any) {
   const { register, setValue, getValues, clearErrors, errors, handleSubmit, control, watch } = useForm({
     mode: "onChange",
     defaultValues: poolDetail,
+    reValidateMode: 'onChange',
   });
 
   const createUpdatePool = async (data: any) => {
@@ -215,11 +216,13 @@ function PoolForm(props: any) {
       console.log('ERROR: ', e);
     }
   };
+
   const handlerDeploy = () => {
     handleSubmit(handleDeloySubmit)();
   };
-  const renderError = renderErrorCreatePool;
 
+  const watchBuyType = watch('buyType');
+  console.log('watchBuyType', watchBuyType);
   console.log('errors==========>', errors);
 
   return (
@@ -259,38 +262,6 @@ function PoolForm(props: any) {
             </div>
 
             <div className={classes.exchangeRate}>
-              <TokenAddress
-                poolDetail={poolDetail}
-                register={register}
-                token={token}
-                setToken={setToken}
-                setValue={setValue}
-                errors={errors}
-              />
-
-              <AddressReceiveMoney
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-              />
-
-              <TotalCoinSold
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-              />
-
-              <TokenLogo
-                poolDetail={poolDetail}
-                register={register}
-                errors={errors}
-              />
-
-            </div>
-
-            <div className={classes.exchangeRate}>
               <BuyType
                 poolDetail={poolDetail}
                 setValue={setValue}
@@ -322,20 +293,6 @@ function PoolForm(props: any) {
             </div>
 
             <div className={classes.exchangeRate}>
-              <DurationTime
-                poolDetail={poolDetail}
-                register={register}
-                token={token}
-                setToken={setToken}
-                setValue={setValue}
-                errors={errors}
-                control={control}
-                getValues={getValues}
-              />
-            </div>
-
-
-            <div className={classes.exchangeRate}>
               <MinTier
                 poolDetail={poolDetail}
                 setValue={setValue}
@@ -346,22 +303,9 @@ function PoolForm(props: any) {
               <TierTable
                 poolDetail={poolDetail}
                 register={register}
-                // setValue={setValue}
-                // errors={errors}
-                // clearErrors={clearErrors}
-                // control={control}
+                watch={watch}
               />
             </div>
-
-            <div className={classes.exchangeRate}>
-              <PoolDescription
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-              />
-            </div>
-
 
             <ExchangeRate
               poolDetail={poolDetail}
@@ -391,16 +335,64 @@ function PoolForm(props: any) {
         </Grid>
 
         <Grid item xs={6}>
-          {isEdit && poolDetail && poolDetail.buy_type === 'whitelist' &&
+          <div className={classes.exchangeRate}>
+            <TokenAddress
+              poolDetail={poolDetail}
+              register={register}
+              token={token}
+              setToken={setToken}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <AddressReceiveMoney
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <TotalCoinSold
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <TokenLogo
+              poolDetail={poolDetail}
+              register={register}
+              errors={errors}
+            />
+
+          </div>
+
+          <div className={classes.exchangeRate}>
+            <DurationTime
+              poolDetail={poolDetail}
+              register={register}
+              token={token}
+              setToken={setToken}
+              setValue={setValue}
+              errors={errors}
+              control={control}
+              getValues={getValues}
+            />
+          </div>
+
+          <div className={classes.exchangeRate}>
+            <PoolDescription
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+          </div>
+
+          {isEdit && poolDetail && watchBuyType === 'whitelist' &&
             <div className={classes.exchangeRate}>
               <UserJoinPool
                 poolDetail={poolDetail}
-                register={register}
-                token={token}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                control={control}
               />
             </div>
           }

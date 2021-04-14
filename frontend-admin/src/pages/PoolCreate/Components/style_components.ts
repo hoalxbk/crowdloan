@@ -12,14 +12,14 @@ const useStyles = makeStyles(theme => ({
   },
 
   btnUpdateItem: {
-    width: 70,
-    height: 23,
-    margin: '5px 10px',
+    margin: '25px 10px',
+    color: '#3f51b5',
+    fontSize: 25,
   },
   btnUpdateRemove: {
-    width: 70,
-    height: 23,
-    margin: '5px 10px',
+    margin: '25px 10px',
+    color: 'red',
+    fontSize: 25,
   }
 
 }));

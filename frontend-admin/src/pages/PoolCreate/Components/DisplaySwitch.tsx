@@ -12,7 +12,7 @@ import {useDispatch} from "react-redux";
 function DisplaySwitch(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, errors, control,
+    setValue, errors, control,
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
