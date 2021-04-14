@@ -106,7 +106,7 @@ const useStyles = makeStyles(theme => ({
   },
   formInputBox: {
     border: '1px solid #DFDFDF',
-    padding: '13px',
+    padding: '10px',
     maxWidth: 300,
     width: 250,
     fontSize: 14,
@@ -123,7 +123,7 @@ const useStyles = makeStyles(theme => ({
   },
   formInputBoxBS: {
     backgroundColor: '#DFDFFF',
-    color: '#3A39BB'
+    color: '#3A39BB',
   },
   box: {
     right: 0,

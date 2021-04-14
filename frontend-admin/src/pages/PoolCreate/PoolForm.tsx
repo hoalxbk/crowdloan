@@ -313,6 +313,8 @@ function PoolForm(props: any) {
               token={token}
               setValue={setValue}
               errors={errors}
+              control={control}
+              watch={watch}
             />
 
             <button

@@ -7,7 +7,6 @@ import {getPoolDetail} from "../../request/pool";
 import moment from "moment";
 import {DATETIME_FORMAT} from "../../constants";
 import BackButton from "../../components/Base/ButtonLink/BackButton";
-import {getCampaignDetail} from "../../store/actions/campaign";
 import {useDispatch, useSelector} from "react-redux";
 import {getPoolBlockchainInfo} from "../../utils/blockchain";
 
