@@ -9,13 +9,25 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'column',
       alignItems: 'center',
       padding: '0 80px',
-      backgroundColor: '#020618'
+      backgroundColor: '#020618',
+      [theme.breakpoints.down('md')]: {
+        padding: '10px 40px',
+      },
+      [theme.breakpoints.only('xs')]: {
+        padding: '10px 20px',
+      }
     },
     mainContent: {
       display: 'grid',
       gridTemplateColumns: '2fr 1fr 1fr 1fr',
       gap: '20px',
-      padding: '60px 20px'
+      padding: '60px 0',
+      [theme.breakpoints.down('sm')]: {
+        gridTemplateColumns: `1fr 1fr`,
+      },
+      [theme.breakpoints.only('xs')]: {
+        gridTemplateColumns: '1fr',
+      }
     },
     infoRedKite: {
       display: 'flex',
@@ -47,6 +59,9 @@ const useStyles = makeStyles((theme) => {
     },
     infoCompany: {
       paddingTop: '60px',
+      [theme.breakpoints.only('xs')]: {
+        paddingTop: '0',
+      }
     },
     companyLink: {
       display: 'flex',
@@ -54,6 +69,9 @@ const useStyles = makeStyles((theme) => {
     },
     help: {
       paddingTop: '60px',
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: '0',
+      }
     },
     helpLink: {
       display: 'flex',
@@ -61,6 +79,9 @@ const useStyles = makeStyles((theme) => {
     },
     developers: {
       paddingTop: '60px',
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: '0',
+      }
     },
     developerLink: {
       display: 'flex',

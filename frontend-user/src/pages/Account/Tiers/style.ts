@@ -7,7 +7,8 @@ const useStyles = makeStyles((theme: any) => {
       flexDirection: 'row',
       alignItems: 'center',
       marginBottom: '20px',
-      width: 560,
+      width: '100%',
+      maxWidth: '100%',
 
       '& p': {
         fontFamily: 'Helvetica',
