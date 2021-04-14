@@ -5,6 +5,7 @@ import CurrencyInput from "react-currency-input-field";
 import useStyles from "../style";
 import {useCommonStyle} from "../../../styles";
 import {ACCEPT_CURRENCY} from "../../../constants";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 function ExchangeRate(props: any) {
   const classes = useStyles();
@@ -16,6 +17,7 @@ function ExchangeRate(props: any) {
     token
   } = props;
   const [rateValue, setRateValue] = useState(0);
+
 
   useEffect(() => {
     if (poolDetail) {
@@ -59,6 +61,7 @@ function ExchangeRate(props: any) {
   };
 
   const acceptCurrency = watch('acceptCurrency');
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <div className={classes.exchangeRate}>
@@ -102,6 +105,7 @@ function ExchangeRate(props: any) {
                 setRateValue(value);
               }}
               className={`${classes.formInputBox} ${classes.formInputBoxBS}`}
+              disabled={isDeployed}
             />
 
             <input
@@ -115,6 +119,7 @@ function ExchangeRate(props: any) {
                   // maxDecimals: checkMaxEthRateDecimals
                 }
               })}
+              disabled={isDeployed}
             />
 
 

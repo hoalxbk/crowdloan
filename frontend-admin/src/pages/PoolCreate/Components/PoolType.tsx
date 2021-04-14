@@ -20,6 +20,7 @@ function PoolType(props: any) {
       setValue('poolType', poolDetail.pool_type);
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -37,11 +38,12 @@ function PoolType(props: any) {
                 <FormControlLabel
                   value="swap" control={<Radio />}
                   label="Swap"
+                  disabled={isDeployed}
                 />
                 <FormControlLabel
-                  value="claimable"
-                  control={<Radio />}
+                  value="claimable" control={<Radio />}
                   label="Claimable"
+                  disabled={isDeployed}
                 />
               </RadioGroup>
             }

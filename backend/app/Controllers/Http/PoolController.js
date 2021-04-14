@@ -4,7 +4,7 @@ const CampaignModel = use('App/Models/Campaign');
 const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
-const CampaignService = use('App/Services/CampaignService');
+const PoolService = use('App/Services/PoolService');
 const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
 const RedisUtils = use('App/Common/RedisUtils');
@@ -254,57 +254,25 @@ class PoolController {
     const page = param.page ? param.page : Config.get('const.page_default');
     param.limit = limit;
     param.page = page;
+    param.is_display = false;
+    param.is_search = true;
     console.log('Start Pool List with params: ', param);
 
     try {
-      // console.log(await RedisUtils.checkExistRedisPoolList(param));
-      // console.log('9999999');
-
       if (await RedisUtils.checkExistRedisPoolList(param)) {
         const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
         console.log('Exist cache data Public Pool List: ', cachedPoolDetail);
         return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
       }
 
-      const filter = {};
-      let listData = CampaignModel.query().orderBy('id', 'DESC');
-      if(param.title) {
-        listData =  listData.where(builder => {
-          builder.where('title', 'like', '%'+ param.title +'%')
-            .orWhere('symbol', 'like', '%'+ param.title +'%')
-          if((param.title).toLowerCase() == Config.get('const.suspend')){
-            builder.orWhere('is_pause', '=', 1)
-          }
-          if((param.title).toLowerCase() == Config.get('const.active')){
-            builder.orWhere('is_pause', '=', 0)
-          }
-        })
-      }
-      if(param.start_time && !param.finish_time) {
-        listData = listData.where('start_time', '>=', param.start_time)
-      }
-      if(param.finish_time && !param.start_time ) {
-        listData = listData.where('finish_time', '<=', param.finish_time)
-      }
-      if(param.finish_time && param.start_time ) {
-        listData = listData.whereRaw('finish_time <=' + param.finish_time)
-          .whereRaw('start_time >=' + param.start_time)
-      }
-      if(param.registed_by){
-        listData = listData.where('registed_by', '=', param.registed_by)
-      }
+      let listData = (new PoolService).buildSearchQuery(param);
+      listData = listData.orderBy('id', 'DESC');
       listData = await listData.paginate(page,limit);
 
       // Cache data
       RedisUtils.createRedisPoolList(param, listData);
 
       return HelperUtils.responseSuccess(listData);
-
-      // return {
-      //   status: 200,
-      //   data: listData,
-      // }
-
     } catch (e) {
       console.log(e)
       return HelperUtils.responseErrorInternal(e.message);

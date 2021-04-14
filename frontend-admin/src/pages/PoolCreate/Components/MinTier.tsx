@@ -20,6 +20,7 @@ function MinTier(props: any) {
       setValue('minTier', poolDetail.min_tier);
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -36,6 +37,7 @@ function MinTier(props: any) {
               id="minTier"
               name="minTier"
               // onChange={handleChange}
+              disabled={isDeployed}
             >
               {
                 [1,2,3,4,5].map((value, index) => {

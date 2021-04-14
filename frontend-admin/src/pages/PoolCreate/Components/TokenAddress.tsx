@@ -49,6 +49,8 @@ function TokenAddress(props: any) {
     await loadingTokenData(e.target.value);
   }, 500);
 
+  const isDeployed = !!poolDetail?.is_deploy;
+
   return (
     <>
       <div className={classes.formControl}>
@@ -73,6 +75,7 @@ function TokenAddress(props: any) {
             maxLength={255}
             onChange={handleTokenGetInfo}
             className={classes.formControlInput}
+            disabled={isDeployed}
           />
           {
             loadingToken ?

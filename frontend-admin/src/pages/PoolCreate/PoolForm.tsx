@@ -340,7 +340,11 @@ function PoolForm(props: any) {
               }
             </button>
 
-            <button disabled={loading || loadingDeploy} className={classes.formButtonUpdatePool} onClick={handleCampaignCreate}>
+            <button
+              disabled={loading || loadingDeploy || poolDetail?.is_deploy}
+              className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}
+              onClick={handleCampaignCreate}
+            >
               {
                 (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
               }
@@ -392,6 +396,7 @@ function PoolForm(props: any) {
               errors={errors}
               control={control}
               getValues={getValues}
+              watch={watch}
             />
           </div>
 

@@ -30,6 +30,7 @@ function AcceptCurrency(props: any) {
         });
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -47,14 +48,17 @@ function AcceptCurrency(props: any) {
                 <FormControlLabel
                   value="usdt" control={<Radio />}
                   label="USDT"
+                  disabled={isDeployed}
                 />
                 <FormControlLabel
                   value="usdc" control={<Radio />}
                   label="USDC"
+                  disabled={isDeployed}
                 />
                 <FormControlLabel
                   value="eth" control={<Radio />}
                   label="Ether"
+                  disabled={isDeployed}
                 />
               </RadioGroup>
             }

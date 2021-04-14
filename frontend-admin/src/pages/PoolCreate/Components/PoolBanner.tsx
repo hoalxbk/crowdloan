@@ -9,11 +9,13 @@ import {imageRoute} from "../../../utils";
 import {renderErrorCreatePool} from "../../../utils/validate";
 import { EditFilled, DeleteFilled } from '@ant-design/icons';
 import {Image} from "antd";
+import {useCommonStyle} from "../../../styles";
 
 // https://codesandbox.io/s/react-images-uploading-demo-u0khz?file=/src/index.js
 function PoolBanner(props: any) {
   const classes = useStyles();
   const classesComponent = useComponentStyles();
+  const commonStyle = useCommonStyle();
   const {
     register, errors,
     poolDetail,
@@ -60,6 +62,8 @@ function PoolBanner(props: any) {
             onChange={onChange}
             maxNumber={maxNumber}
             dataURLKey="data_url"
+            maxFileSize={5000000}
+            acceptType={['jpg', 'gif', 'png']}
           >
             {({
                 imageList,
@@ -69,6 +73,7 @@ function PoolBanner(props: any) {
                 onImageRemove,
                 isDragging,
                 dragProps,
+                errors,
               }) => (
               // write your building UI
               <div className={classesComponent.uploadImageWrapper}>
@@ -89,6 +94,10 @@ function PoolBanner(props: any) {
                       <DeleteFilled
                         className={classesComponent.btnUpdateRemove}
                         onClick={() => {
+                          // eslint-disable-next-line no-restricted-globals
+                          if (!confirm('Do you want delete this image?')) {
+                            return false;
+                          }
                           setImageUploaded('');
                           return onImageRemove(index);
                         }}
@@ -96,6 +105,14 @@ function PoolBanner(props: any) {
                     </div>
                   </div>
                 ))}
+                {errors &&
+                  <div className={commonStyle.error}>
+                    {errors.maxNumber && <span>Number of selected images exceed 1</span>}
+                    {errors.acceptType && <span>The selected file must be in PNG format, up to 5MB in size.</span>}
+                    {errors.maxFileSize && <span>Selected file size exceed 5MB</span>}
+                    {errors.resolution && <span>Selected file is not match your desired resolution</span>}
+                  </div>
+                }
               </div>
             )}
           </ImageUploading>

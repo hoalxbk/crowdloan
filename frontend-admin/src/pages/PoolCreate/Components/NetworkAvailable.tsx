@@ -20,6 +20,7 @@ function NetworkAvailable(props: any) {
       setValue('networkAvailable', poolDetail.network_available);
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -37,10 +38,12 @@ function NetworkAvailable(props: any) {
                 <FormControlLabel
                   value="eth" control={<Radio />}
                   label="Ether"
+                  disabled={isDeployed}
                 />
                 <FormControlLabel
                   value="bsc" control={<Radio />}
                   label="BSC"
+                  disabled={isDeployed}
                 />
               </RadioGroup>
             }

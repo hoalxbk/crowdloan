@@ -20,6 +20,7 @@ function BuyType(props: any) {
       setValue('buyType', poolDetail.buy_type);
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -36,11 +37,12 @@ function BuyType(props: any) {
                 <FormControlLabel
                   value="whitelist" control={<Radio />}
                   label="Whitelist Lottery"
+                  disabled={isDeployed}
                 />
                 <FormControlLabel
-                  value="fcfs"
-                  control={<Radio />}
+                  value="fcfs" control={<Radio />}
                   label="FCFS"
+                  disabled={isDeployed}
                 />
               </RadioGroup>
             }

@@ -9,3 +9,12 @@ export const ACCEPT_CURRENCY = {
   USDT: 'usdt',
   USDC: 'usdc',
 };
+export const BUY_TYPE = {
+  WHITELIST_LOTTERY: 'whitelist',
+  FCFS: 'fcfs',
+};
+export const POOL_TYPE = {
+  SWAP: 'swap',
+  CLAIMABLE: 'claimable',
+};
+

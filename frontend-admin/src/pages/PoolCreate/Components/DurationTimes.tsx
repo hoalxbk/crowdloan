@@ -4,14 +4,15 @@ import {useCommonStyle} from "../../../styles";
 import {Controller} from "react-hook-form";
 import {DatePicker} from "antd";
 import moment from "moment";
-import {DATETIME_FORMAT} from "../../../constants";
+import {BUY_TYPE, DATETIME_FORMAT, POOL_TYPE} from "../../../constants";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 function DurationTime(props: any) {
   const classes = useStyles();
   const commonStyle = useCommonStyle();
   const {
-    register, setValue, getValues, errors, control,
+    register, setValue, getValues, errors, control, watch,
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
@@ -35,11 +36,17 @@ function DurationTime(props: any) {
       }
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
+  const watchBuyType = watch('buyType');
+  const watchPoolType = watch('poolType');
+  const isBuyTypeFCFS = watchBuyType === BUY_TYPE.FCFS;
+  const isPoolTypeSwap = watchPoolType === POOL_TYPE.SWAP;
 
   return (
     <>
 
       <div className={classes.formControlFlex}>
+
         <div className={classes.formControlFlexBlock}>
           <label className={classes.formControlLabel}>Start Join Pool Time</label>
           <div style={{marginBottom: 25}}>
@@ -66,6 +73,7 @@ function DurationTime(props: any) {
                     }}
                     minuteStep={15}
                     className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
+                    disabled={isDeployed || isBuyTypeFCFS}
                   />
                 )
               }}
@@ -132,6 +140,7 @@ function DurationTime(props: any) {
                     }}
                     minuteStep={15}
                     className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
+                    disabled={isDeployed || isBuyTypeFCFS}
                   />
                 )
               }}
@@ -167,6 +176,7 @@ function DurationTime(props: any) {
                     }}
                     minuteStep={15}
                     className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
+                    disabled={isDeployed}
                   />
                 )
               }}
@@ -209,6 +219,7 @@ function DurationTime(props: any) {
                     }}
                     minuteStep={15}
                     className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
+                    disabled={isDeployed}
                   />
                 )
               }}
@@ -225,27 +236,6 @@ function DurationTime(props: any) {
 
       <div className={classes.formControl}>
         <label className={classes.formControlLabel}>Claim time</label>
-        {/*<DateTimePicker*/}
-        {/*  className={`${commonStyle.DateTimePicker} ${classes.formDatePicker} ${classes.formDatePickerBlock}`}*/}
-        {/*  monthPlaceholder="mm"*/}
-        {/*  dayPlaceholder="dd"*/}
-        {/*  yearPlaceholder="yy"*/}
-        {/*  calendarIcon={<img src="/images/icon-calendar.svg" alt="" />}*/}
-        {/*  value={releaseTime}*/}
-        {/*  onChange={(date: any) => { handleDatePicking("release_time", date); setReleaseTime(date) }}*/}
-        {/*/>*/}
-
-        {/*<input*/}
-        {/*  type="hidden"*/}
-        {/*  name="release_time"*/}
-        {/*  ref={register({*/}
-        {/*    required: true,*/}
-        {/*    validate: {*/}
-        {/*      greaterOrEqualFinishTime: (value: any) => finishTime ? new Date(value) > finishTime: new Date(value)> new Date()*/}
-        {/*    }*/}
-        {/*  })}*/}
-        {/*/>*/}
-
         <div style={{marginBottom: 15}}>
           <Controller
             control={control}
@@ -274,6 +264,7 @@ function DurationTime(props: any) {
                   }}
                   minuteStep={15}
                   className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
+                  disabled={isDeployed || isPoolTypeSwap}
                 />
               )
             }}

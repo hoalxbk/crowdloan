@@ -9,6 +9,7 @@ function PoolName(props: any) {
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -21,6 +22,7 @@ function PoolName(props: any) {
           ref={register({ required: true })}
           maxLength={255}
           className={classes.formControlInput}
+          disabled={isDeployed}
         />
         <p className={classes.formErrorMessage}>
           {

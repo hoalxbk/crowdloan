@@ -54,9 +54,11 @@ const deleteRedisPoolDetail = (poolId) => {
  */
 const getRedisKeyPoolList = ({
   page = 1, limit = 10, title = 'title',
-  start_time = 'start_time', finish_time = 'finish_time', registed_by = 'registed_by',
+  start_time = 'start_time', finish_time = 'finish_time',
+  registed_by = 'registed_by', is_display,
 }) => {
-  return `public_pool_list_${page}_${limit}_${title}_${start_time}_${finish_time}_${registed_by}`;
+  if (is_display === undefined) is_display = 'both';
+  return `public_pool_list_${page}_${limit}_${title}_${start_time}_${finish_time}_${registed_by}_${is_display}`;
 };
 
 const getRedisPoolList = async (params) => {
