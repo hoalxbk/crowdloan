@@ -10,18 +10,30 @@ const useStyles = makeStyles((theme: any) => {
       marginBottom: 0,
       flex: 1,
     },
-    changeTier: {
-      width: '440px'
-    },
     accountContainer: {
       display: 'grid',
       gridTemplateColumns: '1fr 440px',
       gap: '100px',
-      padding: '80px'
+      padding: '80px',
+      marginTop: '80px',
+      [theme.breakpoints.down('md')]: {
+        gridTemplateColumns: '1fr',
+      },
+      [theme.breakpoints.down('sm')]: {
+        gridTemplateColumns: '1fr',
+        padding: '40px',
+        marginTop: '120px',
+      },
+      [theme.breakpoints.only('xs')]: {
+        gridTemplateColumns: '1fr',
+        padding: '20px',
+      },
     },
     leftPanel: {
     },
     rightPanel: {
+      maxWidth: '100%',
+      width: '100%'
     }
   };
 });
