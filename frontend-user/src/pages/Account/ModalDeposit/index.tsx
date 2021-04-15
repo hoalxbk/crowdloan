@@ -43,7 +43,7 @@ const ModalDeposit = (props: any) => {
           <div className="modal-content__body">
             <div className="subtitle">
               <span>Input</span>
-              <span>Your wallet balance: { _.isEmpty(balance) ? 0 : parseFloat(userInfo.staked).toFixed() } SOTA</span>
+              <span>Your wallet balance: { _.isEmpty(balance) ? 0 : parseFloat(userInfo.staked).toFixed() } PKF</span>
             </div>
             <div className="input-group">
               <input
@@ -57,7 +57,7 @@ const ModalDeposit = (props: any) => {
             </div>
           </div>
           <div className="modal-content__foot">
-            {allowance == 0 && <button
+            {allowance <= 0 && <button
               className="btn-approve"
               onClick={onApprove}
             >approve</button>}
