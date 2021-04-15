@@ -40,7 +40,7 @@ class WhiteListUserController {
     }
   }
 
-  async getPublicParticipants({request}) {
+  async getParticipants({request}) {
     // get request params
     const campaign_id = request.params.campaignId;
     const page = request.input('page');

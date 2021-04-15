@@ -65,6 +65,7 @@ Route.group(() => {
   Route.post('pool/create', 'PoolController.createPool');
   Route.post('pool/:campaignId/update', 'PoolController.updatePool');
   Route.get('pool/:campaignId', 'PoolController.getPool');
+  Route.get('pool/:campaignId/participants', 'WhiteListUserController.getParticipants');
   Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
   Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 

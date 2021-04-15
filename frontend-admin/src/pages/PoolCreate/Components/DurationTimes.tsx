@@ -244,6 +244,7 @@ function DurationTime(props: any) {
               required: true,
               validate: {
                 greaterOrEqualFinishTime: value => {
+                  if (isPoolTypeSwap) return true;
                   const startTime = getValues('finish_time');
                   const valueUnix = moment(value).unix();
                   const startTimeUnix = moment(startTime).unix();
