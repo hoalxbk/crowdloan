@@ -27,6 +27,12 @@ const useStyles = makeStyles((theme: any) => {
     poolHeaderImage: {
 
     },
+    poolImage: {
+      width: 60,
+      height: 60,
+      borderRadius: '50%',
+      objectFit: 'cover'
+    },
     poolHeaderInfo: {
       color: 'white',
       marginLeft: 12,

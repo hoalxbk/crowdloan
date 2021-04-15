@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { HashLoader } from "react-spinners";
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
@@ -8,7 +8,6 @@ import {CopyToClipboard} from 'react-copy-to-clipboard';
 import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
 import useAuth from '../../hooks/useAuth';
 import usePoolDetails from '../../hooks/usePoolDetails';
-import useTokenBalance from '../../hooks/useTokenBalance';
 import useTokenSoldProgress from './hooks/useTokenSoldProgress';
 import usePoolJoinAction from './hooks/usePoolJoinAction';
 import useFetch from '../../hooks/useFetch';
@@ -21,14 +20,13 @@ import BuyTokenForm from './BuyTokenForm';
 import Button from './Button';
 import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
-import { limitDecimalFormatter, formatMoneyWithoutDollarSign } from '../../utils/currencyFormatter';
 
 import { getTiers, getUserInfo, getUserTier } from '../../store/actions/sota-tiers';
 
 import useStyles from './style';
 
-const poolImage = "/images/pool_circle.svg";
 const copyImage = "/images/copy.svg";
+const poolImage = "/images/pool_circle.svg";
 
 enum HeaderType {
   Main = "Main",
@@ -38,13 +36,12 @@ enum HeaderType {
 
 const headers = [HeaderType.Main, HeaderType.About, HeaderType.Participants];
 
-const ETHERSCAN_BASE_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL;
+const ETHERSCAN_BASE_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL; 
 
 const BuyToken: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
-  const [isParticipated, setIsParticipated] = useState(false);
   const [isWinner, setIsWinner] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
@@ -53,12 +50,11 @@ const BuyToken: React.FC<any> = (props: any) => {
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
   const tokenDetails = poolDetails?.tokenDetails || undefined;
-  const { tokenBalance } = useTokenBalance(tokenDetails, connectedAccount);
   // Should replace hard string by pool address
   const { tokenSold, totalSell, soldProgress } = useTokenSoldProgress(poolDetails?.poolAddress, tokenDetails);
   const { joinPool, poolJoinLoading } = usePoolJoinAction({ poolId: poolDetails?.id });
-  const { data: winners } = useFetch<Array<any>>(`/pool/${poolDetails?.id}/winners`);
-  const { data: participants } = useFetch<Array<any>>(`/pool/${poolDetails?.id}/participants`);
+  const { data: winners } = useFetch<Array<any>>(`/pool/${poolDetails?.id}/winners`, poolDetails?.method !== "whitelist");
+  const { data: alreadyJoinPool } = useFetch<boolean>(`/user/check-join-campaign/${poolDetails?.id}`);
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
   const userBuyLimit = poolDetails?.connectedAccountBuyLimit || 0;
@@ -67,10 +63,69 @@ const BuyToken: React.FC<any> = (props: any) => {
   // With FCFS, always disable join button
   const joinTimeInDate = new Date(Number(poolDetails?.joinTime) * 1000);
   const endJoinTimeInDate = new Date(Number(poolDetails?.endJoinTime) * 1000);
-  const availablePurchase = 
-    poolDetails?.method === 'whitelist' 
+  const startBuyTimeInDate = new Date(Number(poolDetails?.startBuyTime) * 1000);
+  const endBuyTimeInDate = new Date(Number(poolDetails?.endBuyTime) * 1000);
+  const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
+
+  const availableJoin = poolDetails?.method === 'whitelist' 
     ? new Date() >= joinTimeInDate && new Date() <= endJoinTimeInDate
     : false;
+  const availablePurchase = new Date() >= startBuyTimeInDate && new Date() <= endBuyTimeInDate;
+
+  const displayCountDownTime = useCallback((
+    method: string | undefined, 
+    startJoinTime: Date | undefined, 
+    endJoinTime: Date| undefined,
+    startBuyTime: Date | undefined,
+    endBuyTime: Date | undefined
+  ) => {
+    const today = new Date().getTime();
+    let date;
+    let display;
+
+    if (method && method === "whitelist" && startJoinTime && endJoinTime && startBuyTime && endBuyTime) {
+
+      if (today < startJoinTime.getTime()) {
+        date = startJoinTime; 
+        display = "Start in";
+      }
+
+      if (today > startJoinTime.getTime() && today < endJoinTime.getTime()) {
+        date = endJoinTime;
+        display = "End in";
+      }
+
+      if (today > endJoinTime.getTime() && today < startBuyTime.getTime()) {
+        date = startBuyTime;
+        display = "Start buy in"
+      }
+
+      if (today > startBuyTime.getTime() && today < endBuyTime.getTime()) {
+        date =  endBuyTime;
+        display = "End buy in";
+      }
+
+    }
+
+    if (method && method === "fcfs" && startBuyTime && endBuyTime) {
+      if (today < startBuyTime.getTime()) {
+        date = startJoinTime; 
+        display = "Start buy in"
+      }
+
+      if (today > startBuyTime.getTime() && today < endBuyTime.getTime()) {
+        date = endBuyTime;
+        display = "End buy in";
+      }
+    }
+
+    return {
+      date,
+      display
+    }
+  }, [poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate]);
+
+  const { date: countDownDate, display } = displayCountDownTime(poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate)
 
   useEffect(() => {
     // Check if user is winning ticket or not
@@ -84,20 +139,7 @@ const BuyToken: React.FC<any> = (props: any) => {
         }
       });
     }
-  }, [poolDetails, winners]);
-
-  useEffect(() => {
-    if (poolDetails?.method === "whitelist" && participants && participants.length > 0) {
-      let isFound = false;
-
-      participants.forEach(participant => {
-        if (participant.wallet_address === connectedAccount && !isFound) {
-          setIsParticipated(true);
-        }
-      });
-    }
-  }, [poolDetails, participants]);
-
+  }, [poolDetails, winners, connectedAccount]);
 
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
@@ -114,7 +156,7 @@ const BuyToken: React.FC<any> = (props: any) => {
         <header className={styles.poolDetailHeader}> 
           <div className={styles.poolHeaderWrapper}>
             <div className={styles.poolHeaderImage}>
-              <img src={poolImage} alt="pool-image" />
+              <img src={poolDetails?.banner || poolImage} alt="pool-image" className={styles.poolImage}/>
             </div>
             <div className={styles.poolHeaderInfo}>
             <h2 className={styles.poolHeaderTitle}>{poolDetails?.title}</h2>
@@ -153,7 +195,7 @@ const BuyToken: React.FC<any> = (props: any) => {
           <div className={styles.poolDetailTierWrapper}>
             <div className={styles.poolDetailIntro}>
             {
-              (loadingPoolDetail || wrongChain) ? (
+              loadingPoolDetail ? (
                 <div className={styles.loader}>
                   <HashLoader loading={true} color={'#3232DC'} />
                   <p className={styles.loaderText}>
@@ -190,7 +232,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       <Button 
                         text={'Join Pool'} 
                         backgroundColor={'#D01F36'} 
-                        disabled={!availablePurchase || isParticipated} 
+                        disabled={!availableJoin || alreadyJoinPool} 
                         loading={poolJoinLoading}
                         onClick={joinPool}
                       />
@@ -218,11 +260,10 @@ const BuyToken: React.FC<any> = (props: any) => {
                 <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
                 <div className={styles.poolDetailProgressStat}>
                   <span className={styles.poolDetailProgressPercent}>
-                    {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(soldProgress))}%
+                    {soldProgress}%
                   </span>
                   <span>
-                    {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(tokenSold))} /
-                    {formatMoneyWithoutDollarSign(limitDecimalFormatter.format(totalSell))}
+                    {tokenSold} / {totalSell}
                   </span>
                 </div>
                 <div className={styles.progress}>
@@ -230,8 +271,8 @@ const BuyToken: React.FC<any> = (props: any) => {
                 </div>
               </div>
               <div className={styles.poolDetailStartTime}>
-                <span className={styles.poolDetailStartTimeTitle}>Start in</span>
-                <Countdown startDate={poolDetails?.joinTime ? new Date(Number(poolDetails?.joinTime) *  1000): undefined} />
+                <span className={styles.poolDetailStartTimeTitle}>{display}</span>
+                <Countdown startDate={countDownDate} />
               </div>
             </div> 
           </div>
@@ -250,16 +291,16 @@ const BuyToken: React.FC<any> = (props: any) => {
                 activeNav === HeaderType.Main && ( 
                     <BuyTokenForm 
                       tokenDetails={poolDetails?.tokenDetails} 
-                      balance={tokenBalance} 
                       rate={poolDetails?.ethRate}
                       poolAddress={poolDetails?.poolAddress}
                       maximumBuy={userBuyLimit}
                       purchasableCurrency={poolDetails?.purchasableCurrency?.toUpperCase()}
                       poolId={poolDetails?.id}
-                      joinTime={poolDetails?.joinTime}
+                      joinTime={joinTimeInDate}
                       method={poolDetails?.method}
+                      availablePurchase={availablePurchase}
                     /> 
-               )
+                 )
               }
               {
                 activeNav === HeaderType.About && <PoolAbout /> 
@@ -267,7 +308,7 @@ const BuyToken: React.FC<any> = (props: any) => {
               {
                 activeNav === HeaderType.Participants && <LotteryWinners />
               }
-              <ClaimToken />
+              <ClaimToken releaseTime={releaseTimeInDate} />
             </div>
           </div>
         </main>

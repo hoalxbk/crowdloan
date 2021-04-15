@@ -49,7 +49,7 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         display: `1 ${tokenDetails.symbol} = ${ethRate} Tokens`,
         val: 10,
         utilIcon: '/images/swap.svg',
-        label: 'Exchange Rate'
+        label: 'Exchange Rate',
       },
       [PoolDetailKey.method]: { 
         display: method === 'whitelist' ? 'Whitelist/Lottery': 'FCFS',

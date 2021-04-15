@@ -1,7 +1,9 @@
 import { useState, useCallback } from 'react';
 import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
+import { useDispatch } from 'react-redux';
 
+import { alertSuccess, alertFailure } from '../store/actions/alert';
 import { getContract } from '../utils/contract';
 import { TokenType } from '../hooks/useTokenDetails';
 
@@ -16,6 +18,7 @@ const useTokenAllowance = (
 ) => {
   const [tokenApproveLoading, setTokenApproveLoading] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState("");
+  const dispatch = useDispatch();
 
   const { library, account } = useWeb3React();
 
@@ -36,14 +39,15 @@ const useTokenAllowance = (
                const transaction = await contract.approve(spender, APPROVE_AMOUNT);
                console.log('Approve Token', transaction);
 
-               await transaction.wait(1);
-
-                setTransactionHash(transaction.hash);
+              setTransactionHash(transaction.hash);
                setTokenApproveLoading(false);
+
+               await transaction.wait(1);
+                dispatch(alertSuccess("Token Approve Successful!"));
              }
            }
       } catch (err) {
-        console.log(err.message);
+        dispatch(alertFailure(err.message));
         setTokenApproveLoading(false);
         throw new Error(err.message);
       }

@@ -3,16 +3,22 @@ import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 
-import { alertSuccess } from '../../../store/actions/alert';
+import { alertSuccess, alertFailure } from '../../../store/actions/alert';
 import Pool_ABI from '../../../abi/Pool.json';
 import { getContract } from '../../../utils/contract';
 
 type PoolDepositActionParams = {
   poolAddress?: string;
   poolId?: number;
+  signature?: string;
+  deadLine?: string;
+  maxBuy?: string;
 }
 
-const usePoolDepositAction = ({ poolAddress }: PoolDepositActionParams) => {
+const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
+const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
+
+const usePoolDepositAction = ({ poolAddress, signature, deadLine, maxBuy }: PoolDepositActionParams) => {
   const dispatch = useDispatch();
 
   const [tokenDepositTransaction, setTokenDepositTransaction] = useState<string>("");
@@ -20,30 +26,39 @@ const usePoolDepositAction = ({ poolAddress }: PoolDepositActionParams) => {
   const [estimateErr, setEstimateErr] = useState("");
   const [estimateFeeLoading, setEstimateFeeLoading] = useState(false);
 
-  // const { loading, data } = useFetch('/deposit')
   const { account: connectedAccount, library } = useWeb3React();
 
-  const deposit = useCallback(async (amount: string) => {
-    if (poolAddress) {
+  const deposit = useCallback(async (amount: string, acceptCurrency: string) => {
+    console.log(new BigNumber(amount).gt(0), poolAddress, signature, acceptCurrency, maxBuy);
+    if (amount && new BigNumber(amount).gt(0) && poolAddress && signature && acceptCurrency && maxBuy) {
       try {
         setTokenDepositLoading(true);
         setTokenDepositTransaction("");
 
         const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
 
-        const signature = '0xe164E49ED19DDBC32ce7Dd9DE7E28DF3b721B037';
+        const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
 
-        const params = [ 
+        const params = acceptCurrency === 'ETH' ? [ 
           connectedAccount,
           connectedAccount,
-          "300000000000000000000",
-          "1618113309",
+          maxBuy,
+          deadLine,
+          signature,
+          {
+            value: new BigNumber(amount).multipliedBy(10 ** 18).toFixed()
+          }
+        ]: [
+          connectedAccount,
+          acceptCurrency ===  "USDT" ? USDT_ADDRESS: USDC_ADDRESS,
+          new BigNumber(amount).multipliedBy(10 ** 18).toFixed(),
+          connectedAccount,
+          maxBuy,
+          deadLine,
           signature
-        ]
+        ];
 
-        const transaction = await poolContract.buyTokenByEtherWithPermission(...params, {
-          value: new BigNumber(amount).multipliedBy(10 ** 18).toFixed()
-        });
+        const transaction = await poolContract[method](...params);
 
         setTokenDepositLoading(false);
         setTokenDepositTransaction(transaction.hash);
@@ -52,32 +67,43 @@ const usePoolDepositAction = ({ poolAddress }: PoolDepositActionParams) => {
 
         dispatch(alertSuccess("Token Deposit Successful!"));
       } catch (err) {
+        dispatch(alertFailure(err.message));
         setTokenDepositLoading(false);
         throw new Error(err.message);
       }
     }
-  }, [connectedAccount, library, poolAddress])
+  }, [connectedAccount, library, poolAddress, signature, deadLine, maxBuy])
 
-  const estimateFee = useCallback(async (amount: string) => {
+  const estimateFee = useCallback(async (amount: string, acceptCurrency: string) => {
     try {
       setEstimateFeeLoading(true);
 
-      if (amount && poolAddress) {
+      if (amount && new BigNumber(amount).gt(0) && poolAddress && signature && acceptCurrency && maxBuy) {
         const FEE_PER_PRICE = new BigNumber(1).div(new BigNumber(10).pow(9));
         const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
 
-        const signature = '0xe164E49ED19DDBC32ce7Dd9DE7E28DF3b721B037';
-
-        const params = [
+        const params = acceptCurrency === 'ETH' ? [ 
           connectedAccount,
           connectedAccount,
-          "300000000000000000000",
-          "1618113309",
+          maxBuy,
+          deadLine,
+          signature,
+          {
+            value: new BigNumber(amount).multipliedBy(10 ** 18).toFixed()
+          }
+        ]: [
+          connectedAccount,
+          acceptCurrency ===  "USDT" ? USDT_ADDRESS: USDC_ADDRESS,
+          new BigNumber(amount).multipliedBy(10 ** 18).toFixed(),
+          connectedAccount,
+          maxBuy,
+          deadLine,
           signature
-        ]
-        const estimateFee = await poolContract.estimateGas.buyTokenByEtherWithPermission(...params, {
-          value: new BigNumber(amount).multipliedBy(10 ** 18).toFixed()
-        });
+        ];
+
+        const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
+
+        const estimateFee = await poolContract.estimateGas[method](...params);
 
         setEstimateErr("");
         setEstimateFeeLoading(false);
@@ -94,7 +120,7 @@ const usePoolDepositAction = ({ poolAddress }: PoolDepositActionParams) => {
       setEstimateFeeLoading(false);
       setEstimateErr(err.message);
     }
-  }, [poolAddress, connectedAccount]);
+  }, [poolAddress, connectedAccount, signature, deadLine, maxBuy]);
 
   return {
     deposit,

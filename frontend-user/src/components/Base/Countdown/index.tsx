@@ -15,7 +15,7 @@ const Countdown: React.FC<CountDownProps> = ({ startDate }: CountDownProps) => {
   useEffect(() => {
     let countDownInterval = undefined as any; 
 
-    if (startDate) {
+    if (startDate && startDate >= new Date()) {
       const second = 1000,
       minute = second * 60,
       hour = minute * 60,
@@ -38,10 +38,10 @@ const Countdown: React.FC<CountDownProps> = ({ startDate }: CountDownProps) => {
           setSecond(currentSecond < 10 ? `0${currentSecond}`: `${currentSecond}`);
         }
 
-
         //do something later when date is reached
-        if (distance <= 0) {
-          countDownInterval && clearInterval(countDownInterval);
+        if (distance <= 0 && countDownInterval) {
+          clearInterval(countDownInterval);
+          window.location.reload();
         }
         //seconds
       }, 0);

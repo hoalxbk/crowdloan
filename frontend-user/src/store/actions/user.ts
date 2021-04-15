@@ -105,51 +105,65 @@ export const login = (connectedAccount: string, library: Web3Provider, history: 
 
       if (connectedAccount && library && paramsWithConnector) {
         const provider = library.provider;
-        provider && await (provider as any).sendAsync({
-            method: paramsWithConnector.method,
-            params: paramsWithConnector.params
-        }, async function(err: Error, result: any) {
-          if (err || result.error) {
-             const errMsg = (err.message || (err as any).error) || result.error.message
-             console.log('Error when signing message: ', errMsg);
-              dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
-          } else {
-            const response = await baseRequest.post(`/user/login`, {
-              signature: result.result,
-              wallet_address: connectedAccount,
-            }) as any;
+        if (connector !== ConnectorNames.WalletConnect) {
+          const res = await (provider as any).sendAsync({
+              method: paramsWithConnector.method,
+              params: paramsWithConnector.params
+          }, async function(err: Error, result: any) {
+            if (err || result.error) {
+               const errMsg = (err.message || (err as any).error) || result.error.message
+               console.log('Error when signing message: ', errMsg);
+                dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
+            } else {
+              const response = await baseRequest.post(`/user/login`, {
+                signature: result.result,
+                wallet_address: connectedAccount,
+              }) as any;
 
-            const resObj = await response.json();
+              const resObj = await response.json();
 
-            if (resObj.status && resObj.status === 200 && resObj.data) {
-              const { token, user } = resObj.data;
+              if (resObj.status && resObj.status === 200 && resObj.data) {
+                const { token, user } = resObj.data;
 
-              localStorage.setItem('investor_access_token', token.token);
+                localStorage.setItem('investor_access_token', token.token);
 
-              dispatch({ type: walletActions.WALLET_CONNECT_LAYER2_SUCCESS });
+                dispatch({ type: walletActions.WALLET_CONNECT_LAYER2_SUCCESS });
 
-              dispatch({
-                type: userActions.INVESTOR_LOGIN_SUCCESS,
-                payload: user
-              });
+                dispatch({
+                  type: userActions.INVESTOR_LOGIN_SUCCESS,
+                  payload: user
+                });
 
-              history.push('/dashboard');
-            }
+                history.push('/dashboard');
+              }
 
-            if (resObj.status && resObj.status !== 200) {
-              if (resObj.status == 404) {
-                // redirect to register page
-                dispatch(alertFailure(resObj.message));
-                dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
-              } else {
-                // show error
-                console.log('RESPONSE Login: ', resObj);
-                dispatch(alertFailure(resObj.message));
-                dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+              if (resObj.status && resObj.status !== 200) {
+                if (resObj.status == 404) {
+                  // redirect to register page
+                  dispatch(alertFailure(resObj.message));
+                  dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+                } else {
+                  // show error
+                  console.log('RESPONSE Login: ', resObj);
+                  dispatch(alertFailure(resObj.message));
+                  dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+                }
               }
             }
-          }
-        });
+          });
+        } else {
+          
+          const res = await (provider as any).request({
+              method: paramsWithConnector.method,
+              params: paramsWithConnector.params
+          },  async function(err: Error, result: any) {
+            if (err || result.error) {
+               const errMsg = (err.message || (err as any).error) || result.error.message
+               console.log('Error when signing message: ', errMsg);
+              dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
+            }
+          }); 
+        }
       }
     } catch (error) {
       console.log('ERROR Login: ', error);

@@ -15,7 +15,7 @@ const useTokenAllowance = () => {
   const { appChainID }  = useSelector((state: any) => state.appNetwork).data;
   const connector  = useTypedSelector(state => state.connector).data;
 
-  const retrieveTokenAllowance = useCallback(async (token: TokenType, owner: string, spender: string) => {
+  const retrieveTokenAllowance = useCallback(async (token: TokenType | undefined, owner: string, spender: string) => {
       if (token && spender && owner   
           && ethers.utils.isAddress(owner) 
           && ethers.utils.isAddress(spender) 

@@ -4,6 +4,8 @@ import axios from '../../../services/axios';
 
 const useUserPurchaseSignature = (connectedAccount: string | undefined | null, campaignId: number | undefined) => {
   const [signature, setSignature] = useState<string | undefined>(undefined);
+  const [deadLine, setDeadLine] = useState<string| undefined>("");
+  const [maxBuy, setMaxBuy] = useState<string| undefined>("");
 
   useEffect(() => {
       const getUserSignature = async () => {
@@ -17,10 +19,23 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
           wallet_address: connectedAccount
         }, config);
 
-        console.log(response);
+        if (response.data && response.status && response.status === 200) {
+          const { data } = response.data;
+          if (data) {
+            setSignature(data.signature);
+            setDeadLine(data.dead_line);
+            setMaxBuy(data.max_buy);
+          }
+        }
       }
     connectedAccount && campaignId && getUserSignature()  ;
   }, [connectedAccount, campaignId]);
+
+  return {
+    signature,
+    deadLine,
+    maxBuy
+  }
 }
 
 export default useUserPurchaseSignature;

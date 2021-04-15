@@ -1,4 +1,4 @@
-import React, {useEffect, useState } from 'react';
+import React, {useEffect, useState, useContext } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useWeb3React } from '@web3-react/core';
 import {useDispatch} from 'react-redux';
@@ -7,6 +7,8 @@ import {withRouter} from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
 import {useForm} from 'react-hook-form';
 
+import { userActions } from '../../store/constants/user';
+import { alertFailure } from '../../store/actions/alert';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import { disconnectWalletLayer2 } from '../../store/actions/wallet';
 import { login, register as userRegister } from '../../store/actions/user';
@@ -28,7 +30,7 @@ const InvestorLogin: React.FC<any> = (props: any) => {
 
   const [loadingUserExists, setLoadingUserExists] = useState(false);
   const [userExists, setUserExists] = useState(false);
-  const { loading: investorLoginLoading } = useTypedSelector(state => state.investor);
+  const { loading: investorLoginLoading, error } = useTypedSelector(state => state.investor);
   const { loading: investorRegisterLoading } = useTypedSelector(state => state.investorRegister);
   const { account:  connectedAccount, library } = useWeb3React();
   const { register, errors, handleSubmit } = useForm({
@@ -42,6 +44,14 @@ const InvestorLogin: React.FC<any> = (props: any) => {
       }
     }
   }
+
+  useEffect(() => {
+    dispatch(alertFailure(error));
+
+    return () => {
+      dispatch({ type: userActions.INVESTOR_PURGE });
+    }
+  }, [error]);
 
   useEffect(() => {
     const checkUserExists = async () => {
