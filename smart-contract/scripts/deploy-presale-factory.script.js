@@ -6,14 +6,6 @@ const {
 
 const main = async () => {
   // Pre-config
-  const SotaToken = "0xf0F39d2D5D12B04cdf98Dc13FB074f969a22871c";
-
-  const SotaTier = await hre.ethers.getContractFactory("PKFTiers");
-  const sotaTier = await SotaTier.deploy(SotaToken, '0xd1C7BD89165f4c82e95720574e327fa2248F9cf2');
-
-  await sotaTier.deployed();
-
-  console.log("SotaTier deployed to:", sotaTier.address);
 
   // Get contract factory
   const PreSaleFactory = await ethers.getContractFactory(
