@@ -34,7 +34,16 @@ const useStyles = makeStyles((theme: any) => {
         fontSize: '16px',
         lineHeight: '24px',
         color: '#FFFFFF',
-        width: '100%',
+        width: 'calc(100% - 125px)',
+        [theme.breakpoints.down('sm')]: {
+          width: '200px',
+          display: '-webkit-box',
+          '-webkit-box-orient': 'vertical',
+          '-webkit-line-clamp': 1,
+          overflow: 'hidden',
+          textOverflow: 'ellipsis',
+          wordBreak: 'break-word'
+        }
       },
       '& button': {
         fontFamily: 'DM Sans',
@@ -54,6 +63,7 @@ const useStyles = makeStyles((theme: any) => {
     },
     redKiteInfo: {
       marginTop: '25px',
+
       '& .kyc-info': {
         display: 'flex',
         flexDirection: 'row',
@@ -83,6 +93,13 @@ const useStyles = makeStyles((theme: any) => {
         '&:hover': {
           cursor: 'pointer'
         }
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        '& .kyc-info': {
+          flexDirection: 'column',
+          alignItems: 'flex-start',
+        },
       },
     },
     walletInfo: {

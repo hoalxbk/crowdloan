@@ -8,6 +8,10 @@ const useStyles = makeStyles((theme: any) => {
       borderRadius: '8px', 
       padding: '25px 40px 15px 40px',
 
+      [theme.breakpoints.down('xs')]: {
+        padding: '25px 20px 15px 20px',
+      },
+
       '& .button-area': {
         display: 'flex',
         alignItems: 'center',

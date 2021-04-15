@@ -8,6 +8,7 @@ const useStyles = makeStyles((theme: any) => {
 
       '& > img': {
         width: '100%',
+        objectFit: 'cover',
       },
 
       '& .btn': {
@@ -30,6 +31,19 @@ const useStyles = makeStyles((theme: any) => {
           cursor: 'pointer'
         }
       },
+
+      [theme.breakpoints.down('sm')]: {
+        '& > img': {
+          height: '400px'
+        },
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        '& > img': {
+          opacity: 0.4,
+          height: '500px'
+        },
+      }
     },
     wrongNetwork: {
       position: 'absolute',
@@ -78,6 +92,7 @@ const useStyles = makeStyles((theme: any) => {
       left: '0',
       margin: '10% 80px',
       width: '575px',
+      maxWidth: '100%',
 
       '& h1': {
         fontFamily: 'DM Sans',
@@ -97,6 +112,20 @@ const useStyles = makeStyles((theme: any) => {
         color: '#999999',
         marginTop: '22px'
       },
+
+      [theme.breakpoints.down('sm')]: {
+        margin: '10% 40px',
+        width: 'calc(100% - 80px)'
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        margin: '10% 20px',
+        width: 'calc(100% - 40px)',
+        '& h1': {
+          fontSize: '36px',
+          lineHeight: '48px'
+        },
+      }
     },
     buttonArea: {
       display: 'flex',
@@ -112,6 +141,14 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .btn-subscriber': {
         backgroundColor: '#3232DC',
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        '& .btn-subscriber': {
+          marginTop: '20px'
+        },
       }
     },
   };

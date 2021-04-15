@@ -9,25 +9,13 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'column',
       alignItems: 'center',
       padding: '0 80px',
-      backgroundColor: '#020618',
-      [theme.breakpoints.down('md')]: {
-        padding: '10px 40px',
-      },
-      [theme.breakpoints.only('xs')]: {
-        padding: '10px 20px',
-      }
+      backgroundColor: '#020618'
     },
     mainContent: {
       display: 'grid',
-      gridTemplateColumns: '2fr 1fr 1fr 1fr',
+      gridTemplateColumns: '1fr',
       gap: '20px',
-      padding: '60px 0',
-      [theme.breakpoints.down('sm')]: {
-        gridTemplateColumns: `1fr 1fr`,
-      },
-      [theme.breakpoints.only('xs')]: {
-        gridTemplateColumns: '1fr',
-      }
+      padding: '60px 20px'
     },
     infoRedKite: {
       display: 'flex',
@@ -38,12 +26,40 @@ const useStyles = makeStyles((theme) => {
       fontSize: '14px',
       lineHeight: '24px',
       color: '#999999',
+      width: '320px',
+
+      '& > a': {
+        display: 'block',
+        width: '43px',
+        margin:  '15px auto'
+      },
+      '& p': {
+        textAlign: 'center'
+      }
     },
     logo: {
-      marginBottom: 15
+
     },
     shareLink: {
-      marginTop: 15
+      marginTop: '20px',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+
+      '& li': {
+        margin: '0 10px'
+      },
+      '& i': {
+        fontSize: '20px',
+        '&::before': {
+          color: '#9F9F9F'
+        },
+
+        '&:hover::before': {
+          color: '#D01F37'
+        }
+      }
     },
     teleGram: {
 
@@ -59,9 +75,6 @@ const useStyles = makeStyles((theme) => {
     },
     infoCompany: {
       paddingTop: '60px',
-      [theme.breakpoints.only('xs')]: {
-        paddingTop: '0',
-      }
     },
     companyLink: {
       display: 'flex',
@@ -69,9 +82,6 @@ const useStyles = makeStyles((theme) => {
     },
     help: {
       paddingTop: '60px',
-      [theme.breakpoints.down('sm')]: {
-        paddingTop: '0',
-      }
     },
     helpLink: {
       display: 'flex',
@@ -79,9 +89,6 @@ const useStyles = makeStyles((theme) => {
     },
     developers: {
       paddingTop: '60px',
-      [theme.breakpoints.down('sm')]: {
-        paddingTop: '0',
-      }
     },
     developerLink: {
       display: 'flex',
@@ -104,7 +111,6 @@ const useStyles = makeStyles((theme) => {
       color: '#999999',
     },
     endContent: {
-      borderTop: '1px solid rgba(255, 255, 255, 0.1)',
       height: '50px',
       width: '100%'
     },
