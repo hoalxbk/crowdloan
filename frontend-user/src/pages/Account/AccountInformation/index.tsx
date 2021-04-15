@@ -1,11 +1,13 @@
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
+import useAuth from '../../../hooks/useAuth';
 
 const AccountInformation = (props: any) => {
   const styles = useStyles();
   const { classNamePrefix = '', balance = {}, userInfo = {} } = props;
   const { data: loginInvestor } = useSelector((state: any) => state.investor);
+  const { isAuth, connectedAccount, wrongChain } = useAuth();
 
   const handleKYC = () => {
     console.log('hande KYC')
@@ -21,7 +23,7 @@ const AccountInformation = (props: any) => {
         </div>
         <div className={styles.inputGroup}>
           <span>Your Wallet</span>
-          <span>{loginInvestor.wallet_address}</span>
+          <span>{connectedAccount}</span>
         </div>
         <div className={styles.redKiteInfo}>
           <div className="kyc-info">

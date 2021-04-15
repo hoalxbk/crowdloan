@@ -40,11 +40,11 @@ const ModalWithdraw = (props: any) => {
           <div className="modal-content__body">
             <div className="subtitle">
               <span>Input</span>
-              <span>Your wallet staked: { _.isEmpty(userInfo) ? 0 : parseFloat(userInfo.staked).toFixed() } SOTA</span>
+              <span>Your wallet staked: { _.isEmpty(userInfo) ? 0 : parseFloat(userInfo.staked).toFixed() } PKF</span>
             </div>
             <div className="subtitle">
                 <span>Penalty</span>
-                <span>{ withdrawFee.toString() } SOTA</span>
+                <span>{ withdrawFee.toString() } PKF</span>
               </div>
             <div className="input-group">
               <input
