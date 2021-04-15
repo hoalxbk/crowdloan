@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { withStyles, Theme, createStyles, WithStyles } from '@material-ui/core/styles';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { userActions } from '../../../../store/constants/user';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -76,6 +77,7 @@ const DialogContent = withStyles((theme: Theme) => ({
 
 const WalletDisconnect: React.FC<ComponentProps> = (props: ComponentProps) => {
   const styles = useStyles();
+  const dispatch = useDispatch();
   const { logout: disconnectWallet } = useContext(AppContext);
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
   const { opened, handleClose, currentWallet } = props;
@@ -90,6 +92,8 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: ComponentProps) => {
   const handleAccountLogout = () => {
     handleClose();
     disconnectWallet && disconnectWallet();
+    dispatch({ type: userActions.INVESTOR_LOGOUT });
+    localStorage.removeItem("investor_access_token");
   }
 
   return (

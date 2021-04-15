@@ -3,7 +3,12 @@ import Button from '../Button';
 import Countdown from '../../../components/Base/Countdown';
 import useStyles from './style';
 
-const ClaimToken: React.FC<any> = (props: any) => {
+type ClaimTokenProps = {
+  releaseTime: Date | undefined
+}
+
+const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
+  const { releaseTime } = props;
   const styles = useStyles();
   return (
     <div className={styles.poolDetailClaim}>
@@ -11,7 +16,7 @@ const ClaimToken: React.FC<any> = (props: any) => {
         <span>{'Token can claim from'}</span>
         <strong>{new Date().toString() }</strong>
       </p>
-      <Countdown startDate={new Date(1618218340 * 1000)} />
+      <Countdown startDate={releaseTime} />
       <div className={styles.poolDetailClaimInfo}>
         <div className={styles.poolDetailClaimInfoBlock}>
           <span>You can claim</span>

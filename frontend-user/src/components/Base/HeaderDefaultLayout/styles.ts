@@ -144,7 +144,9 @@ const useStyles = makeStyles((theme) => {
       }
     },
     loginErrorBannerText: {
-      marginLeft: 10
+      marginLeft: 10,
+      color: 'white',
+      fontWeight: 500
     },
     loginErrorGuide: {
       color: 'white',
