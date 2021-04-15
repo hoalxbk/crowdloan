@@ -33,6 +33,7 @@ import PoolHash from "./Components/PoolHash";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
 import {ACCEPT_CURRENCY} from "../../constants";
+import PoolWebsite from "./Components/PoolWebsite";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -79,6 +80,7 @@ function PoolForm(props: any) {
 
       // Pool general
       title: data.title,
+      website: data.website,
       banner: data.banner,
       description: data.description,
       address_receiver: data.addressReceiver,
@@ -186,6 +188,7 @@ function PoolForm(props: any) {
 
         // Pool general
         title: data.title,
+        website: data.website,
         banner: data.banner,
         description: data.description,
         address_receiver: data.addressReceiver,
@@ -263,6 +266,14 @@ function PoolForm(props: any) {
                 setValue={setValue}
                 errors={errors}
               />
+
+              <PoolWebsite
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+              />
+
               {!!poolDetail?.is_deploy &&
                 <PoolHash poolDetail={poolDetail} />
               }

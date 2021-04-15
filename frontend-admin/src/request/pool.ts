@@ -21,11 +21,10 @@ export const updatePool = async (data: any, id: any) => {
 
 export const getPoolDetail = async (id: any) => {
   const baseRequest = new BaseRequest();
-
   let url = apiRoute(`/pool/${id}`);
+
   const response = await baseRequest.get(url) as any;
   const resObject = await response.json();
-
   return resObject;
 };
 

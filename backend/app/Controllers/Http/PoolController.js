@@ -97,7 +97,7 @@ class PoolController {
   async updatePool({ request, auth, params }) {
     const inputParams = request.only([
       'register_by',
-      'title', 'banner', 'description', 'address_receiver',
+      'title', 'website', 'banner', 'description', 'address_receiver',
       'token', 'token_by_eth', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
@@ -107,6 +107,7 @@ class PoolController {
 
     const data = {
       'title': inputParams.title,
+      'website': inputParams.website,
       'description': inputParams.description,
       'token': inputParams.token,
       'start_time': inputParams.start_time,
@@ -126,10 +127,6 @@ class PoolController {
       'pool_type': inputParams.pool_type,
       'min_tier': inputParams.min_tier,
     };
-
-    // if (!inputParams.is_deploy) {
-    //   data.is_deploy = inputParams.is_deploy;
-    // }
 
     console.log('Update Pool with data: ', data, params);
     const campaignId = params.campaignId;

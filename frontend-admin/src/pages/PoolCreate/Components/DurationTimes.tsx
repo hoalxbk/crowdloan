@@ -56,6 +56,7 @@ function DurationTime(props: any) {
                 required: true,
                 validate: {
                   greaterOrEqualToday: (value) => {
+                    if (isDeployed || isBuyTypeFCFS) return true;
                     console.log(value);
                     return new Date(value) >= new Date();
                   },
