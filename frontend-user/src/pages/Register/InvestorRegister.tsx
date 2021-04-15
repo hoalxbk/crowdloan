@@ -3,6 +3,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {CircularProgress, TextField} from '@material-ui/core';
 import {Link, withRouter} from 'react-router-dom';
 import {useForm} from 'react-hook-form';
+import { useWeb3React } from '@web3-react/core';
 
 import {alertFailure} from '../../store/actions/alert';
 import {connectWallet, register as registerAccount, resetUserState} from '../../store/actions/user';
@@ -24,9 +25,9 @@ const InvestorRegister: React.FC<any> = (props: any) => {
   const [loadingUserExists, setLoadingUserExists] = useState(false);
   const [userExists, setUserExists] = useState(false);
   const [currentPage, setCurrentPage] = useState('walletConnect');
-  const { data: ethAddress = '', loading = false } = useSelector((state: any) => state.userConnect);
   const { loading: userRegisterLoading = false, error: errorRegister } = useSelector((state: any) => state.userRegister);
   const { data: loginInvestor, loading: investorLoginLoading, error } = useSelector((state: any) => state.investor);
+  const { account: connectedAccount, library } = useWeb3React();
 
   const { register, watch, getValues, setValue, errors, handleSubmit } = useForm({
     mode: 'onChange'
@@ -50,27 +51,27 @@ const InvestorRegister: React.FC<any> = (props: any) => {
   }, [error, errorRegister]);
 
   useEffect(() => {
-    if (ethAddress) {
+    if (connectedAccount) {
       setCurrentPage('signIn');
     } else {
       setCurrentPage('walletConnect');
     }
-  }, [ethAddress]);
+  }, [connectedAccount]);
 
   useEffect(() => {
     const checkUserExists = async () => {
-      if (currentPage === 'signIn') {
+      if (currentPage === 'signIn' && connectedAccount) {
         setLoadingUserExists(true);
 
-        const userExists = await userAlreadyExists(ethAddress);
+        const userExists = await userAlreadyExists(connectedAccount);
         setLoadingUserExists(false);
 
         setUserExists(userExists);
       } else setUserExists(false);
     }
 
-    ethAddress && checkUserExists();
-  }, [currentPage, ethAddress, loginInvestor]);
+    connectedAccount && checkUserExists();
+  }, [currentPage, connectedAccount, loginInvestor]);
 
   useEffect(() => {
     if (loginInvestor) {
@@ -83,7 +84,11 @@ const InvestorRegister: React.FC<any> = (props: any) => {
   }, [loginInvestor, error]);
 
   const handleFormSubmit = (data: any) =>  {
-    dispatch(registerAccount(data));
+    dispatch(registerAccount({
+      ...data,
+      address: connectedAccount,
+      library
+    }));
   }
 
   const render = () => {
@@ -93,8 +98,6 @@ const InvestorRegister: React.FC<any> = (props: any) => {
           <Button
             label={'Connect Wallet'}
             buttonType="primary"
-            loading={loading}
-            disabled={loading}
             onClick={handleUserLogin}
           />
         </ConnectYourWallet>
@@ -117,7 +120,7 @@ const InvestorRegister: React.FC<any> = (props: any) => {
               </TextTitle>
             </div>
             <form onSubmit={handleSubmit(handleFormSubmit)} className={styles.loginForm}>
-              <TextField id="standard-secondary" value={ethAddress} label="Current Ethereum Address" color="secondary" className="login__form-field" disabled />
+              <TextField id="standard-secondary" value={connectedAccount} label="Current Ethereum Address" color="secondary" className="login__form-field" disabled />
               <div>
                 <TextField
                   label="Email *"
@@ -149,8 +152,8 @@ const InvestorRegister: React.FC<any> = (props: any) => {
                 label={'Sign up'}
                 buttonType="primary"
                 className={'login__form-cta'}
-                loading={userRegisterLoading || investorLoginLoading}
-                disabled={userRegisterLoading || investorLoginLoading}
+                loading={investorLoginLoading}
+                disabled={investorLoginLoading}
               />
               <div className="signup">
                 <span>Have an account ?&nbsp;</span>

@@ -18,7 +18,8 @@ type WalletState =  {
   entities: { [key: string]: WalletType },
   loading: boolean,
   error: string,
-  twoFactor: TwoFactors | undefined
+  twoFactor: TwoFactors | undefined,
+  walletConnect: boolean
 }
 
 const wallets = { 
@@ -68,7 +69,8 @@ const initialState = {
   entities: walletInitialState,
   loading: false,
   error: '',
-  twoFactor: undefined
+  twoFactor: undefined,
+  walletConnect: false
 }
 
 
@@ -106,8 +108,16 @@ export const walletReducer = (state: WalletState = initialState, action: AnyActi
           addresses,
           connectionState: WalletConnectionState.CONNECTED
         }}),
-        twoFactor: TwoFactors.Layer1
+        twoFactor: TwoFactors.Layer1,
+        walletConnect: true
       }
+    }
+
+    case walletActions.WALLET_CONNECT_SUCCESS_WITHOUT_LAYER2: {
+      return {
+        ...state,
+        walletConnect: false
+      } 
     }
 
     case walletActions.WALLET_CONNECT_LAYER2_SUCCESS: {

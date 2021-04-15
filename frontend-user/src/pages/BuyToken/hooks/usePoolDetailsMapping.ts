@@ -49,14 +49,14 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         display: `1 ${tokenDetails.symbol} = ${ethRate} Tokens`,
         val: 10,
         utilIcon: '/images/swap.svg',
-        label: 'Exchange Rate'
+        label: 'Exchange Rate',
       },
       [PoolDetailKey.method]: { 
-        display: method === 'whitelist' ? 'Whitelist/Lottery - FCFS': '',
+        display: method === 'whitelist' ? 'Whitelist/Lottery': 'FCFS',
         label: 'Method'
       },
       [PoolDetailKey.type]: { 
-        display: type ===  'swap' ? 'Swap - Claimable': '',
+        display: type ===  'swap' ? 'Swap': 'Claimable',
         label: 'Type'
       }
     }

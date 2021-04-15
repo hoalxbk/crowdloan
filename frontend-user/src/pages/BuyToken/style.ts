@@ -6,13 +6,32 @@ const useStyles = makeStyles((theme: any) => {
       padding: '40px 120px 80px 120px'
     },
     poolDetailHeader: {
-      display: 'flex',
-      alignItems: 'center',
       paddingBottom: 20,
       borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
     },
+    poolHeaderWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+    },
+    poolTicketWinner: {
+      color: 'white',
+      borderRadius: 4,
+      padding: '13px 8px',
+      backgroundColor: 'rgba(50, 50, 220, 0.2)',
+      fontWeight: 600,
+      fontSize: 15,
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: 10
+    },
     poolHeaderImage: {
 
+    },
+    poolImage: {
+      width: 60,
+      height: 60,
+      borderRadius: '50%',
+      objectFit: 'cover'
     },
     poolHeaderInfo: {
       color: 'white',
