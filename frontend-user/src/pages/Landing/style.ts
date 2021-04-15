@@ -92,7 +92,7 @@ const useStyles = makeStyles((theme: any) => {
           gap: '25px',
         },
       },
-      [theme.breakpoints.down('xs')]: {
+      [theme.breakpoints.only('xs')]: {
         '& .main-content': {
           display: 'grid',
           gridTemplateColumns: '1fr',

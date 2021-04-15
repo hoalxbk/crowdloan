@@ -11,7 +11,13 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      position: 'relative'
+      position: 'relative',
+      [theme.breakpoints.down('sm')]: {
+        padding: '10px 40px',
+      },
+      [theme.breakpoints.only('xs')]: {
+        padding: '10px 20px',
+      }
     },
     navbarLink: {
       textAlign: 'center',
@@ -120,7 +126,7 @@ const useStyles = makeStyles((theme) => {
     loginErrorBanner: {
       position: 'absolute',
       left: 0, 
-      top: 90,
+      top: '100%',
       width: '100%',
       backgroundColor: '#d01f3666',
       fontSize: 15,
@@ -129,10 +135,18 @@ const useStyles = makeStyles((theme) => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      fontWeight: 500
+      fontWeight: 500,
+
+      [theme.breakpoints.down('sm')]: {
+        '& button': {
+          minWidth: '200px',
+        },
+      }
     },
     loginErrorBannerText: {
-      marginLeft: 10
+      marginLeft: 10,
+      color: 'white',
+      fontWeight: 500
     },
     loginErrorGuide: {
       color: 'white',

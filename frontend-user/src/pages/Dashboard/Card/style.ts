@@ -14,6 +14,7 @@ const useStyles = makeStyles((theme: any) => {
       '& > img': {
         width: '100%',
         maxHeight: '160px',
+        objectFit: 'cover',
       },
 
       '& .time': {
@@ -32,6 +33,15 @@ const useStyles = makeStyles((theme: any) => {
         fontSize: '12px',
         lineHeight: '14px',
         color: '#FFFFFF',
+        padding: '6px 15px',
+
+        '&.filled': {
+          backgroundColor: '#12A064'
+        },
+
+        '&.closed': {
+          backgroundColor: '#D01F36'
+        }
       }
     },
     cardBody: {

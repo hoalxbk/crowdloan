@@ -74,7 +74,11 @@ export const isNotValidASCIINumber = (keyCode: number, decimalRequired: boolean 
     return false;
   }
 
-  return keyCode > 31 && (keyCode < 48 || keyCode > 57); 
+  if (keyCode === 229) {
+    return true;
+  }
+
+  return keyCode > 31 && (keyCode < 48 || keyCode > 57) && (keyCode < 96 || keyCode > 105);
 };
 
 export const isPreventASCIICharacters = (key: string) => {

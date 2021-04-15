@@ -20,7 +20,7 @@ const BackgroundComponent = (props: any) => {
         <div className={styles.buttonArea}>
           <a href="/" className="btn btn-view-pool">View all Pools</a>
           <a href="/" className="btn btn-subscriber">
-            Subscribe to upcoming pools
+            Subscribe to upcoming pools&nbsp;
             <img src={arrowRightIcon}/>
           </a>
         </div>

@@ -21,13 +21,13 @@ const Card = (props: any) => {
     <div className={styles.card}>
       <div className={styles.cardHeader}>
         <img src={cardImage}/>
-        {status == 'closed' && <div className="time">
+        {status == 'closed' && <div className="time closed">
           <span>Closed</span>
         </div>}
-        {status == 'filled' && <div className="time">
+        {status == 'filled' && <div className="time filled">
           <span>Filled</span>
         </div>}
-        {status == 'upcomming' && <div className="time">
+        {status == 'upcomming' && <div className="time upcomming">
           <img src={dotIcon}/>
           <span>&nbsp;In { days } days</span>
         </div>}

@@ -31,11 +31,11 @@ class UserBuyCampaignController {
         Redis.set('ethPrice', ethToUsd)
         Redis.expire('ethPrice', Const.EXPIRE_ETH_PRICE);
       }).catch(async (err) => {
-        await rp(requestCoingecko).then( response => {
+        await rp(requestCoingecko).then(response => {
           ethToUsd = JSON.parse(response).ethereum.usd
           Redis.set('ethPrice', ethToUsd)
           Redis.expire('ethPrice', Const.EXPIRE_ETH_PRICE);
-        }).catch((err)=>{
+        }).catch((err) => {
           console.log('API V2 call error:', err.message);
         })
         console.log('API call error:', err.message);
@@ -55,7 +55,7 @@ class UserBuyCampaignController {
           token = new Bignumber(Const.MAX_BUY_CAMPAIGN).dividedBy(ethToUsd).toFixed(18);
           symbol = 'ETH'
         }
-        return HelperUtils.responseBadRequest("You've reached the maximum amount of tokens. You can only buy up to "+ token +" " + symbol)
+        return HelperUtils.responseBadRequest("You've reached the maximum amount of tokens. You can only buy up to " + token + " " + symbol)
       } else
         return HelperUtils.responseSuccess()
     } else {
@@ -69,7 +69,7 @@ class UserBuyCampaignController {
           symbol = 'ETH'
           tokenCanBuy = new Bignumber(tokenCanBuy).dividedBy(ethToUsd).toFixed(18)
         }
-        return HelperUtils.responseBadRequest("You've reached the maximum amount of tokens. You can only buy up to "+ tokenCanBuy +" " + symbol)
+        return HelperUtils.responseBadRequest("You've reached the maximum amount of tokens. You can only buy up to " + tokenCanBuy + " " + symbol)
       }
       return HelperUtils.responseSuccess();
     }
@@ -83,12 +83,12 @@ class UserBuyCampaignController {
       .where('campaign_hash', param.campaign)
       .first();
     if (!find) {
-      return  HelperUtils.responseSuccess({
+      return HelperUtils.responseSuccess({
         total_usd: 0,
       });
     }
 
-    return  HelperUtils.responseSuccess(find)
+    return HelperUtils.responseSuccess(find)
   }
 }
 module.exports = UserBuyCampaignController

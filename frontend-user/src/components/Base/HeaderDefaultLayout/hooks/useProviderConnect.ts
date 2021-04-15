@@ -14,6 +14,7 @@ import { requestSupportNetwork } from '../../../../utils/setupNetwork';
 import { connectWalletSuccess, disconnectWallet } from '../../../../store/actions/wallet';
 import { TwoFactors } from '../../../../store/reducers/wallet';
 import getAccountBalance from '../../../../utils/getAccountBalance';
+import { userActions } from '../../../../store/constants/user';
 
 import { settingAppNetwork, NetworkUpdateType, settingCurrentConnector } from '../../../../store/actions/appNetwork';
 
@@ -27,7 +28,7 @@ const useProviderConnect = (
   const dispatch = useDispatch();
 
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
-  const { twoFactor } = useTypedSelector(state => state.wallet);
+  const { twoFactor, walletConnect } = useTypedSelector(state => state.wallet);
   const [account, setAccount] = useState<string | undefined>(undefined);
 
   const [appNetworkLoading, setAppNetworkLoading] = useState(false);
@@ -38,7 +39,7 @@ const useProviderConnect = (
   const [loginError, setLoginError] = useState('');
 
   const history = useHistory();
-  const {activate, active, connector, chainId, error, account: connectedAccount} = useWeb3React();
+  const {activate, active, connector, chainId, error, account: connectedAccount, deactivate } = useWeb3React();
 
   const previousAccount = usePrevious(account);
   const activePrevious = usePrevious(active);
@@ -64,9 +65,16 @@ const useProviderConnect = (
    useEffect(() => {
     const handleWeb3ReactUpdate = (updated: any) => {
       if (updated.account) {
-        console.debug('Account changed: ', updated.account);
-        setAccount(updated.account);
-      }
+        if (updated.account !== previousAccount && localStorage.getItem("investor_access_token")) {
+          localStorage.removeItem("investor_access_token");
+          dispatch({ type: userActions.INVESTOR_LOGOUT });
+          handleLogout && handleLogout();
+          handleConnectorDisconnect();
+        } else { 
+          console.debug('Account changed: ', updated.account);
+          setAccount(updated.account); 
+        }
+      } 
 
       if (updated.chainId) {
         const chainId = Number(updated.chainId).toString();
@@ -159,42 +167,44 @@ const useProviderConnect = (
   }
 
   const tryActivate = useCallback(async (connector: AbstractConnector, appChainID: string, wallet: string) => {
-      setConnectWalletLoading(true);
-
       try {
-        if (wallet === ConnectorNames.MetaMask || wallet === ConnectorNames.BSC) {
-          await requestSupportNetwork(appChainID, wallet);
-        }
+        if (!connectWalletLoading) {
+          setConnectWalletLoading(true);
 
-        if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
-          connector.walletConnectProvider = undefined;
-        }
-
-        if (connector && walletName) {
-          if (wallet === ConnectorNames.Fortmatic) {
-            connector.on("OVERLAY_READY", () => {
-              setOpenConnectDialog && setOpenConnectDialog(false);
-            });
+          if (wallet === ConnectorNames.MetaMask || wallet === ConnectorNames.BSC) {
+            await requestSupportNetwork(appChainID, wallet);
           }
 
-          await activate(connector, undefined, true)
-          .then(() => { 
-            dispatch(settingCurrentConnector(wallet));
-            setWalletNameSuccess(wallet);
-          })
-          .catch(error => {
-            if (error instanceof UnsupportedChainIdError) {
-              console.debug('Error when activate: ', error.message);
-              activate(connector);
-            } else {
-              dispatch(disconnectWallet());
-              handleError && handleError();
-              setConnectWalletLoading(false);
-              setWalletName(walletName.filter(name => wallet !== name));
-              console.debug('Error when try to activate: ', error.message);
-              return;
+          if (connector instanceof WalletConnectConnector && connector.walletConnectProvider?.wc?.uri) {
+            connector.walletConnectProvider = undefined;
+          }
+
+          if (connector && walletName) {
+            if (wallet === ConnectorNames.Fortmatic) {
+              connector.on("OVERLAY_READY", () => {
+                setOpenConnectDialog && setOpenConnectDialog(false);
+              });
             }
-          })
+
+            await activate(connector, undefined, true)
+            .then(() => { 
+              dispatch(settingCurrentConnector(wallet));
+              setWalletNameSuccess(wallet);
+            })
+            .catch(error => {
+              if (error instanceof UnsupportedChainIdError) {
+                console.debug('Error when activate: ', error.message);
+                activate(connector);
+              } else {
+                dispatch(disconnectWallet());
+                handleError && handleError();
+                setConnectWalletLoading(false);
+                setWalletName(walletName.filter(name => wallet !== name));
+                console.debug('Error when try to activate: ', error.message);
+                return;
+              }
+            })
+          }
         }
       } catch (error) {
         console.log(error.message);
@@ -203,12 +213,17 @@ const useProviderConnect = (
       }
 
       setAppNetworkLoading(false);
-  }, [connector, appChainID, walletName]);
+  }, [connector, connectWalletSuccess, appChainID, walletName]);
 
   useEffect(() => {
     const getAccountDetails = async () => {
+      const investorToken = localStorage.getItem("investor_access_token") || "";
+
       if (appChainID && !twoFactor && connectedAccount && walletNameSuccess) {
         const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, walletNameSuccess);
+
+        setOpenConnectDialog && setOpenConnectDialog(false);
+        setConnectWalletLoading(false);
 
         dispatch(
           connectWalletSuccess(
@@ -220,29 +235,27 @@ const useProviderConnect = (
           )
         );
 
-        history.push('/login');
+        !investorToken && history.push('/login');
       } 
-      // else if (twoFactor === TwoFactors.Layer1) {
-      //   handleLogout && handleLogout();
-      //   handleConnectorDisconnect();
-      // }
+      else if (twoFactor === TwoFactors.Layer1 && walletNameSuccess && !walletConnect && !investorToken) {
+        handleLogout && handleLogout();
+        handleConnectorDisconnect();
+      }
     } 
     getAccountDetails();
-  }, [walletNameSuccess, connectedAccount, appChainID, walletChainID, loginError, twoFactor]);
+  }, [walletNameSuccess, connectedAccount, appChainID, walletChainID, twoFactor, walletConnect]);
 
   const handleConnectorDisconnect = useCallback(() => {
-    if (walletNameSuccess === ConnectorNames.WalletConnect) {
-      localStorage.removeItem("walletconnect");
-    }
-
+    deactivate();
     dispatch(disconnectWallet());
     dispatch(settingCurrentConnector(undefined));
+    dispatch(settingAppNetwork(NetworkUpdateType.Wallet, undefined));
     setWalletName([]);
     setWalletNameSuccess(undefined);
     setCurrentConnector(undefined);
+    setConnectWalletLoading(false);
     setLoginError('');
-
-  }, [walletNameSuccess]);
+  }, []);
   
   return {
     handleProviderChosen,

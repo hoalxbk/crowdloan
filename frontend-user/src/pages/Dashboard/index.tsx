@@ -7,7 +7,7 @@ import useStyles from './style';
 import BackgroundComponent from './BackgroundComponent';
 import Card from './Card';
 
-const cardImage = '/images/card-image.jpg';
+const cardImage = '/images/icons/card-image.jpg';
 const arrowRightIcon = '/images/icons/arrow-right.svg';
 const background = '/images/icons/background2.svg';
 

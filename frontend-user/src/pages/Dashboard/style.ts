@@ -19,8 +19,10 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .pools': {
         display: 'Grid',
-        gridTemplateColumns: '1fr 1fr 1fr 1fr',
-        gap: '20px'
+        gridTemplateColumns: '265px 265px 265px 265px',
+        gap: '20px',
+        margin: 'auto',
+        placeContent: 'center',
       },
 
       '& .btn': {
@@ -40,6 +42,40 @@ const useStyles = makeStyles((theme: any) => {
         borderRadius: '60px',
         backgroundColor: '#D01F36',
         margin: '40px auto 0'
+      },
+
+      [theme.breakpoints.down('md')]: {
+        '& .pools': {
+          display: 'Grid',
+          gridTemplateColumns: '265px 265px 265px',
+          gap: '20px'
+        },
+      },
+
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '60px!important',
+        '& .pools': {
+          display: 'Grid',
+          gridTemplateColumns: '265px 265px',
+          gap: '50px'
+        },
+      },
+
+      [theme.breakpoints.down('700')]: {
+        padding: '20px',
+        '& .pools': {
+          display: 'Grid',
+          gridTemplateColumns: '265px 265px',
+          gap: '20px'
+        },
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        '& .pools': {
+          display: 'Grid',
+          gridTemplateColumns: '1fr',
+          gap: '50px'
+        },
       }
     },
     getAlert: {
@@ -48,6 +84,7 @@ const useStyles = makeStyles((theme: any) => {
 
       '& > img': {
         width: '100%',
+        objectFit: 'cover'
       },
 
       '& .content': {
@@ -95,7 +132,31 @@ const useStyles = makeStyles((theme: any) => {
         justifyContent: 'center',
         borderRadius: '60px',
         margin: '40px auto 0'
-      }
+      },
+
+      [theme.breakpoints.down('sm')]: {
+        padding: '0',
+        marginTop: '80px',
+
+        '& .content': {
+          height: '250px',
+          width: '100%'
+        },
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        '& p': {
+          padding: '0 20px'
+        },
+        '& h2': {
+          fontSize: '36px',
+          lineHeight: '40px',
+        },
+
+        '& > img': {
+          height: '250px'
+        },
+      },
     }
   };
 });

@@ -7,7 +7,7 @@ import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import{ getContractInstance, SmartContractMethod } from '../../../services/web3';
 import Pool_ABI from '../../../abi/Pool.json';
 
-const useUserPurchased = (tokenDetails: TokenType | undefined) => {
+const useUserPurchased = (tokenDetails: TokenType | undefined, poolAddress: string | undefined) => {
   const [userPurchasedLoading, setUserPurchasedLoading] = useState<boolean>(false);
 
   const { appChainID } = useTypedSelector(state  => state.appNetwork).data;
@@ -21,11 +21,10 @@ const useUserPurchased = (tokenDetails: TokenType | undefined) => {
          ) {
            setUserPurchasedLoading(true);
 
-           const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read);
-
+           const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read); 
            if (contract) {
              const userPurchased = await contract.methods.userPurchased(userAddress).call();
-             const userPurchasedReturn = new BigNumber(userPurchased).div(new BigNumber(10).pow(tokenDetails.decimals)).toNumber();
+             const userPurchasedReturn = new BigNumber(userPurchased).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed();
 
              return userPurchasedReturn;
            }
@@ -35,7 +34,7 @@ const useUserPurchased = (tokenDetails: TokenType | undefined) => {
     } catch (err) {
       console.log(err.message);
     }
-  }, [appChainID, connector]);
+  }, [appChainID, connector, poolAddress]);
 
   return {
     userPurchasedLoading,
