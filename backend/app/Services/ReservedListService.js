@@ -54,6 +54,10 @@ class ReservedListService {
     // return all result
     return await builder.fetch();
   }
+
+  async create(params) {
+
+  }
 }
 
 module.exports = ReservedListService
