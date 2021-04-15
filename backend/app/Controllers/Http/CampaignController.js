@@ -313,13 +313,13 @@ class CampaignController {
       // get user wallet
       const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
       if (userWalletAddress == null) {
-        return HelperUtils.responseBadRequest("User don't have a valid wallet");
+        return HelperUtils.responseBadRequest("User don't have a valid wallet !");
       }
       // check if exist in winner list
       const winnerListService = new WinnerListService();
       const winner = await winnerListService.findByWalletAddress({'wallet_address': userWalletAddress});
       if (winner == null) {
-        return HelperUtils.responseBadRequest("You're not in winner list");
+        return HelperUtils.responseBadRequest("You're not in winner list !");
       }
 
       // TODO list reserved
@@ -335,7 +335,13 @@ class CampaignController {
       };
       const tier = await tierService.findByLevelAndCampaign(tierParams);
       if (tier == null) {
-        return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign or you're early to deposit");
+        return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign !");
+      }
+      // check time start buy for tier
+      const current = Date.now()/1000;
+      if (tier.start_time > current || tier.end_time < current){
+        console.log(`${tier.start_time} ${tier.end_time} ${current}`);
+        return HelperUtils.responseBadRequest("You're early come to join this campaign !");
       }
       const filterParams = {
         'campaign_id': params.campaign_id
@@ -345,14 +351,14 @@ class CampaignController {
       const camp = await campaignService.findByCampaignId(params.campaign_id)
       if (camp == null) {
         console.log(`Do not found campaign with id ${params.campaign_id}`);
-        return HelperUtils.responseBadRequest("Error");
+        return HelperUtils.responseBadRequest("Do not found campaign");
       }
       // get private key from db
       const walletService = new WalletService();
       const wallet = await walletService.findByCampaignId(filterParams);
       if (wallet == null) {
         console.log(`Do not found wallet for campaign ${params.campaign_id}`);
-        return HelperUtils.responseBadRequest("Error");
+        return HelperUtils.responseBadRequest("Do not found wallet for campaign");
       }
       // call to SC to get sign hash
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);

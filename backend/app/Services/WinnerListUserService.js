@@ -21,6 +21,20 @@ class WinnerListUserService {
     return builder;
   }
 
+  buildSearchQuery(params) {
+    let builder = WinnerListModel.query();
+    if (params.email) {
+      builder = builder.where('email', 'like', '%' + params.email + '%');
+    }
+    if (params.wallet_address) {
+      builder = builder.where('wallet_address', 'like', '%' + params.wallet_address + '%')
+    }
+    if (params.campaign_id) {
+      builder = builder.where('campaign_id', params.campaign_id);
+    }
+    return builder;
+  }
+
   async findWinnerListUser(params) {
     let builder = this.buildQueryBuilder(params);
     if (params.page && params.pageSize) {
@@ -34,6 +48,16 @@ class WinnerListUserService {
   async findByWalletAddress(params) {
     let builder = this.buildQueryBuilder(params);
     return await builder.first();
+  }
+
+  async search(params) {
+    let builder = this.buildSearchQuery(params);
+    if (params.page && params.pageSize) {
+      // pagination
+      return await builder.paginate(params.page, params.pageSize);
+    }
+    // return all result
+    return await builder.fetch();
   }
 }
 
