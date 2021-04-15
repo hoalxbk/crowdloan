@@ -1,24 +1,41 @@
 import React, {useEffect, useState} from 'react';
 import {RouteComponentProps, withRouter} from 'react-router-dom';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
-import ButtonLink from '../../components/Base/ButtonLink';
 import {adminRoute} from "../../utils";
 import PoolForm from "./PoolForm";
 import {getPoolDetail} from "../../request/pool";
 import moment from "moment";
 import {DATETIME_FORMAT} from "../../constants";
 import BackButton from "../../components/Base/ButtonLink/BackButton";
+import {useDispatch, useSelector} from "react-redux";
+import {get} from 'lodash';
+import {getPoolBlockchainInfo} from "../../utils/blockchain";
 
 const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   const isEdit = true;
   const { match } = props;
+  const dispatch = useDispatch();
+  const { data: loginUser } = useSelector((state: any) => state.user);
+  const [poolDetail, setPoolDetail] = useState();
+
   // @ts-ignore
   const id = match.params?.id;
-  const [poolDetail, setPoolDetail] = useState();
+
+  const getPoolInfoInBlockchain = async (data: any) => {
+    if (!get(poolDetail, 'is_deploy')) {
+      return;
+    }
+    try {
+      const response = await getPoolBlockchainInfo(loginUser, data);
+      console.log('getPoolBlockchainInfo: ', response);
+    } catch (e) {
+      console.log('ERROR: ', e);
+    }
+  };
 
   useEffect(() => {
     getPoolDetail(id)
-      .then((res) => {
+      .then(async (res) => {
         const data = res.data;
         const newData = {
           ...data,
@@ -29,6 +46,10 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
           end_join_pool_time: moment.unix(data.end_join_pool_time).format(DATETIME_FORMAT),
         };
         setPoolDetail(newData);
+
+        await getPoolInfoInBlockchain(newData);
+
+        return res.data;
       });
   }, [id]);
 

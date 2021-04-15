@@ -30,6 +30,11 @@ class WinnerListUserService {
     // return all result
     return await builder.fetch();
   }
+
+  async findByWalletAddress(params) {
+    let builder = this.buildQueryBuilder(params);
+    return await builder.first();
+  }
 }
 
 module.exports = WinnerListUserService

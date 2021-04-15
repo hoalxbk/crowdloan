@@ -2,7 +2,7 @@ import React from 'react';
 import useStyles from "../style";
 import {renderErrorCreatePool} from "../../../utils/validate";
 
-function PoolName(props: any) {
+function PoolWebsite(props: any) {
   const classes = useStyles();
   const {
     register, errors,
@@ -14,11 +14,11 @@ function PoolName(props: any) {
   return (
     <>
       <div className={classes.formControl}>
-        <label className={classes.formControlLabel}>Pool Name</label>
+        <label className={classes.formControlLabel}>Website</label>
         <input
           type="text"
-          name="title"
-          defaultValue={poolDetail?.title}
+          name="website"
+          defaultValue={poolDetail?.website}
           ref={register({ required: true })}
           maxLength={255}
           className={classes.formControlInput}
@@ -26,7 +26,7 @@ function PoolName(props: any) {
         />
         <p className={classes.formErrorMessage}>
           {
-            renderError(errors, 'title')
+            renderError(errors, 'website')
           }
         </p>
       </div>
@@ -34,4 +34,4 @@ function PoolName(props: any) {
   );
 }
 
-export default PoolName;
+export default PoolWebsite;

@@ -35,6 +35,7 @@ function CreateEditTierForm(props: any) {
       name: data.name,
       startTime: data.startTime.format(DATETIME_FORMAT),
       endTime: data.endTime.format(DATETIME_FORMAT),
+      minBuy: data.minBuy,
       maxBuy: data.maxBuy,
     };
     handleCreateUpdateData && handleCreateUpdateData(responseData);
@@ -65,11 +66,16 @@ function CreateEditTierForm(props: any) {
           <label className={classes.formControlLabel}>Name</label>
           <input
             type="text"
+            value={editData.name}
+            className={classes.formControlInput}
+            disabled={true}
+          />
+          <input
+            type="hidden"
             name="name"
             ref={register({ required: true })}
             maxLength={255}
             className={classes.formControlInput}
-            disabled={true}
           />
         </div>
         <p className={classes.formErrorMessage}>
@@ -157,21 +163,28 @@ function CreateEditTierForm(props: any) {
 
 
 
+        <div className={classes.formControl}>
+          <label className={classes.formControlLabel}>Min Buy</label>
+          <div>
+            <CurrencyInputWithValidate
+              register={register}
+              errors={errors}
+              initValue={editData.minBuy}
+              controlName={'minBuy'}
+            />
+          </div>
+        </div>
 
-        <FormControl component="fieldset">
+        <div className={classes.formControl}>
           <label className={classes.formControlLabel}>Max Buy</label>
-
-          <CurrencyInputWithValidate
-            register={register}
-            setValue={setValue}
-            errors={errors}
-            clearErrors={clearErrors}
-            renderError={renderError}
-            control={control}
-            initValue={editData.maxBuy}
-            controlName={'maxBuy'}
-          />
-
+          <div>
+            <CurrencyInputWithValidate
+              register={register}
+              errors={errors}
+              initValue={editData.maxBuy}
+              controlName={'maxBuy'}
+            />
+          </div>
 
           {/*<CurrencyInput*/}
           {/*  placeholder="Please enter a number"*/}
@@ -194,9 +207,7 @@ function CreateEditTierForm(props: any) {
           {/*    renderError(errors, 'maxBuy')*/}
           {/*  }*/}
           {/*</p>*/}
-
-        </FormControl>
-
+        </div>
 
 
       </ConfirmDialog>

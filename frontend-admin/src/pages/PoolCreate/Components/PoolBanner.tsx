@@ -6,16 +6,21 @@ import ImageUploading from 'react-images-uploading';
 import {uploadFile} from "../../../request/upload";
 import Button from '@material-ui/core/Button';
 import {imageRoute} from "../../../utils";
+import {renderErrorCreatePool} from "../../../utils/validate";
+import { EditFilled, DeleteFilled } from '@ant-design/icons';
+import {Image} from "antd";
+import {useCommonStyle} from "../../../styles";
 
 // https://codesandbox.io/s/react-images-uploading-demo-u0khz?file=/src/index.js
 function PoolBanner(props: any) {
   const classes = useStyles();
   const classesComponent = useComponentStyles();
+  const commonStyle = useCommonStyle();
   const {
-    register, clearErrors, errors, handleSubmit, control,
+    register, errors,
     poolDetail,
-    renderError,
   } = props;
+  const renderError = renderErrorCreatePool;
 
   const maxNumber = 69;
   const [images, setImages] = React.useState([]);
@@ -57,6 +62,8 @@ function PoolBanner(props: any) {
             onChange={onChange}
             maxNumber={maxNumber}
             dataURLKey="data_url"
+            maxFileSize={5000000}
+            acceptType={['jpg', 'gif', 'png']}
           >
             {({
                 imageList,
@@ -66,6 +73,7 @@ function PoolBanner(props: any) {
                 onImageRemove,
                 isDragging,
                 dragProps,
+                errors,
               }) => (
               // write your building UI
               <div className={classesComponent.uploadImageWrapper}>
@@ -74,22 +82,37 @@ function PoolBanner(props: any) {
                 </Button>
                 {imageList.map((image, index) => (
                   <div key={index} className={classesComponent.imageItem}>
-                    <img src={image?.data_url} alt="" width="100" />
+                    <Image
+                      width={100}
+                      src={image['data_url']}
+                    />
                     <div className={classesComponent.imageItemBtnWrapper}>
-                      <button
-                        onClick={() => onImageUpdate(index)}
+                      <EditFilled
                         className={classesComponent.btnUpdateItem}
-                      >Update</button>
-                      <button
+                        onClick={() => onImageUpdate(index)}
+                      /> Edit
+                      <DeleteFilled
+                        className={classesComponent.btnUpdateRemove}
                         onClick={() => {
+                          // eslint-disable-next-line no-restricted-globals
+                          if (!confirm('Do you want delete this image?')) {
+                            return false;
+                          }
                           setImageUploaded('');
                           return onImageRemove(index);
                         }}
-                        className={classesComponent.btnUpdateRemove}
-                      >Remove</button>
+                      /> Remove
                     </div>
                   </div>
                 ))}
+                {errors &&
+                  <div className={commonStyle.error}>
+                    {errors.maxNumber && <span>Number of selected images exceed 1</span>}
+                    {errors.acceptType && <span>The selected file must be in PNG format, up to 5MB in size.</span>}
+                    {errors.maxFileSize && <span>Selected file size exceed 5MB</span>}
+                    {errors.resolution && <span>Selected file is not match your desired resolution</span>}
+                  </div>
+                }
               </div>
             )}
           </ImageUploading>

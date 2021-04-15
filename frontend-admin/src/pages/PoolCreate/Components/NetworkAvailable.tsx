@@ -5,20 +5,22 @@ import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Controller } from "react-hook-form";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function NetworkAvailable(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    setValue, errors, control,
+    poolDetail
   } = props;
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.network_available) {
       setValue('networkAvailable', poolDetail.network_available);
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -36,10 +38,12 @@ function NetworkAvailable(props: any) {
                 <FormControlLabel
                   value="eth" control={<Radio />}
                   label="Ether"
+                  disabled={isDeployed}
                 />
                 <FormControlLabel
                   value="bsc" control={<Radio />}
                   label="BSC"
+                  disabled={isDeployed}
                 />
               </RadioGroup>
             }

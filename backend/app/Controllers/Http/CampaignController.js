@@ -3,9 +3,11 @@
 const CampaignModel = use('App/Models/Campaign');
 const Tier = use('App/Models/Tier');
 const CampaignService = use('App/Services/CampaignService');
-const WalletAccountService = use('App/Services/WalletAccountService');
+const WalletService = use('App/Services/WalletAccountService');
+const TierService = use('App/Services/TierService');
+const WinnerListService = use('App/Services/WinnerListUserService');
+const WhitelistService = use('App/Services/WhitelistUserService');
 const Const = use('App/Common/Const');
-const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
 const RedisUtils = use('App/Common/RedisUtils');
 const Redis = use('Redis');
@@ -18,12 +20,15 @@ const CONTRACT_FACTORY_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPA
 const { abi: CONTRACT_ABI } = CONTRACT_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Erc20.json');
+const { abi: CONTRACT_TIER_ABI } = require('../../../blockchain_configs/contracts/Tier.json');
 
 const Web3 = require('web3');
 const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
+const tierSmartContract = process.env.TIER_SMART_CONTRACT;
+const SMART_CONTRACT_USDT_ADDRESS =  process.env.SMART_CONTRACT_USDT_ADDRESS;
 
 class CampaignController {
   async campaignList ({request}) {
@@ -271,11 +276,25 @@ class CampaignController {
     if (wallet_address == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }
-    // call to join campaign
-    const campaignService = new CampaignService();
     try {
+      // check user tier
+      const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
+      const userTier = await tierSc.methods.getUserTier(wallet_address).call();
+      console.log(`user tier is ${userTier}`);
+      // call to db to get tier info
+      const tierService = new TierService();
+      const tierParams = {
+        'campaign_id': params.campaign_id,
+        'level': userTier
+      };
+      const tier = await tierService.findByLevelAndCampaign(tierParams);
+      if (tier == null) {
+        return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign!");
+      }
+      // call to join campaign
+      const campaignService = new CampaignService();
       await campaignService.joinCampaign(params.campaign_id, wallet_address, email);
-      return HelperUtils.responseSuccess(null,"Join Campaign Successful !");
+      return HelperUtils.responseSuccess(null, "Join Campaign Successful !");
     } catch (e) {
       console.log("error", e)
       if (e instanceof BadRequestException) {
@@ -287,9 +306,122 @@ class CampaignController {
   }
 
   async deposit({request, auth}) {
-    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
-    if (wallet_address == null) {
+    try {
+      // get all request params
+      const params = request.all();
+      console.log(params);
+      // get user wallet
+      const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
+      if (userWalletAddress == null) {
+        return HelperUtils.responseBadRequest("User don't have a valid wallet");
+      }
+      // check if exist in winner list
+      const winnerListService = new WinnerListService();
+      const winner = await winnerListService.findByWalletAddress({'wallet_address': userWalletAddress});
+      if (winner == null) {
+        return HelperUtils.responseBadRequest("You're not in winner list");
+      }
+
+      // TODO list reserved
+      // check user tier
+      const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
+      const userTier = await tierSc.methods.getUserTier(userWalletAddress).call();
+      console.log(`user tier is ${userTier}`);
+      // call to db to get tier info
+      const tierService = new TierService();
+      const tierParams = {
+        'campaign_id': params.campaign_id,
+        'level': userTier
+      };
+      const tier = await tierService.findByLevelAndCampaign(tierParams);
+      if (tier == null) {
+        return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign or you're early to deposit");
+      }
+      const filterParams = {
+        'campaign_id': params.campaign_id
+      };
+      // call to db get campaign info
+      const campaignService = new CampaignService();
+      const camp = await campaignService.findByCampaignId(params.campaign_id)
+      if (camp == null) {
+        console.log(`Do not found campaign with id ${params.campaign_id}`);
+        return HelperUtils.responseBadRequest("Error");
+      }
+      // get private key from db
+      const walletService = new WalletService();
+      const wallet = await walletService.findByCampaignId(filterParams);
+      if (wallet == null) {
+        console.log(`Do not found wallet for campaign ${params.campaign_id}`);
+        return HelperUtils.responseBadRequest("Error");
+      }
+      // call to SC to get sign hash
+      const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
+      // get convert rate token erc20 -> our token
+      const rate = await poolContract.methods.getErc20TokenConversionRate(SMART_CONTRACT_USDT_ADDRESS).call();
+      const maxTokenAmount = web3.utils.toWei((tier.max_buy * rate).toString(), "ether");
+      console.log(rate, maxTokenAmount, userWalletAddress, camp.start_time);
+      const messageHash = await poolContract.methods.getMessageHash(userWalletAddress, maxTokenAmount, camp.start_time).call();
+      console.log(`message hash ${messageHash}`);
+      const privateKey = wallet.private_key;
+      console.log(`private key ${privateKey}`)
+      // get sign for wallet address
+      const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+      const accAddress = account.address;
+      web3.eth.accounts.wallet.add(account);
+      web3.eth.defaultAccount = accAddress;
+      const signature = await web3.eth.sign(messageHash, accAddress);
+      console.log(`signature ${signature}`);
+      const response = {
+        'max_buy': maxTokenAmount,
+        'signature': signature,
+        'dead_line': camp.start_time
+      }
+      return HelperUtils.responseSuccess(response);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
+  async countingJoinedCampaign({request}) {
+    const campaignId = request.params.campaignId;
+    try {
+      // get from redis cached
+      let redisKey = 'counting_' + campaignId;
+      if (await Redis.exists(redisKey)) {
+        console.log(`existed key ${redisKey} on redis`);
+        const cachedWL = await Redis.get(redisKey);
+        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      }
+      // if not existed on redis then get from db
+      const wlService = new WhitelistService();
+      let noOfParticipants = await wlService.countByCampaignId(campaignId);
+      if (noOfParticipants != null) {
+        noOfParticipants = 0;
+      }
+      // save to redis
+      await Redis.set(redisKey, JSON.stringify(noOfParticipants));
+      return HelperUtils.responseSuccess(noOfParticipants);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
+  async checkJoinedCampaign({request, auth}) {
+    const campaignId = request.params.campaignId;
+    // get user wallet
+    const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
+    if (userWalletAddress == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
+    }
+    try {
+      const wlService = new WhitelistService();
+      const existed = await wlService.checkExisted(userWalletAddress, campaignId);
+      return HelperUtils.responseSuccess(existed);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
     }
   }
 

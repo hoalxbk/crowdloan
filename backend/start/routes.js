@@ -56,15 +56,17 @@ Route.group(() => {
   Route.post('/login', 'AuthAdminController.login').validator('Login').middleware('checkSignature');
   Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignature');
   Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
-  Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');;
+  Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');
   Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.get('check-token/:token', 'AdminController.checkToken');
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.post('upload-avatar', 'FileController.uploadAvatar');
 
-  Route.post('pool/create', 'PoolController.createPool')
-  Route.post('pool/:campaignId/update', 'PoolController.updatePool')
-  Route.get('pool/:campaignId', 'PoolController.getPool')
+  Route.post('pool/create', 'PoolController.createPool');
+  Route.post('pool/:campaignId/update', 'PoolController.updatePool');
+  Route.get('pool/:campaignId', 'PoolController.getPool');
+  Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
+  Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
 
@@ -92,9 +94,12 @@ Route.group(() => {
   Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
   Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
-  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['auth','checkSignature']);
+  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['auth', 'checkSignature']);
+  Route.post('deposit', 'CampaignController.deposit').middleware(['auth']);
   Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware('auth');
   Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
+  Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign').middleware('auth');
+  Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign').middleware('auth');
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
 
 Route.group(() => {
@@ -114,9 +119,7 @@ Route.group(() => {
 }).prefix(':type').middleware(['checkPrefix', 'checkJwtSecret']); //user/public
 
 // Public API:
-Route.get('pool/:campaignId/participants', 'WhiteListUserController.getWhiteList')
 Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
-Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId', 'PoolController.getPool');
 Route.get('pools', 'PoolController.getPoolList');

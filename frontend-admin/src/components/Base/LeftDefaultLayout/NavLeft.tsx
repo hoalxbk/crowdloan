@@ -2,6 +2,8 @@ import React from 'react';
 import { Link, withRouter } from "react-router-dom";
 import useStyles from './styles';
 import {adminRoute} from "../../../utils";
+import {logout} from "../../../store/actions/user";
+import {useDispatch} from "react-redux";
 
 const nav = [
   {
@@ -28,8 +30,17 @@ const nav = [
 
 const NavLeft = (props: any) => {
   const styles = useStyles();
+  const dispatch = useDispatch();
   const { smallLeft, location } = props;
   const [navLeft] = React.useState(nav);
+
+  const logoutUser = () => {
+    // eslint-disable-next-line no-restricted-globals
+    if (!confirm('Do you want logout?')) {
+      return false;
+    }
+    dispatch(logout());
+  };
 
   return (
     <ul className={styles.navLeft}>
@@ -46,6 +57,12 @@ const NavLeft = (props: any) => {
           </li>
         )
       })}
+
+      <li className={styles.itemNavLeft}>
+        <a onClick={logoutUser} className={styles.linkItemNavLeft}>
+          <i className={(smallLeft && ' icon-small') + " icon icon-setting"}></i>Logout
+        </a>
+      </li>
     </ul>
   );
 };

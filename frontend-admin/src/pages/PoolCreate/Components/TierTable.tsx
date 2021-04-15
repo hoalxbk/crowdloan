@@ -11,6 +11,8 @@ import {Button, makeStyles} from "@material-ui/core";
 import CreateEditTierForm from "./CreateEditTierForm";
 import moment from "moment";
 import {DATETIME_FORMAT} from "../../../constants";
+import {renderErrorCreatePool} from "../../../utils/validate";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const useStylesTable = makeStyles({
   table: {
@@ -18,37 +20,42 @@ const useStylesTable = makeStyles({
   },
 });
 
-const createData = (name: string, startTime: string, endTime: string, maxBuy: number, isEdit: boolean) => {
-  return { name, startTime, endTime, maxBuy, isEdit };
+const createData = (name: string, startTime: string, endTime: string, minBuy: number, maxBuy: number, isEdit: boolean) => {
+  return { name, startTime, endTime, minBuy, maxBuy, isEdit };
 };
 
+const createDefaultTiers = () => {
+  return [
+    createData('Tier 1', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 1000, false),
+    createData('Tier 2', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 2000, false),
+    createData('Tier 3', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 3000, false),
+    createData('Tier 4', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 4000, false),
+    createData('Tier 5', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 5000, false),
+  ];
+};
 
 function TierTable(props: any) {
   const classes = useStyles();
   const classesTable = useStylesTable();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
+    register, watch,
     poolDetail,
-    renderError
   } = props;
+  const renderError = renderErrorCreatePool;
   const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
   const [editData, setEditData] = useState({});
   const [editRow, setEditRow] = useState(0);
   const [isEdit, setIsEdit] = useState(true);
-
-  const [rows, setRows] = useState([
-    // createData('Tier 1', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 1000, false),
-    // createData('Tier 2', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 2000, false),
-    // createData('Tier 3', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 5000, false),
-  ]);
+  const [rows, setRows] = useState(createDefaultTiers());
 
   useEffect(() => {
     if (poolDetail && poolDetail.tiers) {
       const dataFormatted = poolDetail.tiers.map((item: any) => {
         return createData(
           item.name,
-          moment(item.start_time).format(DATETIME_FORMAT),
-          moment(item.end_time).format(DATETIME_FORMAT),
+          moment.unix(item.start_time).format(DATETIME_FORMAT),
+          moment.unix(item.end_time).format(DATETIME_FORMAT),
+          item.min_buy,
           item.max_buy,
           false
         );
@@ -69,7 +76,6 @@ function TierTable(props: any) {
     setEditData({});
     setEditRow(-1);
     setIsEdit(false);
-    // setIsOpenEditPopup(true);
     setIsOpenEditPopup(true);
   };
 
@@ -89,8 +95,6 @@ function TierTable(props: any) {
 
   const deleteTier = (e: any, row: any, index: number) => {
     console.log('ROW: ', row, index);
-    // e.preventDefaults();
-
     // eslint-disable-next-line no-restricted-globals
     if (!confirm('Do you want delete this tier?')) {
       return false;
@@ -101,12 +105,10 @@ function TierTable(props: any) {
       newRows.splice(index, 1);
     }
     setRows(newRows);
-
-    // setEditData(row);
-    // setEditRow(index);
-    // setIsEdit(true);
-    // setIsOpenEditPopup(true);
   };
+
+  const acceptCurrency = watch('acceptCurrency');
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -124,13 +126,13 @@ function TierTable(props: any) {
       <div className={classes.formControl}>
         <label className={classes.formControlLabel}>Tier Configuration</label>
       </div>
-      <div className={classes.formControl}>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={openPopupCreate}
-        >Create</Button>
-      </div>
+      {/*<div className={classes.formControl}>*/}
+      {/*  <Button*/}
+      {/*    variant="contained"*/}
+      {/*    color="primary"*/}
+      {/*    onClick={openPopupCreate}*/}
+      {/*  >Create</Button>*/}
+      {/*</div>*/}
       <TableContainer component={Paper}>
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
@@ -138,32 +140,38 @@ function TierTable(props: any) {
               <TableCell>Name</TableCell>
               <TableCell align="right">Start Buy Time</TableCell>
               <TableCell align="right">End Time</TableCell>
+              <TableCell align="right">Min Buy</TableCell>
               <TableCell align="right">Max Buy</TableCell>
+              <TableCell align="right">Currency</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row: any, index: number) => (
-              <TableRow key={row.name}>
+              <TableRow key={index}>
                 <TableCell component="th" scope="row">
                   {row.name}
                 </TableCell>
                 <TableCell align="right">{row.startTime}</TableCell>
                 <TableCell align="right">{row.endTime}</TableCell>
+                <TableCell align="right">{row.minBuy || '0'}</TableCell>
                 <TableCell align="right">{row.maxBuy}</TableCell>
+                <TableCell align="right">{(acceptCurrency + '').toUpperCase()}</TableCell>
                 <TableCell align="right">
+
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={(e) => openPopupEdit(e, row, index)}
+                    disabled={isDeployed}
                   >Edit</Button>
 
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={(e) => deleteTier(e, row, index)}
-                    style={{marginLeft: 10, marginTop: 10}}
-                  >Delete</Button>
+                  {/*<Button*/}
+                  {/*  variant="contained"*/}
+                  {/*  color="secondary"*/}
+                  {/*  onClick={(e) => deleteTier(e, row, index)}*/}
+                  {/*  style={{marginLeft: 10, marginTop: 10}}*/}
+                  {/*>Delete</Button>*/}
                 </TableCell>
               </TableRow>
             ))}

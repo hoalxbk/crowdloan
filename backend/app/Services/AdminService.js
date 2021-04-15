@@ -119,18 +119,18 @@ class AdminService {
         console.log('========================');
 
         if (userExist) {
-          // console.log('CLEAR RECORDS DUPLICATE (NOT ACTIVE):');
-          // // Remove duplicate account EXPIRED and NOT ACTIVE
-          // const duplicateUserNotActive = await this.buildQueryBuilder({
-          //   role,
-          //   wallet_address: user.wallet_address,
-          //   is_active: Const.USER_INACTIVE,
-          // }).delete();
-          //
-          // console.log('========================');
-          // console.log('DUPLICATE USERS:');
-          // console.log(duplicateUserNotActive);
-          // console.log('========================');
+          console.log('CLEAR RECORDS DUPLICATE (NOT ACTIVE):');
+          // Remove duplicate account EXPIRED and NOT ACTIVE
+          const duplicateUserNotActive = await this.buildQueryBuilder({
+            role,
+            wallet_address: user.wallet_address,
+            is_active: Const.USER_INACTIVE,
+          }).delete();
+
+          console.log('========================');
+          console.log('DUPLICATE USERS:');
+          console.log(duplicateUserNotActive);
+          console.log('========================');
 
           return false;
         }

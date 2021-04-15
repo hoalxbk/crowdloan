@@ -6,18 +6,14 @@ const Tier = use('App/Models/Tier');
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
 const TierService = use('App/Services/TierService')
+const RedisUtils = use('App/Common/RedisUtils');
 
 class TierController {
   async getTiers({ request, params }) {
     const campaignId = params.campaignId;
     try {
-      let redisKey = `public_tiers_${campaignId}`;
-      console.log('redisKey', redisKey);
-
-      const isExistRedisData = await Redis.exists(redisKey);
-      if (isExistRedisData) {
-        const cachedTiers = await Redis.get(redisKey);
-        console.log('Exist cache data Public Tiers: ', cachedTiers);
+      if (await RedisUtils.checkExistRedisTierList(campaignId)) {
+        const cachedTiers = RedisUtils.getRedisTierList();
         return HelperUtils.responseSuccess(JSON.parse(cachedTiers));
       }
 
@@ -28,7 +24,7 @@ class TierController {
       const tiers = await query.fetch();
 
       // Cache data
-      await Redis.set(redisKey, JSON.stringify(tiers));
+      RedisUtils.createRedisTierList(campaignId, tiers);
 
       return HelperUtils.responseSuccess(tiers);
     } catch (e) {

@@ -4,7 +4,7 @@ const CampaignModel = use('App/Models/Campaign');
 const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
-const CampaignService = use('App/Services/CampaignService');
+const PoolService = use('App/Services/PoolService');
 const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
 const RedisUtils = use('App/Common/RedisUtils');
@@ -24,6 +24,7 @@ const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
+const moment = require('moment');
 
 class PoolController {
 
@@ -71,15 +72,16 @@ class PoolController {
         tierObj.fill({
           level: (index + 1),
           name: item.name,
-          start_time: item.startTime,
-          end_time: item.endTime,
+          start_time: moment(item.startTime).unix(),
+          end_time: moment(item.endTime).unix(),
           max_buy: item.maxBuy,
+          currency: item.currency,
         });
         return tierObj;
       });
       await campaign.tiers().saveMany(tiers);
 
-      console.log('params.tier_configuration', tiers);
+      console.log('params.tier_configuration', JSON.stringify(tiers));
 
       const campaignId = campaign.id;
       // Create Web3 Account
@@ -95,15 +97,17 @@ class PoolController {
   async updatePool({ request, auth, params }) {
     const inputParams = request.only([
       'register_by',
-      'title', 'banner', 'description', 'address_receiver',
+      'title', 'website', 'banner', 'description', 'address_receiver',
       'token', 'token_by_eth', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
       'min_tier', 'tier_configuration',
+      // 'is_deploy',
     ]);
 
     const data = {
       'title': inputParams.title,
+      'website': inputParams.website,
       'description': inputParams.description,
       'token': inputParams.token,
       'start_time': inputParams.start_time,
@@ -138,9 +142,11 @@ class PoolController {
         tierObj.fill({
           level: (index + 1),
           name: item.name,
-          start_time: item.startTime,
-          end_time: item.endTime,
+          start_time: moment(item.startTime).unix(),
+          end_time: moment(item.endTime).unix(),
+          min_buy: item.minBuy,
           max_buy: item.maxBuy,
+          currency: item.currency,
         });
         return tierObj;
       });
@@ -150,13 +156,69 @@ class PoolController {
 
       // Delete cache
       RedisUtils.deleteRedisPoolDetail(campaignId);
+      RedisUtils.deleteRedisTierList(campaignId);
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
       console.log('ERROR', e);
-      return ErrorFactory.internal('error')
+      return ErrorFactory.internal('error');
     }
   }
+
+  async updateDeploySuccess({ request, auth, params }) {
+    const inputParams = request.only([
+      'campaign_hash', 'token_symbol',
+    ]);
+
+    console.log('Update Deploy Success with data: ', inputParams);
+    const campaignId = params.campaignId;
+    try {
+      const campaign = await CampaignModel.query().where('id', campaignId).first();
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+      await CampaignModel.query().where('id', campaignId).update({
+        is_deploy: true,
+        campaign_hash: inputParams.campaign_hash,
+        token: inputParams.token_symbol,
+      });
+
+      // Delete cache
+      RedisUtils.deleteRedisPoolDetail(campaignId);
+
+      return HelperUtils.responseSuccess(campaign);
+    } catch (e) {
+      console.log('ERROR', e);
+      return ErrorFactory.internal('error');
+    }
+  }
+
+  async changeDisplay({ request, auth, params }) {
+    const inputParams = request.only([
+      'is_display'
+    ]);
+
+    console.log('Update Change Display with data: ', inputParams);
+    const campaignId = params.campaignId;
+    try {
+      const campaign = await CampaignModel.query().where('id', campaignId).first();
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+      await CampaignModel.query().where('id', campaignId).update({
+        is_display: inputParams.is_display,
+      });
+
+      // Delete cache
+      RedisUtils.deleteRedisPoolDetail(campaignId);
+
+      return HelperUtils.responseSuccess();
+    } catch (e) {
+      console.log('ERROR', e);
+      return ErrorFactory.internal('error');
+    }
+  }
+
 
   async getPool({ request, auth, params }) {
     const poolId = params.campaignId;
@@ -183,63 +245,31 @@ class PoolController {
     }
   }
 
-  async getPoolList ({request}) {
+  async getPoolList({request}) {
     const param = request.all();
     const limit = param.limit ? param.limit : Config.get('const.limit_default');
     const page = param.page ? param.page : Config.get('const.page_default');
     param.limit = limit;
     param.page = page;
+    param.is_display = false;
+    param.is_search = true;
     console.log('Start Pool List with params: ', param);
 
     try {
-      // console.log(await RedisUtils.checkExistRedisPoolList(param));
-      console.log('9999999');
-
       if (await RedisUtils.checkExistRedisPoolList(param)) {
         const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
         console.log('Exist cache data Public Pool List: ', cachedPoolDetail);
         return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
       }
 
-      const filter = {};
-      let listData = CampaignModel.query().orderBy('id', 'DESC');
-      if(param.title) {
-        listData =  listData.where(builder => {
-          builder.where('title', 'like', '%'+ param.title +'%')
-            .orWhere('symbol', 'like', '%'+ param.title +'%')
-          if((param.title).toLowerCase() == Config.get('const.suspend')){
-            builder.orWhere('is_pause', '=', 1)
-          }
-          if((param.title).toLowerCase() == Config.get('const.active')){
-            builder.orWhere('is_pause', '=', 0)
-          }
-        })
-      }
-      if(param.start_time && !param.finish_time) {
-        listData = listData.where('start_time', '>=', param.start_time)
-      }
-      if(param.finish_time && !param.start_time ) {
-        listData = listData.where('finish_time', '<=', param.finish_time)
-      }
-      if(param.finish_time && param.start_time ) {
-        listData = listData.whereRaw('finish_time <=' + param.finish_time)
-          .whereRaw('start_time >=' + param.start_time)
-      }
-      if(param.registed_by){
-        listData = listData.where('registed_by', '=', param.registed_by)
-      }
+      let listData = (new PoolService).buildSearchQuery(param);
+      listData = listData.orderBy('id', 'DESC');
       listData = await listData.paginate(page,limit);
 
       // Cache data
       RedisUtils.createRedisPoolList(param, listData);
 
       return HelperUtils.responseSuccess(listData);
-
-      // return {
-      //   status: 200,
-      //   data: listData,
-      // }
-
     } catch (e) {
       console.log(e)
       return HelperUtils.responseErrorInternal(e.message);
