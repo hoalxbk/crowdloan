@@ -3,6 +3,7 @@ require('@nomiclabs/hardhat-ethers');
 require('@nomiclabs/hardhat-etherscan');
 require("@nomiclabs/hardhat-web3");
 require('@openzeppelin/hardhat-upgrades');
+require('hardhat-abi-exporter');
 
 const dotenv = require('dotenv');
 dotenv.config();

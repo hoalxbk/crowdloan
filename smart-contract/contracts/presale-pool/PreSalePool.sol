@@ -209,6 +209,15 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
 
     /**
      * @notice Owner can set the offered token conversion rate. Receiver tokens = tradeTokens * tokenRate / 10 ** etherConversionRateDecimals
+     * @param _newSigner Address of new signer
+     */
+    function setNewSigner(address _newSigner) external onlyOwner {
+        require(signer != _newSigner, "POOL::SIGNER_INVALID");
+        signer = _newSigner;
+    }
+
+    /**
+     * @notice Owner can set the offered token conversion rate. Receiver tokens = tradeTokens * tokenRate / 10 ** etherConversionRateDecimals
      * @param _decimals Fixed number of decimals
      */
     function setOfferedCurrencyDecimals(address _token, uint256 _decimals) external onlyOwner {
