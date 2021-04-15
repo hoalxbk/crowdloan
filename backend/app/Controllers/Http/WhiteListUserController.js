@@ -74,6 +74,42 @@ class WhiteListUserController {
       return HelperUtils.responseErrorInternal('Get Whitelist Failed !');
     }
   }
+
+  async getRandomWinners({request}) {
+    // get request params
+    const campaign_id = request.params.campaignId;
+    const num = request.params.number;
+    if (isNaN(Number(campaign_id)) || isNaN(Number(num))) {
+      return HelperUtils.responseBadRequest(`Bad request params with campaignId ${campaign_id} and number ${num}`)
+    }
+    try {
+      const whitelistService = new WhitelistService();
+      const result = await whitelistService.getRandomWinners(num, campaign_id);
+      return HelperUtils.responseSuccess(result);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('Get Random Winners Failed !');
+    }
+  }
+
+  async search({request}) {
+    // get request params
+    const searchParams = {
+      'campaign_id': request.params.campaignId,
+      'email': request.input('email'),
+      'wallet_address': request.input('wallet_address'),
+      'page': request.input('page'),
+      'pageSize': request.input('limit') ? request.input('limit') : 10
+    }
+    try {
+      const whitelistService = new WhitelistService();
+      const result = await whitelistService.search(searchParams);
+      return HelperUtils.responseSuccess(result);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('Find Whitelist Error !');
+    }
+  }
 }
 
 module.exports = WhiteListUserController

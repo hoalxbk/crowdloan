@@ -22,6 +22,20 @@ class WhitelistUserService {
     return builder;
   }
 
+  buildSearchQuery(params) {
+    let builder = WhitelistModel.query();
+    if (params.email) {
+      builder = builder.where('email', 'like', '%' + params.email + '%');
+    }
+    if (params.wallet_address) {
+      builder = builder.where('wallet_address', 'like', '%' + params.wallet_address + '%')
+    }
+    if (params.campaign_id) {
+      builder = builder.where('campaign_id', params.campaign_id);
+    }
+    return builder;
+  }
+
   async findWhitelistUser(params) {
     let builder = this.buildQueryBuilder(params);
     if (params.page && params.pageSize) {
@@ -42,6 +56,22 @@ class WhitelistUserService {
     where('campaign_id', campaign_id).
     where('wallet_address', wallet_address).first();
     return wl != null ? true : false;
+  }
+
+  async getRandomWinners(number,campaign_id) {
+    return await WhitelistModel.query()
+      .where('campaign_id', campaign_id)
+      .orderByRaw('RAND()').limit(number).fetch();
+  }
+
+  async search(params) {
+    let builder = this.buildSearchQuery(params);
+    if (params.page && params.pageSize) {
+      // pagination
+      return await builder.paginate(params.page, params.pageSize);
+    }
+    // return all result
+    return await builder.fetch();
   }
 }
 
