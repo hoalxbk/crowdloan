@@ -7,9 +7,11 @@ import {withRouter} from 'react-router-dom';
 import { HashLoader } from 'react-spinners';
 import {useForm} from 'react-hook-form';
 
+import { AppContext } from '../../AppContext';
 import { userActions } from '../../store/constants/user';
 import { alertFailure } from '../../store/actions/alert';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
+import { TwoFactors } from '../../store/reducers/wallet';
 import { disconnectWalletLayer2 } from '../../store/actions/wallet';
 import { login, register as userRegister } from '../../store/actions/user';
 import useStyles from './style';
@@ -28,6 +30,7 @@ const InvestorLogin: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
   const history = useHistory();
 
+  const { handleConnectorDisconnect } = useContext(AppContext);
   const [loadingUserExists, setLoadingUserExists] = useState(false);
   const [userExists, setUserExists] = useState(false);
   const { loading: investorLoginLoading, error } = useTypedSelector(state => state.investor);
@@ -65,12 +68,13 @@ const InvestorLogin: React.FC<any> = (props: any) => {
       }     
     } 
 
-    connectedAccount && checkUserExists(); 
+    connectedAccount ? checkUserExists(): history.push('/');
 
     return () => { 
       !localStorage.getItem("investor_access_token") && dispatch(disconnectWalletLayer2()); 
+      !connectedAccount && handleConnectorDisconnect && handleConnectorDisconnect();
     }
-  }, [connectedAccount]);
+  }, [connectedAccount, handleConnectorDisconnect]);
 
   const handleFormSubmit = (data: any) => {
     if (userExists) {

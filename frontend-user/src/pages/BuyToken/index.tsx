@@ -21,6 +21,7 @@ import Button from './Button';
 import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
 
+import { numberWithCommas } from '../../utils/formatNumber';
 import { getTiers, getUserInfo, getUserTier } from '../../store/actions/sota-tiers';
 
 import useStyles from './style';
@@ -30,8 +31,8 @@ const poolImage = "/images/pool_circle.svg";
 
 enum HeaderType {
   Main = "Main",
-  About = "About",
-  Participants = "Participants"
+  About = "About the project",
+  Participants = "Winner"
 }
 
 const headers = [HeaderType.Main, HeaderType.About, HeaderType.Participants];
@@ -48,13 +49,17 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   const { id } = useParams() as any;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
+  console.log(poolDetails);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
   const tokenDetails = poolDetails?.tokenDetails || undefined;
   // Should replace hard string by pool address
   const { tokenSold, totalSell, soldProgress } = useTokenSoldProgress(poolDetails?.poolAddress, tokenDetails);
   const { joinPool, poolJoinLoading } = usePoolJoinAction({ poolId: poolDetails?.id });
-  const { data: winners } = useFetch<Array<any>>(`/pool/${poolDetails?.id}/winners`, poolDetails?.method !== "whitelist");
-  const { data: alreadyJoinPool } = useFetch<boolean>(`/user/check-join-campaign/${poolDetails?.id}`);
+  const { data: winners } = useFetch<Array<any>>(
+    `/pool/${poolDetails?.id}/winners`, poolDetails?.method !== "whitelist" 
+  );
+  const { data: alreadyJoinPool } = useFetch<boolean>(
+    `/user/check-join-campaign/${poolDetails?.id}`);
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
   const userBuyLimit = poolDetails?.connectedAccountBuyLimit || 0;
@@ -148,7 +153,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       dispatch(getTiers());
       dispatch(getUserTier(connectedAccount));
     } 
-  }, [isAuth, wrongChain]);
+  }, [isAuth, connectedAccount, wrongChain]);
 
   return (
     <DefaultLayout>
@@ -253,9 +258,9 @@ const BuyToken: React.FC<any> = (props: any) => {
               <Tiers 
                 showMoreInfomation 
                 tiersBuyLimit={poolDetails?.buyLimit || [] }
-                tokenSymbol={`PKF`}
+                tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
               />
-              <p className={styles.poolDetailMaxBuy}>*Max bought: {userBuyLimit} PKF</p>
+              <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
               <div className={styles.poolDetailProgress}>
                 <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
                 <div className={styles.poolDetailProgressStat}>
@@ -263,7 +268,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                     {soldProgress}%
                   </span>
                   <span>
-                    {tokenSold} / {totalSell}
+                    {numberWithCommas(tokenSold)} / {numberWithCommas(totalSell)}
                   </span>
                 </div>
                 <div className={styles.progress}>
@@ -306,7 +311,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 activeNav === HeaderType.About && <PoolAbout /> 
               }
               {
-                activeNav === HeaderType.Participants && <LotteryWinners />
+                activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
               }
               <ClaimToken releaseTime={releaseTimeInDate} />
             </div>

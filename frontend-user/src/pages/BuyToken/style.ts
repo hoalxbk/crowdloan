@@ -94,7 +94,9 @@ const useStyles = makeStyles((theme: any) => {
     poolDetailTier: {
       padding: '28px 40px',
       background: 'rgba(255, 255, 255, 0.06)',
-      borderRadius: 8
+      borderRadius: 8,
+      maxWidth: 600,
+      width: 600
     },
     poolDetailMaxBuy: {
       marginTop: 15,

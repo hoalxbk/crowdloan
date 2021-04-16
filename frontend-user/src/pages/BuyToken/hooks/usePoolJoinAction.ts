@@ -32,6 +32,7 @@ const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
       }, async function(err: Error, result: any) {
         if (err || result.error) {
            const errMsg = (err.message || (err as any).error) || result.error.message
+           setPoolJoinLoading(false);
            console.log('Error when signing message: ', errMsg);
         } else {
           const config = {

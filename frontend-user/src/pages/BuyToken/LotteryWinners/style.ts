@@ -3,7 +3,10 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme: any) => {
   return {
     LotteryWinners: {
-      marginTop: 30
+    },
+    LotteryWinnersDesc: {
+      marginTop: 30,
+      marginBottom: 16
     },
     table: {
     },
