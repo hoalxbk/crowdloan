@@ -55,6 +55,10 @@ class ReservedListService {
     return await builder.fetch();
   }
 
+  async findOneByFilter(filterParams) {
+    return await this.buildSearchQuery(filterParams).first();
+  }
+
   async create(params) {
 
   }
