@@ -9,13 +9,20 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'column',
       alignItems: 'center',
       padding: '0 80px',
-      backgroundColor: '#020618'
+      backgroundColor: '#020618',
+      [theme.breakpoints.down('xs')]: {
+        padding: '0px'
+      }
     },
     mainContent: {
       display: 'grid',
       gridTemplateColumns: '1fr',
       gap: '20px',
-      padding: '60px 20px'
+      padding: '60px 20px',
+      [theme.breakpoints.down('xs')]: {
+        gap: '0',
+        padding: '60px 0',
+      }
     },
     infoRedKite: {
       display: 'flex',
@@ -34,7 +41,8 @@ const useStyles = makeStyles((theme) => {
         margin:  '15px auto'
       },
       '& p': {
-        textAlign: 'center'
+        textAlign: 'center',
+        margin: '0 20px'
       }
     },
     logo: {
@@ -122,7 +130,7 @@ const useStyles = makeStyles((theme) => {
       fontSize: '12px',
       lineHeight: '50px',
       color: '#666666',
-    },
+    }
   };
 });
 

@@ -8,7 +8,7 @@ const useCommonStyle = makeStyles((theme) => {
   
       /* grid container settings */
       display: 'grid',
-      gridTemplateColumns: '1fr',
+      gridTemplateColumns: '100vw',
       gridTemplateRows: 'auto 1fr auto',
       gridTemplateAreas: 
         `'header'
