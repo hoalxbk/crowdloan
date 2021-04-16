@@ -109,7 +109,7 @@ export const getUserInfo = (address: string) => {
   }
 };
 
-export const deposit = (address: string, amount: string) => {
+export const deposit = (address: string | null | undefined, amount: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
@@ -119,12 +119,12 @@ export const deposit = (address: string, amount: string) => {
 
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
 
-      result = await contract?.methods.deposit(convertToWei(amount)).send({from: address})
+      result = await contract?.methods.deposit(convertToWei(amount)).send({from: address || ''})
 
-      dispatch(getBalance(address));
-      dispatch(getAllowance(address));
-      dispatch(getUserTier(address));
-      dispatch(getUserInfo(address));
+      dispatch(getBalance(address || ''));
+      dispatch(getAllowance(address || ''));
+      dispatch(getUserTier(address || ''));
+      dispatch(getUserInfo(address || ''));
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,

@@ -2,26 +2,37 @@ import {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
-import { getWithdrawPercent, getWithdrawFee } from '../../../store/actions/sota-tiers'
-import ModalDeposit from '../ModalDeposit'
-import ModalWithdraw from '../ModalWithdraw'
-import TransactionSubmitModal from '../../../components/Base/TransactionSubmitModal'
+import useCommonStyle from '../../../styles/CommonStyle';
+import { LinearProgress } from '@material-ui/core';
+import { getWithdrawPercent, getWithdrawFee } from '../../../store/actions/sota-tiers';
+import ModalDeposit from '../ModalDeposit';
+import ModalWithdraw from '../ModalWithdraw';
+import ModalTransaction from '../ModalTransaction';
+import useTokenDetails from '../../../hooks/useTokenDetails';
+
+const TOKEN_ADDRESS = process.env.REACT_APP_SOTA || '';
+const iconClose = '/images/icons/close.svg'
 
 const ManageTier = (props: any) => {
   const styles = useStyles();
+  const commonStyles = useCommonStyle();
   const dispatch = useDispatch()
 
   const [openModalDeposit, setOpenModalDeposit] = useState(false)
+  const [openModalTransactionSubmitting, setOpenModalTransactionSubmitting] = useState(false)
+  const [transactionHashes, setTransactionHashes] = useState([]) as any;
   const [openModalWithdraw, setOpenModalWithdraw] = useState(false)
   const [penaltyPercent, setPenaltyPercent] = useState(0)
-  const [openTransaction, setOpenTransaction] = useState(false)
 
-  const { loading: depositing = {} } = useSelector((state: any) => state.deposit);
-  const { loading: withdrawing = {} } = useSelector((state: any) => state.withdraw);
+
+  const { data: depositTransaction } = useSelector((state: any) => state.deposit);
+  const { data: approveTransaction } = useSelector((state: any) => state.approve);
+  const { data: widthdrawTransaction } = useSelector((state: any) => state.approve);
   const { data: withdrawPercent = {} } = useSelector((state: any) => state.withdrawPercent)
   const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee)
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = {} } = useSelector((state: any) => state.balance);
+  const { tokenDetails, loading } = useTokenDetails(TOKEN_ADDRESS);
 
   const { 
     classNamePrefix = '',
@@ -34,22 +45,35 @@ const ManageTier = (props: any) => {
   }
 
   useEffect(() => {
-      dispatch(getWithdrawPercent());
+    dispatch(getWithdrawPercent());
   }, [])
+
+  useEffect(() => {
+    if(depositTransaction.transactionHash) {
+      setTransactionHashes([...transactionHashes, depositTransaction.transactionHash]);
+      setOpenModalTransactionSubmitting(false);
+    }
+  }, [depositTransaction])
+
+  useEffect(() => {
+    if(approveTransaction.transactionHash) {
+      setTransactionHashes([...transactionHashes, approveTransaction.transactionHash]);
+      setOpenModalTransactionSubmitting(false);
+    }
+  }, [approveTransaction])
+
+  useEffect(() => {
+    if(widthdrawTransaction.transactionHash) {
+      setTransactionHashes([...transactionHashes, widthdrawTransaction.transactionHash]);
+      setOpenModalTransactionSubmitting(false);
+    }
+  }, [widthdrawTransaction])
 
   useEffect(() => {
     if(_.isEmpty(userInfo) || _.isEmpty(withdrawFee)) return
     dispatch(getWithdrawFee(loginInvestor.wallet_address, userInfo.staked));
     setPenaltyPercent(Math.round(parseFloat(withdrawFee) * 100 / parseFloat(userInfo.staked)))
   }, [withdrawFee, userInfo])
-
-  useEffect(() => {
-    if(depositing == false) setOpenTransaction(true)
-  }, [depositing])
-
-  useEffect(() => {
-    if(withdrawing == false) setOpenTransaction(true)
-  }, [withdrawing])
 
   return (
     <div className={`${classNamePrefix}__component`}>
@@ -106,14 +130,27 @@ const ManageTier = (props: any) => {
           </div>
         </div>
       </div>
-      {depositing && 
-      <TransactionSubmitModal 
-        opened={openModalDeposit} 
-        handleClose={() => { setOpenModalDeposit(false); setOpenModalDeposit(false)}} 
-        transactionHash={''}
+      {openModalDeposit && <ModalDeposit
+        setOpenModalDeposit={setOpenModalDeposit}
+        setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
+        token={tokenDetails}
       />}
-      {/* {openModalDeposit && <ModalDeposit setOpenModalDeposit={setOpenModalDeposit} />}
-      {openModalWithdraw && <ModalWithdraw setOpenModalWithdraw={setOpenModalWithdraw} />} */}
+      {openModalWithdraw && <ModalWithdraw
+        setOpenModalWithdraw={setOpenModalWithdraw}
+        token={tokenDetails}
+      />}
+      {openModalTransactionSubmitting && <div className={commonStyles.loadingTransaction}>
+        <div className="content">
+          <img src={iconClose} onClick={e => setOpenModalTransactionSubmitting(false)}/>
+          <span className={commonStyles.nnb1824d}>Transaction Submitting</span>
+          <LinearProgress color="primary" />
+        </div>
+      </div>}
+
+      {transactionHashes.length == 0 && <ModalTransaction
+        transactionHashes={transactionHashes}
+        setTransactionHashes={setTransactionHashes}
+      />}
     </div>
   );
 };
