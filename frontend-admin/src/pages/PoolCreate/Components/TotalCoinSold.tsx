@@ -3,15 +3,16 @@ import useStyles from "../style";
 import FormControl from '@material-ui/core/FormControl';
 // @ts-ignore
 import CurrencyInput from 'react-currency-input-field';
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function TotalCoinSold(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    register, setValue, errors,
+    poolDetail
   } = props;
   const [totalSoldCoin, setTotalSoldCoin] = useState('');
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.total_sold_coin) {
@@ -23,6 +24,7 @@ function TotalCoinSold(props: any) {
     setTotalSoldCoin(value);
     setValue('totalSoldCoin', value, { shouldValidate: true })
   };
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -37,6 +39,7 @@ function TotalCoinSold(props: any) {
           decimalsLimit={2}
           onValueChange={handleChange}
           className={`${classes.formInputBox}`}
+          disabled={isDeployed}
         />
         <input
           type='hidden'

@@ -1,20 +1,23 @@
 import React, {useEffect} from 'react';
 import useStyles from "../style";
 import {isValidAddress} from "../../../services/web3";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function AddressReceiveMoney(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit,
+    register, setValue, errors,
     poolDetail,
-    renderError
   } = props;
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.address_receiver) {
       setValue('addressReceiver', poolDetail.address_receiver);
     }
   }, [poolDetail]);
+
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -31,6 +34,7 @@ function AddressReceiveMoney(props: any) {
           })}
           maxLength={255}
           className={classes.formControlInput}
+          disabled={isDeployed}
         />
         <p className={classes.formErrorMessage}>
           {

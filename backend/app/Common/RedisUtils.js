@@ -53,11 +53,12 @@ const deleteRedisPoolDetail = (poolId) => {
  * POOL LIST
  */
 const getRedisKeyPoolList = ({
-  page = 1,
-  limit = 10,
-  title = 'title', start_time = 'start_time', finish_time = 'finish_time', registed_by = 'registed_by'
+  page = 1, limit = 10, title = 'title',
+  start_time = 'start_time', finish_time = 'finish_time',
+  registed_by = 'registed_by', is_display,
 }) => {
-  return `public_pool_list_${page}_${limit}_${title}_${start_time}_${finish_time}_${registed_by}`;
+  if (is_display === undefined) is_display = 'both';
+  return `public_pool_list_${page}_${limit}_${title}_${start_time}_${finish_time}_${registed_by}_${is_display}`;
 };
 
 const getRedisPoolList = async (params) => {
@@ -95,6 +96,49 @@ const deleteRedisPoolList = (params) => {
   return false;
 };
 
+
+/**
+ * TIER LIST
+ */
+const getRedisKeyTierList = (poolId) => {
+  return `tiers_list_${poolId}`;
+};
+
+const getRedisTierList = async (poolId) => {
+  return await Redis.get(getRedisKeyTierList(poolId));
+};
+
+const checkExistRedisTierList = async (poolId) => {
+  let redisKey = getRedisKeyTierList(poolId);
+  logRedisUtil(`checkExistRedisTierList - redisKey: ${redisKey}`);
+
+  const isExistRedisData = await Redis.exists(redisKey);
+  if (isExistRedisData) {
+    logRedisUtil(`checkExistRedisTierList - Exist Redis cache with key: ${redisKey}`);
+    return true;
+  }
+  logRedisUtil(`checkExistRedisTierList - Not exist Redis cache with key: ${redisKey}`);
+  return false;
+};
+
+const createRedisTierList = async (poolId, data) => {
+  const redisKey = getRedisKeyTierList(poolId);
+  logRedisUtil(`createRedisTierList - Create Cache data with key: ${redisKey}`);
+  return await Redis.set(redisKey, JSON.stringify(data));
+};
+
+const deleteRedisTierList = (poolId) => {
+  let redisKey = getRedisKeyTierList(poolId);
+  if (Redis.exists(redisKey)) {
+    logRedisUtil(`deleteRedisTierList - existed key ${redisKey} on redis`);
+    // remove old key
+    Redis.del(redisKey);
+    return true;
+  }
+  logRedisUtil(`deleteRedisTierList - not exist key ${redisKey}`);
+  return false;
+};
+
 module.exports = {
   // POOL LIST
   checkExistRedisPoolList,
@@ -110,5 +154,11 @@ module.exports = {
   createRedisPoolDetail,
   deleteRedisPoolDetail,
 
+  // TIER LIST
+  checkExistRedisTierList,
+  getRedisKeyTierList,
+  getRedisTierList,
+  createRedisTierList,
+  deleteRedisTierList,
 
 };

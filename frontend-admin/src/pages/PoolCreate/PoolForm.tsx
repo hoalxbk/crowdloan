@@ -2,8 +2,18 @@ import React, {useEffect, useState} from 'react';
 import useStyles from "./style";
 import {useCommonStyle} from "../../styles";
 import {useForm} from "react-hook-form";
+import {useDispatch} from "react-redux";
 
-import {useDispatch, useSelector} from "react-redux";
+import {CircularProgress, Grid} from "@material-ui/core";
+import {getTokenInfo, TokenType} from "../../utils/token";
+import {isFactorySuspended} from "../../utils/campaignFactory";
+import {createPool, updatePool} from "../../request/pool";
+import {alertFailure, alertSuccess} from "../../store/actions/alert";
+import {withRouter} from "react-router-dom";
+import {renderErrorCreatePool} from "../../utils/validate";
+import {deployPool} from "../../store/actions/campaign";
+import {adminRoute} from "../../utils";
+
 import PoolBanner from "./Components/PoolBanner";
 import TokenAddress from "./Components/TokenAddress";
 import TotalCoinSold from "./Components/TotalCoinSold";
@@ -18,26 +28,25 @@ import AcceptCurrency from "./Components/AcceptCurrency";
 import PoolDescription from "./Components/PoolDescription";
 import AddressReceiveMoney from "./Components/AddressReceiveMoney";
 import ExchangeRate from "./Components/ExchangeRate";
-import {CircularProgress, Grid} from "@material-ui/core";
-import {TokenType} from "../../utils/token";
-import {isFactorySuspended} from "../../utils/campaignFactory";
-import {createPool, updatePool} from "../../request/pool";
-import {alertFailure, alertSuccess} from "../../store/actions/alert";
-import {adminRoute} from "../../utils";
-import {withRouter} from "react-router-dom";
+import DisplaySwitch from "./Components/DisplaySwitch";
+import PoolHash from "./Components/PoolHash";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
-import LeftCampaignDetailPage from "../CampaignDetailPage/LeftCampaignDetailPage";
-import {renderErrorCreatePool} from "../../utils/validate";
+import {ACCEPT_CURRENCY} from "../../constants";
+import PoolWebsite from "./Components/PoolWebsite";
 
 function PoolForm(props: any) {
   const classes = useStyles();
   const commonStyle = useCommonStyle();
   const dispatch = useDispatch();
+  const history = props.history;
 
   const { isEdit, poolDetail } = props;
   const [isSuspend, setIsSuspend] = useState(true);
-  const { loading } = useSelector(( state: any ) => state.campaignCreate);
+  // const { loading } = useSelector(( state: any ) => state.campaignCreate);
+  const [loading, setLoading] = useState(false);
+  const [loadingDeploy, setLoadingDeploy] = useState(false);
+  const [deployed, setDeployed] = useState(false);
   const [token, setToken] = useState<TokenType | null>(null);
 
   useEffect(() => {
@@ -51,27 +60,38 @@ function PoolForm(props: any) {
   const { register, setValue, getValues, clearErrors, errors, handleSubmit, control, watch } = useForm({
     mode: "onChange",
     defaultValues: poolDetail,
+    reValidateMode: 'onChange',
   });
 
-  const handleFormSubmit = async (data: any) => {
-    const { title, start_time, finish_time, release_time, token: tokenAddress, addressReceiver, tokenByETH, affiliate } = data;
-
-    const history = props.history;
-
+  const createUpdatePool = async (data: any) => {
     let tierConfiguration = data.tierConfiguration || '[]';
     tierConfiguration = JSON.parse(tierConfiguration);
+    tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
+      return {
+        ...currency,
+        currency: data.acceptCurrency,
+      };
+    });
+
+    const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
     const submitData = {
       register_by: '',
+      is_display: data.is_display,
 
       // Pool general
       title: data.title,
+      website: data.website,
       banner: data.banner,
       description: data.description,
       address_receiver: data.addressReceiver,
 
       // Token
       token: data.token,
-      token_by_eth: data.tokenByETH,
+      // TODO: Check to switch
+      // token_by_eth: isAcceptEth ? data.tokenRate : 0,
+      // token_conversion_rate: !isAcceptEth ? data.tokenRate : 0,
+      token_by_eth: data.tokenRate,
+      token_conversion_rate: data.tokenRate,
       token_images: data.tokenImages,
       total_sold_coin: data.totalSoldCoin,
 
@@ -91,43 +111,134 @@ function PoolForm(props: any) {
       // Tier
       min_tier: data.minTier,
       tier_configuration: tierConfiguration,
-
     };
 
-    let response;
+    let response = {};
     if (isEdit) {
       response = await updatePool(submitData, poolDetail.id);
     } else {
       response = await createPool(submitData);
     }
 
-    if (response?.status === 200) {
-      dispatch(alertSuccess('Successful!'));
-      history.push(adminRoute('/campaigns'));
-    } else {
-      dispatch(alertFailure('Fail!'));
+    return response;
+  };
+
+  const handleFormSubmit = async (data: any) => {
+    setLoading(true);
+    try {
+      const response: any = await createUpdatePool(data);
+      if (response?.status === 200) {
+        dispatch(alertSuccess('Update Pool Successful!'));
+        history.push(adminRoute('/campaigns'));
+      } else {
+        dispatch(alertFailure('Fail!'));
+      }
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      console.log('ERROR: ', e);
     }
-
-    // dispatch(createCampaign({
-    //   title,
-    //   startTime: start_time,
-    //   finishTime: finish_time,
-    //   releaseTime: release_time,
-    //   token: tokenAddress,
-    //   tokenInfo: token,
-    //   addressReceiver,
-    //   tokenByETH,
-    //   affiliate: 'no',
-    // }, history));
-
   };
 
   const handleCampaignCreate = () => {
     handleSubmit(handleFormSubmit)();
   };
 
-  const renderError = renderErrorCreatePool;
+  const handleDeloySubmit = async (data: any) => {
+    if (poolDetail.is_deploy || deployed) {
+      alert('Pool is deployed !!!');
+      return false;
+    }
+    // eslint-disable-next-line no-restricted-globals
+    if (!confirm('Do you want save and deploy this Pool')) {
+      return false;
+    }
 
+    setLoadingDeploy(true);
+    try {
+      // Save data before deploy
+      const response = await createUpdatePool(data);
+
+      const erc20Token = await getTokenInfo(data.token);
+      let tokenInfo = {};
+      if (erc20Token) {
+        const { name, symbol, decimals, address } = erc20Token;
+        tokenInfo = {
+          name,
+          symbol,
+          decimals,
+          address
+        }
+      }
+
+      const history = props.history;
+      let tierConfiguration = data.tierConfiguration || '[]';
+      tierConfiguration = JSON.parse(tierConfiguration);
+      tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
+        return {
+          ...currency,
+          currency: data.acceptCurrency,
+        };
+      });
+
+      const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
+      const submitData = {
+        id: poolDetail.id,
+        register_by: '',
+
+        // Pool general
+        title: data.title,
+        website: data.website,
+        banner: data.banner,
+        description: data.description,
+        address_receiver: data.addressReceiver,
+
+        // Token
+        token: data.token,
+        // TODO: Check to switch
+        // token_by_eth: isAcceptEth ? data.tokenRate : 0,
+        // token_conversion_rate: !isAcceptEth ? data.tokenRate : 0,
+        token_by_eth: data.tokenRate,
+        token_conversion_rate: data.tokenRate,
+        token_images: data.tokenImages,
+        total_sold_coin: data.totalSoldCoin,
+
+        // Time
+        start_time: data.start_time && data.start_time.unix(),
+        finish_time: data.finish_time && data.finish_time.unix(),
+        release_time: data.release_time && data.release_time.unix(),
+        start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
+        end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
+
+        // Types
+        accept_currency: data.acceptCurrency,
+        network_available: data.networkAvailable,
+        buy_type: data.buyType,
+        pool_type: data.poolType,
+
+        // Tier
+        min_tier: data.minTier,
+        tier_configuration: tierConfiguration,
+
+        tokenInfo,
+      };
+
+      await dispatch(deployPool(submitData, history));
+      setLoadingDeploy(false);
+      setDeployed(true);
+      window.location.reload();
+    } catch (e) {
+      setLoadingDeploy(false);
+      console.log('ERROR: ', e);
+    }
+  };
+
+  const handlerDeploy = () => {
+    handleSubmit(handleDeloySubmit)();
+  };
+
+  const watchBuyType = watch('buyType');
+  console.log('watchBuyType', watchBuyType);
   console.log('errors==========>', errors);
 
   return (
@@ -139,166 +250,86 @@ function PoolForm(props: any) {
 
           <div className="">
             <div className={classes.exchangeRate}>
+              {!!poolDetail?.is_deploy &&
+                <DisplaySwitch
+                  poolDetail={poolDetail}
+                  register={register}
+                  setValue={setValue}
+                  errors={errors}
+                  control={control}
+                />
+              }
+
               <PoolName
                 poolDetail={poolDetail}
                 register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
               />
+
+              <PoolWebsite
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+              />
+
+              {!!poolDetail?.is_deploy &&
+                <PoolHash poolDetail={poolDetail} />
+              }
               <PoolBanner
                 poolDetail={poolDetail}
                 register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
               />
-            </div>
-
-            <div className={classes.exchangeRate}>
-              <TokenAddress
-                poolDetail={poolDetail}
-                register={register}
-                token={token}
-                setToken={setToken}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                watch={watch}
-              />
-
-              <TotalCoinSold
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-              />
-
-              <TokenLogo
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-              />
-
-              <AddressReceiveMoney
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-              />
-
             </div>
 
             <div className={classes.exchangeRate}>
               <BuyType
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
 
               <PoolType
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
 
               <NetworkAvailable
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
 
               <AcceptCurrency
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
-            </div>
 
-            <div className={classes.exchangeRate}>
-              <DurationTime
-                poolDetail={poolDetail}
-                register={register}
-                token={token}
-                setToken={setToken}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-                getValues={getValues}
-              />
             </div>
-
 
             <div className={classes.exchangeRate}>
               <MinTier
                 poolDetail={poolDetail}
-                register={register}
                 setValue={setValue}
                 errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
                 control={control}
               />
 
               <TierTable
                 poolDetail={poolDetail}
                 register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
+                watch={watch}
               />
             </div>
-
-
-
-
-            <div className={classes.exchangeRate}>
-              <PoolDescription
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                renderError={renderError}
-                control={control}
-              />
-
-            </div>
-
 
             <ExchangeRate
               poolDetail={poolDetail}
@@ -306,32 +337,93 @@ function PoolForm(props: any) {
               token={token}
               setValue={setValue}
               errors={errors}
-              clearErrors={clearErrors}
+              control={control}
+              watch={watch}
             />
 
-
-            <button disabled={loading} className={classes.formButton} onClick={handleCampaignCreate}>
+            <button
+              disabled={!isEdit || !poolDetail?.id || poolDetail?.is_deploy || loading || loadingDeploy || deployed }
+              className={(!isEdit || poolDetail?.is_deploy || deployed) ? classes.formButtonDeployed : classes.formButtonDeploy}
+              onClick={handlerDeploy}
+            >
               {
-                loading ? <CircularProgress size={25} />: "Create New"
+                (loadingDeploy) ? <CircularProgress size={25} /> : "Deploy"
+              }
+            </button>
+
+            <button
+              disabled={loading || loadingDeploy || poolDetail?.is_deploy}
+              className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}
+              onClick={handleCampaignCreate}
+            >
+              {
+                (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
               }
             </button>
 
           </div>
-
-
         </Grid>
 
         <Grid item xs={6}>
-          {isEdit && poolDetail && poolDetail.buy_type === 'whitelist' &&
+          <div className={classes.exchangeRate}>
+            <TokenAddress
+              poolDetail={poolDetail}
+              register={register}
+              token={token}
+              setToken={setToken}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <AddressReceiveMoney
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <TotalCoinSold
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <TokenLogo
+              poolDetail={poolDetail}
+              register={register}
+              errors={errors}
+            />
+
+          </div>
+
+          <div className={classes.exchangeRate}>
+            <DurationTime
+              poolDetail={poolDetail}
+              register={register}
+              token={token}
+              setToken={setToken}
+              setValue={setValue}
+              errors={errors}
+              control={control}
+              getValues={getValues}
+              watch={watch}
+            />
+          </div>
+
+          <div className={classes.exchangeRate}>
+            <PoolDescription
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+          </div>
+
+          {isEdit && poolDetail && watchBuyType === 'whitelist' &&
             <div className={classes.exchangeRate}>
               <UserJoinPool
                 poolDetail={poolDetail}
-                register={register}
-                token={token}
-                setValue={setValue}
-                errors={errors}
-                clearErrors={clearErrors}
-                control={control}
               />
             </div>
           }

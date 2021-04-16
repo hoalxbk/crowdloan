@@ -5,32 +5,27 @@ import { Controller, useForm } from "react-hook-form";
 import { TextField, Select, RadioGroup, Radio, MenuItem } from "@material-ui/core";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import {imageRoute} from "../../../utils";
+import {renderErrorCreatePool} from "../../../utils/validate";
 
 function MinTier(props: any) {
   const classes = useStyles();
   const {
-    register, setValue, clearErrors, errors, handleSubmit, control,
-    poolDetail,
-    renderError
+    setValue, errors, control,
+    poolDetail
   } = props;
+  const renderError = renderErrorCreatePool;
 
   useEffect(() => {
     if (poolDetail && poolDetail.min_tier) {
       setValue('minTier', poolDetail.min_tier);
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
       <FormControl component="fieldset">
         <label className={classes.formControlLabel}>Min Tier</label>
-        {/*<input*/}
-        {/*  type='number'*/}
-        {/*  name="minTier"*/}
-        {/*  ref={register({ required: true })}*/}
-        {/*  className={`${classes.formInputBox}`}*/}
-        {/*/>*/}
-
         <Controller
           rules={{ required: true }}
           control={control}
@@ -42,6 +37,7 @@ function MinTier(props: any) {
               id="minTier"
               name="minTier"
               // onChange={handleChange}
+              disabled={isDeployed}
             >
               {
                 [1,2,3,4,5].map((value, index) => {

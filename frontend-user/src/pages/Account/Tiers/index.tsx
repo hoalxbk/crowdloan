@@ -21,6 +21,7 @@ const Tiers = (props: any) => {
   } = props;
 
   const [currentProcess, setCurrentProcess] = useState(0)
+  
 
   const calculateProcess = () => {
     if(_.isEmpty(tiers) || _.isEmpty(userTier) || _.isEmpty(userInfo)) return
@@ -55,6 +56,7 @@ const Tiers = (props: any) => {
             <img src={TIERS[0].icon} />
           </div>
           <span className="tier-name">{TIERS[0].name}</span>
+          { !showMoreInfomation && <span>0</span> }
           { showMoreInfomation && <span>0</span> }
         </li>
         {tiers.length > 0 && tiers.map((tier: any, idx: any) => {
@@ -65,6 +67,7 @@ const Tiers = (props: any) => {
               </div>
               <span className="tier-name">{TIERS[idx + 1].name}</span>
               { showMoreInfomation && <span>{tiersBuyLimit[idx]} {tokenSymbol}</span> }
+              { !showMoreInfomation && <span>{tier} {tokenSymbol}</span> }
             </li>
           }
         })}

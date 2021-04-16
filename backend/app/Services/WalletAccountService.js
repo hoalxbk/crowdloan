@@ -10,10 +10,15 @@ const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 
 class WalletAccountService {
   buildQueryBuilder(params) {
-    // create query
-    let builder = WhitelistModel.query();
+    let builder = WalletAccountModel.query();
     if (params.id) {
       builder = builder.where('id', params.id);
+    }
+    if (params.wallet_address) {
+      builder = builder.where('wallet_address', params.wallet_address);
+    }
+    if (params.campaign_id) {
+      builder = builder.where('campaign_id', params.campaign_id);
     }
     return builder;
   }
@@ -36,6 +41,11 @@ class WalletAccountService {
     console.log('Created wallet: ', wallet);
 
     return wallet;
+  }
+
+  async findByCampaignId(params) {
+    let builder = this.buildQueryBuilder(params);
+    return await builder.first();
   }
 }
 
