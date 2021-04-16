@@ -13,6 +13,17 @@ export const connectWalletSuccess = (entity: string, addresses: string[], balanc
   }
 };
 
+export const updateWalletBalance = (entity: string, addresses: string[], balances: {[key: string]: string}) => {
+  return {
+    type: walletActions.WALLET_UPDATE_BALANCE,
+    payload: {
+      entity,
+      addresses,
+      balances
+    }
+  }
+};
+
 export const disconnectWallet = () => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({
