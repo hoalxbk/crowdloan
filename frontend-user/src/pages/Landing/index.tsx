@@ -6,12 +6,14 @@ import useStyles from './style';
 import commonStyles from '../../styles/CommonStyle'
 import { LandingCard } from './Card';
 import LandingLayout from '../../components/Layout/LandingLayout'
+import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 
 const cardImage = '/images/icons/card-image.jpg';
 const arrowRightIcon = '/images/icons/arrow-right.svg';
 const background = '/images/icons/background2.svg';
 const landingBackground2 = '/images/landing/landing-bg2.svg'
 const landingBackground = '/images/landing/landing-bg.svg'
+const landingBackgroundXs = '/images/landing/landing-bg-xs.svg'
 
 const Dashboard = (props: any) => {
   const styles = useStyles();
@@ -51,11 +53,16 @@ const Dashboard = (props: any) => {
   return (
     <LandingLayout>
       <div className={styles.container}>
-        <img src={landingBackground} alt=""/>
+        {isWidthUp('sm', props.width) && <img src={landingBackground} alt=""/>}
+        {isWidthDown('xs', props.width) && <img src={landingBackgroundXs} alt=""/>}
         <div className="main-content">
-          <div className="title">
+          {isWidthUp('sm', props.width) && <div className="title">
             <h1 className={common.nnb1214d}>Flying with Red Kite</h1>
-          </div>
+          </div>}
+          {isWidthDown('xs', props.width) && <div className="title">
+            <h1 className={common.nnb1214d}>Flying with</h1>
+            <h1 className={common.nnb1214d}>Red Kite</h1>
+          </div>}
           <div className="description">
             <p className={common.nnb1824d}>Launch hand-picked projects in a fair way</p>
           </div>
@@ -77,7 +84,7 @@ const Dashboard = (props: any) => {
         </div>
       </div>
       <div className={styles.container}>
-        <img src={landingBackground2} alt=""/>
+        <img src={landingBackground2} alt="" className="bg2"/>
         <div className="main-content">
           <div className="title">
             <h1 className={common.nnb1214d}>Get Alerts For New Pools</h1>
@@ -97,4 +104,4 @@ const Dashboard = (props: any) => {
   );
 };
 
-export default withRouter(Dashboard);
+export default withWidth()(withRouter(Dashboard));
