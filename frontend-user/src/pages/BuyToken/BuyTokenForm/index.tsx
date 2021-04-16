@@ -6,6 +6,7 @@ import TransactionSubmitModal from '../../../components/Base/TransactionSubmitMo
 import Button from '../Button';
 import useStyles from './style';
 
+import { numberWithCommas } from '../../../utils/formatNumber';
 import { isNotValidASCIINumber, isPreventASCIICharacters, trimLeadingZerosWithDecimal } from '../../../utils/formatNumber';
 import { BSC_CHAIN_ID } from '../../../constants/network';
 import { TokenType } from '../../../hooks/useTokenDetails';
@@ -56,10 +57,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     maximumBuy, 
     purchasableCurrency,
     poolId,
-    availablePurchase
+    availablePurchase,
   } = props;
 
-  const { connectedAccount } = useAuth();
+  const { connectedAccount, wrongChain } = useAuth();
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
   const connector = useTypedSelector(state => state.connector).data;
 
@@ -107,9 +108,16 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 
   const enableApprove = 
     tokenAllowance <= 0  
-    && (purchasableCurrency && purchasableCurrency !== 'ETH');
+    && (purchasableCurrency && purchasableCurrency !== 'ETH') && availablePurchase && !wrongChain;
 
-  const purchasable = (tokenAllowance > 0 && !estimateErr && availablePurchase && estimateTokens > 0 && estimateTokens <= maximumBuy);
+  const purchasable = 
+    (tokenAllowance > 0 
+     && !estimateErr 
+     && availablePurchase 
+     && estimateTokens > 0 
+     && estimateTokens <= maximumBuy
+     && !wrongChain
+    );
 
   const fetchUserBalance = useCallback(async () => {
       if (appChainID && connectedAccount && connector) {
@@ -143,7 +151,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     const val = e.target.value;
     setInput(val);
 
-    if (!isNaN(val) && val && rate && purchasableCurrency) {
+    if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
       const tokens = new BigNumber(val).multipliedBy(rate).toNumber()
       setEstimateTokens(tokens);
       const estimatedFee = await estimateFee(val, purchasableCurrency) 
@@ -177,6 +185,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     try {
       setApproveModal(true);
       await approveToken();
+      setInput("");
 
       if (tokenDetails && poolAddress && connectedAccount && tokenToApprove) {
         setTokenAllowance(await retrieveTokenAllowance(tokenToApprove, connectedAccount, poolAddress) as number);
@@ -191,14 +200,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     <div className={styles.buyTokenForm}>
       {
         appChainID !== BSC_CHAIN_ID && (
-          <p className={styles.buyTokenFormTitle}>You have {userPurchased} {tokenDetails?.symbol} DEPOSITED from {maximumBuy} available for your TIER</p>
+          <p className={styles.buyTokenFormTitle}>You have {userPurchased} {tokenDetails?.symbol} BOUGHT from {maximumBuy} available for your TIER</p>
         ) 
       }
       <div className={styles.buyTokenInputForm}>
         <p className={styles.buyTokenInputLabel}>
           <span>Input</span>
           <span>Your wallet balance:&nbsp;
-            {tokenBalance} &nbsp;
+            {numberWithCommas(tokenBalance.toString())} &nbsp;
             {purchasableCurrency}
           </span>
         </p>
@@ -222,6 +231,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
             max={tokenBalance}
             min={0}
             maxLength={255}
+            disabled={wrongChain}
           />
           <span>{purchasableCurrency}</span>
         </div>
@@ -244,7 +254,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
         loading={tokenApproveLoading} 
         />
         <Button 
-          text={'Deposit'} 
+          text={'Buy'} 
           backgroundColor={'#D01F36'} 
           disabled={!purchasable}
           onClick={handleTokenDeposit}

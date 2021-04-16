@@ -11,7 +11,7 @@ import { useTypedSelector } from '../../../../hooks/useTypedSelector';
 import { ConnectorNames } from '../../../../constants/connectors';
 import { APP_NETWORKS_ID, ETH_CHAIN_ID, BSC_CHAIN_ID } from '../../../../constants/network';
 import { requestSupportNetwork } from '../../../../utils/setupNetwork';
-import { connectWalletSuccess, disconnectWallet } from '../../../../store/actions/wallet';
+import { connectWalletSuccess, updateWalletBalance, disconnectWallet } from '../../../../store/actions/wallet';
 import { TwoFactors } from '../../../../store/reducers/wallet';
 import getAccountBalance from '../../../../utils/getAccountBalance';
 import { userActions } from '../../../../store/constants/user';
@@ -64,8 +64,9 @@ const useProviderConnect = (
 
    useEffect(() => {
     const handleWeb3ReactUpdate = (updated: any) => {
+      console.log(updated);
       if (updated.account) {
-        if (updated.account !== previousAccount && localStorage.getItem("investor_access_token")) {
+        if (localStorage.getItem("investor_access_token")) {
           localStorage.removeItem("investor_access_token");
           dispatch({ type: userActions.INVESTOR_LOGOUT });
           handleLogout && handleLogout();
@@ -105,6 +106,7 @@ const useProviderConnect = (
 
     return () => {
       if (currentConnector) {
+        console.log('Remove Connector');
         currentConnector.removeListener('Web3ReactUpdate', handleWeb3ReactUpdate);
         currentConnector.removeListener('Web3ReactError', handleWeb3ReactError);
       }
@@ -213,20 +215,27 @@ const useProviderConnect = (
       }
 
       setAppNetworkLoading(false);
-  }, [connector, connectWalletSuccess, appChainID, walletName]);
+  }, [connector, appChainID, walletName]);
 
   useEffect(() => {
     const getAccountDetails = async () => {
       const investorToken = localStorage.getItem("investor_access_token") || "";
 
-      if (appChainID && !twoFactor && connectedAccount && walletNameSuccess) {
+      if (
+        ((appChainID === walletChainID && twoFactor === TwoFactors.Layer2) || !twoFactor) 
+          && connectedAccount 
+          && walletNameSuccess 
+          && !walletConnect
+      ) {
         const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, walletNameSuccess);
 
         setOpenConnectDialog && setOpenConnectDialog(false);
         setConnectWalletLoading(false);
 
+        const dispatchAction = twoFactor === TwoFactors.Layer2 ? updateWalletBalance: connectWalletSuccess;
+
         dispatch(
-          connectWalletSuccess(
+          dispatchAction(
             walletNameSuccess, 
             [connectedAccount], 
             { 

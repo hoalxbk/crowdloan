@@ -5,6 +5,7 @@ import useStyles from './style';
 import { getWithdrawPercent, getWithdrawFee } from '../../../store/actions/sota-tiers'
 import ModalDeposit from '../ModalDeposit'
 import ModalWithdraw from '../ModalWithdraw'
+import TransactionSubmitModal from '../../../components/Base/TransactionSubmitModal'
 
 const ManageTier = (props: any) => {
   const styles = useStyles();
@@ -13,6 +14,7 @@ const ManageTier = (props: any) => {
   const [openModalDeposit, setOpenModalDeposit] = useState(false)
   const [openModalWithdraw, setOpenModalWithdraw] = useState(false)
   const [penaltyPercent, setPenaltyPercent] = useState(0)
+  const [openTransaction, setOpenTransaction] = useState(false)
 
   const { loading: depositing = {} } = useSelector((state: any) => state.deposit);
   const { loading: withdrawing = {} } = useSelector((state: any) => state.withdraw);
@@ -42,11 +44,11 @@ const ManageTier = (props: any) => {
   }, [withdrawFee, userInfo])
 
   useEffect(() => {
-    if(depositing == false) setOpenModalDeposit(false)
+    if(depositing == false) setOpenTransaction(true)
   }, [depositing])
 
   useEffect(() => {
-    if(withdrawing == false) setOpenModalWithdraw(false)
+    if(withdrawing == false) setOpenTransaction(true)
   }, [withdrawing])
 
   return (
@@ -104,8 +106,14 @@ const ManageTier = (props: any) => {
           </div>
         </div>
       </div>
-      {openModalDeposit && <ModalDeposit setOpenModalDeposit={setOpenModalDeposit} />}
-      {openModalWithdraw && <ModalWithdraw setOpenModalWithdraw={setOpenModalWithdraw} />}
+      {depositing && 
+      <TransactionSubmitModal 
+        opened={openModalDeposit} 
+        handleClose={() => { setOpenModalDeposit(false); setOpenModalDeposit(false)}} 
+        transactionHash={''}
+      />}
+      {/* {openModalDeposit && <ModalDeposit setOpenModalDeposit={setOpenModalDeposit} />}
+      {openModalWithdraw && <ModalWithdraw setOpenModalWithdraw={setOpenModalWithdraw} />} */}
     </div>
   );
 };

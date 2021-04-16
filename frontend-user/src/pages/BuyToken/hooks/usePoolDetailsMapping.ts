@@ -1,4 +1,5 @@
 import { TokenType } from '../../../hooks/useTokenDetails';
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 export enum PoolDetailKey {
   website = 'website',
@@ -41,7 +42,7 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         label: 'Website'
       },
       [PoolDetailKey.swapAmount]: { 
-        display: `${amount} Tokens`,
+        display: `${numberWithCommas(amount.toString())} Tokens`,
         val: amount,
         label: 'Swap Amount'
       },

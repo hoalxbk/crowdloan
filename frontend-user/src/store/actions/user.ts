@@ -191,10 +191,9 @@ export const register = ({ email, address: connectedAccount, library }: UserRegi
             params: paramsWithConnector.params
         }, async function(err: Error, result: any) {
           if (err || result.error) {
-             const errMsg = err.message || result.error.message
+             const errMsg = (err.message || (err as any).error) || result.error.message
               dispatchErrorWithMsg(dispatch, userActions.INVESTOR_REGISTER_FAILURE, errMsg);
-
-            return;
+              return;
           }
 
           const response = await baseRequest.post(`/user/register/`, {
@@ -212,6 +211,8 @@ export const register = ({ email, address: connectedAccount, library }: UserRegi
 
               localStorage.setItem('investor_access_token', token.token);
 
+              dispatch({ type: walletActions.WALLET_CONNECT_LAYER2_SUCCESS });
+
               dispatch({
                 type: alertActions.SUCCESS_MESSAGE,
                 payload: 'Register Account Successful'
@@ -226,6 +227,7 @@ export const register = ({ email, address: connectedAccount, library }: UserRegi
                 type: userActions.INVESTOR_LOGIN_SUCCESS,
                 payload: user
               });
+
             } else {
               dispatch({
                 type: alertActions.SUCCESS_MESSAGE,
