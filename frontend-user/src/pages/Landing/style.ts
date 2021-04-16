@@ -10,8 +10,8 @@ const useStyles = makeStyles((theme: any) => {
       },
       '& .main-content h1': {
         textAlign: 'center',
-        fontSize: '68px',
-        lineHeight: '80px',
+        fontSize: '46px',
+        lineHeight: '52px',
         color: '#FFFFFF',
         marginBottom: '12px'
       },
@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme: any) => {
 
         '& img': {
           width: '20px',
-          height: '10px'
+          height: '10px',
+          marginTop: '2px',
         }
       },
       '& .buttons button': {

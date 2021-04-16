@@ -20,27 +20,32 @@ const Dashboard = (props: any) => {
   const cardsInfo = [{
     image: '/images/landing/image1.svg',
     title: 'Multi-chain, flexible options',
-    description: 'Red Kite supports both Ethereum and BSC pools, and are testing Polkadot pools on PolkaFoundry testnet, with flexbile types of pools and whitelist conditions.'
+    description: 'Red Kite supports both Ethereum and BSC pools, and are testing Polkadot pools on PolkaFoundry testnet, with flexbile types of pools and whitelist conditions.',
+    backgroundColor: 'linear-gradient(180deg, rgba(147, 19, 51, 0.69) 0%, #060B26 50%)'
   },
   {
     image: '/images/landing/image2.svg',
     title: 'Hand-picked projects',
-    description: 'We hand-pick project cautiously and verify the project team’s legitimacy, innovation of idea, and capacity to execute their vision.'
+    description: 'We hand-pick project cautiously and verify the project team’s legitimacy, innovation of idea, and capacity to execute their vision.',
+    backgroundColor: 'linear-gradient(180deg, #234650 0%, #060B26 50%)'
   },
   {
     image: '/images/landing/image3.svg',
     title: 'Fairness',
-    description: 'We understand that opportunity delivery must be fair instead of rushing. Red Kite’s lane-based swap system ensure everybody have a chance accordingly to their tiers without gas war.'
+    description: 'We understand that opportunity delivery must be fair instead of rushing. Red Kite’s lane-based swap system ensure everybody have a chance accordingly to their tiers without gas war.',
+    backgroundColor: 'linear-gradient(180deg, #50307D 0%, #060B26 50%)'
   },
   {
     image: '/images/landing/image4.svg',
     title: 'Integrated Vesting Schedule',
-    description: 'Red Kite goes with a Distribution Portal for projects to vest their sold tokens. This can even be used for secondary, post-IDO offerings.'
+    description: 'Red Kite goes with a Distribution Portal for projects to vest their sold tokens. This can even be used for secondary, post-IDO offerings.',
+    backgroundColor: 'linear-gradient(180deg, #274F89 0%, #060B26 43.95%)'
   },
   {
     image: '/images/landing/image5.svg',
     title: 'Parachain Crowdloan',
-    description: 'Kusama and Polkadot parachain auctions are around the corner. Red Kite supports crownloan campaigns for projects to collect KSM and DOT tokens effectively for winning the auction.'
+    description: 'Kusama and Polkadot parachain auctions are around the corner. Red Kite supports crownloan campaigns for projects to collect KSM and DOT tokens effectively for winning the auction.',
+    backgroundColor: 'linear-gradient(180deg, #5C274F 0%, #060B26 43.33%)'
   }]
 
   return (
@@ -57,7 +62,7 @@ const Dashboard = (props: any) => {
           <div className="buttons">
             <button className={common.nnb1418d}>View all Pools</button>
             <button className={common.nnb1418d}>
-              Subscribe to upcoming pools&nbsp;
+              Subscribe to upcoming pools&nbsp;&nbsp;
               <img src={arrowRightIcon}/>
             </button>
           </div>
@@ -78,11 +83,11 @@ const Dashboard = (props: any) => {
             <h1 className={common.nnb1214d}>Get Alerts For New Pools</h1>
           </div>
           <div className="description">
-            <p className={common.nnb1824d}>Subscribe to get notified about new pools and other relevant events.</p>
+            <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about new pools and other relevant events.</p>
           </div>
           <div className="buttons">
             <button className={common.nnb1418d}>
-              Subscribe to upcoming pools&nbsp;
+              Subscribe to upcoming pools&nbsp;&nbsp;
               <img src={arrowRightIcon}/>
             </button>
           </div>

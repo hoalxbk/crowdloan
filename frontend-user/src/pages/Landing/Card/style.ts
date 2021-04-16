@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme: any) => {
     cardContainer: {
       height: '100%',
       paddingBottom: '50px',
-      background: 'linear-gradient(180deg, #234650 0%, #060B26 50%)',
       borderRadius: '16px',
     },
   };
