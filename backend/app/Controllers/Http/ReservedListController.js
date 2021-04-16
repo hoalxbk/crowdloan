@@ -66,6 +66,10 @@ class ReservedListController {
       'campaign_id': request.params.campaignId,
       'email': request.params.email,
       'wallet_address': request.params.wallet_address,
+      'start_time': request.params.start_time,
+      'end_time': request.params.end_time,
+      'min_buy': request.params.min_buy,
+      'max_buy': request.params.max_buy
     }
     try {
       const reservedListService = new ReservedListService();

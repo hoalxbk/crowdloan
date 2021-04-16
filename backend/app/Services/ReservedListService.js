@@ -60,7 +60,15 @@ class ReservedListService {
   }
 
   async create(params) {
-
+    const reserved =new ReservedListModel;
+    reserved.campaign_id = params.campaign_id;
+    reserved.wallet_address = params.wallet_address;
+    reserved.email = params.email;
+    reserved.start_time = params.start_time;
+    reserved.end_time = params.end_time;
+    reserved.max_buy = params.max_buy;
+    reserved.min_buy = params.min_buy;
+    reserved.save();
   }
 }
 
