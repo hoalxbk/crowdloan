@@ -45,9 +45,8 @@ class WinnerListUserService {
     return await builder.fetch();
   }
 
-  async findByWalletAddress(params) {
-    let builder = this.buildQueryBuilder(params);
-    return await builder.first();
+  async findOneByFilters(params) {
+    return await this.buildQueryBuilder(params).first();
   }
 
   async search(params) {
