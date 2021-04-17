@@ -7,7 +7,7 @@ import { getBalance } from './balance';
 
 import {approve, getAllowance} from './sota-token';
 
-export const getTiers = () => {
+export const getTiers = (forceUsingEther?: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.TIERS_LOADING });
     try {
@@ -19,7 +19,8 @@ export const getTiers = () => {
         process.env.REACT_APP_SOTATIER as string,
         connector, 
         appChainID,
-        SmartContractMethod.Read
+        SmartContractMethod.Read,
+        forceUsingEther === 'eth'
       );
 
       let result = await contract?.methods.getTiers().call();
@@ -44,7 +45,7 @@ export const getTiers = () => {
   }
 };
 
-export const getUserTier = (address: string) => {
+export const getUserTier = (address: string, forceUsingEther?: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.USER_TIER_LOADING });
     try {
@@ -52,7 +53,14 @@ export const getUserTier = (address: string) => {
       const connector = getState().connector.data;
       let result = {};
 
-      const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
+      const contract = getContractInstance(
+        sotaTiersABI.abi, 
+        process.env.REACT_APP_SOTATIER as string, 
+        connector, 
+        appChainID,
+        SmartContractMethod.Read,
+        forceUsingEther === 'eth'
+      );
 
       result = await contract?.methods.getUserTier(address).call();
 
@@ -71,7 +79,7 @@ export const getUserTier = (address: string) => {
   }
 };
 
-export const getUserInfo = (address: string) => {
+export const getUserInfo = (address: string, forceUsingEther?: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
@@ -81,7 +89,9 @@ export const getUserInfo = (address: string) => {
         sotaTiersABI.abi,
         process.env.REACT_APP_SOTATIER as string,
         connector,
-        appChainID
+        appChainID,
+        SmartContractMethod.Read,
+        forceUsingEther === 'eth'
       );
 
       let result = await contract?.methods.userInfo(address).call();

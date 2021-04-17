@@ -7,7 +7,11 @@ import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import{ getContractInstance, SmartContractMethod } from '../../../services/web3';
 import Pool_ABI from '../../../abi/Pool.json';
 
-const useUserPurchased = (tokenDetails: TokenType | undefined, poolAddress: string | undefined) => {
+const useUserPurchased = (
+  tokenDetails: TokenType | undefined, 
+  poolAddress: string | undefined,
+  ableToFetchFromBlockchain: boolean | undefined
+) => {
   const [userPurchasedLoading, setUserPurchasedLoading] = useState<boolean>(false);
 
   const { appChainID } = useTypedSelector(state  => state.appNetwork).data;
@@ -15,7 +19,7 @@ const useUserPurchased = (tokenDetails: TokenType | undefined, poolAddress: stri
 
   const retrieveUserPurchased = useCallback(async (userAddress: string, poolAddress: string) => {
     try {
-      if (userAddress && poolAddress && tokenDetails 
+      if (userAddress && poolAddress && tokenDetails && ableToFetchFromBlockchain 
           && ethers.utils.isAddress(userAddress) 
           && ethers.utils.isAddress(poolAddress) 
          ) {
@@ -34,7 +38,7 @@ const useUserPurchased = (tokenDetails: TokenType | undefined, poolAddress: stri
     } catch (err) {
       console.log(err.message);
     }
-  }, [appChainID, connector, poolAddress]);
+  }, [appChainID, connector, poolAddress, ableToFetchFromBlockchain]);
 
   return {
     userPurchasedLoading,

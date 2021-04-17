@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import useFetch from '../../../hooks/useFetch';
 import { numberWithCommas } from '../../../utils/formatNumber';
 
@@ -9,10 +10,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import useStyles from './style';
-
-function createData(id: string, address: string) {
-  return { id, address };
-}
 
 const headers = ['Ticket Number', 'Address'];
 
@@ -29,13 +26,27 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   const styles = useStyles();
   const { poolId } = props;
   const { data: totalParticipants } = useFetch<number>(`/user/counting/${poolId}`);
-  const { data: winners } = useFetch<Array<RowData>>(`/pool/${poolId}/winners`);
+  const { data: winners } = useFetch<Array<RowData>>(`/user/winner-list/${poolId}`);
+  const [input, setInput] = useState("");
+  const [searchedWinners, setSearchedWinners] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPage, setTotalPage] = useState(1);
+
+  useEffect(() => {
+
+  }, [input]);
 
   return (
     <div className={styles.LotteryWinners}>
       <p className={styles.LotteryWinnersDesc}>There are {totalParticipants ? numberWithCommas(totalParticipants.toString()): 0} people joining this pool right now</p>
       <div className={styles.tableSearchWrapper}>
-        <input type="text" name="lottery-search" className={styles.tableSearch} placeholder="Search for Email Address/Wallet Address"/>
+        <input 
+          type="text" 
+          name="lottery-search" 
+          className={styles.tableSearch} 
+          placeholder="Search for Email Address/Wallet Address"
+          onChange={(e: any) => setInput(e.target.value)}
+        />
         <img src="/images/search.svg" className={styles.tableSearchIcon} alt="search-icon" />
       </div>
       <TableContainer component={Paper} className={styles.tableContainer}>

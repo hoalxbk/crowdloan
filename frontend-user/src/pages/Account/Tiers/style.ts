@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme: any) => {
         marginLeft: '10px',
       }
     },
+    tierLinkToAccount: {
+      color: '#6399FF',
+      textDecoration: 'underline'
+    },
     tierList: {
       display: 'flex',
       flexDirection: 'row',

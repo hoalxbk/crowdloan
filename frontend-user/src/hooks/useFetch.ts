@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import useAuth from './useAuth';
 import axios from '../services/axios';
 
 type useFetchReturnType<T> ={
@@ -9,7 +8,6 @@ type useFetchReturnType<T> ={
 }
 
 const useFetch = <T>(uri: string, suspendRender: any = false): useFetchReturnType<T> => {
-  const { wrongChain } = useAuth();
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<T | undefined>(undefined);
   const [error, setError] = useState<string>('');
@@ -34,8 +32,8 @@ const useFetch = <T>(uri: string, suspendRender: any = false): useFetchReturnTyp
       }
     }
 
-    uri && (!suspendRender || !wrongChain) && fetchDataFromUri();
-  }, [uri, suspendRender, wrongChain]);
+    uri && (!suspendRender) && fetchDataFromUri();
+  }, [uri, suspendRender]);
 
   return {
     loading, 
