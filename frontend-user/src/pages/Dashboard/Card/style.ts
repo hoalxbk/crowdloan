@@ -4,8 +4,7 @@ const useStyles = makeStyles((theme: any) => {
   return {
     card: {
       borderRadius: '20px',
-//       background: 'linear-gradient(360deg, rgba(373949) 0%, #252732 23.38%)',
-// opacity: 0.4;
+      background: 'linear-gradient(360deg, rgba(55, 57, 73, 0.4) 0%, rgba(37, 39, 50, 0.4) 23.38%)',
       overflow: 'hidden'
     },
     cardHeader: {
@@ -14,6 +13,7 @@ const useStyles = makeStyles((theme: any) => {
       '& > img': {
         width: '100%',
         maxHeight: '160px',
+        height: '160px',
         objectFit: 'cover',
       },
 
@@ -50,8 +50,12 @@ const useStyles = makeStyles((theme: any) => {
         display: 'flex',
         flexDirection: 'row',
 
-        '& .img': {
-          minWidth: '36px'
+        '& img': {
+          minWidth: '36px',
+          width: '36px',
+          height: '36px',
+          marginRight: '10px',
+          borderRadius: '50%',
         },
 
         '& > div': {
@@ -79,6 +83,7 @@ const useStyles = makeStyles((theme: any) => {
           fontSize: '12px',
           lineHeight: '18px',
           color: '#999999',
+          textTransform: 'uppercase'
         }
       },
 
