@@ -3,7 +3,10 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme: any) => {
   return {
     poolDetailContainer: {
-      padding: '40px 120px 80px 120px'
+      padding: '40px 120px 80px 120px',
+      [theme.breakpoints.down('xs')]: {
+        padding: '40px 20px 80px 20px',
+      }
     },
     poolDetailHeader: {
       paddingBottom: 20,
@@ -41,7 +44,17 @@ const useStyles = makeStyles((theme: any) => {
       fontWeight: 700,
       fontSize: 28,
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+
+        '& > div': {
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        },
+      }
     },
     poolHeaderType: {
       display: 'flex',
@@ -89,7 +102,14 @@ const useStyles = makeStyles((theme: any) => {
     poolDetailIntro: {
       color: 'white',
       minWidth: 400,
-      marginRight: 120
+      width: '30%',
+      marginRight: 120,
+      [theme.breakpoints.down('xs')]: {
+        marginRight: 0,
+        minWidth: 'unset',
+        width: '100%',
+        marginBottom: '30px'
+      }
     },
     poolDetailBasic: {
       display: 'grid',
@@ -119,16 +139,17 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolDetailTierWrapper: {
       display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginTop: 30
+      justifyContent: 'space-between',
+      marginTop: 30,
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+      }
     },
     poolDetailTier: {
       padding: '28px 40px',
       background: 'rgba(255, 255, 255, 0.06)',
       borderRadius: 8,
-      maxWidth: 600,
-      width: 600
+      width: '60%',
     },
     poolDetailMaxBuy: {
       marginTop: 15,
@@ -230,6 +251,54 @@ const useStyles = makeStyles((theme: any) => {
       marginTop: 20,
       color: "#999999",
       fontSize: 16
+    },
+    [theme.breakpoints.down('xs')]: {
+      poolDetailTier: {
+        padding: '20px',
+        width: '100%',
+      },
+      poolHeaderAddress: {
+        fontSize: 14,
+        display: 'flex',
+        alignItems: 'center',
+        marginTop: 8
+      },
+      poolDetailProgressPercent: {
+
+      }
+    },
+    [theme.breakpoints.down('xs')]: {
+      poolDetailLink: {
+        marginRight: '20px',
+      },
+      poolDetailTier: {
+        width: '100%',
+        padding: '10px'
+      },
+      btnGroup: {
+        display: 'flex',
+        justifyContent: 'center',
+        '& button': {
+          padding: '15px 25px',
+          width: '140px'
+        }
+      },
+      poolHeaderType: {
+        marginLeft: '0'
+      },
+      poolHeaderWrapper: {
+        alignItems: 'flex-start'
+      },
+      poolStatus: {
+        paddingRight: '10px',
+        paddingLeft: '10px',
+        marginLeft: '5px'
+      },
+      poolsDetailBasicText: {
+        justifyContent: 'flex-end',
+        marginLeft: 0,
+        textAlign: 'right'
+      },
     }
   };
 });

@@ -60,18 +60,18 @@ const Countdown: React.FC<CountDownProps> = ({ startDate }: CountDownProps) => {
   return (
     <div id="countdown">
       <ul style={{ display: 'flex', alignItems: 'flex-start' }}>
-        <li className={styles.countdownPart}>
+        <li className={styles.countdownPart + ' number'}>
           <span id="days">{day}</span><span className={styles.countdownInfo}>Days</span>
         </li>
         <li className={styles.countdownPart}>:</li>
-        <li className={styles.countdownPart}>
+        <li className={styles.countdownPart + ' number'}>
           <span id="hours">{hour}</span><span className={styles.countdownInfo}>Hours</span>
         </li>
         <li className={styles.countdownPart}>:</li>
-        <li className={styles.countdownPart}>
+        <li className={styles.countdownPart + ' number'}>
           <span id="minutes">{minute}</span><span className={styles.countdownInfo}>Minutes</span></li>
         <li className={styles.countdownPart}>:</li>
-        <li className={styles.countdownPart}>
+        <li className={styles.countdownPart + ' number'}>
           <span id="seconds">{second}</span><span className={styles.countdownInfo}>Seconds</span></li>
       </ul>
     </div>

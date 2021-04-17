@@ -30,6 +30,7 @@ import { getUserTierAlias } from '../../utils/getUserTierAlias';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
 import { getTiers, getUserInfo, getUserTier } from '../../store/actions/sota-tiers';
+import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 
 import useStyles from './style';
 
@@ -46,7 +47,7 @@ const headers = [HeaderType.Main, HeaderType.About, HeaderType.Participants];
 
 const ETHERSCAN_BASE_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL; 
 
-const BuyToken: React.FC<any> = () => {
+const BuyToken: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
@@ -161,6 +162,10 @@ const BuyToken: React.FC<any> = () => {
 
   const { date: countDownDate, display } = displayCountDownTime(poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate)
 
+  const shortAdress = (address: string, digits: number = 4) => {
+    return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
+  }
+
   useEffect(() => {
     if (endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
   }, [endBuyTimeInDate]);
@@ -198,19 +203,35 @@ const BuyToken: React.FC<any> = () => {
               <img src={poolDetails?.banner || poolImage} alt="pool-image" className={styles.poolImage}/>
             </div>
             <div className={styles.poolHeaderInfo}>
-            <h2 className={styles.poolHeaderTitle}>
-              {poolDetails?.title}
-              <p className={styles.poolHeaderType}>
-                <img src={poolDetails?.networkIcon} />
-                <span style={{ fontWeight: 600, marginLeft: 10 }}>{networkAvailable}</span>
-              </p>
-              <p className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
-                {poolStatus}
-              </p>
-              <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
-            </h2>
+              {isWidthUp('sm', props.width) && <h2 className={styles.poolHeaderTitle}>
+                {poolDetails?.title}
+                <p className={styles.poolHeaderType}>
+                  <img src={poolDetails?.networkIcon} />
+                  <span style={{ fontWeight: 600, marginLeft: 10 }}>{networkAvailable}</span>
+                </p>
+                <p className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
+                  {poolStatus}
+                </p>
+                <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
+              </h2>}
+              {isWidthDown('xs', props.width) && <h2 className={styles.poolHeaderTitle}>
+                <div>
+                  {poolDetails?.title}
+                  <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
+                </div>
+                <div>
+                  <p className={styles.poolHeaderType}>
+                    <img src={poolDetails?.networkIcon} />
+                    <span style={{ fontWeight: 600, marginLeft: 10 }}>{networkAvailable}</span>
+                  </p>
+                  <p className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
+                    {poolStatus}
+                  </p>
+                </div>
+              </h2>}
               <p className={styles.poolHeaderAddress}>
-                {poolDetails?.poolAddress}
+                {isWidthUp('sm', props.width) && poolDetails?.poolAddress}
+                {isWidthDown('xs', props.width) && shortAdress(poolDetails?.poolAddress || '', 8)}
                 <CopyToClipboard text={poolDetails?.poolAddress}
                   onCopy={() => { 
                     setCopiedAddress(true);
@@ -320,14 +341,22 @@ const BuyToken: React.FC<any> = () => {
               <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
               <div className={styles.poolDetailProgress}>
                 <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
-                <div className={styles.poolDetailProgressStat}>
+                {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
                   <span className={styles.poolDetailProgressPercent}>
                     {soldProgress}%
                   </span>
                   <span>
                     {numberWithCommas(tokenSold)} / {numberWithCommas(totalSell)}
                   </span>
-                </div>
+                </div>}
+                {isWidthDown('xs', props.width) && <div className={styles.poolDetailProgressStat}>
+                  <span className={styles.poolDetailProgressPercent}>
+                    {parseFloat(soldProgress).toFixed(2)}%
+                  </span>
+                  <span>
+                    {numberWithCommas(parseFloat(tokenSold).toFixed(2))} / {numberWithCommas(parseFloat(totalSell).toFixed(2))}
+                  </span>
+                </div>}
                 <div className={styles.progress}>
                   <div className={styles.achieved} style={{ width: `${soldProgress}%` }}></div>
                 </div>
@@ -393,4 +422,4 @@ const BuyToken: React.FC<any> = () => {
   )
 }
 
-export default BuyToken;
+export default withWidth()(BuyToken);
