@@ -431,7 +431,7 @@ class CampaignController {
       // if not existed on redis then get from db
       const wlService = new WhitelistService();
       let noOfParticipants = await wlService.countByCampaignId(campaignId);
-      if (noOfParticipants != null) {
+      if (!noOfParticipants) {
         noOfParticipants = 0;
       }
       // save to redis
