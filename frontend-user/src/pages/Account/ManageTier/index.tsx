@@ -32,7 +32,7 @@ const ManageTier = (props: any) => {
   const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee)
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = {} } = useSelector((state: any) => state.balance);
-  const { tokenDetails } = useTokenDetails(TOKEN_ADDRESS);
+  const { tokenDetails } = useTokenDetails(TOKEN_ADDRESS, 'eth');
   const { connectedAccount } = useAuth();
 
   const { 
