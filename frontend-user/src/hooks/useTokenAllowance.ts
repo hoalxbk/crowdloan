@@ -34,7 +34,7 @@ const useTokenAllowance = () => {
 
       return 0;
     }
-  }, []);
+  }, [appChainID, connector]);
 
   return {
     retrieveTokenAllowance,

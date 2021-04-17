@@ -67,6 +67,16 @@ const useStyles = makeStyles((theme: any) => {
       fontSize: 28,
       marginTop: 12,
       display: 'inline-block'
+    },
+    [theme.breakpoints.down('xs')]: {
+      btnGroup: {
+        display: 'flex',
+        justifyContent: 'center',
+        '& button': {
+          padding: '15px 25px',
+          width: '130px'
+        }
+      }
     }
   };
 });

@@ -41,7 +41,8 @@ const useStyles = makeStyles((theme: any) => {
         justifyContent: 'center',
         borderRadius: '60px',
         backgroundColor: '#D01F36',
-        margin: '40px auto 0'
+        margin: '40px auto 0',
+        cursor: 'pointer'
       },
 
       [theme.breakpoints.down('md')]: {
@@ -131,7 +132,8 @@ const useStyles = makeStyles((theme: any) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: '60px',
-        margin: '40px auto 0'
+        margin: '40px auto 0',
+        cursor: 'pointer'
       },
 
       [theme.breakpoints.down('sm')]: {

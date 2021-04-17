@@ -21,6 +21,7 @@ import usePoolDepositAction from '../hooks/usePoolDepositAction';
 import useUserPurchaseSignature from '../hooks/useUserPurchaseSignature';
 import useTokenApprove from '../../../hooks/useTokenApprove';
 import useAuth from '../../../hooks/useAuth';
+import { withWidth, isWidthDown, isWidthUp } from '@material-ui/core';
 
 type BuyTokenFormProps = {
   tokenDetails: TokenType | undefined,
@@ -38,7 +39,7 @@ type BuyTokenFormProps = {
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
 const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
 
-const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => {
+const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -146,7 +147,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
       if (tokenDetails && poolAddress && connectedAccount && tokenToApprove) {
         setTokenAllowance(await retrieveTokenAllowance(tokenToApprove, connectedAccount, poolAddress) as number);
         setUserPurchased(await retrieveUserPurchased(connectedAccount, poolAddress) as number);
-        /* setTokenBalance(await retrieveTokenBalance(tokenToApprove, connectedAccount) as number); */
+        setTokenBalance(await retrieveTokenBalance(tokenToApprove, connectedAccount) as number);
       }
     }
 
@@ -212,10 +213,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
       <div className={styles.buyTokenInputForm}>
         <p className={styles.buyTokenInputLabel}>
           <span>Input</span>
-          <span>Your wallet balance:&nbsp;
-            {numberWithCommas(tokenBalance.toString())} &nbsp;
+          {isWidthUp('sm', props.width) && <span>Your wallet balance:&nbsp;
+            {numberWithCommas(parseFloat(tokenBalance.toString()).toFixed(6))} &nbsp;
             {purchasableCurrency}
-          </span>
+          </span>}
+          {isWidthDown('xs', props.width) && <span>Balance:&nbsp;
+            {numberWithCommas(parseFloat(tokenBalance.toString()).toFixed(6))} &nbsp;
+            {purchasableCurrency}
+          </span>}
         </p>
         <div className={styles.buyTokenInputWrapper}>
           <input 
@@ -281,4 +286,4 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   )
 }
 
-export default BuyTokenForm;
+export default withWidth()(BuyTokenForm);

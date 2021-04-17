@@ -95,6 +95,21 @@ const useStyles = makeStyles((theme: any) => {
         color: '#FFFFFF',
         opacity: 0.4,
       }
+    },
+    [theme.breakpoints.down('xs')]: {
+      tierInfo: {
+        '& span:last-child': {
+          height: '36px',
+          textAlign: 'center'
+        },
+        '&:nth-child(2) span:last-child': {
+          width: '100%',
+          display: 'block',
+        },
+        '&:last-child span:last-child': {
+          textAlign: 'right'
+        }
+      }
     }
   };
 });

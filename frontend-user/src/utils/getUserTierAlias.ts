@@ -14,12 +14,27 @@ export type userTiers = Extract<UserTier,
   UserTier.Start
 >
 
-export const userTierByNumber: { [key: number]: userTiers } = {
-  0: UserTier.Start,
-  1: UserTier.Bronze,
-  2: UserTier.Silver,
-  3: UserTier.Gold,
-  4: UserTier.Diamond
+export const userTierByNumber: { [key: number]: { text: userTiers, icon?: string } } = {
+  0: { 
+    text: UserTier.Start,
+    icon: '/images/icons/rocket.svg'
+  },
+  1: { 
+    text: UserTier.Bronze,
+    icon: '/images/icons/bronze-medal.svg'
+  },
+  2: { 
+    text: UserTier.Silver,
+    icon: '/images/icons/silver-medal.svg',
+  },
+  3: { 
+    text: UserTier.Gold,
+    icon: '/images/icons/golden-medal.svg'
+  },
+  4: { 
+    text: UserTier.Diamond,
+    icon: '/images/icons/diamond.svg'
+  }
 }
 
 export const getUserTierAlias = (tier: number) => {

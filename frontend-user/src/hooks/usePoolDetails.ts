@@ -26,6 +26,7 @@ export type PoolDetails = {
   banner: string;
   networkAvailable: string;
   networkIcon: string;
+  minTier: number;
 }
 
 export type PoolDetailsReturnType ={
@@ -69,7 +70,8 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         banner: `${BASE_URL}/image/${data.banner}`,
         releaseTime: data.release_time,
         networkAvailable: data.network_available,
-        networkIcon: data.network_available === 'eth' ? ETH_ICON: BSC_ICON
+        networkIcon: data.network_available === 'eth' ? ETH_ICON: BSC_ICON,
+        minTier: data.min_tier
       }
     }
 

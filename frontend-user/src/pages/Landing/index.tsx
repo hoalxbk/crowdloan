@@ -68,7 +68,7 @@ const Dashboard = (props: any) => {
           </div>
           <div className="buttons">
             <button className={common.nnb1418d}>View all Pools</button>
-            <button className={common.nnb1418d}>
+            <button className={common.nnb1418d + ' btn'}>
               Subscribe to upcoming pools&nbsp;&nbsp;
               <img src={arrowRightIcon}/>
             </button>
@@ -93,7 +93,7 @@ const Dashboard = (props: any) => {
             <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about new pools and other relevant events.</p>
           </div>
           <div className="buttons">
-            <button className={common.nnb1418d}>
+            <button className={common.nnb1418d + ' btn'}>
               Subscribe to upcoming pools&nbsp;&nbsp;
               <img src={arrowRightIcon}/>
             </button>
