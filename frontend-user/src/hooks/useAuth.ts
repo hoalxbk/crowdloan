@@ -36,6 +36,9 @@ const useAuth = (): ReturnType => {
   useEffect(() => {
     if (active) {
       activeWallet ? setIsAuth(true) : getCurrentActiveWallet();
+    } else { 
+      setIsAuth(false);
+      setActiveWallet(undefined);
     }
   }, [active, activeWallet]);
 

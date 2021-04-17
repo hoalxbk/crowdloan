@@ -27,10 +27,11 @@ const useUserPurchased = (
 
            const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read); 
            if (contract) {
-             const userPurchased = await contract.methods.userPurchased(userAddress).call();
-             const userPurchasedReturn = new BigNumber(userPurchased).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed();
+             console.log(contract);
+             // const userPurchased = await contract.methods.userPurchased(userAddress).call();
+             // const userPurchasedReturn = new BigNumber(userPurchased).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed();
 
-             return userPurchasedReturn;
+             // return userPurchasedReturn;
            }
 
            return 0;
