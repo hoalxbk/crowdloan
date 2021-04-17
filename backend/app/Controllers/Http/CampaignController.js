@@ -273,7 +273,7 @@ class CampaignController {
     const params = request.all()
     // get user wallet_address
     const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
-    const email = auth.user.email;
+    const email = auth.user && auth.user.email;
     if (wallet_address == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }
