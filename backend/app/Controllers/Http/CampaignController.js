@@ -449,7 +449,8 @@ class CampaignController {
   async checkJoinedCampaign({request, auth}) {
     const campaignId = request.params.campaignId;
     // get user wallet
-    const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
+    const userWalletAddress = request.input('wallet_address');
+    // const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
     if (userWalletAddress == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }
