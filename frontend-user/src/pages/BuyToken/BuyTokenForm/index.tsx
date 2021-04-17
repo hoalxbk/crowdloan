@@ -12,8 +12,8 @@ import { BSC_CHAIN_ID } from '../../../constants/network';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import getAccountBalance from '../../../utils/getAccountBalance';
 import { connectWalletSuccess } from '../../../store/actions/wallet';
-import { useTypedSelector } from '../../../hooks/useTypedSelector';
 
+import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import useTokenBalance from '../../../hooks/useTokenBalance';
 import useTokenAllowance from '../../../hooks/useTokenAllowance';
 import useUserPurchased from '../hooks/useUserPurchased';
@@ -33,6 +33,7 @@ type BuyTokenFormProps = {
   method: string | undefined;
   availablePurchase: boolean | undefined;
   ableToFetchFromBlockchain: boolean | undefined
+  minTier: number | undefined
 }
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
@@ -59,10 +60,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     purchasableCurrency,
     poolId,
     availablePurchase,
-    ableToFetchFromBlockchain
+    ableToFetchFromBlockchain,
+    minTier
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
+  const userTier = useTypedSelector(state => state.userTier).data;
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
   const connector = useTypedSelector(state => state.connector).data;
 
@@ -114,7 +117,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     && (purchasableCurrency && purchasableCurrency !== 'ETH') 
     && availablePurchase && !wrongChain && ableToFetchFromBlockchain;
 
+  
 
+  const validTier = minTier && userTier >= minTier;
   const purchasable = 
     (tokenAllowance > 0 
      && !estimateErr 
@@ -123,6 +128,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
      && estimateTokens <= maximumBuy
      && !wrongChain
      && signature
+     && validTier    
     );
 
   const fetchUserBalance = useCallback(async () => {

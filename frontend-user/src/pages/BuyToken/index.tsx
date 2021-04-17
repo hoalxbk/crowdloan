@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { HashLoader } from "react-spinners";
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
+import { useWeb3React } from '@web3-react/core';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js'; 
@@ -24,6 +25,7 @@ import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
 import { ETH_CHAIN_ID } from '../../constants/network';
 
+import { login } from '../../store/actions/user';
 import { getUserTierAlias } from '../../utils/getUserTierAlias';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
@@ -53,6 +55,7 @@ const BuyToken: React.FC<any> = () => {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
+  const { library } = useWeb3React();
   const { id } = useParams() as any;
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
@@ -179,7 +182,7 @@ const BuyToken: React.FC<any> = () => {
 
   useEffect(() => {
     const poolNetwork = poolDetails?.networkAvailable;
-    if (isAuth && connectedAccount && !wrongChain && poolDetails && ableToFetchFromBlockchain) { 
+    if (isAuth && connectedAccount && poolDetails && ableToFetchFromBlockchain) { 
       dispatch(getTiers(poolNetwork)) 
       dispatch(getUserInfo(connectedAccount, poolNetwork));
       dispatch(getUserTier(connectedAccount, poolNetwork));
@@ -227,8 +230,8 @@ const BuyToken: React.FC<any> = () => {
           {isWinner && 
             <p className={styles.poolTicketWinner}>
               {
-                [...Array(3)].map(num => (
-                  <img src="/images/fire-cracker.svg" alt="file-cracker" />
+                [...Array(3)].map((num, index) => (
+                  <img src="/images/fire-cracker.svg" alt="file-cracker" key={index} />
                 ))
               }
               <span style={{ marginLeft: 14 }}>
@@ -279,6 +282,7 @@ const BuyToken: React.FC<any> = () => {
                                       setShowRateReverse(!showRateReserve);
                                     }
                                   }} 
+                                  key={key}
                                 />)
                             }
                           </p>
@@ -342,7 +346,13 @@ const BuyToken: React.FC<any> = () => {
                     if (header === HeaderType.Main && new Date() > endBuyTimeInDate) {
                       return null;
                     }
-                    return <li className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`} onClick={() => setActiveNav(header)}>{header}</li>
+                    return <li 
+                      className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`} 
+                      onClick={() => setActiveNav(header)}
+                      key={header}
+                    >
+                      {header}
+                    </li>
                   })
                 }
               </ul>
@@ -361,6 +371,7 @@ const BuyToken: React.FC<any> = () => {
                       method={poolDetails?.method}
                       availablePurchase={availablePurchase}
                       ableToFetchFromBlockchain={ableToFetchFromBlockchain}
+                      minTier={poolDetails?.minTier}
                     /> 
                  )
               }
@@ -375,6 +386,7 @@ const BuyToken: React.FC<any> = () => {
               }
             </div>
           </div>
+          <button onClick={() => dispatch(login(connectedAccount as string, library))}>Login</button>
         </main>
      </div>
     </DefaultLayout>

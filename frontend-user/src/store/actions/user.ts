@@ -92,7 +92,7 @@ export const clearUserProfileUpdate = () => {
   }
 }
 
-export const login = (connectedAccount: string, library: Web3Provider, history: any) => {
+export const login = (connectedAccount: string, library: Web3Provider) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     try {
       dispatch({
@@ -115,6 +115,7 @@ export const login = (connectedAccount: string, library: Web3Provider, history: 
                console.log('Error when signing message: ', errMsg);
                 dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
             } else {
+              console.log(result.result);
               const response = await baseRequest.post(`/user/login`, {
                 signature: result.result,
                 wallet_address: connectedAccount,
@@ -134,7 +135,6 @@ export const login = (connectedAccount: string, library: Web3Provider, history: 
                   payload: user
                 });
 
-                history.push('/dashboard');
               }
 
               if (resObj.status && resObj.status !== 200) {

@@ -223,10 +223,12 @@ const useProviderConnect = (
   }, [walletNameSuccess, connectedAccount, appChainID, walletChainID]);
 
   const handleConnectorDisconnect = useCallback(() => {
-    deactivate();
     dispatch(disconnectWallet());
     dispatch(settingCurrentConnector(undefined));
     dispatch(settingAppNetwork(NetworkUpdateType.Wallet, undefined));
+
+    deactivate();
+    setAccount(undefined);
     setWalletName([]);
     setWalletNameSuccess(undefined);
     setCurrentConnector(undefined);
