@@ -272,11 +272,13 @@ class CampaignController {
     // get all params
     const params = request.all()
     // get user wallet_address
-    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
+    // const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
     const email = auth.user && auth.user.email;
-    if (wallet_address == null) {
-      return HelperUtils.responseBadRequest("User don't have a valid wallet");
-    }
+    // if (wallet_address == null) {
+    //   return HelperUtils.responseBadRequest("User don't have a valid wallet");
+    // }
+    const wallet_address = request.header('wallet_address');
+    console.log('Join Pool with params: ', params, email, wallet_address);
     try {
       // check user tier
       const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
