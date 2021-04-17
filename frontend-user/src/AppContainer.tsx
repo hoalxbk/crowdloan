@@ -161,12 +161,6 @@ const AppContainer = (props: any) => {
     }
   }, [loginUser, loginInvestor]);
 
-  if (!isMetaMaskInstalled()) {
-    return (
-      <InstallMetameask />
-    );
-  }
-
   return (
     <>
       {props.children}

@@ -1,10 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import _ from 'lodash';
+import _, { gt } from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
-import { LinearProgress } from '@material-ui/core';
 import { withdraw, getWithdrawFee } from '../../../store/actions/sota-tiers';
+import useAuth from '../../../hooks/useAuth';
+import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
+
+const closeIcon = '/images/icons/close.svg';
+const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,}$/;
 
 const ModalWithdraw = (props: any) => {
   const styles = useStyles();
@@ -12,22 +16,42 @@ const ModalWithdraw = (props: any) => {
   const commonStyles = useCommonStyle();
 
   const [withdrawAmount, setWithdrawAmount] = useState('0');
+  const [disableWithdraw, setDisableWithdraw] = useState(true);
 
-  const { loading: withdrawing = false } = useSelector((state: any) => state.withdraw);
-  const { data: loginInvestor } = useSelector((state: any) => state.investor);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
-  const { data: withdrawFee = 0 } = useSelector((state: any) => state.withdrawFee);
+  const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee);
+  const { connectedAccount } = useAuth();
 
   const {
-    setOpenModalWithdraw
+    setOpenModalWithdraw,
+    setOpenModalTransactionSubmitting,
+    token
   } = props;
 
   const onWithDraw = () => {
-    dispatch(withdraw(loginInvestor.wallet_address, withdrawAmount));
+    dispatch(withdraw(connectedAccount, withdrawAmount));
+    setOpenModalTransactionSubmitting(true);
+    setOpenModalWithdraw(false);
+  }
+
+  const handleClose = () => {
+    setOpenModalWithdraw(false);
   }
 
   useEffect(() => {
-    dispatch(getWithdrawFee(loginInvestor.wallet_address, withdrawAmount))
+    if(!connectedAccount) return
+    if(!isNaN(parseFloat(userInfo.staked))
+      && !isNaN(parseFloat(withdrawAmount)))
+    {
+      const staked = convertToBN(convertToWei(userInfo.staked))
+      const amount = convertToBN(convertToWei(withdrawAmount))
+      const zero = convertToBN('0')
+      setDisableWithdraw(staked.lt(amount) || amount.lte(zero));
+    }
+  }, [connectedAccount, userInfo, withdrawAmount]);
+
+  useEffect(() => {
+    dispatch(getWithdrawFee(connectedAccount, withdrawAmount))
   }, [withdrawAmount])
 
   return (
@@ -35,22 +59,23 @@ const ModalWithdraw = (props: any) => {
       <div className={commonStyles.modal + ' ' + styles.modalWithdraw}>
         <div className="modal-content">
           <div className="modal-content__head">
-            <h2 className="title">you have no Sota</h2>
+            <img src={closeIcon} className="btn-close" onClick={handleClose}/>
+            <h2 className="title">You have {userInfo.staked} {token?.symbol} lock-in</h2>
           </div>
           <div className="modal-content__body">
             <div className="subtitle">
               <span>Input</span>
-              <span>Your wallet staked: { _.isEmpty(userInfo) ? 0 : parseFloat(userInfo.staked).toFixed() } PKF</span>
+              <span>Your wallet staked: { _.isEmpty(userInfo) ? 0 : parseFloat(userInfo.staked).toFixed() } {token?.symbol}</span>
             </div>
             <div className="subtitle">
                 <span>Penalty</span>
-                <span>{ withdrawFee.toString() } PKF</span>
+                <span>{ withdrawFee.fee?.toString() || 0 } {token?.symbol}</span>
               </div>
             <div className="input-group">
               <input
                 type="text"
                 value={withdrawAmount}
-                onChange={e => setWithdrawAmount(e.target.value)}
+                onChange={e => (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) && setWithdrawAmount(e.target.value)}
                 placeholder="0.00"
               />
               <div>
@@ -60,7 +85,7 @@ const ModalWithdraw = (props: any) => {
           </div>
           <div className="modal-content__foot">
             {userInfo.staked > 0 && <button
-              className="btn-staking"
+              className={"btn-staking " + (disableWithdraw ? 'disabled' : '')}
               onClick={onWithDraw}
             >Unlock</button>}
             <button
@@ -70,15 +95,6 @@ const ModalWithdraw = (props: any) => {
           </div>
         </div>
       </div>
-
-      {
-        withdrawing && <div className={commonStyles.loadingTransaction}>
-          <div className="content">
-            Transaction loading
-            <LinearProgress color="secondary" />
-          </div>
-        </div>
-      }
     </>
   );
 };

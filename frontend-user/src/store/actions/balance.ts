@@ -21,19 +21,19 @@ export const getBalance = (loginUser: string) => {
       const { appChainID } = getState().appNetwork.data;
       const { connector } = getState().connector.data;
 
-      const sotaContract = getContractInstance(
+      const tokenContract = getContractInstance(
         erc20ABI,
         process.env.REACT_APP_SOTA as string,
         connector,
         appChainID
       );
-      if (sotaContract) {
-        const sotaDecimals = await sotaContract.methods.decimals().call();
-        const sotaBalance = await sotaContract.methods.balanceOf(loginUser).call();
-        const sotaBalanceConvert = (new BigNumber(sotaBalance)).div(new BigNumber(`1e+${sotaDecimals}`)).toString();
+      if (tokenContract) {
+        const tokenDecimals = await tokenContract.methods.decimals().call();
+        const tokenBalance = await tokenContract.methods.balanceOf(loginUser).call();
+        const tokenBalanceConvert = (new BigNumber(tokenBalance)).div(new BigNumber(`1e+${tokenDecimals}`)).toString();
         result = {
           ...result,
-          sota: sotaBalanceConvert,
+          token: tokenBalanceConvert,
         };
       }
 

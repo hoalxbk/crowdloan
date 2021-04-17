@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+var commaNumber = require('comma-number');
 
 const ARROW_LEFT_KEY_CODE = 37;
 const ARROW_RIGHT_KEY_CODE = 39;
@@ -134,5 +135,5 @@ export const getDigitsAfterDecimals = (input: string): number => {
 }
 
 export function numberWithCommas(x: string) {
-    return x.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return commaNumber(x);
 }

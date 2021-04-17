@@ -195,6 +195,7 @@ const useCommonStyle = makeStyles((theme) => {
       top: '0',
       left: '0',
       zIndex: 10,
+      backgroundColor: 'rgba(3, 9, 46, 0.6)',
 
       '& .content': {
         position: 'relative',
@@ -202,9 +203,25 @@ const useCommonStyle = makeStyles((theme) => {
         top: '45%',
         left: '50%',
         width: '40%',
-        padding: '40px 20px',
-        background: '#fff'
+        padding: '60px',
+        background: '#020616',
+        borderRadius: '4px',
       },
+
+      '& .content img': {
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        cursor: 'pointer',
+      },
+
+      '& .content > span': {
+        textAlign: 'center',
+        marginBottom: '40px',
+        display: 'block',
+        width: '100%',
+        color: '#ffffff'
+      }
     },
     modalTransactionInfomation: {
       '& .modal-content__body span': {
@@ -232,9 +249,11 @@ const useCommonStyle = makeStyles((theme) => {
       top: '0',
       left: '0',
       zIndex: 5,
+      backgroundColor: 'rgba(3, 9, 46, 0.6)',
 
       '& .modal-content': {
         width: '480px',
+        maxWidth: '100%',
         maxHeight: '80%',
         overflow: 'auto',
         padding: '60px',
@@ -252,9 +271,17 @@ const useCommonStyle = makeStyles((theme) => {
           fontFamily: 'DM Sans',
           fontStyle: 'normal',
           fontWeight: 'bold',
-          fontSize: '14px',
-          lineHeight: '18px',
-        }
+          fontSize: '18px',
+          lineHeight: '24px',
+          textAlign: 'center'
+        },
+
+        '& .btn-close': {
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          cursor: 'pointer',
+        },
       },
 
       '& .modal-content__body': {
@@ -290,6 +317,7 @@ const useCommonStyle = makeStyles((theme) => {
           color: '#FDFDFD',
           border: 'none',
           outline: 'none',
+          paddingRight: '60px',
         },
 
         '& .input-group .btn-max': {
@@ -351,6 +379,10 @@ const useCommonStyle = makeStyles((theme) => {
             cursor: 'pointer'
           },
 
+          '&.disabled': {
+            backgroundColor: '#727272!important'
+          },
+
           '&:first-child': {
             backgroundColor: '#29C08A'
           },
@@ -358,6 +390,12 @@ const useCommonStyle = makeStyles((theme) => {
           '&.btn-cancel': {
             backgroundColor: '#727272'
           }
+        }
+      },
+      [theme.breakpoints.down('xs')]: {
+        width: '100vw',
+        '& .modal-content': {
+          width: 'calc(100% - 40px)'
         }
       }
     },

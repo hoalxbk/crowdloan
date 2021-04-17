@@ -11,7 +11,6 @@ import { AppContext } from '../../AppContext';
 import { userActions } from '../../store/constants/user';
 import { alertFailure } from '../../store/actions/alert';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
-import { TwoFactors } from '../../store/reducers/wallet';
 import { disconnectWalletLayer2 } from '../../store/actions/wallet';
 import { login, register as userRegister } from '../../store/actions/user';
 import useStyles from './style';
@@ -71,8 +70,14 @@ const InvestorLogin: React.FC<any> = (props: any) => {
     connectedAccount ? checkUserExists(): history.push('/');
 
     return () => { 
-      !localStorage.getItem("investor_access_token") && dispatch(disconnectWalletLayer2()); 
-      !connectedAccount && handleConnectorDisconnect && handleConnectorDisconnect();
+      const accessToken = localStorage.getItem("investor_access_token");
+      if (!accessToken) {
+        dispatch(disconnectWalletLayer2()); 
+      }
+
+      if (!connectedAccount) {
+        handleConnectorDisconnect && handleConnectorDisconnect();
+      }
     }
   }, [connectedAccount, handleConnectorDisconnect]);
 

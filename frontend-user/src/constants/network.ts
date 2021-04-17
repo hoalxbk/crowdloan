@@ -1,5 +1,6 @@
 export const ETH_CHAIN_ID = process.env.REACT_APP_ETH_CHAIN_ID;
 export const BSC_CHAIN_ID = process.env.REACT_APP_BSC_CHAIN_ID;
+export const BSC_RPC_URL = process.env.REACT_APP_BSC_RPC_URL || "";
 
 export enum ChainId  {
   MAINNET = 1,

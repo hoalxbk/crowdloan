@@ -39,7 +39,15 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolHeaderTitle: {
       fontWeight: 700,
-      fontSize: 28
+      fontSize: 28,
+      display: 'flex',
+      alignItems: 'center'
+    },
+    poolHeaderType: {
+      display: 'flex',
+      alignItems: 'center',
+      marginLeft: 30,
+      fontSize: 17,
     },
     poolHeaderAddress: {
       fontSize: 14,

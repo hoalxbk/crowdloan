@@ -16,6 +16,7 @@ type PoolDepositActionParams = {
 const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
   const dispatch = useDispatch();
   const { account, library } = useWeb3React();
+  const [joinPoolSuccess, setJoinPoolSuccess] = useState<boolean>(false);
   const [poolJoinLoading, setPoolJoinLoading] = useState<boolean>(false);
   const connector = useTypedSelector(state => state.connector).data;
 
@@ -52,6 +53,7 @@ const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
           if (response.data) {
             if (response.data.status === 200) {
               dispatch(alertSuccess("Join Pool Successful!"));
+              setJoinPoolSuccess(true);
             }
 
             if (response.data.status !== 200) {
@@ -67,7 +69,8 @@ const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
 
   return {
     joinPool,
-    poolJoinLoading
+    poolJoinLoading,
+    joinPoolSuccess
   }
 }
 
