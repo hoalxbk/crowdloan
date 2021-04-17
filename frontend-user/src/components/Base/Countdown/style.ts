@@ -20,6 +20,15 @@ const useStyles = makeStyles((theme) => {
       color: '#999999',
       fontSize: '14px !important',
       fontWeight: '400 !important' as any
+    },
+    [theme.breakpoints.down('xs')]: {
+      countdownPart: {
+        padding: '10px 5px',
+
+        '&.number': {
+          padding: '5px 5px 15px 5px'
+        }
+      }
     }
   };
 });

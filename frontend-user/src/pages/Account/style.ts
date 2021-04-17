@@ -12,10 +12,11 @@ const useStyles = makeStyles((theme: any) => {
     },
     accountContainer: {
       display: 'grid',
-      gridTemplateColumns: '1fr 440px',
+      gridTemplateColumns: '5fr 4fr',
       gap: '100px',
       padding: '80px',
-      marginTop: '80px',
+      marginTop: '40px',
+      marginBottom: '120px',
       [theme.breakpoints.down('md')]: {
         gridTemplateColumns: '1fr',
       },

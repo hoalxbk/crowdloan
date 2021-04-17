@@ -20,7 +20,7 @@ const Card = (props: any): JSX.Element => {
   const {
     pool
   } = props
-  const { data: participants } = useFetch<any>(`/user/counting/${pool.campaign_id}`);
+  const { data: participants } = useFetch<any>(`/user/counting/${pool.id}`);
   
   useEffect(() => {
     setProgress(pool.tokenSold * 100 / pool.total_sold_coin || 0);
