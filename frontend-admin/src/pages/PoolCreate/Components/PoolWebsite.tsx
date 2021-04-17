@@ -10,7 +10,7 @@ function PoolWebsite(props: any) {
   } = props;
   const renderError = renderErrorCreatePool;
 
-  const [website, setWebsite] = useState('');
+  const [website, setWebsite] = useState(poolDetail?.website);
   useEffect(() => {
     if (poolDetail && poolDetail.website) {
       setWebsite(poolDetail.website);
