@@ -49,11 +49,34 @@ const useStyles = makeStyles((theme: any) => {
       marginLeft: 30,
       fontSize: 17,
     },
+    poolStatus: {
+      fontSize: 14,
+      marginLeft: 10,
+      padding: '6px 30px',
+      backgroundColor: 'blue',
+      borderRadius: 40,
+
+      '&--In-progress': {
+        backgroundColor: '#ebc321'
+      },
+      '&--Joining': {
+        background: "#6398FF"
+      },
+      '&--Upcoming': {
+        background: "#6398FF"
+      },
+      '&--Closed': {
+        backgroundColor: "#D01F36"
+      },
+      '&--Filled': {
+        backgroundColor: "#12A064"
+      }
+    },
     poolHeaderAddress: {
       fontSize: 14,
       display: 'flex',
       alignItems: 'center',
-      marginTop: 5
+      marginTop: 8
     },
     poolHeaderCopy: {
       marginLeft: 10,
@@ -96,7 +119,7 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolDetailTierWrapper: {
       display: 'flex',
-      justifyContent: 'space-between',
+      justifyContent: 'center',
       alignItems: 'center',
       marginTop: 30
     },

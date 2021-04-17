@@ -33,7 +33,7 @@ const useTokenBalance = (token: TokenType | undefined, userAddress: string | nul
     }
 
     return 0;
-  }, [userAddress, token]);
+  }, [userAddress, token, appChainID, connector]);
 
   return {
     retrieveTokenBalance,
