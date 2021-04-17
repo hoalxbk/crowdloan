@@ -67,7 +67,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         endBuyTime: data.finish_time,
         purchasableCurrency: data.accept_currency,
         id: data.id,
-        banner: `${BASE_URL}/image/${data.banner}`,
+        banner: `${BASE_URL}/image/${data.token_images}`,
         releaseTime: data.release_time,
         networkAvailable: data.network_available,
         networkIcon: data.network_available === 'eth' ? ETH_ICON: BSC_ICON,

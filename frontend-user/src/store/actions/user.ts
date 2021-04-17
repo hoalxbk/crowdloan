@@ -8,6 +8,7 @@ import { getWeb3Instance } from '../../services/web3';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { Web3Provider } from '@ethersproject/providers'
+import { ethers } from 'ethers';
 
 type UserRegisterProps = {
   email: string;
@@ -152,17 +153,18 @@ export const login = (connectedAccount: string, library: Web3Provider) => {
             }
           });
         } else {
-          
-          const res = await (provider as any).request({
-              method: paramsWithConnector.method,
-              params: paramsWithConnector.params
-          },  async function(err: Error, result: any) {
-            if (err || result.error) {
-               const errMsg = (err.message || (err as any).error) || result.error.message
-               console.log('Error when signing message: ', errMsg);
-              dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
-            }
-          }); 
+          var rawMessage = MESSAGE_INVESTOR_SIGNATURE;
+          var rawMessageLength = new Blob([rawMessage]).size
+          var message = ethers.utils.toUtf8Bytes("\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage)
+          var messageHash = ethers.utils.keccak256(message)
+          var params = [
+            connectedAccount,
+            messageHash
+          ]
+          await (library as any).provider.enable();
+
+          var signature = await (library as any).provider.wc.signMessage(params);
+          console.log(signature);
         }
       }
     } catch (error) {
@@ -366,6 +368,84 @@ export const updateUserProfile = (updatedUser: UserProfileProps) => {
       }
     } catch (error) {
       dispatchErrorWithMsg(dispatch, userActions.USER_PROFILE_UPDATE_FAILURE, error.message);
+    }
+  }
+}
+
+export const joinPool = (connectedAccount: string, library: Web3Provider, poolId?: number) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
+    try {
+      const baseRequest = new BaseRequest();
+      const connector = getState().connector.data;
+      const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
+
+      if (connectedAccount && library && paramsWithConnector) {
+        const provider = library.provider;
+        if (connector !== ConnectorNames.WalletConnect) {
+          const res = await (provider as any).sendAsync({
+              method: paramsWithConnector.method,
+              params: paramsWithConnector.params
+          }, async function(err: Error, result: any) {
+            if (err || result.error) {
+               const errMsg = (err.message || (err as any).error) || result.error.message
+               console.log('Error when signing message: ', errMsg);
+                dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
+            } else {
+              console.log(result.result);
+              const response = await baseRequest.post(`/user/login`, {
+                signature: result.result,
+                wallet_address: connectedAccount,
+              }) as any;
+
+              const resObj = await response.json();
+
+              if (resObj.status && resObj.status === 200 && resObj.data) {
+                const { token, user } = resObj.data;
+
+                localStorage.setItem('investor_access_token', token.token);
+
+                dispatch({ type: walletActions.WALLET_CONNECT_LAYER2_SUCCESS });
+
+                dispatch({
+                  type: userActions.INVESTOR_LOGIN_SUCCESS,
+                  payload: user
+                });
+
+              }
+
+              if (resObj.status && resObj.status !== 200) {
+                if (resObj.status == 404) {
+                  // redirect to register page
+                  dispatch(alertFailure(resObj.message));
+                  dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+                } else {
+                  // show error
+                  console.log('RESPONSE Login: ', resObj);
+                  dispatch(alertFailure(resObj.message));
+                  dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+                }
+              }
+            }
+          });
+        } else {
+          var rawMessage = MESSAGE_INVESTOR_SIGNATURE;
+          var rawMessageLength = new Blob([rawMessage]).size
+          var message = ethers.utils.toUtf8Bytes("\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage)
+          var messageHash = ethers.utils.keccak256(message)
+          var params = [
+            connectedAccount,
+            messageHash
+          ]
+          await (library as any).provider.enable();
+
+          var signature = await (library as any).provider.wc.signMessage(params);
+          console.log(signature);
+        }
+      }
+    } catch (error) {
+      console.log('ERROR Login: ', error);
+      dispatch(alertFailure(error.message));
+      dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
     }
   }
 }

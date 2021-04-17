@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { HashLoader } from "react-spinners";
 import { useDispatch } from 'react-redux';
 import { useParams } from 'react-router-dom';
-import { useWeb3React } from '@web3-react/core';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js'; 
@@ -25,8 +24,8 @@ import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
 import { ETH_CHAIN_ID } from '../../constants/network';
 
-import { login } from '../../store/actions/user';
 import { getUserTierAlias } from '../../utils/getUserTierAlias';
+import { getPoolCountDown } from '../../utils/getPoolCountDown';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
 import { getTiers, getUserInfo, getUserTier } from '../../store/actions/sota-tiers';
@@ -56,7 +55,6 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
-  const { library } = useWeb3React();
   const { id } = useParams() as any;
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
@@ -92,7 +90,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
 
   const availableJoin = poolDetails?.method === 'whitelist' 
-    ? new Date() >= joinTimeInDate && new Date() <= endJoinTimeInDate
+    ? (new Date() >= joinTimeInDate && new Date() <= endJoinTimeInDate && connectedAccount && !wrongChain)
     : false;
   const availablePurchase = new Date() >= startBuyTimeInDate && new Date() <= endBuyTimeInDate;
   
@@ -114,50 +112,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     startBuyTime: Date | undefined,
     endBuyTime: Date | undefined
   ) => {
-    const today = new Date().getTime();
-    let date;
-    let display;
-
-    if (method && method === "whitelist" && startJoinTime && endJoinTime && startBuyTime && endBuyTime) {
-
-      if (today < startJoinTime.getTime()) {
-        date = startJoinTime; 
-        display = "Start in";
-      }
-
-      if (today > startJoinTime.getTime() && today < endJoinTime.getTime()) {
-        date = endJoinTime;
-        display = "End in";
-      }
-
-      if (today > endJoinTime.getTime() && today < startBuyTime.getTime()) {
-        date = startBuyTime;
-        display = "Start buy in"
-      }
-
-      if (today > startBuyTime.getTime() && today < endBuyTime.getTime()) {
-        date =  endBuyTime;
-        display = "End buy in";
-      }
-
-    }
-
-    if (method && method === "fcfs" && startBuyTime && endBuyTime) {
-      if (today < startBuyTime.getTime()) {
-        date = startJoinTime; 
-        display = "Start buy in"
-      }
-
-      if (today > startBuyTime.getTime() && today < endBuyTime.getTime()) {
-        date = endBuyTime;
-        display = "End buy in";
-      }
-    }
-
-    return {
-      date,
-      display
-    }
+    return getPoolCountDown(startJoinTime, endJoinTime, startBuyTime, endBuyTime, method);
   }, [poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate]);
 
   const { date: countDownDate, display } = displayCountDownTime(poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate)
@@ -166,6 +121,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
 
+  // Hide main tab after end buy time
   useEffect(() => {
     if (endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
   }, [endBuyTimeInDate]);
@@ -415,7 +371,6 @@ const BuyToken: React.FC<any> = (props: any) => {
               }
             </div>
           </div>
-          <button onClick={() => dispatch(login(connectedAccount as string, library))}>Login</button>
         </main>
      </div>
     </DefaultLayout>
