@@ -8,7 +8,7 @@ const useCommonStyle = makeStyles((theme) => {
   
       /* grid container settings */
       display: 'grid',
-      gridTemplateColumns: '1fr',
+      gridTemplateColumns: '100vw',
       gridTemplateRows: 'auto 1fr auto',
       gridTemplateAreas: 
         `'header'
@@ -375,6 +375,9 @@ const useCommonStyle = makeStyles((theme) => {
     },
     nnb1214d: {
       font: 'normal normal bold 12px/14px DM Sans',
+    },
+    nnb2432d: {
+      font: 'normal normal bold 24px/32px DM Sans',
     },
     nnn1424h: {
       font: 'normal normal normal 14px/24px Helvetica',
