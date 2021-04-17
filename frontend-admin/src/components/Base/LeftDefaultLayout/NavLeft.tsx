@@ -17,7 +17,7 @@ const nav = [
     icon: 'icon-list-campaign',
   },
   {
-    title: 'Admin List',
+    title: 'List Admin',
     part: adminRoute('/admins'),
     icon: 'icon-users',
   },

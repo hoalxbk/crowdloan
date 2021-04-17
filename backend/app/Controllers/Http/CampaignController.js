@@ -271,12 +271,20 @@ class CampaignController {
   async joinCampaign({request, auth}) {
     // get all params
     const params = request.all()
+
+    // ===========================================================================================
+    // Todo - Check user is verify email or register email or not
+    // ===========================================================================================
+
     // get user wallet_address
-    const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
-    const email = auth.user.email;
-    if (wallet_address == null) {
-      return HelperUtils.responseBadRequest("User don't have a valid wallet");
-    }
+    // const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
+    const email = auth.user && auth.user.email;
+    // if (wallet_address == null) {
+    //   return HelperUtils.responseBadRequest("User don't have a valid wallet");
+    // }
+    const wallet_address = request.header('wallet_address');
+    console.log('Join Pool with params: ', params, email, wallet_address);
+
     try {
       // check user tier
       const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
@@ -312,10 +320,17 @@ class CampaignController {
       const params = request.all();
       console.log(params);
       // get user wallet
-      const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
+      // const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
+      const userWalletAddress = request.input('wallet_address');
       if (userWalletAddress == null) {
         return HelperUtils.responseBadRequest("User don't have a valid wallet !");
       }
+
+      // ===========================================================================================
+      // Todo - Check user is verify email or register email or not
+
+      // ===========================================================================================
+
       // check if exist in winner list
       const winnerListService = new WinnerListService();
       const winnerParams = {
@@ -326,6 +341,12 @@ class CampaignController {
       const winner = await winnerListService.findOneByFilters(winnerParams);
       // check user tier for winner
       if (winner != null) {
+
+        // ===========================================================================================
+        // Todo - FCFS does not have winner list and reserve list
+        // ===========================================================================================
+
+        // TODO list reserved
         // check user tier
         const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
         const userTier = await tierSc.methods.getUserTier(userWalletAddress).call();
@@ -336,9 +357,17 @@ class CampaignController {
           'campaign_id': params.campaign_id,
           'level': userTier
         };
+
+        // ===========================================================================================
+        // Todo - Check min tier required for pool
+        // ===========================================================================================
+
+        // ===========================================================================================
+        // Todo - if user tier is not in start and end of current tier, response error and don't sign signature
+        // ===========================================================================================
         const tier = await tierService.findByLevelAndCampaign(tierParams);
         if (tier == null) {
-          return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign !");
+          return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign or you're early to deposit");
         }
         // check time start buy for tier
         const current = Date.now() / 1000;
@@ -389,11 +418,21 @@ class CampaignController {
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
       // get convert rate token erc20 -> our token
       // TODO need get dynamic rate of each Erc20 token
+
+      // ===========================================================================================
+      // Todo - Support multiple token buy from ETH, USDC, USDT. Need check supported currency
+      // => Different max Token amount
+      // => Support min buy amount and convert in response
+      // ===========================================================================================
       const rate = await poolContract.methods.getErc20TokenConversionRate(SMART_CONTRACT_USDT_ADDRESS).call();
       // calc min, max token user can buy
       const maxTokenAmount = web3.utils.toWei((maxBuy * rate).toString(), "ether");
       const minTokenAmount = web3.utils.toWei((minBuy * rate).toString(), "ether");
       console.log(rate, minTokenAmount, maxTokenAmount, userWalletAddress);
+
+      // ===========================================================================================
+      // Todo - Params getMessageHash changed. Please check new Smart contract
+      // ===========================================================================================
       // get message hash
       const messageHash = await poolContract.methods.getMessageHash(userWalletAddress, maxTokenAmount, camp.start_time).call();
       console.log(`message hash ${messageHash}`);
@@ -406,6 +445,10 @@ class CampaignController {
       web3.eth.defaultAccount = accAddress;
       const signature = await web3.eth.sign(messageHash, accAddress);
       console.log(`signature ${signature}`);
+      // ===========================================================================================
+      // Don't need to response start_time, end_time
+      // Lack response min buy amount
+      // ===========================================================================================
       const response = {
         'max_buy': maxTokenAmount,
         'min_buy': minTokenAmount,
@@ -431,7 +474,7 @@ class CampaignController {
       // if not existed on redis then get from db
       const wlService = new WhitelistService();
       let noOfParticipants = await wlService.countByCampaignId(campaignId);
-      if (noOfParticipants != null) {
+      if (!noOfParticipants) {
         noOfParticipants = 0;
       }
       // save to redis
@@ -446,7 +489,8 @@ class CampaignController {
   async checkJoinedCampaign({request, auth}) {
     const campaignId = request.params.campaignId;
     // get user wallet
-    const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
+    const userWalletAddress = request.input('wallet_address');
+    // const userWalletAddress = auth.user !== null ? auth.user.wallet_address : null;
     if (userWalletAddress == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }

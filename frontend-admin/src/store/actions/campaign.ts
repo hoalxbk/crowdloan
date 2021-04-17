@@ -17,6 +17,7 @@ import { getDigitsAfterDecimals } from '../../utils/formatNumber';
 import { TokenType } from '../../utils/token';
 import {adminRoute} from "../../utils";
 import {updateDeploySuccess} from "../../request/pool";
+import {ACCEPT_CURRENCY} from "../../constants";
 const queryString = require('query-string');
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
 const USDT_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS || "";
@@ -573,7 +574,11 @@ export const deployPool = (campaign: any, history: any) => {
       const baseRequest = new BaseRequest();
       const factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || "");
 
-      const { title, affiliate, start_time, finish_time, release_time, token, address_receiver, token_by_eth, tokenInfo, tier_configuration } = campaign;
+      const {
+        title, affiliate, start_time, finish_time, release_time,
+        token, address_receiver, token_by_eth, token_conversion_rate, tokenInfo,
+        tier_configuration
+      } = campaign;
       const releaseTimeUnix = release_time;
       const startTimeUnix = start_time;
       const finishTimeUnix = finish_time;
@@ -585,11 +590,11 @@ export const deployPool = (campaign: any, history: any) => {
       const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
 
       const tiers = tier_configuration.map((tier: any, index: number) => {
-        let decimal = 18;
-        // let decimal = 6;
-        // if (campaign.accept_currency == 'eth') {
-        //   decimal = 18;
-        // }
+        // let decimal = 18;
+        let decimal = 6;
+        if (campaign.accept_currency === ACCEPT_CURRENCY.ETH) {
+          decimal = 18;
+        }
         return (new BigNumber(tier.maxBuy || 0)).multipliedBy(Math.pow(10, decimal)).toString();
       });
 

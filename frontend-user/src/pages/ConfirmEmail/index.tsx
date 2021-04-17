@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import { withRouter, useParams } from 'react-router-dom';
 
+import { AppContext } from '../../AppContext';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
@@ -20,6 +21,7 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
   const { data: loginInvestor } = useSelector((state: any) => state.investor);
   const { data: loginUser } = useSelector((state: any) => state.user);
 
+  const { handleConnectorDisconnect } = useContext(AppContext);
   const { role, token } = useParams() as any;
 
   if (role === 'investor' && loginInvestor) {
@@ -49,6 +51,7 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
       setConfirmEmailLoading(false);
 
       if (role === 'investor') {
+        handleConnectorDisconnect && handleConnectorDisconnect();
         props.history.push(publicRoute('/'));
       }
       if (role !== 'investor') {

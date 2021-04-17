@@ -4,8 +4,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
-import { Controller } from "react-hook-form";
-import {getParticipantUser} from "../../../request/participants";
+import {Controller} from "react-hook-form";
 import {getTiers} from "../../../request/tier";
 import {renderErrorCreatePool} from "../../../utils/validate";
 
@@ -31,6 +30,7 @@ function AcceptCurrency(props: any) {
         });
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -48,14 +48,17 @@ function AcceptCurrency(props: any) {
                 <FormControlLabel
                   value="usdt" control={<Radio />}
                   label="USDT"
+                  disabled={isDeployed}
                 />
                 <FormControlLabel
                   value="usdc" control={<Radio />}
                   label="USDC"
+                  disabled={isDeployed}
                 />
                 <FormControlLabel
                   value="eth" control={<Radio />}
                   label="Ether"
+                  disabled={isDeployed}
                 />
               </RadioGroup>
             }

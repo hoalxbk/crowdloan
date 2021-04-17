@@ -17,6 +17,8 @@ function AddressReceiveMoney(props: any) {
     }
   }, [poolDetail]);
 
+  const isDeployed = !!poolDetail?.is_deploy;
+
   return (
     <>
       <div className={classes.formControl}>
@@ -32,6 +34,7 @@ function AddressReceiveMoney(props: any) {
           })}
           maxLength={255}
           className={classes.formControlInput}
+          disabled={isDeployed}
         />
         <p className={classes.formErrorMessage}>
           {

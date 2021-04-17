@@ -29,7 +29,6 @@ const usePoolDepositAction = ({ poolAddress, signature, deadLine, maxBuy }: Pool
   const { account: connectedAccount, library } = useWeb3React();
 
   const deposit = useCallback(async (amount: string, acceptCurrency: string) => {
-    console.log(new BigNumber(amount).gt(0), poolAddress, signature, acceptCurrency, maxBuy);
     if (amount && new BigNumber(amount).gt(0) && poolAddress && signature && acceptCurrency && maxBuy) {
       try {
         setTokenDepositLoading(true);
@@ -81,6 +80,7 @@ const usePoolDepositAction = ({ poolAddress, signature, deadLine, maxBuy }: Pool
       if (amount && new BigNumber(amount).gt(0) && poolAddress && signature && acceptCurrency && maxBuy) {
         const FEE_PER_PRICE = new BigNumber(1).div(new BigNumber(10).pow(9));
         const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
+        console.log(library);
 
         const params = acceptCurrency === 'ETH' ? [ 
           connectedAccount,

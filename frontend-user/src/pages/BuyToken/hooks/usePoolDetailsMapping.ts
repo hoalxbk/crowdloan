@@ -1,4 +1,6 @@
+import BigNumber from 'bignumber.js';
 import { TokenType } from '../../../hooks/useTokenDetails';
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 export enum PoolDetailKey {
   website = 'website',
@@ -17,6 +19,7 @@ export type PoolDetailMapping = {
   [key in PoolDetailKey]: {
     display: string | number;
     utilIcon?: string;
+    reverse?: string;
     label: string
   }
 };
@@ -27,13 +30,14 @@ export type PoolDetailMappingProps = {
   ethRate: number;
   method: string;
   type: string;
-  tokenDetails: TokenType
+  tokenDetails: TokenType;
+  purchasableCurrency: string;
 }
 
 
 const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined): PoolDetailMapping | undefined => {
   if (poolDetails) {
-    const { website, amount, ethRate, type, method, tokenDetails } = poolDetails;
+    const { website, amount, ethRate, type, method, tokenDetails, purchasableCurrency } = poolDetails;
     const poolDetailsBasic = {
       [PoolDetailKey.website]: { 
         display: website,
@@ -41,12 +45,13 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         label: 'Website'
       },
       [PoolDetailKey.swapAmount]: { 
-        display: `${amount} Tokens`,
+        display: `${numberWithCommas(amount.toString())} ${tokenDetails?.name}`,
         val: amount,
         label: 'Swap Amount'
       },
       [PoolDetailKey.exchangeRate]: { 
-        display: `1 ${tokenDetails.symbol} = ${ethRate} Tokens`,
+        display: `1 ${tokenDetails.symbol} = ${ethRate} ${purchasableCurrency.toUpperCase()}`,
+        reverse: `1 ${purchasableCurrency.toUpperCase()} = ${new BigNumber(1).div(ethRate).toNumber()} ${tokenDetails?.symbol}`,
         val: 10,
         utilIcon: '/images/swap.svg',
         label: 'Exchange Rate',

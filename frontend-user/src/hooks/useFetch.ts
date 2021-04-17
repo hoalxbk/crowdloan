@@ -15,14 +15,9 @@ const useFetch = <T>(uri: string, suspendRender: any = false): useFetchReturnTyp
   useEffect(() => {
     const fetchDataFromUri = async () => {
       setLoading(true);
-      const config = {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("investor_access_token")}`
-        }
-      }
 
       try {
-        const response = await axios.get(uri, config) as any;
+        const response = await axios.get(uri) as any;
         response.data && setData(response.data.data);
 
         setLoading(false);
@@ -32,7 +27,7 @@ const useFetch = <T>(uri: string, suspendRender: any = false): useFetchReturnTyp
       }
     }
 
-    uri && !suspendRender && fetchDataFromUri();
+    uri && (!suspendRender) && fetchDataFromUri();
   }, [uri, suspendRender]);
 
   return {

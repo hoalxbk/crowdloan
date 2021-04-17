@@ -5,6 +5,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 // @ts-ignore
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import {renderErrorCreatePool} from "../../../utils/validate";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 // CSS in /src/index.css
 
@@ -25,6 +26,7 @@ function PoolDescription(props: any) {
       setDescription(poolDetail.description);
     }
   }, [poolDetail]);
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -49,6 +51,7 @@ function PoolDescription(props: any) {
           onFocus={ ( event: any, editor: any ) => {
             // console.log( 'Focus.', editor );
           } }
+          // disabled={isDeployed}
         />
         <input
           type="hidden"
@@ -57,6 +60,7 @@ function PoolDescription(props: any) {
           ref={register({
             // required: true
           })}
+          disabled={isDeployed}
         />
 
         <p className={classes.formErrorMessage}>

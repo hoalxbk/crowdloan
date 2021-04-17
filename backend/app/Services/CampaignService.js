@@ -244,6 +244,11 @@ class CampaignService {
     // Investor join campaign
     async joinCampaign(campaign_id, wallet_address, email) {
       // check exist campaign available to join
+
+      // ===========================================================================================
+      // Todo - Only join pool for Lottery campaign, does not accept for FCFS campaign
+
+      // ===========================================================================================
       const currentDate = Date.now()/1000;
       console.log(`joinCampaign with date ${currentDate} and campaign_id ${campaign_id}`);
       const camp = await CampaignModel.query()

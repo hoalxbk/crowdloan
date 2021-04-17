@@ -14,7 +14,8 @@ const APPROVE_AMOUNT = '999999999999999999999';
 const useTokenAllowance = (
   token: TokenType | undefined, 
   owner: string | null | undefined, 
-  spender: string | null | undefined
+  spender: string | null | undefined,
+  sotaABI: false
 ) => {
   const [tokenApproveLoading, setTokenApproveLoading] = useState<boolean>(false);
   const [transactionHash, setTransactionHash] = useState("");

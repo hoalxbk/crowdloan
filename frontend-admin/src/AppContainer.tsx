@@ -159,7 +159,7 @@ const AppContainer = (props: any) => {
 
       });
     }
-  }, [loginUser, loginInvestor]);
+  }, [loginUser]);
 
   if (!isMetaMaskInstalled()) {
     return (

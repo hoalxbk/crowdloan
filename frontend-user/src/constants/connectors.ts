@@ -29,7 +29,7 @@ export const walletConnect = new WalletConnectConnector({
   rpc: {[Number(ETH_CHAIN_ID)]: NETWORK_URL as string},
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
-  pollingInterval: 15000
+  pollingInterval: 10000
 });
 
 // mainnet only

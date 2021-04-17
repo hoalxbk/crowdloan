@@ -113,17 +113,33 @@ export const walletReducer = (state: WalletState = initialState, action: AnyActi
       }
     }
 
+    case walletActions.WALLET_UPDATE_BALANCE: {
+      const { balances, addresses, entity } = action.payload;
+
+      return {
+        ...state,
+        entities: Object.assign({...state.entities}, {[entity]: {
+          ...state.entities[entity],
+          balances,
+          addresses,
+          connectionState: WalletConnectionState.CONNECTED
+        }}),
+      }
+    }
+
     case walletActions.WALLET_CONNECT_SUCCESS_WITHOUT_LAYER2: {
       return {
         ...state,
-        walletConnect: false
+        walletConnect: false,
+        twoFactor: TwoFactors.Layer1
       } 
     }
 
     case walletActions.WALLET_CONNECT_LAYER2_SUCCESS: {
       return {
         ...state,
-        twoFactor: TwoFactors.Layer2
+        twoFactor: TwoFactors.Layer2,
+        walletConnect: false
       }
     }
 

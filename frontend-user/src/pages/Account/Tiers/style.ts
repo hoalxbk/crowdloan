@@ -20,6 +20,10 @@ const useStyles = makeStyles((theme: any) => {
         marginLeft: '10px',
       }
     },
+    tierLinkToAccount: {
+      color: '#6399FF',
+      textDecoration: 'underline'
+    },
     tierList: {
       display: 'flex',
       flexDirection: 'row',
@@ -90,6 +94,21 @@ const useStyles = makeStyles((theme: any) => {
         lineHeight: '18px',
         color: '#FFFFFF',
         opacity: 0.4,
+      }
+    },
+    [theme.breakpoints.down('xs')]: {
+      tierInfo: {
+        '& span:last-child': {
+          height: '36px',
+          textAlign: 'center'
+        },
+        '&:nth-child(2) span:last-child': {
+          width: '100%',
+          display: 'block',
+        },
+        '&:last-child span:last-child': {
+          textAlign: 'right'
+        }
       }
     }
   };

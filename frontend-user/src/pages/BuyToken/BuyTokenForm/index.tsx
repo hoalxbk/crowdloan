@@ -6,13 +6,14 @@ import TransactionSubmitModal from '../../../components/Base/TransactionSubmitMo
 import Button from '../Button';
 import useStyles from './style';
 
+import { numberWithCommas } from '../../../utils/formatNumber';
 import { isNotValidASCIINumber, isPreventASCIICharacters, trimLeadingZerosWithDecimal } from '../../../utils/formatNumber';
 import { BSC_CHAIN_ID } from '../../../constants/network';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import getAccountBalance from '../../../utils/getAccountBalance';
 import { connectWalletSuccess } from '../../../store/actions/wallet';
-import { useTypedSelector } from '../../../hooks/useTypedSelector';
 
+import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import useTokenBalance from '../../../hooks/useTokenBalance';
 import useTokenAllowance from '../../../hooks/useTokenAllowance';
 import useUserPurchased from '../hooks/useUserPurchased';
@@ -20,6 +21,7 @@ import usePoolDepositAction from '../hooks/usePoolDepositAction';
 import useUserPurchaseSignature from '../hooks/useUserPurchaseSignature';
 import useTokenApprove from '../../../hooks/useTokenApprove';
 import useAuth from '../../../hooks/useAuth';
+import { withWidth, isWidthDown, isWidthUp } from '@material-ui/core';
 
 type BuyTokenFormProps = {
   tokenDetails: TokenType | undefined,
@@ -31,12 +33,14 @@ type BuyTokenFormProps = {
   joinTime: Date | undefined;
   method: string | undefined;
   availablePurchase: boolean | undefined;
+  ableToFetchFromBlockchain: boolean | undefined
+  minTier: number | undefined
 }
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
 const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
 
-const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => {
+const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
@@ -56,10 +60,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     maximumBuy, 
     purchasableCurrency,
     poolId,
-    availablePurchase
+    availablePurchase,
+    ableToFetchFromBlockchain,
+    minTier
   } = props;
 
-  const { connectedAccount } = useAuth();
+  const { connectedAccount, wrongChain } = useAuth();
+  const userTier = useTypedSelector(state => state.userTier).data;
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
   const connector = useTypedSelector(state => state.connector).data;
 
@@ -74,7 +81,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   } = usePoolDepositAction({ poolAddress, signature, deadLine, maxBuy });
 
   const { retrieveTokenAllowance } = useTokenAllowance();
-  const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress);
+  const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
 
   const getApproveToken = useCallback(() => {
     if (purchasableCurrency && purchasableCurrency === "USDT") {
@@ -101,15 +108,29 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   const { approveToken, tokenApproveLoading, transactionHash, setTokenApproveLoading } = useTokenApprove(
     tokenToApprove,
     connectedAccount, 
-    poolAddress
+    poolAddress,
+    false
   );
 
   const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 
   const enableApprove = 
     tokenAllowance <= 0  
-    && (purchasableCurrency && purchasableCurrency !== 'ETH');
+    && (purchasableCurrency && purchasableCurrency !== 'ETH') 
+    && availablePurchase && !wrongChain && ableToFetchFromBlockchain;
 
-  const purchasable = (tokenAllowance > 0 && !estimateErr && availablePurchase && estimateTokens > 0 && estimateTokens <= maximumBuy);
+  
+
+  const validTier = minTier && userTier >= minTier;
+  const purchasable = 
+    (tokenAllowance > 0 
+     && !estimateErr 
+     && availablePurchase 
+     && estimateTokens > 0 
+     && estimateTokens <= maximumBuy
+     && !wrongChain
+     && signature
+     && validTier    
+    );
 
   const fetchUserBalance = useCallback(async () => {
       if (appChainID && connectedAccount && connector) {
@@ -136,14 +157,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
       }
     }
 
-    fetchTokenPoolAllowance();
-  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
+    ableToFetchFromBlockchain && fetchTokenPoolAllowance();
+  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain]);
 
   const handleInputChange = async (e: any) => {
     const val = e.target.value;
     setInput(val);
 
-    if (!isNaN(val) && val && rate && purchasableCurrency) {
+    if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
       const tokens = new BigNumber(val).multipliedBy(rate).toNumber()
       setEstimateTokens(tokens);
       const estimatedFee = await estimateFee(val, purchasableCurrency) 
@@ -156,7 +177,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
 
   const handleTokenDeposit = async () => {
     try {
-      if (purchasableCurrency) {
+      if (purchasableCurrency && ableToFetchFromBlockchain) {
         setOpenSubmitModal(true);
 
         // Call to smart contract to deposit token and refetch user balance
@@ -177,6 +198,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     try {
       setApproveModal(true);
       await approveToken();
+      setInput("");
 
       if (tokenDetails && poolAddress && connectedAccount && tokenToApprove) {
         setTokenAllowance(await retrieveTokenAllowance(tokenToApprove, connectedAccount, poolAddress) as number);
@@ -191,16 +213,20 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     <div className={styles.buyTokenForm}>
       {
         appChainID !== BSC_CHAIN_ID && (
-          <p className={styles.buyTokenFormTitle}>You have {userPurchased} {tokenDetails?.symbol} DEPOSITED from {maximumBuy} available for your TIER</p>
+          <p className={styles.buyTokenFormTitle}>You have {userPurchased} {tokenDetails?.symbol} BOUGHT from {maximumBuy} available for your TIER</p>
         ) 
       }
       <div className={styles.buyTokenInputForm}>
         <p className={styles.buyTokenInputLabel}>
           <span>Input</span>
-          <span>Your wallet balance:&nbsp;
-            {tokenBalance} &nbsp;
+          {isWidthUp('sm', props.width) && <span>Your wallet balance:&nbsp;
+            {numberWithCommas(parseFloat(tokenBalance.toString()).toFixed(6))} &nbsp;
             {purchasableCurrency}
-          </span>
+          </span>}
+          {isWidthDown('xs', props.width) && <span>Balance:&nbsp;
+            {numberWithCommas(parseFloat(tokenBalance.toString()).toFixed(6))} &nbsp;
+            {purchasableCurrency}
+          </span>}
         </p>
         <div className={styles.buyTokenInputWrapper}>
           <input 
@@ -222,6 +248,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
             max={tokenBalance}
             min={0}
             maxLength={255}
+            disabled={wrongChain}
           />
           <span>{purchasableCurrency}</span>
         </div>
@@ -244,7 +271,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
         loading={tokenApproveLoading} 
         />
         <Button 
-          text={'Deposit'} 
+          text={'Buy'} 
           backgroundColor={'#D01F36'} 
           disabled={!purchasable}
           onClick={handleTokenDeposit}
@@ -265,4 +292,4 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   )
 }
 
-export default BuyTokenForm;
+export default withWidth()(BuyTokenForm);

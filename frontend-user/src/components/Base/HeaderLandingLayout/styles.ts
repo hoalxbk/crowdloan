@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      padding: '0 120px',
+      padding: '10px 120px',
       background: '#000',
       width: '100%',
       color: '#FFFFFF',
@@ -16,9 +16,6 @@ const useStyles = makeStyles((theme) => {
       top: 0,
       left: 0,
       zIndex: 1,
-      [theme.breakpoints.down('sm')]: {
-        position: 'static',
-      },
 
       '& > div': {
         display: 'flex',
@@ -41,7 +38,27 @@ const useStyles = makeStyles((theme) => {
             color: '#D01F37'
           }
         }
-      }
+      },
+      [theme.breakpoints.down('sm')]: {
+        position: 'static',
+        padding: '10px 40px',
+      },
+      [theme.breakpoints.down('xs')]: {
+        padding: '10px 32px',
+        flexDirection: 'row-reverse',
+        position: 'relative',
+
+        '& .logo img': {
+          width: '30px',
+        },
+
+        '& .connects': {
+          position: 'absolute',
+          top: 'calc(100% + 31px)',
+          right: '20px',
+          flexDirection: 'column'
+        }
+      },
     }
   };
 });

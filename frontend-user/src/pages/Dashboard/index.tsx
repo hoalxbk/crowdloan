@@ -6,6 +6,11 @@ import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
 import BackgroundComponent from './BackgroundComponent';
 import Card from './Card';
+import usePools from '../../hooks/usePools';
+import moment from 'moment';
+import { POOL_STATUS } from '../../constants';
+import POOL_ABI from '../../abi/Pool.json';
+import { getContractInstance, convertFromWei, convertToWei } from '../../services/web3';
 
 const cardImage = '/images/icons/card-image.jpg';
 const arrowRightIcon = '/images/icons/arrow-right.svg';
@@ -13,8 +18,53 @@ const background = '/images/icons/background2.svg';
 
 const Dashboard = (props: any) => {
   const styles = useStyles();
-
   const dispatch = useDispatch();
+  const { pools = [], pagination, loading } = usePools();
+  const [upcommingPools, setUpcommingPools] = useState([]);
+  const [camePools, setCamePools] = useState([]);
+  const { data: appChain } = useSelector((state: any) => state.appNetwork);
+  const { data: connector } = useSelector((state: any) => state.connector);
+
+  const getTokenSold = async (pool: any) => {
+    let result = '0';
+    try {
+      const contract = getContractInstance(POOL_ABI, pool.campaign_hash || '', connector, appChain.appChainID);
+      if (contract) {
+        result = await contract.methods.tokenSold().call();
+        result = convertFromWei(result.toString());
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    return result;
+  }
+
+  useEffect(() => {
+    setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING))
+    setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING))
+    if(!appChain || !connector) return
+    pools.forEach(async (pool: any) => {
+      const currentTime = moment().unix()
+      if(pool.startJoinPoolTime > currentTime || pool.endJoinPoolTime < currentTime && currentTime < pool.startTime) {
+        pool.status = POOL_STATUS.UPCOMMING
+      } else if(pool.startJoinPoolTime <= currentTime
+        && currentTime <= pool.endJoinPoolTime
+        ) 
+      {
+        pool.status = POOL_STATUS.JOINING
+      } else if(currentTime <= pool.startTime && currentTime <= pool.finishTime) {
+        if(Math.round(pool.tokenSold * 100 / pool.total_sold_coin) == 100) {
+          pool.status = POOL_STATUS.FILLED
+        } else {
+          pool.status = POOL_STATUS.IN_PROGRESS
+        }
+      } else {
+        pool.status = POOL_STATUS.CLOSED
+      }
+      const tokenSold = await getTokenSold(pool)
+      pool.tokenSold = tokenSold
+    })
+  }, [pools, appChain, connector]);
 
   return (
     <DefaultLayout>
@@ -22,10 +72,9 @@ const Dashboard = (props: any) => {
       <div className={styles.listPools}>
         <h2>Upcoming Pools</h2>
         <div className="pools">
-          <Card cardImage={cardImage}/>
-          <Card cardImage={cardImage}/>
-          <Card cardImage={cardImage}/>
-          <Card cardImage={cardImage}/>
+          {upcommingPools.map((pool: any, index) => {
+            return index < 4 && <Card pool={pool} key={pool.id}/>
+          })}
         </div>
         <button className="btn">
           Get Notified&nbsp;
@@ -35,10 +84,9 @@ const Dashboard = (props: any) => {
       <div className={styles.listPools} style={{marginTop: '220px'}}>
         <h2>Upcoming Pools</h2>
         <div className="pools">
-          <Card cardImage={cardImage}/>
-          <Card cardImage={cardImage}/>
-          <Card cardImage={cardImage}/>
-          <Card cardImage={cardImage}/>
+          {camePools.map((pool: any, index) => {
+            return index < 8 && <Card pool={pool} key={pool.id}/>
+          })}
         </div>
         <button className="btn">
           View all Pools&nbsp;

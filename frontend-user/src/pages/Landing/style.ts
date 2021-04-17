@@ -10,8 +10,8 @@ const useStyles = makeStyles((theme: any) => {
       },
       '& .main-content h1': {
         textAlign: 'center',
-        fontSize: '68px',
-        lineHeight: '80px',
+        fontSize: '46px',
+        lineHeight: '52px',
         color: '#FFFFFF',
         marginBottom: '12px'
       },
@@ -27,7 +27,8 @@ const useStyles = makeStyles((theme: any) => {
 
         '& img': {
           width: '20px',
-          height: '10px'
+          height: '10px',
+          marginTop: '2px',
         }
       },
       '& .buttons button': {
@@ -69,6 +70,38 @@ const useStyles = makeStyles((theme: any) => {
           margin: '15px auto'
         },
       },
+      [theme.breakpoints.down('xs')]: {
+        overflow: 'hidden',
+        '& img': {
+          objectFit: 'unset',
+          height: 'auto',
+          with: '100%'
+        },
+        '& img.bg2': {
+          objectFit: 'cover',
+          height: '500px',
+          with: '100%'
+        },
+        '& .main-content h1': {
+          display: 'block',
+          width: '100%',
+          margin: '15px auto'
+        },
+        '& p': {
+          fontSize: '16px'
+        },
+        '& .buttons': {
+          flexDirection: 'column',
+          '& button': {
+            width: '280px',
+            margin: '15px auto 0',
+            padding: '0 15px'
+          },
+          '& button:first-child': {
+            margin: '40px auto 0'
+          }
+        }
+      },
     },
     cardContainer: {
       margin: '80px 0',
@@ -96,7 +129,7 @@ const useStyles = makeStyles((theme: any) => {
         '& .main-content': {
           display: 'grid',
           gridTemplateColumns: '1fr',
-          margin: '0 40px',
+          margin: '0 20px',
           gap: '25px',
         },
       },

@@ -12,8 +12,6 @@ export enum SmartContractMethod {
 
 type smartContractMethod = Extract<SmartContractMethod, SmartContractMethod.Write | SmartContractMethod.Read>
 
-const ABNORMAL_CONNECTORS = [ConnectorNames.Fortmatic, ConnectorNames.WalletConnect];
-
 export const getWeb3Instance = () => {
   const windowObj = window as any;
   const { ethereum, web3 } = windowObj;
@@ -36,14 +34,14 @@ export const isMetaMaskInstalled = () => {
 export const getProviderByNetwork = (
   networkName: connectorNames, 
   appChainID: string, 
-  typeMethod: smartContractMethod
+  typeMethod: smartContractMethod,
+  forceUsingEther: boolean
 ) => {
-  if (ABNORMAL_CONNECTORS.indexOf(networkName) < 0) {
-    const { ethereum } = (window as any);
-    return isMetaMaskInstalled() ? ethereum : undefined;
-  } 
+  if (forceUsingEther) {
+      return new Web3.providers.HttpProvider(NETWORK_URL);
+  }
 
-  if (appChainID && typeMethod === SmartContractMethod.Read && ABNORMAL_CONNECTORS.indexOf(networkName) >= 0) {
+  if (appChainID && typeMethod === SmartContractMethod.Read) {
       return new Web3.providers.HttpProvider(appChainID === ETH_CHAIN_ID ? NETWORK_URL: BSC_NETWORK_URL);
   }  
 
@@ -56,9 +54,10 @@ export const getContractInstance =
    contractAddress: string, 
    networkName: connectorNames = ConnectorNames.MetaMask, 
    appChainID: string = ETH_CHAIN_ID as string, 
-   typeMethod: smartContractMethod = SmartContractMethod.Read
+   typeMethod: smartContractMethod = SmartContractMethod.Read,
+   forceUsingEther: boolean = false
   ) => {
-  const provider = getProviderByNetwork(networkName as connectorNames, appChainID, typeMethod);
+  const provider = getProviderByNetwork(networkName as connectorNames, appChainID, typeMethod, forceUsingEther);
 
   if (provider) {
     const web3Instance = new Web3(provider);
@@ -97,4 +96,8 @@ export const getETHBalance = async (loginUser: string) => {
   };
 
   return 0;
+}
+
+export const convertToBN = (number: string) => {
+  return Web3.utils.toBN(number)
 }

@@ -136,6 +136,7 @@ const useStyles = makeStyles((theme) => {
       justifyContent: 'center',
       alignItems: 'center',
       fontWeight: 500,
+      zIndex: 99999,
 
       [theme.breakpoints.down('sm')]: {
         '& button': {

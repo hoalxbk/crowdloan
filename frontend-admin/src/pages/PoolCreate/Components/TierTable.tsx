@@ -12,6 +12,7 @@ import CreateEditTierForm from "./CreateEditTierForm";
 import moment from "moment";
 import {DATETIME_FORMAT} from "../../../constants";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 const useStylesTable = makeStyles({
   table: {
@@ -107,6 +108,7 @@ function TierTable(props: any) {
   };
 
   const acceptCurrency = watch('acceptCurrency');
+  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -156,10 +158,12 @@ function TierTable(props: any) {
                 <TableCell align="right">{row.maxBuy}</TableCell>
                 <TableCell align="right">{(acceptCurrency + '').toUpperCase()}</TableCell>
                 <TableCell align="right">
+
                   <Button
                     variant="contained"
                     color="primary"
                     onClick={(e) => openPopupEdit(e, row, index)}
+                    disabled={isDeployed}
                   >Edit</Button>
 
                   {/*<Button*/}

@@ -65,12 +65,6 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   } = useProviderConnect(
     setOpenConnectWallet, 
     openConnectWallet, 
-    () => { 
-      setCurrentConnectedWallet(undefined);
-    }, 
-    () => { 
-      setCurrentConnectedWallet(undefined) 
-    }, 
     binanceAvailable
   );
 
@@ -116,10 +110,10 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
     >
       <div>
         <Switch>
-          <Route
+          {/* <Route
             exact path="/"
-            render={() => <Redirect to={`${'/dashboard'}`} />}
-          />
+            render={() => <Redirect to={`${'/home'}`} />}
+          /> */}
           <Route exact path={`${'/dashboard'}`} component={Dashboard} />
           <Route path={`${'/buy-token/:id'}`} component={BuyToken} />
           <Route path={'/register'} component={InvestorRegister} />
@@ -130,7 +124,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
           <Route path={'/network-change'} component={NetworkChange} />
           <Route path={'/change-password/:role?'} component={ChangePassword} />
           <Route path={'/account'} component={Account} />
-          <Route path={'/home'} component={Landing} />
+          <Route path={'/'} component={Landing} />
 
           <Route path={'/coming-soon'} component={ComingSoon} />
           <Route component={NotFoundPage} />

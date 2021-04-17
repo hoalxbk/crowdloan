@@ -1,10 +1,11 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const WalletAccountModel = use('App/Models/WalletAccount');
 const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
-const CampaignService = use('App/Services/CampaignService');
+const PoolService = use('App/Services/PoolService');
 const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
 const RedisUtils = use('App/Common/RedisUtils');
@@ -81,7 +82,7 @@ class PoolController {
       });
       await campaign.tiers().saveMany(tiers);
 
-      console.log('params.tier_configuration', tiers);
+      console.log('params.tier_configuration', JSON.stringify(tiers));
 
       const campaignId = campaign.id;
       // Create Web3 Account
@@ -97,8 +98,8 @@ class PoolController {
   async updatePool({ request, auth, params }) {
     const inputParams = request.only([
       'register_by',
-      'title', 'banner', 'description', 'address_receiver',
-      'token', 'token_by_eth', 'token_images', 'total_sold_coin',
+      'title', 'website', 'banner', 'description', 'address_receiver',
+      'token', 'token_by_eth', 'token_conversion_rate', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
       'min_tier', 'tier_configuration',
@@ -107,11 +108,13 @@ class PoolController {
 
     const data = {
       'title': inputParams.title,
+      'website': inputParams.website,
       'description': inputParams.description,
       'token': inputParams.token,
       'start_time': inputParams.start_time,
       'finish_time': inputParams.finish_time,
       'ether_conversion_rate': inputParams.token_by_eth,
+      'token_conversion_rate': inputParams.token_conversion_rate,
 
       'banner': inputParams.banner,
       'address_receiver': inputParams.address_receiver,
@@ -126,10 +129,6 @@ class PoolController {
       'pool_type': inputParams.pool_type,
       'min_tier': inputParams.min_tier,
     };
-
-    // if (!inputParams.is_deploy) {
-    //   data.is_deploy = inputParams.is_deploy;
-    // }
 
     console.log('Update Pool with data: ', data, params);
     const campaignId = params.campaignId;
@@ -238,6 +237,12 @@ class PoolController {
         .where('id', poolId)
         .first();
 
+      const walletAccount = await WalletAccountModel.query().where('campaign_id', poolId).first();
+      pool.wallet = {
+        id: walletAccount.id,
+        wallet_address: walletAccount.wallet_address,
+      };
+
       // Cache data
       RedisUtils.createRedisPoolDetail(poolId, pool);
 
@@ -254,57 +259,25 @@ class PoolController {
     const page = param.page ? param.page : Config.get('const.page_default');
     param.limit = limit;
     param.page = page;
+    param.is_display = false;
+    param.is_search = true;
     console.log('Start Pool List with params: ', param);
 
     try {
-      // console.log(await RedisUtils.checkExistRedisPoolList(param));
-      // console.log('9999999');
-
       if (await RedisUtils.checkExistRedisPoolList(param)) {
         const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
         console.log('Exist cache data Public Pool List: ', cachedPoolDetail);
         return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
       }
 
-      const filter = {};
-      let listData = CampaignModel.query().orderBy('id', 'DESC');
-      if(param.title) {
-        listData =  listData.where(builder => {
-          builder.where('title', 'like', '%'+ param.title +'%')
-            .orWhere('symbol', 'like', '%'+ param.title +'%')
-          if((param.title).toLowerCase() == Config.get('const.suspend')){
-            builder.orWhere('is_pause', '=', 1)
-          }
-          if((param.title).toLowerCase() == Config.get('const.active')){
-            builder.orWhere('is_pause', '=', 0)
-          }
-        })
-      }
-      if(param.start_time && !param.finish_time) {
-        listData = listData.where('start_time', '>=', param.start_time)
-      }
-      if(param.finish_time && !param.start_time ) {
-        listData = listData.where('finish_time', '<=', param.finish_time)
-      }
-      if(param.finish_time && param.start_time ) {
-        listData = listData.whereRaw('finish_time <=' + param.finish_time)
-          .whereRaw('start_time >=' + param.start_time)
-      }
-      if(param.registed_by){
-        listData = listData.where('registed_by', '=', param.registed_by)
-      }
+      let listData = (new PoolService).buildSearchQuery(param);
+      listData = listData.orderBy('id', 'DESC');
       listData = await listData.paginate(page,limit);
 
       // Cache data
       RedisUtils.createRedisPoolList(param, listData);
 
       return HelperUtils.responseSuccess(listData);
-
-      // return {
-      //   status: 200,
-      //   data: listData,
-      // }
-
     } catch (e) {
       console.log(e)
       return HelperUtils.responseErrorInternal(e.message);

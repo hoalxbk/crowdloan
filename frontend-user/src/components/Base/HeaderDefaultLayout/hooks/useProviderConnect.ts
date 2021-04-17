@@ -1,6 +1,5 @@
 import { useState, useEffect, SetStateAction, Dispatch, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
-import { useHistory } from 'react-router-dom';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
@@ -12,23 +11,18 @@ import { ConnectorNames } from '../../../../constants/connectors';
 import { APP_NETWORKS_ID, ETH_CHAIN_ID, BSC_CHAIN_ID } from '../../../../constants/network';
 import { requestSupportNetwork } from '../../../../utils/setupNetwork';
 import { connectWalletSuccess, disconnectWallet } from '../../../../store/actions/wallet';
-import { TwoFactors } from '../../../../store/reducers/wallet';
 import getAccountBalance from '../../../../utils/getAccountBalance';
-import { userActions } from '../../../../store/constants/user';
 
 import { settingAppNetwork, NetworkUpdateType, settingCurrentConnector } from '../../../../store/actions/appNetwork';
 
 const useProviderConnect = (
   setOpenConnectDialog?: Dispatch<SetStateAction<boolean>>, 
   openConnectDialog?: boolean,
-  handleError?: () => void,
-  handleLogout?: () => void,
   binanceAvailable?: boolean
 ) => {
   const dispatch = useDispatch();
 
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
-  const { twoFactor, walletConnect } = useTypedSelector(state => state.wallet);
   const [account, setAccount] = useState<string | undefined>(undefined);
 
   const [appNetworkLoading, setAppNetworkLoading] = useState(false);
@@ -38,7 +32,6 @@ const useProviderConnect = (
   const [connectWalletLoading, setConnectWalletLoading] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  const history = useHistory();
   const {activate, active, connector, chainId, error, account: connectedAccount, deactivate } = useWeb3React();
 
   const previousAccount = usePrevious(account);
@@ -65,15 +58,8 @@ const useProviderConnect = (
    useEffect(() => {
     const handleWeb3ReactUpdate = (updated: any) => {
       if (updated.account) {
-        if (updated.account !== previousAccount && localStorage.getItem("investor_access_token")) {
-          localStorage.removeItem("investor_access_token");
-          dispatch({ type: userActions.INVESTOR_LOGOUT });
-          handleLogout && handleLogout();
-          handleConnectorDisconnect();
-        } else { 
-          console.debug('Account changed: ', updated.account);
-          setAccount(updated.account); 
-        }
+        console.log('updated');
+        setAccount(updated.account); 
       } 
 
       if (updated.chainId) {
@@ -98,15 +84,17 @@ const useProviderConnect = (
       }
     }
 
-    if (currentConnector) {
+    if (currentConnector && !active && !error) {
       currentConnector.on('Web3ReactUpdate', handleWeb3ReactUpdate)
       currentConnector.on('Web3ReactError', handleWeb3ReactError);
+      currentConnector.on('Web3ReactDeactivate', handleConnectorDisconnect);
     }
 
     return () => {
-      if (currentConnector) {
+      if (currentConnector && currentConnector.removeListener) {
         currentConnector.removeListener('Web3ReactUpdate', handleWeb3ReactUpdate);
         currentConnector.removeListener('Web3ReactError', handleWeb3ReactError);
+        currentConnector.removeListener('Web3ReactDeactivate', handleConnectorDisconnect);
       }
     }
   }, [currentConnector, connectedAccount]);
@@ -156,7 +144,6 @@ const useProviderConnect = (
 
   const switchNetwork = (appChainID: string, walletChainID: string) => {
     if (appChainID && walletChainID) {
-      console.log('Network Change Detected');
       Number(appChainID) !== Number(walletChainID) ? setLoginError(`App network (${appChainID}) doesn't mach to network selected in wallet: ${Number(walletChainID)}.`) : setLoginError('');
       currentConnector && activate(currentConnector, undefined, true).catch(err =>
         console.log('Fail when switch between network:', err.message)
@@ -197,7 +184,6 @@ const useProviderConnect = (
                 activate(connector);
               } else {
                 dispatch(disconnectWallet());
-                handleError && handleError();
                 setConnectWalletLoading(false);
                 setWalletName(walletName.filter(name => wallet !== name));
                 console.debug('Error when try to activate: ', error.message);
@@ -213,17 +199,12 @@ const useProviderConnect = (
       }
 
       setAppNetworkLoading(false);
-  }, [connector, connectWalletSuccess, appChainID, walletName]);
+  }, [connector, appChainID, walletName]);
 
   useEffect(() => {
     const getAccountDetails = async () => {
-      const investorToken = localStorage.getItem("investor_access_token") || "";
-
-      if (appChainID && !twoFactor && connectedAccount && walletNameSuccess) {
+      if (appChainID && connectedAccount && walletNameSuccess) {
         const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, walletNameSuccess);
-
-        setOpenConnectDialog && setOpenConnectDialog(false);
-        setConnectWalletLoading(false);
 
         dispatch(
           connectWalletSuccess(
@@ -235,21 +216,19 @@ const useProviderConnect = (
           )
         );
 
-        !investorToken && history.push('/login');
+        setConnectWalletLoading(false);
       } 
-      else if (twoFactor === TwoFactors.Layer1 && walletNameSuccess && !walletConnect && !investorToken) {
-        handleLogout && handleLogout();
-        handleConnectorDisconnect();
-      }
     } 
     getAccountDetails();
-  }, [walletNameSuccess, connectedAccount, appChainID, walletChainID, twoFactor, walletConnect]);
+  }, [walletNameSuccess, connectedAccount, appChainID, walletChainID]);
 
   const handleConnectorDisconnect = useCallback(() => {
-    deactivate();
     dispatch(disconnectWallet());
     dispatch(settingCurrentConnector(undefined));
     dispatch(settingAppNetwork(NetworkUpdateType.Wallet, undefined));
+
+    deactivate();
+    setAccount(undefined);
     setWalletName([]);
     setWalletNameSuccess(undefined);
     setCurrentConnector(undefined);

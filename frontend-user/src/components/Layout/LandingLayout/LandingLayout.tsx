@@ -7,7 +7,7 @@ const LandingLayout = (props: any) => {
   const commonStyle = useCommonStyle();
 
   return (
-    <div className={commonStyle.DefaultLayout}>
+    <div className={commonStyle.DefaultLayout} style={{backgroundColor: '#020618'}}>
       <HeaderLandingLayout/>
       <MainDefaultLayout backgroundColor="#020618">{props.children}</MainDefaultLayout>
       <FooterLandingLayout/>
