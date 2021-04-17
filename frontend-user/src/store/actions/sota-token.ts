@@ -31,7 +31,7 @@ export const getAllowance = (owner: string) => {
   }
 };
 
-export const approve = (address: string, amount: string) => {
+export const approve = (address: string | null | undefined, amount: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     dispatch({ type: sotaTokenActions.APPROVE_LOADING });
     try {
@@ -39,7 +39,7 @@ export const approve = (address: string, amount: string) => {
 
       const contract = getContractInstance(erc20ABI, process.env.REACT_APP_SOTA as string);
 
-      result = await contract?.methods.approve(process.env.REACT_APP_SOTATIER, convertToWei(amount)).send({from: address})
+      result = await contract?.methods.approve(process.env.REACT_APP_SOTATIER, convertToWei(amount)).send({from: address || ''})
       console.log('approve', result)
 
       // dispatch(getAllowance(address));
