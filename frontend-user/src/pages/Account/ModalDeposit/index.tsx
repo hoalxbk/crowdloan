@@ -1,13 +1,15 @@
-import { useState} from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
-import { LinearProgress } from '@material-ui/core';
 import { approve } from '../../../store/actions/sota-token';
 import { deposit } from '../../../store/actions/sota-tiers';
-import TokenType from '../../../hooks/useTokenDetails'
-import useAuth from '../../../hooks/useAuth'
+import useAuth from '../../../hooks/useAuth';
+import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
+
+const closeIcon = '/images/icons/close.svg';
+const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,}$/;
 
 const ModalDeposit = (props: any) => {
   const styles = useStyles();
@@ -15,14 +17,13 @@ const ModalDeposit = (props: any) => {
   const commonStyles = useCommonStyle();
 
   const [depositAmount, setDepositAmount] = useState('0');
+  const [disableApprove, setDisableApprove] = useState(true);
+  const [disableDeposit, setDisableDeposit] = useState(true);
 
-  const { data: depositTransaction, loading: depositing = false } = useSelector((state: any) => state.deposit);
-  const { data: approveTansaction, loading: approving = false } = useSelector((state: any) => state.approve);
-  const { data: loginInvestor } = useSelector((state: any) => state.investor);
   const { data: allowance = 0 } = useSelector((state: any) => state.allowance);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = 0 } = useSelector((state: any) => state.balance);
-  const { isAuth, connectedAccount, wrongChain } = useAuth();
+  const { connectedAccount } = useAuth();
 
 
   const {
@@ -31,7 +32,21 @@ const ModalDeposit = (props: any) => {
     token
   } = props;
 
+  useEffect(() => {
+    if(!connectedAccount) return
+    setDisableApprove(false)
+    if(!isNaN(parseFloat(balance.token))
+      && !isNaN(parseFloat(depositAmount)))
+    {
+      const tokenBalance = convertToBN(convertToWei(balance.token))
+      const amount = convertToBN(convertToWei(depositAmount))
+      const zero = convertToBN('0')
+      setDisableDeposit(tokenBalance.lt(amount) || amount.lte(zero))
+    }
+  }, [connectedAccount, balance, depositAmount]);
+
   const onDeposit = () => {
+    if(disableDeposit) return
     dispatch(deposit(connectedAccount, depositAmount));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
@@ -43,36 +58,41 @@ const ModalDeposit = (props: any) => {
     setOpenModalDeposit(false);
   }
 
+  const handleClose = () => {
+    setOpenModalDeposit(false);
+  }
+
   return (
     <>
       <div className={commonStyles.modal + ' ' + styles.modalDeposit}>
         <div className="modal-content">
           <div className="modal-content__head">
+            <img src={closeIcon} className="btn-close" onClick={handleClose}/>
             <h2 className="title">You have {userInfo.staked} {token?.symbol} lock-in</h2>
           </div>
           <div className="modal-content__body">
             <div className="subtitle">
               <span>Input</span>
-              <span>Your wallet balance: { _.isEmpty(balance) ? 0 : parseFloat(userInfo.staked).toFixed() } {token.symbol}</span>
+              <span>Your wallet balance: { _.isEmpty(balance) ? 0 : parseFloat(balance.token).toFixed(2) } {token.symbol}</span>
             </div>
             <div className="input-group">
               <input
                 type="text"
                 value={depositAmount}
-                onChange={e => setDepositAmount(e.target.value)}
+                onChange={e => (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) && setDepositAmount(e.target.value)}
               />
               <div>
-                <button className="btn-max" onClick={() => setDepositAmount(balance.sota)}>MAX</button>
+                <button className="btn-max" onClick={() => setDepositAmount(balance.token)}>MAX</button>
               </div>
             </div>
           </div>
           <div className="modal-content__foot">
             {allowance <= 0 && <button
-              className="btn-approve"
+              className={"btn-approve " + (disableApprove ? 'disabled' : '')}
               onClick={onApprove}
             >approve</button>}
             {allowance > 0 && <button
-              className="btn-staking"
+              className={"btn-staking " + (disableDeposit ? 'disabled' : '')}
               onClick={onDeposit}
             >Lock-in</button>}
             <button

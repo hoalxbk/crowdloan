@@ -15,7 +15,8 @@ const useStyles = makeStyles((theme: any) => {
           borderRadius: '4px'
         },
         '& .input-group input': {
-          cursor: 'default'
+          cursor: 'default',
+          padding: '0'
         },
         '& .subtitle span': {
           textIndent: '10px',

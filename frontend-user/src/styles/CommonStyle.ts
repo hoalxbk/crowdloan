@@ -317,6 +317,7 @@ const useCommonStyle = makeStyles((theme) => {
           color: '#FDFDFD',
           border: 'none',
           outline: 'none',
+          paddingRight: '60px',
         },
 
         '& .input-group .btn-max': {
@@ -376,6 +377,10 @@ const useCommonStyle = makeStyles((theme) => {
 
           '&:hover': {
             cursor: 'pointer'
+          },
+
+          '&.disabled': {
+            backgroundColor: '#727272!important'
           },
 
           '&:first-child': {
