@@ -273,6 +273,12 @@ class CampaignController {
     // get user wallet_address
     const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
     const email = auth.user.email;
+
+    // ===========================================================================================
+    // Todo - Check user is verify email or register email or not
+
+    // ===========================================================================================
+
     if (wallet_address == null) {
       return HelperUtils.responseBadRequest("User don't have a valid wallet");
     }
@@ -315,12 +321,23 @@ class CampaignController {
       if (userWalletAddress == null) {
         return HelperUtils.responseBadRequest("User don't have a valid wallet");
       }
+      
+      // ===========================================================================================
+      // Todo - Check user is verify email or register email or not
+
+      // ===========================================================================================
+
       // check if exist in winner list
       const winnerListService = new WinnerListService();
       const winner = await winnerListService.findByWalletAddress({'wallet_address': userWalletAddress});
       if (winner == null) {
         return HelperUtils.responseBadRequest("You're not in winner list");
       }
+
+      // ===========================================================================================
+      // Todo - FCFS does not have winner list and reserve list
+
+      // ===========================================================================================
 
       // TODO list reserved
       // check user tier
@@ -333,6 +350,16 @@ class CampaignController {
         'campaign_id': params.campaign_id,
         'level': userTier
       };
+
+      // ===========================================================================================
+      // Todo - Check min tier required for pool
+
+      // ===========================================================================================
+
+      // ===========================================================================================
+      // Todo - if user tier is not in start and end of current tier, response error and don't sign signature
+
+      // ===========================================================================================
       const tier = await tierService.findByLevelAndCampaign(tierParams);
       if (tier == null) {
         return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign or you're early to deposit");
@@ -347,6 +374,7 @@ class CampaignController {
         console.log(`Do not found campaign with id ${params.campaign_id}`);
         return HelperUtils.responseBadRequest("Error");
       }
+
       // get private key from db
       const walletService = new WalletService();
       const wallet = await walletService.findByCampaignId(filterParams);
@@ -357,6 +385,12 @@ class CampaignController {
       // call to SC to get sign hash
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
       // get convert rate token erc20 -> our token
+
+      // ===========================================================================================
+      // Todo - Support multiple token buy from ETH, USDC, USDT. Need check supported currency
+      // => Different max Token amount
+      // => Support min buy amount and convert in response
+      // ===========================================================================================
       const rate = await poolContract.methods.getErc20TokenConversionRate(SMART_CONTRACT_USDT_ADDRESS).call();
       const maxTokenAmount = web3.utils.toWei((tier.max_buy * rate).toString(), "ether");
       console.log(rate, maxTokenAmount, userWalletAddress, camp.start_time);
@@ -371,6 +405,10 @@ class CampaignController {
       web3.eth.defaultAccount = accAddress;
       const signature = await web3.eth.sign(messageHash, accAddress);
       console.log(`signature ${signature}`);
+      // ===========================================================================================
+      // Don't need to response start_time, end_time
+      // Lack response min buy amount
+      // ===========================================================================================
       const response = {
         'max_buy': maxTokenAmount,
         'signature': signature,
