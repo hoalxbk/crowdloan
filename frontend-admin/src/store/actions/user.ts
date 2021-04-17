@@ -25,12 +25,12 @@ const MESSAGE_SIGNATURE = process.env.REACT_APP_MESSAGE_SIGNATURE || "";
 
 const getMessageParams = (isInvestor: boolean = false) => {
   const msgSignature = MESSAGE_SIGNATURE;
-
-  return [{
-    type: 'string',      // Any valid solidity type
-    name: 'Message',     // Any string label you want
-    value: msgSignature  // The value to sign
-  }]
+  return msgSignature;
+  // return [{
+  //   type: 'string',      // Any valid solidity type
+  //   name: 'Message',     // Any string label you want
+  //   value: msgSignature  // The value to sign
+  // }]
 }
 
 const dispatchErrorWithMsg = (dispatch: Dispatch, action: string, msg: string) => {
@@ -84,41 +84,44 @@ export const login = (password: string, isInvestor: boolean = false) => {
       if (ethAddress) {
         const windowObj = window as any;
         const { ethereum } = windowObj;
-       await ethereum.sendAsync({
-            method: 'eth_signTypedData',
-            params: [getMessageParams(isInvestor), ethAddress],
-            from: ethAddress,
-        }, async function(err: Error, result: any) {
-          if (err || result.error) {
-             const errMsg = err.message || result.error.message
-              dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, errMsg);
-          } else {
-            const response = await baseRequest.post(apiRoute('login'), {
-              password,
-              signature: result.result,
-              wallet_address: ethAddress,
-            }, isInvestor) as any;
 
-            const resObj = await response.json();
+      const res = await ethereum.sendAsync({
+        method: 'personal_sign',
+        params: [getMessageParams(false), ethAddress],
+        from: ethAddress,
+      }, async (err: Error, result: any) => {
+        if (err || result.error) {
+          const errMsg = err.message || result.error.message
+          dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, errMsg);
+        } else {
+          const response = await baseRequest.post(apiRoute('login'), {
+            password,
+            signature: result.result,
+            wallet_address: ethAddress,
+          }, isInvestor) as any;
 
-            if (resObj.status && resObj.status === 200 && resObj.data) {
-              const { token, user } = resObj.data;
+          const resObj = await response.json();
 
-              localStorage.setItem(!isInvestor ? 'access_token': 'investor_access_token', token.token);
+          if (resObj.status && resObj.status === 200 && resObj.data) {
+            const { token, user } = resObj.data;
 
-              dispatch({
-                type: !isInvestor ? userActions.USER_LOGIN_SUCCESS: userActions.INVESTOR_LOGIN_SUCCESS,
-                payload: user
-              });
-            }
+            localStorage.setItem(!isInvestor ? 'access_token': 'investor_access_token', token.token);
 
-            if (resObj.status && resObj.status !== 200) {
-              console.log('RESPONSE Login: ', resObj);
-              dispatch(alertFailure(resObj.message));
-              dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, '');
-            }
+            dispatch({
+              type: !isInvestor ? userActions.USER_LOGIN_SUCCESS: userActions.INVESTOR_LOGIN_SUCCESS,
+              payload: user
+            });
           }
-        });
+
+          if (resObj.status && resObj.status !== 200) {
+            console.log('RESPONSE Login: ', resObj);
+            dispatch(alertFailure(resObj.message));
+            dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, '');
+          }
+        }
+      });
+
+      console.log('Res: ', res)
       }
     } catch (error) {
       console.log('ERROR Login: ', error);
