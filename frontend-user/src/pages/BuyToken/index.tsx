@@ -25,6 +25,7 @@ import DefaultLayout  from '../../components/Layout/DefaultLayout';
 import { ETH_CHAIN_ID } from '../../constants/network';
 
 import { getUserTierAlias } from '../../utils/getUserTierAlias';
+import { getPoolCountDown } from '../../utils/getPoolCountDown';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
 import { getTiers, getUserInfo, getUserTier } from '../../store/actions/sota-tiers';
@@ -89,7 +90,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
 
   const availableJoin = poolDetails?.method === 'whitelist' 
-    ? new Date() >= joinTimeInDate && new Date() <= endJoinTimeInDate
+    ? (new Date() >= joinTimeInDate && new Date() <= endJoinTimeInDate && connectedAccount && !wrongChain)
     : false;
   const availablePurchase = new Date() >= startBuyTimeInDate && new Date() <= endBuyTimeInDate;
   
@@ -111,50 +112,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     startBuyTime: Date | undefined,
     endBuyTime: Date | undefined
   ) => {
-    const today = new Date().getTime();
-    let date;
-    let display;
-
-    if (method && method === "whitelist" && startJoinTime && endJoinTime && startBuyTime && endBuyTime) {
-
-      if (today < startJoinTime.getTime()) {
-        date = startJoinTime; 
-        display = "Start in";
-      }
-
-      if (today > startJoinTime.getTime() && today < endJoinTime.getTime()) {
-        date = endJoinTime;
-        display = "End in";
-      }
-
-      if (today > endJoinTime.getTime() && today < startBuyTime.getTime()) {
-        date = startBuyTime;
-        display = "Start buy in"
-      }
-
-      if (today > startBuyTime.getTime() && today < endBuyTime.getTime()) {
-        date =  endBuyTime;
-        display = "End buy in";
-      }
-
-    }
-
-    if (method && method === "fcfs" && startBuyTime && endBuyTime) {
-      if (today < startBuyTime.getTime()) {
-        date = startJoinTime; 
-        display = "Start buy in"
-      }
-
-      if (today > startBuyTime.getTime() && today < endBuyTime.getTime()) {
-        date = endBuyTime;
-        display = "End buy in";
-      }
-    }
-
-    return {
-      date,
-      display
-    }
+    return getPoolCountDown(startJoinTime, endJoinTime, startBuyTime, endBuyTime, method);
   }, [poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate]);
 
   const { date: countDownDate, display } = displayCountDownTime(poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate)
@@ -163,6 +121,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
 
+  // Hide main tab after end buy time
   useEffect(() => {
     if (endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
   }, [endBuyTimeInDate]);
@@ -184,7 +143,7 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     const poolNetwork = poolDetails?.networkAvailable;
-    if (isAuth && connectedAccount && !wrongChain && poolDetails && ableToFetchFromBlockchain) { 
+    if (isAuth && connectedAccount && poolDetails && ableToFetchFromBlockchain) { 
       dispatch(getTiers(poolNetwork)) 
       dispatch(getUserInfo(connectedAccount, poolNetwork));
       dispatch(getUserTier(connectedAccount, poolNetwork));
@@ -248,8 +207,8 @@ const BuyToken: React.FC<any> = (props: any) => {
           {isWinner && 
             <p className={styles.poolTicketWinner}>
               {
-                [...Array(3)].map(num => (
-                  <img src="/images/fire-cracker.svg" alt="file-cracker" />
+                [...Array(3)].map((num, index) => (
+                  <img src="/images/fire-cracker.svg" alt="file-cracker" key={index} />
                 ))
               }
               <span style={{ marginLeft: 14 }}>
@@ -300,6 +259,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                                       setShowRateReverse(!showRateReserve);
                                     }
                                   }} 
+                                  key={key}
                                 />)
                             }
                           </p>
@@ -371,7 +331,13 @@ const BuyToken: React.FC<any> = (props: any) => {
                     if (header === HeaderType.Main && new Date() > endBuyTimeInDate) {
                       return null;
                     }
-                    return <li className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`} onClick={() => setActiveNav(header)}>{header}</li>
+                    return <li 
+                      className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`} 
+                      onClick={() => setActiveNav(header)}
+                      key={header}
+                    >
+                      {header}
+                    </li>
                   })
                 }
               </ul>
@@ -390,6 +356,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       method={poolDetails?.method}
                       availablePurchase={availablePurchase}
                       ableToFetchFromBlockchain={ableToFetchFromBlockchain}
+                      minTier={poolDetails?.minTier}
                     /> 
                  )
               }

@@ -48,6 +48,12 @@ const Dashboard = (props: any) => {
     title: 'Parachain Crowdloan',
     description: 'Kusama and Polkadot parachain auctions are around the corner. Red Kite supports crownloan campaigns for projects to collect KSM and DOT tokens effectively for winning the auction.',
     backgroundColor: 'linear-gradient(180deg, #5C274F 0%, #060B26 43.33%)'
+  },
+  {
+    image: '/images/landing/image6.svg',
+    title: 'Tier và reputation ',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet vestibulum elit. Aliquam sagittis massa ut ultrices tincidunt. Curabitur tincidunt pharetra erat vitae consectetur. ',
+    backgroundColor: 'linear-gradient(180deg, #50A3CF 0%, #060B26 50%)'
   }]
 
   return (
