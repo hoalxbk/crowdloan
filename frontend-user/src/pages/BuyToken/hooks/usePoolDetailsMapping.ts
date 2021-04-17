@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import { numberWithCommas } from '../../../utils/formatNumber';
 
@@ -18,6 +19,7 @@ export type PoolDetailMapping = {
   [key in PoolDetailKey]: {
     display: string | number;
     utilIcon?: string;
+    reverse?: string;
     label: string
   }
 };
@@ -49,6 +51,7 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
       },
       [PoolDetailKey.exchangeRate]: { 
         display: `1 ${tokenDetails.symbol} = ${ethRate} ${purchasableCurrency.toUpperCase()}`,
+        reverse: `1 ${purchasableCurrency.toUpperCase()} = ${new BigNumber(1).div(ethRate).toNumber()} ${tokenDetails?.symbol}`,
         val: 10,
         utilIcon: '/images/swap.svg',
         label: 'Exchange Rate',

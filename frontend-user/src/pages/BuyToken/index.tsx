@@ -46,6 +46,7 @@ const BuyToken: React.FC<any> = () => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
+  const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
   const [isWinner, setIsWinner] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
@@ -243,14 +244,26 @@ const BuyToken: React.FC<any> = () => {
                         <div className={styles.poolDetailBasic} key={key}>
                           <span className={styles.poolDetailBasicLabel}>{poolDetail.label}</span>
                           <p className={styles.poolsDetailBasicText}>
-                            <span>{poolDetail.display}</span>
+                            <span>
+                            {
+                              key !== PoolDetailKey.exchangeRate ? poolDetail.display: (
+                                showRateReserve ? poolDetail.reverse: poolDetail.display 
+                              )
+                            }
+                            </span>
                             {
                               poolDetail.utilIcon && ( 
                                 <img 
                                   src={poolDetail.utilIcon} 
                                   className={styles.poolDetailUtil} 
                                   onClick={() => {
-                                    key === PoolDetailKey.website && window.open(poolDetail.display as string, '_blank')
+                                    if (key === PoolDetailKey.website) {
+                                      window.open(poolDetail.display as string, '_blank')
+                                    }
+
+                                    if (key === PoolDetailKey.exchangeRate) {
+                                      setShowRateReverse(!showRateReserve);
+                                    }
                                   }} 
                                 />)
                             }
