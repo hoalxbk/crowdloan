@@ -10,6 +10,7 @@ type ClaimTokenProps = {
 const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
   const { releaseTime } = props;
   const styles = useStyles();
+
   return (
     <div className={styles.poolDetailClaim}>
       <p className={styles.poolDetailClaimTitle}>

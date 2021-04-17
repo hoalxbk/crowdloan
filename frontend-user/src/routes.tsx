@@ -65,12 +65,6 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   } = useProviderConnect(
     setOpenConnectWallet, 
     openConnectWallet, 
-    () => { 
-      setCurrentConnectedWallet(undefined);
-    }, 
-    () => { 
-      setCurrentConnectedWallet(undefined) 
-    }, 
     binanceAvailable
   );
 

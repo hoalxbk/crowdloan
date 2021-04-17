@@ -10,10 +10,10 @@ import { getContractInstance, SmartContractMethod } from '../../../services/web3
 
 const DECIMAL_PLACES = 8;
 
-const useTokenSoldProgress = (poolAddress: string | undefined, token: TokenType | undefined) => {
-  const [soldProgress, setSoldProgress] = useState<string>("");
-  const [tokenSold, setTokenSold] = useState<string>("");
-  const [totalSell, setTotalSell] = useState<string>("");
+const useTokenSoldProgress = (poolAddress: string | undefined, token: TokenType | undefined, networkAvailable: string | undefined) => {
+  const [soldProgress, setSoldProgress] = useState<string>("0");
+  const [tokenSold, setTokenSold] = useState<string>("0");
+  const [totalSell, setTotalSell] = useState<string>("0");
 
   const { appChainID }  = useTypedSelector(state  => state.appNetwork).data;
   const connector  = useTypedSelector(state => state.connector).data;
@@ -21,9 +21,23 @@ const useTokenSoldProgress = (poolAddress: string | undefined, token: TokenType 
 
   useEffect(() => {
     const calSoldProgress = async () => {
-      if (poolAddress && token && ethers.utils.isAddress(poolAddress)) {
-        const poolContract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read);
-        const tokenContract = getContractInstance(ERC20_ABI, token.address, connector, appChainID, SmartContractMethod.Read);
+      if (poolAddress && token && networkAvailable && ethers.utils.isAddress(poolAddress)) {
+        const poolContract = getContractInstance(
+          Pool_ABI, 
+          poolAddress, 
+          connector, 
+          appChainID, 
+          SmartContractMethod.Read, 
+          networkAvailable === 'eth'
+        );
+        const tokenContract = getContractInstance(
+          ERC20_ABI, 
+          token.address, 
+          connector, 
+          appChainID, 
+          SmartContractMethod.Read, 
+          networkAvailable === 'eth'
+        );
 
         if (poolContract && tokenContract) {
           const tokensSold = await poolContract.methods.tokenSold().call();
@@ -43,14 +57,14 @@ const useTokenSoldProgress = (poolAddress: string | undefined, token: TokenType 
       }
     }
 
-    if (poolAddress && token) {
+    if (poolAddress && token && networkAvailable) {
       soldProgressInterval = setInterval(() => calSoldProgress(), 5000);
     }
 
     return () => {
       soldProgressInterval && clearInterval(soldProgressInterval);
     }
-  }, [poolAddress, token]);
+  }, [poolAddress, token, networkAvailable]);
    
   return {
     tokenSold,

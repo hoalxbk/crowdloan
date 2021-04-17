@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { TIERS } from '../../../constants';
 import useStyles from './style';
-import { convertFromWei } from '../../../services/web3'
+import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 
 const warningIcon = '/images/icons/warning.svg';
 
@@ -22,7 +23,6 @@ const Tiers = (props: any) => {
 
   const [currentProcess, setCurrentProcess] = useState(0)
   
-
   const calculateProcess = () => {
     if(_.isEmpty(tiers) || _.isEmpty(userTier) || _.isEmpty(userInfo)) return
     let idx = 0
@@ -46,8 +46,18 @@ const Tiers = (props: any) => {
   return (
     <div className={`tiers__component`}>
       <div className={styles.title}>
-        <img src={warningIcon} />
-        <p>You don't have an X yet. Please upgrade your level</p>
+        {
+          userTier >= 0 && ( 
+            <>
+              <img src={warningIcon} />
+              <p>
+              You are in tier {getUserTierAlias(userTier as number)}.&nbsp; 
+              To upgrade your tier, please click&nbsp;
+              <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
+              </p> 
+            </>
+         )
+        }
       </div>
       <ul className={styles.tierList}>
         <li className="process" style={{width:`${currentProcess}%`}}></li>

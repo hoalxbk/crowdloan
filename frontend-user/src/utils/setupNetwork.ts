@@ -1,9 +1,9 @@
-import {NETWORK_URL} from '../constants/network';
+import {BSC_RPC_URL} from '../constants/network';
 import {ETH_CHAIN_ID, BSC_CHAIN_ID} from '../constants/network';
 import {ConnectorNames} from '../constants/connectors';
 
-const BSC_CHAIN_ALIAS = 'bsc-mainnet';
-const ETH_CHAIN_ALIAS = 'eth-mainnet';
+const BSC_CHAIN_ALIAS = process.env.REACT_APP_BSC_BSC_CHAIN_ALIAS;
+const ETH_CHAIN_ALIAS = process.env.REACT_APP_BSC_ETH_CHAIN_ALIAS;
 const BSC_ADDRESS = parseInt(process.env.REACT_APP_BSC_CHAIN_ID as string, 10);
 
 export const requestSupportNetwork = async (chainId: string, walletName: string) => {
@@ -18,13 +18,13 @@ export const requestSupportNetwork = async (chainId: string, walletName: string)
           params: [
             {
               chainId: `0x${BSC_ADDRESS.toString(16)}`,
-              chainName: 'Binance Smart Chain Mainnet',
+              chainName: 'Binance Smart Chain Testnet',
               nativeCurrency: {
                 name: 'BNB',
                 symbol: 'bnb',
                 decimals: 18,
               },
-              rpcUrls: [NETWORK_URL],
+              rpcUrls: [BSC_RPC_URL],
               blockExplorerUrls: ['https://bscscan.com/'],
             },
           ],

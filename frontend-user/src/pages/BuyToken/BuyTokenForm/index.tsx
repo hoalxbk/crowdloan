@@ -32,6 +32,7 @@ type BuyTokenFormProps = {
   joinTime: Date | undefined;
   method: string | undefined;
   availablePurchase: boolean | undefined;
+  ableToFetchFromBlockchain: boolean | undefined
 }
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
@@ -58,6 +59,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
     purchasableCurrency,
     poolId,
     availablePurchase,
+    ableToFetchFromBlockchain
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -75,7 +77,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   } = usePoolDepositAction({ poolAddress, signature, deadLine, maxBuy });
 
   const { retrieveTokenAllowance } = useTokenAllowance();
-  const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress);
+  const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
 
   const getApproveToken = useCallback(() => {
     if (purchasableCurrency && purchasableCurrency === "USDT") {
@@ -108,7 +110,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 
   const enableApprove = 
     tokenAllowance <= 0  
-    && (purchasableCurrency && purchasableCurrency !== 'ETH') && availablePurchase && !wrongChain;
+    && (purchasableCurrency && purchasableCurrency !== 'ETH') 
+    && availablePurchase && !wrongChain && ableToFetchFromBlockchain;
+
 
   const purchasable = 
     (tokenAllowance > 0 
@@ -117,6 +121,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
      && estimateTokens > 0 
      && estimateTokens <= maximumBuy
      && !wrongChain
+     && signature
     );
 
   const fetchUserBalance = useCallback(async () => {
@@ -144,8 +149,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
       }
     }
 
-    fetchTokenPoolAllowance();
-  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
+    ableToFetchFromBlockchain && fetchTokenPoolAllowance();
+  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain]);
 
   const handleInputChange = async (e: any) => {
     const val = e.target.value;
@@ -164,7 +169,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
 
   const handleTokenDeposit = async () => {
     try {
-      if (purchasableCurrency) {
+      if (purchasableCurrency && ableToFetchFromBlockchain) {
         setOpenSubmitModal(true);
 
         // Call to smart contract to deposit token and refetch user balance
