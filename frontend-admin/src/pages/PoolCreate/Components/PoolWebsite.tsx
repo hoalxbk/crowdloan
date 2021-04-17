@@ -26,7 +26,8 @@ function PoolWebsite(props: any) {
         <input
           type="text"
           name="website"
-          value={website}
+          // value={website}
+          defaultValue={poolDetail?.website}
           ref={register({ required: true })}
           maxLength={255}
           className={classes.formControlInput}

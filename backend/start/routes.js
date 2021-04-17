@@ -100,7 +100,7 @@ Route.group(() => {
   Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware(['auth']);
   Route.get('whitelist-search/:campaignId', 'WhiteListUserController.search').middleware(['auth']);
   Route.get('winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners').middleware(['auth']);
-  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
+  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList');//.middleware('auth');
   Route.get('winner-search/:campaignId', 'WinnerListUserController.search').middleware('auth');
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');//.middleware('auth');
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign').middleware('auth');

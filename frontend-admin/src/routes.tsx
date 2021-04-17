@@ -60,8 +60,6 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   return (
     <div>
       <Switch>
-        {/*<Route exact path={`${publicRoute('/buy-token')}`} component={BuyToken} />*/}
-
         <Route
           exact path="/"
           render={() => <Redirect to={`${adminRoute()}`} />}

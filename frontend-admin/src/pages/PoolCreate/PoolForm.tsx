@@ -346,9 +346,8 @@ function PoolForm(props: any) {
               className={(!isEdit || poolDetail?.is_deploy || deployed) ? classes.formButtonDeployed : classes.formButtonDeploy}
               onClick={handlerDeploy}
             >
-              {
-                (loadingDeploy) ? <CircularProgress size={25} /> : "Deploy"
-              }
+              {loadingDeploy && <CircularProgress size={25} />}
+              {!loadingDeploy && 'Deploy'}
             </button>
 
             <button

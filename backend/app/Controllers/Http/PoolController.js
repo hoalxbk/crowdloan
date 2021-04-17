@@ -1,6 +1,7 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const WalletAccountModel = use('App/Models/WalletAccount');
 const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
@@ -235,6 +236,12 @@ class PoolController {
         .with('tiers')
         .where('id', poolId)
         .first();
+
+      const walletAccount = await WalletAccountModel.query().where('campaign_id', poolId).first();
+      pool.wallet = {
+        id: walletAccount.id,
+        wallet_address: walletAccount.wallet_address,
+      };
 
       // Cache data
       RedisUtils.createRedisPoolDetail(poolId, pool);
