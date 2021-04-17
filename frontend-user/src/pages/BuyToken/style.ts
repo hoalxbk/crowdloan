@@ -141,6 +141,7 @@ const useStyles = makeStyles((theme: any) => {
       display: 'flex',
       justifyContent: 'space-between',
       marginTop: 30,
+      alignItems: 'center',
       [theme.breakpoints.down('xs')]: {
         flexDirection: 'column',
       }

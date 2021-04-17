@@ -31,16 +31,20 @@ const useAuth = (): ReturnType => {
         isFound = true;
       }
     });
-  }, [])
+  }, [walletsInfo]);
+
+  useEffect(() => {
+    walletsInfo && getCurrentActiveWallet();
+  }, [walletsInfo]);
   
   useEffect(() => {
-    if (active) {
-      activeWallet ? setIsAuth(true) : getCurrentActiveWallet();
+    if (active && activeWallet) {
+      setIsAuth(true) 
     } else { 
       setIsAuth(false);
       setActiveWallet(undefined);
     }
-  }, [active, activeWallet]);
+  }, [active, account, activeWallet]);
 
   return { isAuth, connectedAccount: account, wrongChain: appChainID != chainId };
 }

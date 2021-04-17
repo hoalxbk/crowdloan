@@ -83,7 +83,7 @@ const InvestorLogin: React.FC<any> = (props: any) => {
 
   const handleFormSubmit = (data: any) => {
     if (userExists) {
-      connectedAccount && library && dispatch(login(connectedAccount, library, history));
+      connectedAccount && library && dispatch(login(connectedAccount, library));
     } else {
       connectedAccount && library && dispatch(userRegister({ 
         email: data.email, 

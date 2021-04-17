@@ -58,13 +58,13 @@ const useTokenSoldProgress = (poolAddress: string | undefined, token: TokenType 
     }
 
     if (poolAddress && token && networkAvailable) {
-      soldProgressInterval = setInterval(() => calSoldProgress(), 5000);
+      soldProgressInterval = setInterval(() => calSoldProgress(), 20000);
     }
 
     return () => {
       soldProgressInterval && clearInterval(soldProgressInterval);
     }
-  }, [poolAddress, token, networkAvailable]);
+  }, [poolAddress, token, appChainID, connector, networkAvailable]);
    
   return {
     tokenSold,
