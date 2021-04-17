@@ -98,7 +98,7 @@ Route.group(() => {
   Route.post('deposit', 'CampaignController.deposit').middleware(['auth']);
   Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware(['auth']);
   Route.get('whitelist-search/:campaignId', 'WhiteListUserController.search').middleware(['auth']);
-  Route.get('winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners').middleware(['auth']);
+  Route.get('winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners');
   Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
   Route.get('winner-search/:campaignId', 'WinnerListUserController.search').middleware('auth');
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign').middleware('auth');
