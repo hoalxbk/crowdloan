@@ -104,7 +104,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
   const { approveToken, tokenApproveLoading, transactionHash, setTokenApproveLoading } = useTokenApprove(
     tokenToApprove,
     connectedAccount, 
-    poolAddress
+    poolAddress,
+    false
   );
 
   const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 

@@ -30,8 +30,6 @@ export const getTiers = (forceUsingEther?: string) => {
         return parseFloat(convertFromWei(e))
       })
 
-      console.log('getTiers', result)
-
       dispatch({
         type: sotaTiersActions.TIERS_SUCCESS,
         payload: result,
@@ -65,7 +63,6 @@ export const getUserTier = (address: string, forceUsingEther?: string) => {
       );
 
       result = await contract?.methods.getUserTier(address).call();
-      console.log('getUserTier', result)
 
       dispatch({
         type: sotaTiersActions.USER_TIER_SUCCESS,
@@ -119,7 +116,7 @@ export const getUserInfo = (address: string, forceUsingEther?: string) => {
   }
 };
 
-export const deposit = (address: string, amount: string) => {
+export const deposit = (address: string | null | undefined, amount: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
@@ -129,12 +126,12 @@ export const deposit = (address: string, amount: string) => {
 
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
 
-      result = await contract?.methods.deposit(convertToWei(amount)).send({from: address})
+      result = await contract?.methods.deposit(convertToWei(amount)).send({from: address || ''})
 
-      dispatch(getBalance(address));
-      dispatch(getAllowance(address));
-      dispatch(getUserTier(address));
-      dispatch(getUserInfo(address));
+      dispatch(getBalance(address || ''));
+      dispatch(getAllowance(address || ''));
+      dispatch(getUserTier(address || ''));
+      dispatch(getUserInfo(address || ''));
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,
@@ -150,7 +147,7 @@ export const deposit = (address: string, amount: string) => {
   }
 };
 
-export const withdraw = (address: string, amount: string) => {
+export const withdraw = (address: string | null | undefined, amount: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_LOADING });
     try {
@@ -162,10 +159,10 @@ export const withdraw = (address: string, amount: string) => {
 
       result = await contract?.methods.withdraw(convertToWei(amount)).send({from: address})
 
-      dispatch(getBalance(address));
-      dispatch(getAllowance(address));
-      dispatch(getUserTier(address));
-      dispatch(getUserInfo(address));
+      dispatch(getBalance(address || ''));
+      dispatch(getAllowance(address || ''));
+      dispatch(getUserTier(address || ''));
+      dispatch(getUserInfo(address || ''));
 
       dispatch({
         type: sotaTiersActions.WITHDRAW_SUCCESS,
@@ -182,22 +179,29 @@ export const withdraw = (address: string, amount: string) => {
   }
 };
 
-export const getWithdrawFee = (address: string, amount: string) => {
+export const getWithdrawFee = (address: string | null | undefined, amount: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_FEE_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
       const connector = getState().connector.data;
-      let result = {};
+      let data = {};
 
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
 
-      result = await contract?.methods.calculateWithdrawFee(address, convertToWei(amount)).call();
+      data = await contract?.methods.calculateWithdrawFee(address, convertToWei(amount)).call();
       
+      const fee = convertFromWei(data);
+      const feePercent = parseFloat(fee || '0')*100/parseFloat(amount || '0')
+
+      const result = {
+        fee: fee,
+        feePercent: feePercent
+      }
 
       dispatch({
         type: sotaTiersActions.WITHDRAW_FEE_SUCCESS,
-        payload: convertFromWei(result),
+        payload: result,
       });
 
     } catch (error) {
@@ -223,7 +227,6 @@ export const getWithdrawPercent = () => {
       const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
 
       result = await contract?.methods.withdrawFeePercent(0).call();
-      console.log(result)
       data.push(result)
       result = await contract?.methods.withdrawFeePercent(1).call();
       data.push(result)

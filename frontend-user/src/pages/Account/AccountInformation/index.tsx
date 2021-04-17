@@ -32,7 +32,7 @@ const AccountInformation = (props: any) => {
           </div>
           <div className={styles.walletInfo}>
             <p>Wallet balance</p>
-            <span>{ parseFloat(balance.sota || 0).toFixed(2) }</span>
+            <span>{ parseFloat(balance.token || 0).toFixed(2) }</span>
             <p>Locked-in </p>
             <span>{ parseFloat(userInfo.staked || 0).toFixed(2) }</span>
           </div>

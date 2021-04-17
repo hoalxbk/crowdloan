@@ -5,6 +5,9 @@ const useStyles = makeStyles((theme: any) => {
     modalWithdraw: {
       '& .modal-content__body': {
         background: '#11152A',
+      },
+      '& .modal-content__foot button.btn-staking': {
+        backgroundColor: '#D01F36'
       }
     }
   };

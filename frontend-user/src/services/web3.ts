@@ -97,3 +97,7 @@ export const getETHBalance = async (loginUser: string) => {
 
   return 0;
 }
+
+export const convertToBN = (number: string) => {
+  return Web3.utils.toBN(number)
+}
