@@ -65,12 +65,12 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolDetailIntro: {
       color: 'white',
-      minWidth: 340,
+      minWidth: 400,
       marginRight: 120
     },
     poolDetailBasic: {
       display: 'grid',
-      gridTemplateColumns: '1fr 1fr',
+      gridTemplateColumns: '1fr 2fr',
 
       '&:not(:first-child)': {
         marginTop: 30
@@ -86,7 +86,8 @@ const useStyles = makeStyles((theme: any) => {
       color: 'white',
       fontSize: 16,
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      marginLeft: 50
     },
     poolDetailUtil: {
       marginLeft: 10,

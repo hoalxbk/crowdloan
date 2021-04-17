@@ -146,7 +146,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: BuyTokenFormProps) => 
       if (tokenDetails && poolAddress && connectedAccount && tokenToApprove) {
         setTokenAllowance(await retrieveTokenAllowance(tokenToApprove, connectedAccount, poolAddress) as number);
         setUserPurchased(await retrieveUserPurchased(connectedAccount, poolAddress) as number);
-        setTokenBalance(await retrieveTokenBalance(tokenToApprove, connectedAccount) as number);
+        /* setTokenBalance(await retrieveTokenBalance(tokenToApprove, connectedAccount) as number); */
       }
     }
 
