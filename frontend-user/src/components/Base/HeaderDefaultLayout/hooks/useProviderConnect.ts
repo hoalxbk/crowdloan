@@ -58,6 +58,7 @@ const useProviderConnect = (
    useEffect(() => {
     const handleWeb3ReactUpdate = (updated: any) => {
       if (updated.account) {
+        console.log('updated');
         setAccount(updated.account); 
       } 
 
@@ -86,12 +87,14 @@ const useProviderConnect = (
     if (currentConnector && !active && !error) {
       currentConnector.on('Web3ReactUpdate', handleWeb3ReactUpdate)
       currentConnector.on('Web3ReactError', handleWeb3ReactError);
+      currentConnector.on('Web3ReactDeactivate', handleConnectorDisconnect);
     }
 
     return () => {
       if (currentConnector && currentConnector.removeListener) {
         currentConnector.removeListener('Web3ReactUpdate', handleWeb3ReactUpdate);
         currentConnector.removeListener('Web3ReactError', handleWeb3ReactError);
+        currentConnector.removeListener('Web3ReactDeactivate', handleConnectorDisconnect);
       }
     }
   }, [currentConnector, connectedAccount]);

@@ -24,6 +24,8 @@ import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
 import { ETH_CHAIN_ID } from '../../constants/network';
 
+import { getUserTierAlias } from '../../utils/getUserTierAlias';
+import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
 import { getTiers, getUserInfo, getUserTier } from '../../store/actions/sota-tiers';
 
@@ -70,6 +72,7 @@ const BuyToken: React.FC<any> = () => {
     `/user/check-join-campaign/${poolDetails?.id}`);
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
+  // Use for check whether pool exist in selected network or not
   const networkAvailable = poolDetails?.networkAvailable === 'eth'? 'Ethereum': 'BinanceChain' ;
   const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
   const ableToFetchFromBlockchain = appNetwork === poolDetails?.networkAvailable && !wrongChain;
@@ -88,7 +91,17 @@ const BuyToken: React.FC<any> = () => {
     ? new Date() >= joinTimeInDate && new Date() <= endJoinTimeInDate
     : false;
   const availablePurchase = new Date() >= startBuyTimeInDate && new Date() <= endBuyTimeInDate;
-  const poolFilled = new Date() <= endBuyTimeInDate && new BigNumber(tokenSold).div(totalSell).gte(99);
+  
+  // Get Pool Status
+  const poolStatus = getPoolStatus(
+    joinTimeInDate, 
+    endJoinTimeInDate, 
+    startBuyTimeInDate, 
+    endBuyTimeInDate,
+    new BigNumber(tokenSold).div(totalSell).toFixed()
+  );
+  // Get Pool mintier
+  const poolMinTier = getUserTierAlias(poolDetails?.minTier || 0);
 
   const displayCountDownTime = useCallback((
     method: string | undefined, 
@@ -188,9 +201,10 @@ const BuyToken: React.FC<any> = () => {
                 <img src={poolDetails?.networkIcon} />
                 <span style={{ fontWeight: 600, marginLeft: 10 }}>{networkAvailable}</span>
               </p>
-              <p>
-                {poolFilled ? 'Filled': 'Closed'}
+              <p className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
+                {poolStatus}
               </p>
+              <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
             </h2>
               <p className={styles.poolHeaderAddress}>
                 {poolDetails?.poolAddress}
