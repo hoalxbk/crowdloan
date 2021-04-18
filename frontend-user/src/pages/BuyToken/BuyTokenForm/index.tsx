@@ -112,11 +112,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   );
 
   const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 
+  console.log(tokenAllowance, purchasableCurrency, new BigNumber(tokenAllowance).lt(new BigNumber(input)));
   const enableApprove = 
-    tokenAllowance <= 0  
+    (tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
     && (purchasableCurrency && purchasableCurrency !== 'ETH') 
-    && new BigNumber(tokenAllowance).lt(new BigNumber(input)) 
     && !wrongChain && ableToFetchFromBlockchain;
+
 
   const validTier = minTier && userTier >= minTier;
   const purchasable = 
