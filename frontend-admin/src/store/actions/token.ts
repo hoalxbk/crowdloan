@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { tokenActions } from '../constants/token'
 import { alertActions } from '../constants/alert'
 import { BaseRequest } from '../../request/Request'
-import erc20ABI from '../../abi/Erc20.json';
+import erc20ABI from '../../abi/Swap/Erc20.json';
 import { getContractInstance, getETHBalance } from '../../services/web3'
 
 export const getTokensByUser = () => {
@@ -48,7 +48,7 @@ export const getTokensByUser = () => {
             type: tokenActions.TOKENS_BY_USER_SUCCESS,
             payload: tokensDetail
           })
-        }   
+        }
       } catch (err) {
         dispatch({
           type: tokenActions.TOKENS_BY_USER_FAIL,
@@ -87,7 +87,7 @@ export const addTokenByUser = (tokenCreate: { tokenSymbol: string, tokenAddress:
         dispatch(getTokensByUser());
       } else if (resObject.status === 400) {
         throw new Error(resObject.message);
-      }  
+      }
     } catch (err) {
        dispatch({
          type: alertActions.ERROR_MESSAGE,
