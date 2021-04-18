@@ -23,7 +23,6 @@ function UserParticipant(props: any) {
   const [editData, setEditData] = useState({});
   const [editRow, setEditRow] = useState(0);
   const [isEdit, setIsEdit] = useState(true);
-
   const { users } = props;
 
   useEffect(() => {

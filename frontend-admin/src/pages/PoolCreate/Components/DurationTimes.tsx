@@ -53,7 +53,7 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true,
+                required: !isBuyTypeFCFS,
                 validate: {
                   greaterOrEqualToday: (value) => {
                     if (isDeployed || isBuyTypeFCFS) return true;
@@ -94,9 +94,10 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true,
+                required: !isBuyTypeFCFS,
                 validate: {
                   greateOrEqualStartJoinPoolTime: value => {
+                    if (isDeployed || isBuyTypeFCFS) return true;
                     const startTime = getValues('start_join_pool_time');
                     const valueUnix = moment(value).unix();
                     const startTimeUnix = moment(startTime).unix();
@@ -196,7 +197,7 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true,
+                required: !isBuyTypeFCFS,
                 validate: {
                   greateOrEqualStartTime: value => {
                     const startTime = getValues('start_time');
@@ -241,9 +242,10 @@ function DurationTime(props: any) {
           <Controller
             control={control}
             rules={{
-              required: true,
+              required: !isPoolTypeSwap,
               validate: {
                 greaterOrEqualFinishTime: value => {
+                  if (isPoolTypeSwap) return true;
                   const startTime = getValues('finish_time');
                   const valueUnix = moment(value).unix();
                   const startTimeUnix = moment(startTime).unix();

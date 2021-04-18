@@ -17,7 +17,7 @@ function PoolType(props: any) {
 
   useEffect(() => {
     if (poolDetail && poolDetail.pool_type) {
-      setValue('poolType', poolDetail.pool_type);
+      setValue('poolType', poolDetail.pool_type, { shouldValidate: true });
     }
   }, [poolDetail]);
   const isDeployed = !!poolDetail?.is_deploy;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import useStyles from "../style";
 import {renderErrorCreatePool} from "../../../utils/validate";
 
@@ -9,6 +9,14 @@ function PoolWebsite(props: any) {
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
+
+  const [website, setWebsite] = useState(poolDetail?.website);
+  useEffect(() => {
+    if (poolDetail && poolDetail.website) {
+      setWebsite(poolDetail.website);
+    }
+  }, [poolDetail]);
+
   const isDeployed = !!poolDetail?.is_deploy;
 
   return (
@@ -18,6 +26,7 @@ function PoolWebsite(props: any) {
         <input
           type="text"
           name="website"
+          // value={website}
           defaultValue={poolDetail?.website}
           ref={register({ required: true })}
           maxLength={255}
