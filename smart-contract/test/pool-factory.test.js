@@ -45,7 +45,7 @@ describe('Pool Factory', function () {
     const PoolFactory = await hardhat.ethers.getContractFactory(
       'PoolFactory',
     );
-    const deployedPoolFactory = await upgrades.deployProxy(PoolFactory, [tierContract]);
+    const deployedPoolFactory = await upgrades.deployProxy(PoolFactory);
     poolFactory = deployedPoolFactory;
   });
 
@@ -78,20 +78,8 @@ describe('Pool Factory', function () {
     const offeredCurrency = USDTToken;
     const offeredCurrencyRate = 2;
     const offeredCurrencyDecimals = 6;
-    const tierLimitBuy = [
-      (10 * 10 ** 18).toString(),
-      (30 * 10 ** 18).toString(),
-      (20 * 10 ** 18).toString(),
-      (40 * 10 ** 18).toString(),
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-    ];
     const wallet = accounts[1];
-    await poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, tierLimitBuy, wallet, wallet);
+    await poolFactory.registerPool(token, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, wallet, wallet);
 
     // Get pool length
     const poolLength = await poolFactory.allPoolsLength();

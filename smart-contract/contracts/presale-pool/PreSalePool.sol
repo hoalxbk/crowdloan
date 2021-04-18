@@ -273,12 +273,12 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
 
-        require(tokens >= _minAmount || userPurchased[_beneficiary].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
-        require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
+        require(tokens >= _minAmount || userPurchased[msg.sender].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
+        require(userPurchased[msg.sender].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _forwardFunds(weiAmount);
 
-        _updatePurchasingState(weiAmount, tokens, _beneficiary);
+        _updatePurchasingState(weiAmount, tokens);
 
         investedAmountOf[address(0)][msg.sender] = investedAmountOf[address(0)][msg.sender].add(weiAmount);
 
@@ -304,12 +304,12 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
 
         uint256 tokens = _getOfferedCurrencyToTokenAmount(_token, _amount);
 
-        require(tokens >= _minAmount || userPurchased[_beneficiary].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
-        require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
+        require(tokens >= _minAmount || userPurchased[msg.sender].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
+        require(userPurchased[msg.sender].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _forwardTokenFunds(_token, _amount);
 
-        _updatePurchasingState(_amount, tokens, _beneficiary);
+        _updatePurchasingState(_amount, tokens);
 
         investedAmountOf[_token][msg.sender] = investedAmountOf[address(0)][msg.sender].add(_amount);
         
@@ -343,8 +343,10 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
     {
         require(isFinalized(), "POOL::ICO_NOT_ENDED");
         require(token.balanceOf(address(this)) > 0, "POOL::EMPTY_BALANCE");
-        _deliverTokens(_wallet, _amount);
-        emit RefundedIcoToken(_wallet, _amount);
+        
+        uint256 remainingTokens = getAvailableTokensForSale();
+        _deliverTokens(_wallet, remainingTokens);
+        emit RefundedIcoToken(_wallet, remainingTokens);
     }
     
     /**
@@ -419,12 +421,12 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @param _tokens Value of sold tokens
      * @param _weiAmount Value in wei involved in the purchase
      */
-    function _updatePurchasingState(uint256 _weiAmount, uint256 _tokens, address _beneficiary)
+    function _updatePurchasingState(uint256 _weiAmount, uint256 _tokens)
         internal
     {
         weiRaised = weiRaised.add(_weiAmount);
         tokenSold = tokenSold.add(_tokens);
-        userPurchased[_beneficiary] = userPurchased[_beneficiary].add(_tokens);
+        userPurchased[msg.sender] = userPurchased[msg.sender].add(_tokens);
         totalUnclaimed = totalUnclaimed.add(_tokens);
     }
 

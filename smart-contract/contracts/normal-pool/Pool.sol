@@ -248,8 +248,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
 
-        require(tokens >= _minAmount || userPurchased[_beneficiary].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
-        require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
+        require(tokens >= _minAmount || userPurchased[msg.sender].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
+        require(userPurchased[msg.sender].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _deliverTokens(_beneficiary, tokens);
 
@@ -278,8 +278,8 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
 
         uint256 tokens = _getOfferedCurrencyToTokenAmount(_token, _amount);
 
-        require(tokens >= _minAmount || userPurchased[_beneficiary].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
-        require(userPurchased[_beneficiary].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
+        require(tokens >= _minAmount || userPurchased[msg.sender].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
+        require(userPurchased[msg.sender].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _deliverTokens(_beneficiary, tokens);
 
