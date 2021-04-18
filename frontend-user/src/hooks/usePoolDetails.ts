@@ -27,6 +27,7 @@ export type PoolDetails = {
   networkAvailable: string;
   networkIcon: string;
   minTier: number;
+  isDeployed: boolean;
 }
 
 export type PoolDetailsReturnType ={
@@ -47,6 +48,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const poolDetails = useMemo(() => {
     if (data && !loading && !error && tokenDetails && poolDetailDone)  {
       const buyLimit = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.max_buy): [0,0,0,0,0];
+      console.log(connectedAccountTier);
 
       return {
         method: data.buy_type,
@@ -71,7 +73,8 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         releaseTime: data.release_time,
         networkAvailable: data.network_available,
         networkIcon: data.network_available === 'eth' ? ETH_ICON: BSC_ICON,
-        minTier: data.min_tier
+        minTier: data.min_tier,
+        isDeployed: data.is_deploy === 1
       }
     }
 
