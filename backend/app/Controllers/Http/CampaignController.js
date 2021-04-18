@@ -295,8 +295,7 @@ class CampaignController {
       // get user info
       const userService = new UserService();
       const userParams = {
-        'wallet_address': wallet_address,
-        'campaign_id': campaign_id
+        'wallet_address': wallet_address
       }
       const user = await userService.findUser(userParams);
       if (user == null || user.email === '') {
@@ -337,15 +336,14 @@ class CampaignController {
   async deposit({request}) {
     // get all request params
     const params = request.all();
-    const campaign_id = request.params.campaign_id;
+    const campaign_id = params.campaign_id;
     const userWalletAddress = request.header('wallet_address');
     console.log('Deposit campaign with params: ',params, campaign_id, userWalletAddress);
     try {
       // get user info
       const userService = new UserService();
       const userParams = {
-        'wallet_address': userWalletAddress,
-        'campaign_id': campaign_id
+        'wallet_address': userWalletAddress
       }
       const user = await userService.findUser(userParams);
       if (user == null || user.email === '') {
@@ -397,7 +395,7 @@ class CampaignController {
           return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign !");
         }
         // check time start buy for tier
-        const current = Date.now() / 1000;
+        const current = Math.floor(Date.now() / 1000)
         if (tier.start_time > current || tier.end_time < current) {
           console.log(`${tier.start_time} ${tier.end_time} ${current}`);
           return HelperUtils.responseBadRequest("You're early come to join this campaign !");
@@ -414,7 +412,7 @@ class CampaignController {
           return HelperUtils.responseBadRequest("You're not in buyer list !");
         }
         // check time start buy for tier
-        const current = Date.now() / 1000;
+        const current = Math.floor(Date.now() / 1000)
         if (reserved.start_time > current || reserved.end_time < current) {
           console.log(`Reserved ${reserved.start_time} ${reserved.end_time} ${current}`);
           return HelperUtils.responseBadRequest("You're early come to join this campaign !");
