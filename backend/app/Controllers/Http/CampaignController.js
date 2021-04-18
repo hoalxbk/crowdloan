@@ -271,8 +271,11 @@ class CampaignController {
 
   async joinCampaign({request}) {
     // get request params
-    const campaign_id = request.params.campaign_id;
+    const campaign_id = request.input('campaign_id');
     const wallet_address = request.header('wallet_address');
+    if (campaign_id == null) {
+      return HelperUtils.responseBadRequest('Bad request with campaign_id');
+    }
     console.log('Join campaign with params: ', campaign_id, wallet_address);
     try {
       // check campaign
