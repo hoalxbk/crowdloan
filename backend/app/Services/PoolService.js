@@ -52,9 +52,11 @@ class PoolService {
     if(params.registed_by){
       builder = builder.where('registed_by', '=', params.registed_by)
     }
-    if(params.is_display !== undefined){
-      builder = builder.where('is_display', '=', params.is_display)
-    }
+    // if(params.is_display !== undefined){
+    //   builder = builder.where('is_display', '=', params.is_display)
+    // }
+
+    builder = builder.where('is_display', '=', true);
 
     return builder;
   }
