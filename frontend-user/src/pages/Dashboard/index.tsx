@@ -42,7 +42,6 @@ const Dashboard = (props: any) => {
   useEffect(() => {
     setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING))
     setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING))
-    if(!appChain || !connector) return
     pools.forEach(async (pool: any) => {
       const currentTime = moment().unix()
       if(pool.startJoinPoolTime > currentTime || pool.endJoinPoolTime < currentTime && currentTime < pool.startTime) {
@@ -61,6 +60,11 @@ const Dashboard = (props: any) => {
       } else {
         pool.status = POOL_STATUS.CLOSED
       }
+      const tokenSold = await getTokenSold(pool)
+      pool.tokenSold = tokenSold
+    })
+    if(!appChain || !connector) return
+    pools.forEach(async (pool: any) => {
       const tokenSold = await getTokenSold(pool)
       pool.tokenSold = tokenSold
     })

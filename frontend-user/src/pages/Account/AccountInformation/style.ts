@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme: any) => {
     inputGroup: {
       display: 'flex',
       flexDirection: 'row',
-      justifyContent: 'space-between',
+      justifyContent: 'flex-start',
       alignItems: 'center',
       marginBottom: '15px',
 
@@ -43,8 +43,15 @@ const useStyles = makeStyles((theme: any) => {
           overflow: 'hidden',
           textOverflow: 'ellipsis',
           wordBreak: 'break-word'
-        }
+        },
       },
+
+      '& span.verify-email': {
+        textDecoration: 'underline',
+        cursor: 'pointer',
+        width: 'auto'
+      },
+      
       '& button': {
         fontFamily: 'DM Sans',
         fontStyle: 'normal',
