@@ -2,7 +2,7 @@ import { usdtAllowanceActions } from '../constants/usdt-allowance';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getContractInstance } from '../../services/web3';
-import ErcABI from '../../abi/Erc20.json';
+import ErcABI from '../../abi/Swap/Erc20.json';
 import { isAllowanceUsdt } from '../../utils/usdt';
 
 export const getUsdtAllowance = (amount: string, campaignId: string) => {

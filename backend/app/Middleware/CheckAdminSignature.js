@@ -9,10 +9,6 @@ const web3 = new Web3();
 class CheckAdminSignature {
   async handle({ request, }, next) {
     try {
-      // const type = request.params.type;
-      // const isAdmin = type == Const.USER_TYPE_PREFIX.ICO_OWNER;
-      // const message = isAdmin ? process.env.MESSAGE_SIGNATURE : process.env.MESSAGE_INVESTOR_SIGNATURE;
-
       const params = request.all();
       const headers = request.headers();
       const signature = params.signature;
@@ -31,7 +27,6 @@ class CheckAdminSignature {
       }
 
       headers.wallet_address = wallet_address;
-
       await next();
     } catch (e) {
       console.log(e);

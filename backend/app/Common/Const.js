@@ -65,7 +65,7 @@ module.exports = Object.freeze({
   USER_STATUS: {
     UNVERIFIED: 0,
     ACTIVE: 1,
-    BLOCKED : 2,
+    BLOCKED: 2,
     DELETED: 3
   },
   FILE_SITE: '2mb',
@@ -98,5 +98,10 @@ module.exports = Object.freeze({
   BUY_TYPE: {
     WHITELIST_LOTTERY: 'whitelist',
     FCFS: 'fcfs',
+  },
+  ACCEPT_CURRENCY: {
+    ETH: 'eth',
+    USDT: 'usdt',
+    USDC: 'usdc',
   }
 });
