@@ -139,7 +139,7 @@ const Login: React.FC<any> = (props: any) => {
               <p className="login__form-desc login__form-privacy">
                 By clicking sign in you indicate that you have read and agree to our <a>Terms of Service</a> and <a>Privacy Policy</a>
               </p>
-              {/*<Link className="login__form-desc login__form-forgot-password" to={adminRoute('/register')}>Sign up ?</Link>*/}
+              <Link className="login__form-desc login__form-forgot-password" to={adminRoute('/register')}>Sign up ?</Link>
               <button disabled={userRegisterLoading || userLoginLoading} type="submit" className="login__form-button">
                 Sign in
                 {

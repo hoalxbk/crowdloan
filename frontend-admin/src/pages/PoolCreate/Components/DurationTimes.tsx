@@ -55,11 +55,11 @@ function DurationTime(props: any) {
               rules={{
                 required: !isBuyTypeFCFS,
                 validate: {
-                  greaterOrEqualToday: (value) => {
-                    if (isDeployed || isBuyTypeFCFS) return true;
-                    console.log(value);
-                    return new Date(value) >= new Date();
-                  },
+                  // greaterOrEqualToday: (value) => {
+                  //   if (isDeployed || isBuyTypeFCFS) return true;
+                  //   console.log(value);
+                  //   return new Date(value) >= new Date();
+                  // },
                 }
               }}
               name="start_join_pool_time"

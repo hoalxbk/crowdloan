@@ -589,23 +589,10 @@ export const deployPool = (campaign: any, history: any) => {
       const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
       const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
 
-      // const tiers = tier_configuration.map((tier: any, index: number) => {
-      //   // let decimal = 18;
-      //   let decimal = 6;
-      //   if (campaign.accept_currency === ACCEPT_CURRENCY.ETH) {
-      //     decimal = 18;
-      //   }
-      //   return (new BigNumber(tier.maxBuy || 0)).multipliedBy(Math.pow(10, decimal)).toString();
-      // });
-      //
-      // for (let i = 0; i < 5; i++) {
-      //   tiers.push(0);
-      // }
-
       const poolType = campaign.pool_type;
-      let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || "");
+      let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');
       if (poolType === POOL_TYPE.CLAIMABLE) {
-        factorySmartContract = getContractInstance(campaignFactoryClaimABI, '0xd9D2A1BA8C1CB226C589538068c14E8A47382597');
+        factorySmartContract = getContractInstance(campaignFactoryClaimABI, process.env.REACT_APP_SMART_CONTRACT_PRESALE_FACTORY_ADDRESS || '');
       }
 
       if (factorySmartContract) {

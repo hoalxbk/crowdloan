@@ -1,40 +1,48 @@
 import { useState, useEffect } from 'react';
 import axios from '../../../services/axios';
 
+const MESSAGE_INVESTOR_SIGNATURE = process.env.REACT_APP_MESSAGE_INVESTOR_SIGNATURE || "";
 
-const useUserPurchaseSignature = (connectedAccount: string | undefined | null, campaignId: number | undefined) => {
+const useUserPurchaseSignature = (connectedAccount: string | undefined | null, campaignId: number | undefined, authSignature: string | undefined) => {
   const [signature, setSignature] = useState<string | undefined>(undefined);
-  const [deadLine, setDeadLine] = useState<string| undefined>("");
+  const [minBuy, setMinBuy] = useState<string| undefined>("");
   const [maxBuy, setMaxBuy] = useState<string| undefined>("");
+  const [error, setError] = useState<string | undefined>("");
 
   useEffect(() => {
       const getUserSignature = async () => {
-        const config = {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("investor_access_token")}`
+        try {
+          const config = {
+            headers: {
+              msgSignature: MESSAGE_INVESTOR_SIGNATURE 
+            }
           }
-        }
-        const response = await axios.post('/user/deposit', {
-          campaign_id: campaignId,
-          wallet_address: connectedAccount
-        }, config);
+          const response = await axios.post('/user/deposit', {
+            campaign_id: campaignId,
+            wallet_address: connectedAccount,
+            signature: authSignature
+          }, config);
 
-        if (response.data && response.status && response.status === 200) {
-          const { data } = response.data;
-          if (data) {
-            setSignature(data.signature);
-            setDeadLine(data.dead_line);
-            setMaxBuy(data.max_buy);
+          if (response.data && response.status && response.status === 200) {
+            const { data } = response.data;
+            if (data) {
+              setSignature(data.signature);
+              setMinBuy(data.min_buy);
+              setMaxBuy(data.max_buy);
+            }
           }
+        } catch (err) {
+          setError(err.message);
         }
       }
-    connectedAccount && campaignId && getUserSignature()  ;
-  }, [connectedAccount, campaignId]);
+    connectedAccount && campaignId && authSignature && getUserSignature();
+  }, [connectedAccount, campaignId, authSignature]);
 
   return {
     signature,
-    deadLine,
-    maxBuy
+    minBuy,
+    maxBuy,
+    error
   }
 }
 

@@ -4,6 +4,7 @@ const ForbiddenException = use('App/Exceptions/ForbiddenException');
 const sigUtil = require('eth-sig-util')
 const Web3 = require('web3')
 const Const = use('App/Common/Const');
+const web3 = new Web3();
 
 class CheckAdminSignature {
   async handle({ request, }, next) {
@@ -14,9 +15,7 @@ class CheckAdminSignature {
       const message = headers.msgsignature;
 
       console.log('Check Signature with: ', params);
-      console.log('MessageAAAAA: ', message);
-
-      console.log('AAAAA===>')
+      console.log('Message: ', message);
 
       let recover = await web3.eth.accounts.recover(message, signature);
       const recoverConvert = Web3.utils.toChecksumAddress(recover);
