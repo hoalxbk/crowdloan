@@ -5,8 +5,8 @@ import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
 import { approve } from '../../../store/actions/sota-token';
 import { deposit } from '../../../store/actions/sota-tiers';
-import useAuth from '../../../hooks/useAuth';
 import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
+import { useWeb3React } from '@web3-react/core';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,}$/;
@@ -16,14 +16,13 @@ const ModalDeposit = (props: any) => {
   const dispatch = useDispatch();
   const commonStyles = useCommonStyle();
 
-  const [depositAmount, setDepositAmount] = useState('0');
-  const [disableApprove, setDisableApprove] = useState(true);
+  const [depositAmount, setDepositAmount] = useState('');
   const [disableDeposit, setDisableDeposit] = useState(true);
 
   const { data: allowance = 0 } = useSelector((state: any) => state.allowance);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = 0 } = useSelector((state: any) => state.balance);
-  const { connectedAccount } = useAuth();
+  const { account: connectedAccount, library } = useWeb3React();
 
 
   const {
@@ -33,8 +32,11 @@ const ModalDeposit = (props: any) => {
   } = props;
 
   useEffect(() => {
+    if(depositAmount === '' || depositAmount === '0') {
+      setDisableDeposit(true)
+      return
+    }
     if(!connectedAccount) return
-    setDisableApprove(false)
     if(!isNaN(parseFloat(balance.token))
       && !isNaN(parseFloat(depositAmount)))
     {
@@ -47,13 +49,13 @@ const ModalDeposit = (props: any) => {
 
   const onDeposit = () => {
     if(disableDeposit) return
-    dispatch(deposit(connectedAccount, depositAmount));
+    dispatch(deposit(connectedAccount, depositAmount, library));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
   }
 
   const onApprove = () => {
-    dispatch(approve(connectedAccount, '1000000000'));
+    dispatch(approve(connectedAccount, library));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
   }
@@ -80,6 +82,7 @@ const ModalDeposit = (props: any) => {
                 type="text"
                 value={depositAmount}
                 onChange={e => (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) && setDepositAmount(e.target.value)}
+                placeholder="0.00"
               />
               <div>
                 <button className="btn-max" onClick={() => setDepositAmount(balance.token)}>MAX</button>
@@ -88,7 +91,7 @@ const ModalDeposit = (props: any) => {
           </div>
           <div className="modal-content__foot">
             {allowance <= 0 && <button
-              className={"btn-approve " + (disableApprove ? 'disabled' : '')}
+              className={"btn-approve"}
               onClick={onApprove}
             >approve</button>}
             {allowance > 0 && <button
