@@ -39,8 +39,9 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
     minBuy &&
     maxBuy &&
     tokenDepositLoading &&
+    authSignature &&
     depositWithSignature(poolAddress, purchasableCurrency, amount, signature, `${minBuy}`, maxBuy);
-  }, [signature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy, tokenDepositLoading]);
+  }, [signature, authSignature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy, tokenDepositLoading]);
 
   useEffect(() => {
     if (error || buyError) {
@@ -81,8 +82,6 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
           minBuy,
           signature
         ];
-
-        console.log(params);
 
         const transaction = await poolContract[method](...params);
 
