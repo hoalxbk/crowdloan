@@ -102,8 +102,9 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
 
         token.contractAddress = PKF;
         token.decimals = 18;
-        token.rate = 1;
+        token.rate = 1000000000000000000;
         token.isERC721 = false;
+        token.canStake = true;
 
         tierPrice[1] = 2000e18;
         tierPrice[2] = 5000e18;
@@ -205,8 +206,6 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         UserInfo storage user = userInfo[msg.sender][_token];
         require(user.staked >= _amount, "not enough amount to withdraw");
 
-        user.staked = user.staked.sub(_amount);
-
         if (_token != PKF) {
             ExternalToken storage token = externalToken[_token];
             userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
@@ -218,6 +217,8 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         if (toPunish > 0) {
             IERC20(_token).transfer(penaltyWallet, toPunish);
         }
+
+        user.staked = user.staked.sub(_amount);
 
         IERC20(_token).transfer(msg.sender, _amount.sub(toPunish));
         emit WithdrawnERC20(msg.sender, _token, _amount, toPunish);
