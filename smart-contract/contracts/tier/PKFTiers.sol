@@ -20,7 +20,7 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         uint256 decimals;
         uint256 rate;
         bool isERC721;
-        bool isERC1155;
+        bool canStake;
     }
 
     uint256 constant MAX_NUM_TIERS = 10;
@@ -51,7 +51,6 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         address token,
         uint128[] tokenIds
     );
-    // event StakedERC1155(address indexed user, address token, uint256 amount);
     event WithdrawnERC20(
         address indexed user,
         address token,
@@ -68,7 +67,6 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         address token,
         uint128[] tokenIds
     );
-    // event WithdrawnERC1155(address indexed user, address token, uint256 indexed amount);
     event EmergencyWithdrawnERC20(
         address indexed user,
         address token,
@@ -79,18 +77,18 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         address token,
         uint128[] tokenIds
     );
-    // event EmergencyWithdrawnERC1155(address indexed user, address token, uint256 amount);
     event AddExternalToken(
         address indexed token,
         uint256 decimals,
         uint256 rate,
         bool isERC721,
-        bool isERC1155
+        bool canStake
     );
     event ExternalTokenStatsChange(
         address indexed token,
         uint256 decimals,
-        uint256 rate
+        uint256 rate,
+        bool canStake
     );
     event ChangePenaltyWallet(address indexed penaltyWallet);
 
@@ -99,6 +97,13 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         penaltyWallet = _penaltyWallet;
 
         PKF = _pkf;
+
+        ExternalToken storage token = externalToken[PKF];
+
+        token.contractAddress = PKF;
+        token.decimals = 18;
+        token.rate = 1;
+        token.isERC721 = false;
 
         tierPrice[1] = 2000e18;
         tierPrice[2] = 5000e18;
@@ -127,8 +132,8 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
             IERC20(PKF).transferFrom(msg.sender, address(this), _amount);
         } else {
             require(
-                _token == externalToken[_token].contractAddress,
-                "TIER::INVALID_TOKEN_DEPOSIT"
+                externalToken[_token].canStake == true,
+                "TIER::TOKEN_NOT_ACCEPTED"
             );
             IERC20(_token).transferFrom(msg.sender, address(this), _amount);
 
@@ -151,8 +156,8 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         nonReentrant()
     {
         require(
-            _token == externalToken[_token].contractAddress,
-            "TIER::INVALID_TOKEN_DEPOSIT"
+            externalToken[_token].canStake == true,
+            "TIER::TOKEN_NOT_ACCEPTED"
         );
         IERC721(_token).safeTransferFrom(msg.sender, address(this), _tokenId);
 
@@ -174,8 +179,8 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         nonReentrant()
     {
         require(
-            _token == externalToken[_token].contractAddress,
-            "TIER::INVALID_TOKEN_DEPOSIT"
+            externalToken[_token].canStake == true,
+            "TIER::TOKEN_NOT_ACCEPTED"
         );
         _batchSafeTransferFrom(_token, msg.sender, address(this), _tokenIds);
 
@@ -193,35 +198,23 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         emit StakedBatchERC721(msg.sender, _token, _tokenIds);
     }
 
-    // function depositERC1155(address _token, uint256 _ids, uint256 _amount, bytes calldata data) external nonReentrant() {
-    //     require(_token == externalToken[_token].contractAddress, "TIER::INVALID_TOKEN_DEPOSIT");
-    //     IERC1155(_token).safeTransferFrom(msg.sender, address(this), _amount, data);
-
-    //     ExternalToken storage token = externalToken[_token];
-    //     userExternalStaked[msg.sender] = userExternalStaked[msg.sender].add(_amount.mul(token.rate).div(10**token.decimals));
-
-    //     userInfo[msg.sender][_token].staked = userInfo[msg.sender][_token].staked.add(_amount);
-    //     userInfo[msg.sender][_token].stakedTime = block.timestamp;
-
-    //     emit StakedERC1155(msg.sender, _token, _amount);
-    // }
-
     function withdrawERC20(
-        address,
         address _token,
         uint256 _amount
     ) external nonReentrant() {
         UserInfo storage user = userInfo[msg.sender][_token];
         require(user.staked >= _amount, "not enough amount to withdraw");
 
-        uint256 toPunish = calculateWithdrawFee(msg.sender, _token, _amount);
         user.staked = user.staked.sub(_amount);
 
-        ExternalToken storage token = externalToken[_token];
-        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-            _amount.mul(10**token.decimals).div(token.rate)
-        );
+        if (_token != PKF) {
+            ExternalToken storage token = externalToken[_token];
+            userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
+                _amount.mul(10**token.decimals).div(token.rate)
+            );
+        }
 
+        uint256 toPunish = calculateWithdrawFee(msg.sender, _token, _amount);
         if (toPunish > 0) {
             IERC20(_token).transfer(penaltyWallet, toPunish);
         }
@@ -266,19 +259,6 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         _batchSafeTransferFrom(_token, address(this), msg.sender, _tokenIds);
         emit WithdrawnBatchERC721(msg.sender, _token, _tokenIds);
     }
-
-    // function withdrawERC1155(address _token, uint256 _amount) external nonReentrant() {
-    //     UserInfo storage user = userInfo[msg.sender][_token];
-    //     require(user.staked >= _amount, "not enough amount to withdraw");
-
-    //     user.staked = user.staked.sub(_amount);
-
-    //     ExternalToken storage token = externalToken[_token];
-    //     userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(_amount.mul(10**token.decimals).div(token.rate));
-
-    //     IERC1155(_token).transfer(msg.sender, _amount);
-    //     emit WithdrawnERC1155(msg.sender, _token, _amount);
-    // }
 
     function setPenaltyWallet(address _penaltyWallet) external onlyOwner {
         require(
@@ -343,49 +323,42 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         emit EmergencyWithdrawnERC721(msg.sender, _token, _tokenIds);
     }
 
-    // function emergencyWithdrawERC1155(address _token) external {
-    //     require(canEmergencyWithdraw, "function disabled");
-    //     UserInfo storage user = userInfo[msg.sender][_token];
-    //     require(user.staked > 0, "nothing to withdraw");
-
-    //     uint256 _amount = user.staked;
-    //     user.staked = 0;
-
-    //     IERC1155(_token).transfer(msg.sender, _amount);
-    //     emit EmergencyWithdrawnERC1155(msg.sender, _token, _amount);
-    // }
-
     function addExternalToken(
         address _token,
         uint256 _decimals,
         uint256 _rate,
         bool _isERC721,
-        bool _isERC1155
+        bool _canStake
     ) external onlyOwner {
         ExternalToken storage token = externalToken[_token];
+
+        require(_rate > 0, "TIER::INVALID_TOKEN_RATE");
 
         token.contractAddress = _token;
         token.decimals = _decimals;
         token.rate = _rate;
         token.isERC721 = _isERC721;
-        token.isERC1155 = _isERC1155;
+        token.canStake = _canStake;
 
-        emit AddExternalToken(_token, _decimals, _rate, _isERC721, _isERC1155);
+        emit AddExternalToken(_token, _decimals, _rate, _isERC721, _canStake);
     }
 
     function setExternalToken(
         address _token,
         uint256 _decimals,
-        uint256 _rate
+        uint256 _rate,
+        bool _canStake
     ) external onlyOwner {
         ExternalToken storage token = externalToken[_token];
 
         require(token.contractAddress == _token, "TIER::TOKEN_NOT_EXISTS");
+        require(_rate > 0, "TIER::INVALID_TOKEN_RATE");
 
         token.decimals = _decimals;
         token.rate = _rate;
+        token.canStake = _canStake;
 
-        emit ExternalTokenStatsChange(_token, _decimals, _rate);
+        emit ExternalTokenStatsChange(_token, _decimals, _rate, _canStake);
     }
 
     function updateTier(uint8 _tierId, uint256 _amount) external onlyOwner {
