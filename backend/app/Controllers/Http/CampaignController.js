@@ -1,7 +1,6 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
-const Tier = use('App/Models/Tier');
 const CampaignService = use('App/Services/CampaignService');
 const WalletService = use('App/Services/WalletAccountService');
 const TierService = use('App/Services/TierService');
@@ -11,8 +10,9 @@ const ReservedListService = use('App/Services/ReservedListService');
 const UserService = use('App/Services/UserService');
 const Const = use('App/Common/Const');
 const HelperUtils = use('App/Common/HelperUtils');
-const RedisUtils = use('App/Common/RedisUtils');
 const Redis = use('Redis');
+const BigNumber = use('bignumber.js')
+BigNumber.config({ EXPONENTIAL_AT: 50 });
 
 const CONFIGS_FOLDER = '../../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -439,34 +439,32 @@ class CampaignController {
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
       // get convert rate token erc20 -> our token
       // TODO need improve this code
-      let scCurrency;
+      let scCurrency, unit;
       switch (camp.accept_currency) {
         case Const.ACCEPT_CURRENCY.USDT:
           scCurrency = SMART_CONTRACT_USDT_ADDRESS;
+          unit = 6;
           break;
         case Const.ACCEPT_CURRENCY.USDT:
           scCurrency = SMART_CONTRACT_USDC_ADDRESS;
+          unit = 6;
           break;
-        default:
-
-      }
-      // TODO need improve this code
-      const rate = await poolContract.methods.getOfferedCurrencyRate(scCurrency).call();
-      const decimal = await poolContract.methods.getOfferedCurrencyDecimals(scCurrency).call();
-      let unit;
-      switch (decimal) {
-        case "18":
-          unit = "ether";
-          break;
-        case "6":
-          unit = "mwei";
-          break;
+        case Const.ACCEPT_CURRENCY.ETH:
+          scCurrency = '0x0000000000000000000000000000000000000000';
+          unit = 18;
         default:
       }
+      const receipt = await Promise.all([
+        poolContract.methods.getOfferedCurrencyRate(scCurrency).call(),
+        poolContract.methods.getOfferedCurrencyDecimals(scCurrency).call()
+      ]);
+      const rate = receipt[0];
+      const decimal = receipt[1];
+      console.log(rate,decimal);
       // calc min, max token user can buy
-      const maxTokenAmount = web3.utils.toWei((maxBuy * rate).toString(), unit);
-      const minTokenAmount = web3.utils.toWei((minBuy * rate).toString(), unit);
-      console.log(rate, minTokenAmount, maxTokenAmount, userWalletAddress);
+      const maxTokenAmount = new BigNumber (maxBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
+      const minTokenAmount = new BigNumber (minBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
+      console.log(minTokenAmount, maxTokenAmount, userWalletAddress);
       // get message hash
       const messageHash = await poolContract.methods.getMessageHash(userWalletAddress, maxTokenAmount, minTokenAmount).call();
       console.log(`message hash ${messageHash}`);
