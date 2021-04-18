@@ -58,16 +58,16 @@ module.exports = Object.freeze({
     WHITELISTED: 1,
     REGULAR: 2,
   },
-  // USER_TYPE_PREFIX: {
-  //   ICO_OWNER: 'user',
-  //   PUBLIC_USER: 'public',
-  // },
   USER_TYPE_PREFIX: {
     ICO_OWNER: 'admin',
     PUBLIC_USER: 'user',
   },
-  USER_INACTIVE: 0,
-  USER_ACTIVE: 1,
+  USER_STATUS: {
+    UNVERIFIED: 0,
+    ACTIVE: 1,
+    BLOCKED : 2,
+    DELETED: 3
+  },
   FILE_SITE: '2mb',
   FILE_EXT: ['png', 'gif', 'jpg', 'jpeg', 'JPEG'],
   TIME_EXPIRED: 300000,

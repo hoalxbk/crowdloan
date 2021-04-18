@@ -266,7 +266,7 @@ class AdminController {
       const admin = new AdminModel();
       admin.fill(inputs);
       admin.signature = randomString(15);  // TODO: Fill any string
-      admin.is_active = Const.USER_ACTIVE;
+      admin.status = Const.USER_STATUS.ACTIVE;
       const res = await admin.save();
 
       return HelperUtils.responseSuccess(res);

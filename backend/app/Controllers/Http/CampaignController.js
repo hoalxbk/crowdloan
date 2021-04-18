@@ -8,6 +8,7 @@ const TierService = use('App/Services/TierService');
 const WinnerListService = use('App/Services/WinnerListUserService');
 const WhitelistService = use('App/Services/WhitelistUserService');
 const ReservedListService = use('App/Services/ReservedListService');
+const UserService = use('App/Services/UserService');
 const Const = use('App/Common/Const');
 const HelperUtils = use('App/Common/HelperUtils');
 const RedisUtils = use('App/Common/RedisUtils');
@@ -25,6 +26,8 @@ const { abi: CONTRACT_TIER_ABI } = require('../../../blockchain_configs/contract
 
 const Web3 = require('web3');
 const BadRequestException = require("../../Exceptions/BadRequestException");
+const {USER_STATUS} = require("../../Common/Const");
+const {BUY_TYPE} = require("../../../../frontend-admin/src/constants");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
@@ -268,32 +271,49 @@ class CampaignController {
     }
   }
 
-  async joinCampaign({request, auth}) {
-    // get all params
-    const params = request.all()
-
-    // ===========================================================================================
-    // Todo - Check user is verify email or register email or not
-    // ===========================================================================================
-
-    // get user wallet_address
-    // const wallet_address = auth.user !== null ? auth.user.wallet_address : null;
-    const email = auth.user && auth.user.email;
-    // if (wallet_address == null) {
-    //   return HelperUtils.responseBadRequest("User don't have a valid wallet");
-    // }
+  async joinCampaign({request}) {
+    // get request params
+    const campaign_id = request.params.campaign_id;
     const wallet_address = request.header('wallet_address');
-    console.log('Join Pool with params: ', params, email, wallet_address);
-
+    console.log('Join campaign with params: ', campaign_id, wallet_address);
     try {
+      // check campaign
+      const campaignService = new CampaignService();
+      const camp = await campaignService.findByCampaignId(campaign_id);
+      if (camp == null || camp.buy_type !== BUY_TYPE.WHITELIST_LOTTERY) {
+        console.log(`Campaign with id ${campaign_id}`)
+        return HelperUtils.responseBadRequest(`Bad request with campaignId ${campaign_id}`)
+      }
+      const currentDate = Math.floor(Date.now() / 1000);
+      console.log(`Join with date ${currentDate}`);
+      // check time to join campaign
+      if (camp.start_join_pool_time > currentDate || camp.end_join_pool_time < currentDate) {
+        console.log(`It's not right time to join campaign ${currentDate} ${camp.start_join_pool_time} ${camp.end_join_pool_time}`)
+        return HelperUtils.responseBadRequest("It's not right time to join this campaign !");
+      }
+      // get user info
+      const userService = new UserService();
+      const userParams = {
+        'wallet_address': wallet_address,
+        'campaign_id': campaign_id
+      }
+      const user = await userService.findUser(userParams);
+      if (user == null || user.email === '') {
+        console.log(`User ${user}`);
+        return HelperUtils.responseBadRequest("You're not valid user to join this campaign !");
+      }
       // check user tier
       const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
       const userTier = await tierSc.methods.getUserTier(wallet_address).call();
       console.log(`user tier is ${userTier}`);
+      // check user tier with min tier of campaign
+      if (camp.min_tier > userTier) {
+        return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign!");
+      }
       // call to db to get tier info
       const tierService = new TierService();
       const tierParams = {
-        'campaign_id': params.campaign_id,
+        'campaign_id': campaign_id,
         'level': userTier
       };
       const tier = await tierService.findByLevelAndCampaign(tierParams);
@@ -301,8 +321,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign!");
       }
       // call to join campaign
-      const campaignService = new CampaignService();
-      await campaignService.joinCampaign(params.campaign_id, wallet_address, email);
+      await campaignService.joinCampaign(campaign_id, wallet_address, user.email);
       return HelperUtils.responseSuccess(null, "Join Campaign Successful !");
     } catch (e) {
       console.log("error", e)
@@ -314,7 +333,7 @@ class CampaignController {
     }
   }
 
-  async deposit({request, auth}) {
+  async deposit({request}) {
     try {
       // get all request params
       const params = request.all();
