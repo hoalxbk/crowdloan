@@ -18,7 +18,6 @@ import useTokenBalance from '../../../hooks/useTokenBalance';
 import useTokenAllowance from '../../../hooks/useTokenAllowance';
 import useUserPurchased from '../hooks/useUserPurchased';
 import usePoolDepositAction from '../hooks/usePoolDepositAction';
-import useUserPurchaseSignature from '../hooks/useUserPurchaseSignature';
 import useTokenApprove from '../../../hooks/useTokenApprove';
 import useAuth from '../../../hooks/useAuth';
 import { withWidth, isWidthDown, isWidthUp } from '@material-ui/core';
@@ -70,7 +69,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
   const connector = useTypedSelector(state => state.connector).data;
 
-  const { signature, deadLine, maxBuy } = useUserPurchaseSignature(connectedAccount, poolId);
   const { 
     deposit, 
     estimateFee, 
@@ -78,7 +76,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     tokenDepositLoading, 
     tokenDepositTransaction,
     setTokenDepositLoading
-  } = usePoolDepositAction({ poolAddress, signature, deadLine, maxBuy });
+  } = usePoolDepositAction({ poolAddress, poolId });
 
   const { retrieveTokenAllowance } = useTokenAllowance();
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
@@ -118,17 +116,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     && (purchasableCurrency && purchasableCurrency !== 'ETH') 
     && availablePurchase && !wrongChain && ableToFetchFromBlockchain;
 
-  
-
   const validTier = minTier && userTier >= minTier;
   const purchasable = 
     (tokenAllowance > 0 
      && !estimateErr 
      && availablePurchase 
      && estimateTokens > 0 
-     && estimateTokens <= maximumBuy
      && !wrongChain
-     && signature
      && validTier    
     );
 
