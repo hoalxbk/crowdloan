@@ -1,4 +1,5 @@
 import React from 'react';
+import moment from 'moment';
 import Button from '../Button';
 import Countdown from '../../../components/Base/Countdown';
 import useStyles from './style';
@@ -15,7 +16,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     <div className={styles.poolDetailClaim}>
       <p className={styles.poolDetailClaimTitle}>
         <span>{'Token can claim from'}</span>
-        <strong>{new Date().toString() }</strong>
+        <strong>{moment(releaseTime).format("h:mm:ss a, DD MMMM YYYY") }</strong>
       </p>
       <Countdown startDate={releaseTime} />
       <div className={styles.poolDetailClaimInfo}>

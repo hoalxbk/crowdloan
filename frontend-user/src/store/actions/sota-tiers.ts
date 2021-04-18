@@ -7,6 +7,12 @@ import { getBalance } from './balance';
 
 import {approve, getAllowance} from './sota-token';
 
+export const resetTiers = () => {
+  return {
+    type: sotaTiersActions.USER_TIER_RESET
+  }
+}
+
 export const getTiers = (forceUsingEther?: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.TIERS_LOADING });

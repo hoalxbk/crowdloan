@@ -39,7 +39,8 @@ const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
         const response = await axios.post(`/user/join-campaign`, {
           signature,
           wallet_address: account,
-          campaign_id: poolId
+          campaign_id: poolId,
+          email: "truong020900@gmail.com"
         }, config as any) as any;
 
         if (response.data) {
