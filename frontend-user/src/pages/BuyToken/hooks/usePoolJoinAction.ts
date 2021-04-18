@@ -16,20 +16,30 @@ const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
   const { account, library } = useWeb3React();
   const [joinPoolSuccess, setJoinPoolSuccess] = useState<boolean>(false);
   const [poolJoinLoading, setPoolJoinLoading] = useState<boolean>(false);
-  const { signature, signMessage, setSignature } = useWalletSignature();
+  const { signature, signMessage, setSignature, error } = useWalletSignature();
 
   const joinPool = useCallback(async () => {
     if (account && poolId && library) {
-      setPoolJoinLoading(true);
+      try {
+        setPoolJoinLoading(true);
 
-      await signMessage();
+        await signMessage();
+      } catch (err) {
+        setPoolJoinLoading(false);
+        console.log('Error when signing: ', err.message);
+      }
     }
   }, [poolId, account, library, signMessage]);
 
   useEffect(() => {
+    if (error && poolJoinLoading) {
+      setPoolJoinLoading(false);
+    }
+  }, [error]);
+
+  useEffect(() => {
     const poolJoinRequestWithSignature = async () => {
       if (signature && poolJoinLoading) {
-
         const config = {
           headers: {
             msgSignature: process.env.REACT_APP_MESSAGE_INVESTOR_SIGNATURE
@@ -40,7 +50,6 @@ const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
           signature,
           wallet_address: account,
           campaign_id: poolId,
-          email: "truong020900@gmail.com"
         }, config as any) as any;
 
         if (response.data) {

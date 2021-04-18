@@ -14,16 +14,6 @@ const rawMessageLength = new Blob([rawMessage]).size
 const message = ethers.utils.toUtf8Bytes("\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage)
 const messageHash = ethers.utils.keccak256(message);
 
-const getMessageParams = () => {
-  const msgSignature = MESSAGE_INVESTOR_SIGNATURE;
-
-  return [{
-    type: 'string',      // Any valid solidity type
-    name: 'Message',     // Any string label you want
-    value: msgSignature // The value to sign
-  }]
-}
-
 export const getParamsWithConnector = (connectedAccount: string) => ({
   [ConnectorNames.BSC]: {
     method: 'eth_sign',
@@ -47,6 +37,7 @@ const useWalletSignature = () => {
   const dispatch = useDispatch();
   const connector = useTypedSelector(state => state.connector).data;
   const { library, account: connectedAccount } = useWeb3React();
+  const [error, setError] = useState("");
   const [signature, setSignature] = useState("");
 
   const signMessage = useCallback(async () => {
@@ -56,6 +47,8 @@ const useWalletSignature = () => {
         const provider = library.provider;
 
         if (connector !== ConnectorNames.WalletConnect) {
+          setError("");
+
           await (provider as any).sendAsync({
             method: paramsWithConnector.method,
             params: paramsWithConnector.params
@@ -64,6 +57,7 @@ const useWalletSignature = () => {
               const errMsg = (err.message || (err as any).error) || result.error.message
               console.log('Error when signing message: ', errMsg);
               dispatch(alertFailure(errMsg));
+              setError(errMsg);
             } else {
               console.log(result.result);
               result.result && setSignature(result.result);
@@ -83,13 +77,16 @@ const useWalletSignature = () => {
       }
     } catch(err) {
       dispatch(alertFailure(err.message));
+      setError(err.message);
+      throw new Error(err.message);
     }
   }, [library, connector, connectedAccount]);
 
   return {
     signMessage,
     signature,
-    setSignature
+    setSignature,
+    error
   }
 }
 
