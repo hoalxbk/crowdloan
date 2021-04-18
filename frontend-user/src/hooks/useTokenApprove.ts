@@ -3,13 +3,12 @@ import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
 
+import { MAX_INT } from '../services/web3';
 import { alertSuccess, alertFailure } from '../store/actions/alert';
 import { getContract } from '../utils/contract';
 import { TokenType } from '../hooks/useTokenDetails';
 
 import ERC20_ABI from '../abi/Erc20.json';
-
-const APPROVE_AMOUNT = '999999999999999999999';
 
 const useTokenAllowance = (
   token: TokenType | undefined, 
@@ -37,7 +36,7 @@ const useTokenAllowance = (
              const contract = getContract(token.address, ERC20_ABI, library, account as string);
 
              if (contract) {
-               const transaction = await contract.approve(spender, APPROVE_AMOUNT);
+               const transaction = await contract.approve(spender, MAX_INT);
                console.log('Approve Token', transaction);
 
               setTransactionHash(transaction.hash);

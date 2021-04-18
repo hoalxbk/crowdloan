@@ -23,24 +23,27 @@ const Tiers = (props: any) => {
 
   const [currentProcess, setCurrentProcess] = useState(0)
   
-  const calculateProcess = () => {
+  useEffect(() => {
     if(_.isEmpty(tiers) || _.isEmpty(userTier) || _.isEmpty(userInfo)) return
-    let idx = 0
+    let tierA = 0;
+    let tierB = 0;
+    let overTier = true;
     tiers.forEach((tier: any) => {
-      if(tier > userInfo.staked) {
+    if(tier > parseFloat(userInfo.staked) && overTier) {
+        tierA = tierB;
+        tierB = tier;
+        overTier = false;
         return
       }
-      idx++
     });
-    const tierA = parseFloat(tiers[idx - 1])
-    const tierB = parseFloat(tiers[idx])
-    let currentProcess = parseInt(userTier) * 100 / tiers.length + (parseFloat(userInfo.staked) - tierA) * 100 /((tierB - tierA) * tiers.length)
-    if(currentProcess > 100) currentProcess = 100
-    setCurrentProcess(currentProcess)
-  }
-
-  useEffect(() => {
-    calculateProcess()
+    if(overTier) {
+      setCurrentProcess(100)
+      return
+    }
+    let process = parseInt(userTier) * 100 / tiers.length + (parseFloat(userInfo.staked) - tierA) * 100 /((tierB - tierA) * tiers.length)
+    if(process > 100) process = 100
+    console.log(process)
+    setCurrentProcess(process)
   }, [tiers, userTier, userInfo])
 
   return (
@@ -61,14 +64,13 @@ const Tiers = (props: any) => {
       </div>
       <ul className={styles.tierList}>
         <li className="process" style={{width:`${currentProcess}%`}}></li>
-        <li className={styles.tierInfo + ' ' + 'active'}>
+        {!showMoreInfomation && <li className={styles.tierInfo + ' active'}>
           <div className="icon">
             <img src={TIERS[0].icon} />
           </div>
           <span className="tier-name">{TIERS[0].name}</span>
-          { !showMoreInfomation && <span>0</span> }
-          { showMoreInfomation && <span>0</span> }
-        </li>
+          <span>0</span>
+        </li>}
         {tiers.length > 0 && tiers.map((tier: any, idx: any) => {
           if(tier != 0) {
             return <li key={tier} className={styles.tierInfo + (userTier > idx ? ' active' : '')}>

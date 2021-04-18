@@ -4,8 +4,8 @@ import _, { gt } from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
 import { withdraw, getWithdrawFee } from '../../../store/actions/sota-tiers';
-import useAuth from '../../../hooks/useAuth';
 import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
+import { useWeb3React } from '@web3-react/core';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,}$/;
@@ -15,12 +15,12 @@ const ModalWithdraw = (props: any) => {
   const dispatch = useDispatch();
   const commonStyles = useCommonStyle();
 
-  const [withdrawAmount, setWithdrawAmount] = useState('0');
+  const [withdrawAmount, setWithdrawAmount] = useState('');
   const [disableWithdraw, setDisableWithdraw] = useState(true);
 
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee);
-  const { connectedAccount } = useAuth();
+  const { account: connectedAccount, library } = useWeb3React();
 
   const {
     setOpenModalWithdraw,
@@ -29,7 +29,7 @@ const ModalWithdraw = (props: any) => {
   } = props;
 
   const onWithDraw = () => {
-    dispatch(withdraw(connectedAccount, withdrawAmount));
+    dispatch(withdraw(connectedAccount, withdrawAmount, library));
     setOpenModalTransactionSubmitting(true);
     setOpenModalWithdraw(false);
   }
@@ -39,6 +39,10 @@ const ModalWithdraw = (props: any) => {
   }
 
   useEffect(() => {
+    if(withdrawAmount === '' || withdrawAmount === '0') {
+      setDisableWithdraw(true)
+      return
+    }
     if(!connectedAccount) return
     if(!isNaN(parseFloat(userInfo.staked))
       && !isNaN(parseFloat(withdrawAmount)))
@@ -51,7 +55,8 @@ const ModalWithdraw = (props: any) => {
   }, [connectedAccount, userInfo, withdrawAmount]);
 
   useEffect(() => {
-    dispatch(getWithdrawFee(connectedAccount, withdrawAmount))
+    if(disableWithdraw) return
+    dispatch(getWithdrawFee(connectedAccount, withdrawAmount === '' ? '0' : withdrawAmount))
   }, [withdrawAmount])
 
   return (
@@ -69,7 +74,8 @@ const ModalWithdraw = (props: any) => {
             </div>
             <div className="subtitle">
                 <span>Penalty</span>
-                <span>{ withdrawFee.fee?.toString() || 0 } {token?.symbol}</span>
+                {withdrawAmount === '' &&  <span>{ withdrawFee.fee?.toString() || 0 } {token?.symbol}</span>}
+                {withdrawAmount !== '' && <span>0 {token?.symbol}</span>}
               </div>
             <div className="input-group">
               <input
