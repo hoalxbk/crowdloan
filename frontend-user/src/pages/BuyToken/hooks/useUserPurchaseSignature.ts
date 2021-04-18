@@ -23,6 +23,7 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
             signature: authSignature
           }, config);
 
+          console.log(response);
           if (response.data && response.status && response.status === 200) {
             const { data } = response.data;
             if(data.message) {
