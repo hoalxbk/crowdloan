@@ -2,8 +2,11 @@ import { sotaTiersActions } from '../constants/sota-tiers';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getContractInstance, convertFromWei, convertToWei, SmartContractMethod } from '../../services/web3';
+import { getContract } from '../../utils/contract';
 import sotaTiersABI from '../../abi/SotaTiers.json';
+import PKFTiersABI from '../../abi/PKFTiers.json';
 import { getBalance } from './balance';
+import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
 import {approve, getAllowance} from './sota-token';
 
@@ -122,7 +125,7 @@ export const getUserInfo = (address: string, forceUsingEther?: string) => {
   }
 };
 
-export const deposit = (address: string | null | undefined, amount: string) => {
+export const deposit = (address: string | null | undefined, amount: string, library: Web3Provider) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
@@ -130,9 +133,8 @@ export const deposit = (address: string | null | undefined, amount: string) => {
       const connector = getState().connector.data;
       let result = {};
 
-      const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
-
-      result = await contract?.methods.deposit(convertToWei(amount)).send({from: address || ''})
+      const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
+      result = await contract?.depositERC20(process.env.REACT_APP_SOTA, convertToWei(amount))
 
       dispatch(getBalance(address || ''));
       dispatch(getAllowance(address || ''));
@@ -153,7 +155,7 @@ export const deposit = (address: string | null | undefined, amount: string) => {
   }
 };
 
-export const withdraw = (address: string | null | undefined, amount: string) => {
+export const withdraw = (address: string | null | undefined, amount: string, library: Web3Provider) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_LOADING });
     try {
@@ -161,9 +163,9 @@ export const withdraw = (address: string | null | undefined, amount: string) => 
       const connector = getState().connector.data;
       let result = {};
 
-      const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
+      const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
 
-      result = await contract?.methods.withdraw(convertToWei(amount)).send({from: address})
+      result = await contract?.withdrawERC20(address, process.env.REACT_APP_SOTA, convertToWei(amount));
 
       dispatch(getBalance(address || ''));
       dispatch(getAllowance(address || ''));
