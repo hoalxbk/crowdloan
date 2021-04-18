@@ -124,11 +124,9 @@ const useStyles = makeStyles((theme) => {
       }
     },
     loginErrorBanner: {
-      position: 'absolute',
-      left: 0, 
       top: '100%',
       width: '100%',
-      backgroundColor: '#d01f3666',
+      backgroundColor: '#5b0712fa',
       fontSize: 15,
       color: 'white',
       padding: 12,

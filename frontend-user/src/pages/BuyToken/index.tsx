@@ -98,9 +98,10 @@ const BuyToken: React.FC<any> = (props: any) => {
       connectedAccount && 
       !wrongChain &&
       userTier >= poolDetails?.minTier
-      )
+      && poolDetails?.isDeployed
+    )
     : false;
-  const availablePurchase = new Date() >= startBuyTimeInDate && new Date() <= endBuyTimeInDate;
+  const availablePurchase = new Date() >= startBuyTimeInDate && new Date() <= endBuyTimeInDate && poolDetails?.isDeployed;
   
   // Get Pool Status
   const poolStatus = getPoolStatus(
@@ -182,21 +183,6 @@ const BuyToken: React.FC<any> = (props: any) => {
                 </p>
                 <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
               </h2>}
-              {isWidthDown('xs', props.width) && <h2 className={styles.poolHeaderTitle}>
-                <div>
-                  {poolDetails?.title}
-                  <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
-                </div>
-                <div>
-                  <p className={styles.poolHeaderType}>
-                    <img src={poolDetails?.networkIcon} />
-                    <span style={{ fontWeight: 600, marginLeft: 10 }}>{networkAvailable}</span>
-                  </p>
-                  <p className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
-                    {poolStatus}
-                  </p>
-                </div>
-              </h2>}
               <p className={styles.poolHeaderAddress}>
                 {isWidthUp('sm', props.width) && poolDetails?.poolAddress}
                 {isWidthDown('xs', props.width) && shortAdress(poolDetails?.poolAddress || '', 8)}
@@ -215,6 +201,21 @@ const BuyToken: React.FC<any> = (props: any) => {
                 </CopyToClipboard>
               </p>
             </div>
+              {isWidthDown('xs', props.width) && <h2 className={styles.poolHeaderTitle}>
+                <div>
+                  {poolDetails?.title}
+                  <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
+                </div>
+                <div>
+                  <p className={styles.poolHeaderType}>
+                    <img src={poolDetails?.networkIcon} />
+                    <span style={{ fontWeight: 600, marginLeft: 10 }}>{networkAvailable}</span>
+                  </p>
+                  <p className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
+                    {poolStatus}
+                  </p>
+                </div>
+              </h2>}
           </div>
           {isWinner && 
             <p className={styles.poolTicketWinner}>

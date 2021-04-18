@@ -25,11 +25,19 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
 
           if (response.data && response.status && response.status === 200) {
             const { data } = response.data;
+            if(data.message) {
+              console.log('err', data.message);
+              throw new Error(data.message);
+            }
             if (data) {
               setSignature(data.signature);
               setMinBuy(data.min_buy);
               setMaxBuy(data.max_buy);
-            }
+            } 
+          } 
+          if (response.data && response.status && response.status !== 200) {
+            const { data } = response.data;
+            throw new Error(data.message);
           }
         } catch (err) {
           setError(err.message);
