@@ -10,25 +10,6 @@
       "anonymous": false,
       "inputs": [
         {
-          "indexed": false,
-          "internalType": "address",
-          "name": "token",
-          "type": "address"
-        },
-        {
-          "indexed": false,
-          "internalType": "uint256",
-          "name": "rate",
-          "type": "uint256"
-        }
-      ],
-      "name": "AllowTokenToTradeWithRate",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
           "indexed": true,
           "internalType": "address",
           "name": "previousOwner",
@@ -55,12 +36,6 @@
       "inputs": [
         {
           "indexed": false,
-          "internalType": "string",
-          "name": "name",
-          "type": "string"
-        },
-        {
-          "indexed": false,
           "internalType": "address",
           "name": "token",
           "type": "address"
@@ -79,14 +54,20 @@
         },
         {
           "indexed": false,
+          "internalType": "address",
+          "name": "offeredCurrency",
+          "type": "address"
+        },
+        {
+          "indexed": false,
           "internalType": "uint256",
-          "name": "ethRate",
+          "name": "offeredCurrencyDecimals",
           "type": "uint256"
         },
         {
           "indexed": false,
           "internalType": "uint256",
-          "name": "ethRateDecimals",
+          "name": "offeredCurrencyRate",
           "type": "uint256"
         },
         {
@@ -227,7 +208,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_deadline",
+          "name": "_minAmount",
           "type": "uint256"
         },
         {
@@ -270,7 +251,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_deadline",
+          "name": "_minAmount",
           "type": "uint256"
         },
         {
@@ -326,25 +307,6 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_token",
-          "type": "address"
-        }
-      ],
-      "name": "getErc20TokenConversionRate",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
           "internalType": "bytes32",
           "name": "_messageHash",
           "type": "bytes32"
@@ -362,21 +324,43 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getEtherConversionRate",
-      "outputs": [
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_candidate",
+          "type": "address"
+        },
         {
           "internalType": "uint256",
-          "name": "",
+          "name": "_maxAmount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_minAmount",
           "type": "uint256"
         }
       ],
-      "stateMutability": "view",
+      "name": "getMessageHash",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "pure",
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "getEtherConversionRateDecimals",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        }
+      ],
+      "name": "getOfferedCurrencyDecimals",
       "outputs": [
         {
           "internalType": "uint256",
@@ -391,29 +375,19 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "_candidate",
+          "name": "_token",
           "type": "address"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_maxAmount",
-          "type": "uint256"
-        },
-        {
-          "internalType": "uint256",
-          "name": "_deadline",
-          "type": "uint256"
         }
       ],
-      "name": "getMessageHash",
+      "name": "getOfferedCurrencyRate",
       "outputs": [
         {
-          "internalType": "bytes32",
+          "internalType": "uint256",
           "name": "",
-          "type": "bytes32"
+          "type": "uint256"
         }
       ],
-      "stateMutability": "pure",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -443,11 +417,6 @@
     {
       "inputs": [
         {
-          "internalType": "string",
-          "name": "_name",
-          "type": "string"
-        },
-        {
           "internalType": "address",
           "name": "_token",
           "type": "address"
@@ -463,23 +432,28 @@
           "type": "uint256"
         },
         {
+          "internalType": "address",
+          "name": "_offeredCurrency",
+          "type": "address"
+        },
+        {
           "internalType": "uint256",
-          "name": "_ethRate",
+          "name": "_offeredRate",
           "type": "uint256"
         },
         {
           "internalType": "uint256",
-          "name": "_ethRateDecimals",
+          "name": "_offeredCurrencyDecimals",
           "type": "uint256"
-        },
-        {
-          "internalType": "uint256[10]",
-          "name": "_tierLimitBuy",
-          "type": "uint256[10]"
         },
         {
           "internalType": "address",
           "name": "_wallet",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_signer",
           "type": "address"
         }
       ],
@@ -502,13 +476,24 @@
       "type": "function"
     },
     {
-      "inputs": [],
-      "name": "name",
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "name": "offeredCurrencies",
       "outputs": [
         {
-          "internalType": "string",
-          "name": "",
-          "type": "string"
+          "internalType": "uint256",
+          "name": "decimals",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "rate",
+          "type": "uint256"
         }
       ],
       "stateMutability": "view",
@@ -600,11 +585,11 @@
         },
         {
           "internalType": "uint256",
-          "name": "_rate",
+          "name": "_decimals",
           "type": "uint256"
         }
       ],
-      "name": "setErc20TokenConversionRate",
+      "name": "setOfferedCurrencyDecimals",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -612,18 +597,28 @@
     {
       "inputs": [
         {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
+        {
           "internalType": "uint256",
           "name": "_rate",
           "type": "uint256"
         }
       ],
-      "name": "setEtherConversionRate",
+      "name": "setOfferedCurrencyRate",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
     },
     {
       "inputs": [
+        {
+          "internalType": "address",
+          "name": "_token",
+          "type": "address"
+        },
         {
           "internalType": "uint256",
           "name": "_rate",
@@ -631,24 +626,11 @@
         },
         {
           "internalType": "uint256",
-          "name": "_rateDecimals",
+          "name": "_decimals",
           "type": "uint256"
         }
       ],
-      "name": "setEtherConversionRateAndDecimals",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "_rateDecimals",
-          "type": "uint256"
-        }
-      ],
-      "name": "setEtherConversionRateDecimals",
+      "name": "setOfferedCurrencyRateAndDecimals",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -680,16 +662,16 @@
       "type": "function"
     },
     {
-      "inputs": [
+      "inputs": [],
+      "name": "signer",
+      "outputs": [
         {
-          "internalType": "uint256[10]",
-          "name": "_tierLimitBuy",
-          "type": "uint256[10]"
+          "internalType": "address",
+          "name": "",
+          "type": "address"
         }
       ],
-      "name": "setTierLimitBuy",
-      "outputs": [],
-      "stateMutability": "nonpayable",
+      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -719,25 +701,6 @@
         }
       ],
       "stateMutability": "pure",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "name": "tierLimitBuy",
-      "outputs": [
-        {
-          "internalType": "uint256",
-          "name": "",
-          "type": "uint256"
-        }
-      ],
-      "stateMutability": "view",
       "type": "function"
     },
     {
@@ -837,7 +800,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "_deadline",
+          "name": "_minAmount",
           "type": "uint256"
         },
         {
