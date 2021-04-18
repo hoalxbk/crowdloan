@@ -78,9 +78,8 @@ const usePoolDepositAction = ({ poolAddress, signature, deadLine, maxBuy }: Pool
       setEstimateFeeLoading(true);
 
       if (amount && new BigNumber(amount).gt(0) && poolAddress && signature && acceptCurrency && maxBuy) {
-        const FEE_PER_PRICE = new BigNumber(1).div(new BigNumber(10).pow(9));
+        const gasPrice = await library.getGasPrice();
         const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
-        console.log(library);
 
         const params = acceptCurrency === 'ETH' ? [ 
           connectedAccount,
@@ -97,18 +96,20 @@ const usePoolDepositAction = ({ poolAddress, signature, deadLine, maxBuy }: Pool
           new BigNumber(amount).multipliedBy(10 ** 18).toFixed(),
           connectedAccount,
           maxBuy,
-          deadLine,
+          0,
           signature
         ];
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
 
-        const estimateFee = await poolContract.estimateGas[method](...params);
+        const estimateFee = await poolContract.estimateGas[method](...params, {
+          gasPrice: new BigNumber(gasPrice._hex).div(new BigNumber(10).pow(18)).toFixed()
+        });
 
         setEstimateErr("");
         setEstimateFeeLoading(false);
 
-        return new BigNumber(estimateFee._hex).multipliedBy(FEE_PER_PRICE).toNumber();
+        return new BigNumber(estimateFee._hex).toNumber();
       } else {
         setEstimateErr("");
         setEstimateFeeLoading(false);
