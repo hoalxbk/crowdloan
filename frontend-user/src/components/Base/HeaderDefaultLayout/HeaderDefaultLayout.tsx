@@ -84,46 +84,48 @@ const HeaderDefaultLayout = () => {
 
   return (
     <>
-      <div className={styles.navBar}>
-        <div>
-          <Link to={'/'} className={styles.navbarLink}>
-          <img src="/images/logo.svg" className={styles.navbarLogo}/>
-          <h1 className={styles.navbarBrand}><strong className={styles.navbarBrandBold}>RED</strong> KITE</h1>
-          </Link>
-        </div>
-        <div className={styles.rightBar}>
-        <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn}`} />
-        <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => setSwitchNetworkDialog(true)}>
-        <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
-          <span className={styles.btnConnectText}>
-            {appChainID === ETH_CHAIN_ID ? 'Ethereum': 'BSC Mainnet'}
-          </span>
-        </button>
-        <button 
-          className={`${styles.btn} ${styles.btnConnect}`} 
-          onClick={!currentAccount ? handleConnectWalletOpen: handleDisconnectDialogOpen}
-        >
-          {
-            !connectWalletLoading ? (
-              <>
-                <span>
-                {
-                  currentAccount && (!loginError ? `${balance} ${appChainID === ETH_CHAIN_ID ? "ETH": "BNB"}`: '0' ) 
-                }
+      <div>
+        <div className={styles.navBar}>
+          <div>
+            <Link to={'/'} className={styles.navbarLink}>
+            <img src="/images/logo.svg" className={styles.navbarLogo}/>
+            <h1 className={styles.navbarBrand}><strong className={styles.navbarBrandBold}>RED</strong> KITE</h1>
+            </Link>
+          </div>
+          <div className={styles.rightBar}>
+            <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn}`} />
+              <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => setSwitchNetworkDialog(true)}>
+              <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
+                <span className={styles.btnConnectText}>
+                {appChainID === ETH_CHAIN_ID ? 'Ethereum': 'BSC Mainnet'}
                 </span>
-                {
-                  !currentAccount && <img src={ `/images/${WalletIcon}`} />
-                }
-                <span className={`${styles.btnConnectText} ${currentAccount ? styles.btnAccount: ''}`}>
-                {
-                  currentAccount && `${trimMiddlePartAddress(currentAccount)}` || "Connect Wallet"
-                }
-                </span>
-              </> 
-            ): <BeatLoader color={'white'} css={css`margin-top: 3px`} size={10} />
-          }
-          </button>
-        </div>
+              </button>
+              <button 
+                className={`${styles.btn} ${styles.btnConnect}`} 
+                onClick={!currentAccount ? handleConnectWalletOpen: handleDisconnectDialogOpen}
+              >
+              {
+                !connectWalletLoading ? (
+                  <>
+                  <span>
+                  {
+                    currentAccount && (!loginError ? `${balance} ${appChainID === ETH_CHAIN_ID ? "ETH": "BNB"}`: '0' ) 
+                  }
+                  </span>
+                  {
+                    !currentAccount && <img src={ `/images/${WalletIcon}`} />
+                  }
+                  <span className={`${styles.btnConnectText} ${currentAccount ? styles.btnAccount: ''}`}>
+                  {
+                    currentAccount && `${trimMiddlePartAddress(currentAccount)}` || "Connect Wallet"
+                  }
+                  </span>
+                  </> 
+                ): <BeatLoader color={'white'} css={css`margin-top: 3px`} size={10} />
+              }
+              </button>
+            </div>
+          </div>
         <HeaderContext.Provider value={{ agreedTerms, setAgreedTerms }}>
             <ConnectWalletModal opened={openConnectWallet as boolean} handleClose={handleConnectWalletClose}/>
             <AppNetworkSwitch 
