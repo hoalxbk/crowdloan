@@ -21,8 +21,8 @@ const CONTRACT_FACTORY_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPA
 
 const { abi: CONTRACT_ABI } = CONTRACT_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
-const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Erc20.json');
-const { abi: CONTRACT_TIER_ABI } = require('../../../blockchain_configs/contracts/Tier.json');
+const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
+const { abi: CONTRACT_TIER_ABI } = require('../../../blockchain_configs/contracts/Normal/Tier.json');
 
 const Web3 = require('web3');
 const BadRequestException = require("../../Exceptions/BadRequestException");

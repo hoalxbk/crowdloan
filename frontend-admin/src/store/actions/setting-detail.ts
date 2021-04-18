@@ -2,7 +2,7 @@ import { settingDetailActions } from '../constants/setting-detail';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getContractInstance } from '../../services/web3';
-import campaignFactoryABI from '../../abi/CampaignFactory.json';
+import campaignFactoryABI from '../../abi/Swap/CampaignFactory.json';
 import _ from 'lodash';
 
 export const getSettingDetail = () => {

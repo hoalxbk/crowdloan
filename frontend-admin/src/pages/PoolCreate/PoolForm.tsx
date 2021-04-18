@@ -111,6 +111,9 @@ function PoolForm(props: any) {
       // Tier
       min_tier: data.minTier,
       tier_configuration: tierConfiguration,
+
+      // Wallet
+      wallet: isEdit ? poolDetail?.wallet : {},
     };
 
     let response = {};
@@ -203,6 +206,9 @@ function PoolForm(props: any) {
         token_images: data.tokenImages,
         total_sold_coin: data.totalSoldCoin,
 
+        // TokenInfo
+        tokenInfo,
+
         // Time
         start_time: data.start_time && data.start_time.unix(),
         finish_time: data.finish_time && data.finish_time.unix(),
@@ -220,7 +226,8 @@ function PoolForm(props: any) {
         min_tier: data.minTier,
         tier_configuration: tierConfiguration,
 
-        tokenInfo,
+        // Wallet
+        wallet: isEdit ? poolDetail?.wallet : {},
       };
 
       await dispatch(deployPool(submitData, history));
