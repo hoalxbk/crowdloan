@@ -48,23 +48,23 @@ const ManageTier = (props: any) => {
   }, [])
 
   useEffect(() => {
-    if(depositTransaction.transactionHash) {
-      setTransactionHashes([...transactionHashes, depositTransaction.transactionHash]);
+    if(depositTransaction.hash) {
+      setTransactionHashes([...transactionHashes, depositTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
   }, [depositTransaction])
 
   useEffect(() => {
-    if(approveTransaction.transactionHash) {
-      setTransactionHashes([...transactionHashes, approveTransaction.transactionHash]);
+    if(approveTransaction.hash) {
+      setTransactionHashes([...transactionHashes, approveTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
   }, [approveTransaction])
 
   useEffect(() => {
     console.log(withdrawTransaction)
-    if(withdrawTransaction.transactionHash) {
-      setTransactionHashes([...transactionHashes, withdrawTransaction.transactionHash]);
+    if(withdrawTransaction.hash) {
+      setTransactionHashes([...transactionHashes, withdrawTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
   }, [withdrawTransaction])
