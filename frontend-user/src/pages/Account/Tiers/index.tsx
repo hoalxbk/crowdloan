@@ -40,7 +40,8 @@ const Tiers = (props: any) => {
       setCurrentProcess(100)
       return
     }
-    let process = parseInt(userTier) * 100 / tiers.length + (parseFloat(userInfo.staked) - tierA) * 100 /((tierB - tierA) * tiers.length)
+
+    let process = (parseInt(userTier)) * 100 / tiers.length + (parseFloat(userInfo.staked) - tierA) * 100 /((tierB - tierA) * tiers.length)
     if(process > 100) process = 100
     console.log(process)
     setCurrentProcess(process)
@@ -64,13 +65,14 @@ const Tiers = (props: any) => {
       </div>
       <ul className={styles.tierList}>
         <li className="process" style={{width:`${currentProcess}%`}}></li>
-        {!showMoreInfomation && <li className={styles.tierInfo + ' active'}>
+        <li className={styles.tierInfo + ' active'}>
           <div className="icon">
             <img src={TIERS[0].icon} />
           </div>
           <span className="tier-name">{TIERS[0].name}</span>
-          <span>0</span>
-        </li>}
+          {!showMoreInfomation && <span>0</span>}
+          {showMoreInfomation && <span>0</span>}
+        </li>
         {tiers.length > 0 && tiers.map((tier: any, idx: any) => {
           if(tier != 0) {
             return <li key={tier} className={styles.tierInfo + (userTier > idx ? ' active' : '')}>

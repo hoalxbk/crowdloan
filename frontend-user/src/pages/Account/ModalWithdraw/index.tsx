@@ -74,8 +74,8 @@ const ModalWithdraw = (props: any) => {
             </div>
             <div className="subtitle">
                 <span>Penalty</span>
-                {withdrawAmount === '' &&  <span>{ withdrawFee.fee?.toString() || 0 } {token?.symbol}</span>}
-                {withdrawAmount !== '' && <span>0 {token?.symbol}</span>}
+                {withdrawAmount !== '' &&  <span>{ withdrawFee.fee?.toString() || 0 } {token?.symbol}</span>}
+                {withdrawAmount === '' && <span>0 {token?.symbol}</span>}
               </div>
             <div className="input-group">
               <input
