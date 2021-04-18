@@ -89,7 +89,8 @@ const useStyles = makeStyles((theme: any) => {
       fontSize: 14,
       display: 'flex',
       alignItems: 'center',
-      marginTop: 8
+      marginTop: 8,
+      lineHeight: "20px"
     },
     poolHeaderCopy: {
       marginLeft: 10,

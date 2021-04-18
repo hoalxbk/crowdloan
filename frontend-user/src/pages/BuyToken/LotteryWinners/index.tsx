@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import useFetch from '../../../hooks/useFetch';
 import { numberWithCommas } from '../../../utils/formatNumber';
+//@ts-ignore
+import debounce from 'lodash.debounce';
 
+import Pagination from '@material-ui/lab/Pagination';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -17,24 +20,27 @@ type LotteryWinnersProps = {
   poolId: number | undefined;
 }
 
-type RowData = {
-  id: number;
-  wallet_address: string;
-}
-
 const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProps) => {
   const styles = useStyles();
   const { poolId } = props;
-  const { data: totalParticipants } = useFetch<number>(`/user/counting/${poolId}`);
-  const { data: winners } = useFetch<Array<RowData>>(`/user/winner-list/${poolId}`);
   const [input, setInput] = useState("");
   const [searchedWinners, setSearchedWinners] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+  const { data: totalParticipants } = useFetch<number>(`/user/counting/${poolId}`);
+  const { data: winnersList } = useFetch<any>(
+    `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&wallet_address=${input}`
+  );
 
-  useEffect(() => {
+  const searchDebounce = debounce(() => {
+    if (winnersList) {
+      setTotalPage(winnersList.lastPage);
+      setCurrentPage(winnersList.page);
+      setSearchedWinners(winnersList.data);
+    }
+  }, 500);
 
-  }, [input]);
+  useEffect(searchDebounce, [winnersList])
 
   return (
     <div className={styles.LotteryWinners}>
@@ -45,36 +51,47 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
           name="lottery-search" 
           className={styles.tableSearch} 
           placeholder="Search for Email Address/Wallet Address"
-          onChange={(e: any) => setInput(e.target.value)}
+          onChange={(e: any) => { setInput(e.target.value); setCurrentPage(1) }}
         />
         <img src="/images/search.svg" className={styles.tableSearchIcon} alt="search-icon" />
       </div>
-      <TableContainer component={Paper} className={styles.tableContainer}>
-        <Table className={styles.table} aria-label="simple table">
-          <TableHead className={styles.tableHeaderWrapper}>
-            <TableRow>
-            {
-              headers.map(header => (
-                <TableCell key={header} className={styles.tableHeader}>{header}</TableCell>
-              ))
-            }
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {winners && winners.length> 0 && winners.map((row, index) => (
-            <TableRow key={index}>
-              <TableCell component="th" scope="row">
-                {row.id}
-              </TableCell>
-              <TableCell component="th" scope="row">
-                {row.wallet_address}
-              </TableCell>
+        <TableContainer component={Paper} className={styles.tableContainer}>
+          <Table className={styles.table} aria-label="simple table">
+            <TableHead className={styles.tableHeaderWrapper}>
+              <TableRow>
+              {
+                headers.map(header => (
+                  <TableCell key={header} className={styles.tableHeader}>{header}</TableCell>
+                ))
+              }
               </TableRow>
-          ))}
-            </TableBody>
-          </Table>
-          </TableContainer>
-          </div>
+            </TableHead>
+            <TableBody>
+              {searchedWinners && searchedWinners.length> 0 && searchedWinners.map((row: any, index) => (
+              <TableRow key={index}>
+                <TableCell component="th" scope="row">
+                  {row.id}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.wallet_address}
+                </TableCell>
+                </TableRow>
+            ))}
+              </TableBody>
+            </Table>
+        </TableContainer>
+      {
+        searchedWinners && searchedWinners.length> 0 && (
+          <Pagination 
+            count={totalPage} 
+            color="primary" 
+            style={{ marginTop: 30 }} className={styles.pagination} 
+            onChange={(e: any, value: any) => setCurrentPage(value)}
+            page={currentPage}
+          />
+        )
+      }
+    </div>
   )
 }
 

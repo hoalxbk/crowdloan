@@ -63,6 +63,11 @@ const useStyles = makeStyles((theme: any) => {
         fontWeight:  400,
         fontSize: 15
       }
+    },
+    pagination: {
+      '& *': {
+        color: 'white'
+      }
     }
   };
 });

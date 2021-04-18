@@ -28,7 +28,7 @@ import { getUserTierAlias } from '../../utils/getUserTierAlias';
 import { getPoolCountDown } from '../../utils/getPoolCountDown';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
-import { getTiers, getUserInfo, getUserTier } from '../../store/actions/sota-tiers';
+import { getTiers, getUserInfo, getUserTier, resetTiers } from '../../store/actions/sota-tiers';
 import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 
 import useStyles from './style';
@@ -71,7 +71,8 @@ const BuyToken: React.FC<any> = (props: any) => {
     `/pool/${poolDetails?.id}/winners`, poolDetails?.method !== "whitelist" 
   );
   const { data: alreadyJoinPool } = useFetch<boolean>(
-    `/user/check-join-campaign/${poolDetails?.id}`);
+    `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
+  );
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
   // Use for check whether pool exist in selected network or not
@@ -147,6 +148,9 @@ const BuyToken: React.FC<any> = (props: any) => {
       dispatch(getTiers(poolNetwork)) 
       dispatch(getUserInfo(connectedAccount, poolNetwork));
       dispatch(getUserTier(connectedAccount, poolNetwork));
+    } 
+    if (!ableToFetchFromBlockchain && !isAuth) {
+      dispatch(resetTiers());
     }
   }, [isAuth, connectedAccount, ableToFetchFromBlockchain, poolDetails]);
 
@@ -367,7 +371,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
               }
               {
-                poolDetails?.type === 'claim' && <ClaimToken releaseTime={releaseTimeInDate} />
+                poolDetails?.type === 'claimable' && <ClaimToken releaseTime={releaseTimeInDate} />
               }
             </div>
           </div>

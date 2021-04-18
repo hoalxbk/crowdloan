@@ -71,6 +71,14 @@ export const getUserTierReducer = (state: StateType = initialState, action: AnyA
       }
     }
 
+    case sotaTiersActions.USER_TIER_RESET: {
+      return {
+        data: {},
+        loading: false,
+        error: ''
+      }
+    }
+
     default: {
       return state;
     }
