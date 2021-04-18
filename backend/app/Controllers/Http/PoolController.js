@@ -265,11 +265,11 @@ class PoolController {
     console.log('Start Pool List with params: ', param);
 
     try {
-      if (await RedisUtils.checkExistRedisPoolList(param)) {
-        const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
-        console.log('Exist cache data Public Pool List: ', cachedPoolDetail);
-        return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
-      }
+      // if (await RedisUtils.checkExistRedisPoolList(param)) {
+      //   const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
+      //   console.log('Exist cache data Public Pool List: ', cachedPoolDetail);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
+      // }
 
       let listData = (new PoolService).buildSearchQuery(param);
       listData = listData.orderBy('id', 'DESC');
