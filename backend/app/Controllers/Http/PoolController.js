@@ -33,7 +33,7 @@ class PoolController {
     const inputParams = request.only([
       'register_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
-      'token', 'token_by_eth', 'token_images', 'total_sold_coin',
+      'token', 'token_by_eth',  'token_conversion_rate', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
       'min_tier', 'tier_configuration',
@@ -47,6 +47,7 @@ class PoolController {
       'start_time': inputParams.start_time,
       'finish_time': inputParams.finish_time,
       'ether_conversion_rate': inputParams.token_by_eth,
+      'token_conversion_rate': inputParams.token_conversion_rate,
 
       'banner': inputParams.banner,
       'address_receiver': inputParams.address_receiver,
@@ -104,7 +105,6 @@ class PoolController {
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
       'min_tier', 'tier_configuration',
-      // 'is_deploy',
     ]);
 
     const data = {
