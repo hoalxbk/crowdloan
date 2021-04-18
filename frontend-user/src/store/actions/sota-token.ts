@@ -17,7 +17,6 @@ export const getAllowance = (owner: string) => {
       const contract = getContractInstance(erc20ABI, process.env.REACT_APP_SOTA as string);
 
       result = await contract?.methods.allowance(owner, process.env.REACT_APP_PKFTIERS).call();
-      console.log('getAllowance', result)
 
       dispatch({
         type: sotaTokenActions.ALLOWANCE_SUCCESS,
@@ -41,9 +40,10 @@ export const approve = (address: string | null | undefined, library: Web3Provide
 
       const contract = getContract(process.env.REACT_APP_SOTA as string, erc20ABI, library, address || '');
       result = await contract?.approve(process.env.REACT_APP_PKFTIERS, MAX_INT)
-      console.log('approve', result)
 
-      // dispatch(getAllowance(address));
+      if(result) {
+        dispatch(getAllowance(address || ''));
+      }
 
       dispatch({
         type: sotaTokenActions.APPROVE_SUCCESS,
