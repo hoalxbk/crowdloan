@@ -118,7 +118,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     && (purchasableCurrency && purchasableCurrency !== 'ETH') 
     && !wrongChain && ableToFetchFromBlockchain;
 
-
   const validTier = minTier && userTier >= minTier;
   const purchasable = 
     (tokenAllowance > 0 
