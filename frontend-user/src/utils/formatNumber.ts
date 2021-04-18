@@ -1,4 +1,6 @@
 import BigNumber from 'bignumber.js';
+//@ts-ignore
+import removeTrailingZeros from 'remove-trailing-zeros'
 var commaNumber = require('comma-number');
 
 const ARROW_LEFT_KEY_CODE = 37;
@@ -134,8 +136,8 @@ export const getDigitsAfterDecimals = (input: string): number => {
   return totalDigits;     
 }
 
-export function numberWithCommas(x: string) {
-  return commaNumber(x);
+export function numberWithCommas(x: string, decimals: number = 18) {
+  return removeTrailingZeros(commaNumber(new BigNumber(x).toFixed(decimals)));
 }
 export const nFormatter = (number: string, digits: any = 0) => {
   const SI = [
