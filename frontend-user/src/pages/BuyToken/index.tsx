@@ -56,6 +56,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
   const { id } = useParams() as any;
+  const userTier = useTypedSelector(state => state.userTier).data;
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
@@ -91,7 +92,13 @@ const BuyToken: React.FC<any> = (props: any) => {
   const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
 
   const availableJoin = poolDetails?.method === 'whitelist' 
-    ? (new Date() >= joinTimeInDate && new Date() <= endJoinTimeInDate && connectedAccount && !wrongChain)
+    ? (
+      new Date() >= joinTimeInDate && 
+      new Date() <= endJoinTimeInDate && 
+      connectedAccount && 
+      !wrongChain &&
+      userTier >= poolDetails?.minTier
+      )
     : false;
   const availablePurchase = new Date() >= startBuyTimeInDate && new Date() <= endBuyTimeInDate;
   
@@ -148,11 +155,12 @@ const BuyToken: React.FC<any> = (props: any) => {
       dispatch(getTiers(poolNetwork)) 
       dispatch(getUserInfo(connectedAccount, poolNetwork));
       dispatch(getUserTier(connectedAccount, poolNetwork));
-    } 
-    if (!ableToFetchFromBlockchain && !isAuth) {
+    }   
+
+    if ((!isAuth || !ableToFetchFromBlockchain) && typeof userTier === 'string') {
       dispatch(resetTiers());
     }
-  }, [isAuth, connectedAccount, ableToFetchFromBlockchain, poolDetails]);
+  }, [isAuth, connectedAccount, userTier, ableToFetchFromBlockchain, poolDetails]);
 
   return (
     <DefaultLayout>

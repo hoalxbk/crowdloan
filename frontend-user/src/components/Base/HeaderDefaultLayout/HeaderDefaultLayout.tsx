@@ -132,7 +132,7 @@ const HeaderDefaultLayout = () => {
             />
             <WalletDisconnect 
               opened={disconnectDialog} 
-              handleClose={() => setDisconnectDialog(false)} 
+              handleClose={() => { setDisconnectDialog(false); setAgreedTerms(false) }} 
               currentWallet={currentConnectedWallet}
             />
         </HeaderContext.Provider>
