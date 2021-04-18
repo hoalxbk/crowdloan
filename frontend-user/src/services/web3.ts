@@ -4,6 +4,7 @@ import { ETH_CHAIN_ID } from '../constants/network';
 
 const NETWORK_URL = process.env.REACT_APP_NETWORK_URL || "";
 const BSC_NETWORK_URL = process.env.REACT_APP_BSC_RPC_URL || "";
+export const MAX_INT = '0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff'
 
 export enum SmartContractMethod {
   Write = "Write",
