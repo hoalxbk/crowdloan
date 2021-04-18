@@ -97,6 +97,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
       dispatch(alertFailure(err.message));
       setTokenDepositLoading(false);
       setSignature("");
+      setDepositError(err.message);
     }
   }, [minBuy, maxBuy, signature, poolAddress]);
 

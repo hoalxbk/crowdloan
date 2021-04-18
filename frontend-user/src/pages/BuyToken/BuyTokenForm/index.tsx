@@ -123,6 +123,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && !estimateErr 
      && availablePurchase 
      && estimateTokens > 0 
+     && estimateTokens <= maximumBuy
      && !wrongChain
      && validTier    
     );
