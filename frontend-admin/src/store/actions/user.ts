@@ -143,10 +143,10 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
       const ethAddress = await getCurrentAccount();
 
       if (ethAddress) {
-       await ethereum.sendAsync({
-            method: 'eth_signTypedData',
-            params: [getMessageParams(isInvestor), ethAddress],
-            from: ethAddress,
+        const res = await ethereum.sendAsync({
+          method: 'personal_sign',
+          params: [getMessageParams(false), ethAddress],
+          from: ethAddress,
         }, async function(err: Error, result: any) {
           if (err || result.error) {
              const errMsg = err.message || result.error.message
