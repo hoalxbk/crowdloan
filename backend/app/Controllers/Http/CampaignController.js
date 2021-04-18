@@ -30,7 +30,8 @@ const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
 const tierSmartContract = process.env.TIER_SMART_CONTRACT;
-const SMART_CONTRACT_USDT_ADDRESS =  process.env.SMART_CONTRACT_USDT_ADDRESS;
+const SMART_CONTRACT_USDT_ADDRESS =  process.env.SMART_CONTRACT_USDT_ADDRESS
+const SMART_CONTRACT_USDC_ADDRESS =  process.env.SMART_CONTRACT_USDC_ADDRESS;
 
 class CampaignController {
   async campaignList ({request}) {
@@ -338,6 +339,9 @@ class CampaignController {
     const params = request.all();
     const campaign_id = params.campaign_id;
     const userWalletAddress = request.header('wallet_address');
+    if (campaign_id == null) {
+      return HelperUtils.responseBadRequest('Bad request with campaign_id');
+    }
     console.log('Deposit campaign with params: ',params, campaign_id, userWalletAddress);
     try {
       // get user info
@@ -361,21 +365,40 @@ class CampaignController {
         console.log(`Do not found campaign with id ${campaign_id}`);
         return HelperUtils.responseBadRequest("Do not found campaign");
       }
-
-      // check if exist in winner list
-      const winnerListService = new WinnerListService();
-      const winnerParams = {
-        'wallet_address': userWalletAddress,
-        'campaign_id': campaign_id
-      }
       let minBuy = 0, maxBuy = 0;
-      const winner = await winnerListService.findOneByFilters(winnerParams);
-      // check user tier for winner
-      if (winner != null) {
-
-        // ===========================================================================================
-        // Todo - FCFS does not have winner list and reserve list
-        // ===========================================================================================
+      let is_reserved = false;
+      // check user winner or reserved lis if campaign is lottery
+      if(camp.buy_type === Const.BUY_TYPE.WHITELIST_LOTTERY){
+        // check if exist in winner list
+        const winnerListService = new WinnerListService();
+        const winnerParams = {
+          'wallet_address': userWalletAddress,
+          'campaign_id': campaign_id
+        }
+        const winner = await winnerListService.findOneByFilters(winnerParams);
+        // if user not in winner list then check on reserved list
+        if (winner == null) {
+          // if user is not in winner list then check with reserved list
+          const reservedListService = new ReservedListService();
+          const reserved = await reservedListService.findOneByFilter(winnerParams);
+          if (reserved == null) {
+            console.log()
+            return HelperUtils.responseBadRequest("You're not in buyer list !");
+          }
+          is_reserved = true;
+          // check time start buy for tier
+          const current = Math.floor(Date.now() / 1000)
+          if (reserved.start_time > current || reserved.end_time < current) {
+            console.log(`Reserved ${reserved.start_time} ${reserved.end_time} ${current}`);
+            return HelperUtils.responseBadRequest("You're early come to join this campaign !");
+          }
+          // set min, max buy amount of user
+          minBuy = reserved.min_buy;
+          maxBuy = reserved.max_buy;
+        }
+      }
+      // check user tier if user not in reserved list
+      if (!is_reserved) {
         // check user tier
         const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
         const userTier = await tierSc.methods.getUserTier(userWalletAddress).call();
@@ -403,52 +426,49 @@ class CampaignController {
         // set min, max buy amount of user
         minBuy = tier.min_buy;
         maxBuy = tier.max_buy;
-      } else {
-        // if user is not in winner list then check with reserved list
-        const reservedListService = new ReservedListService();
-        const reserved = await reservedListService.findOneByFilter(winnerParams);
-        if (reserved == null) {
-          console.log()
-          return HelperUtils.responseBadRequest("You're not in buyer list !");
-        }
-        // check time start buy for tier
-        const current = Math.floor(Date.now() / 1000)
-        if (reserved.start_time > current || reserved.end_time < current) {
-          console.log(`Reserved ${reserved.start_time} ${reserved.end_time} ${current}`);
-          return HelperUtils.responseBadRequest("You're early come to join this campaign !");
-        }
-        // set min, max buy amount of user
-        minBuy = reserved.min_buy;
-        maxBuy = reserved.max_buy;
       }
+
       // get private key for campaign from db
       const walletService = new WalletService();
       const wallet = await walletService.findByCampaignId(filterParams);
       if (wallet == null) {
-        console.log(`Do not found wallet for campaign ${params.campaign_id}`);
+        console.log(`Do not found wallet for campaign ${campaign_id}`);
         return HelperUtils.responseBadRequest("Do not found wallet for campaign");
       }
       // call to SC to get sign hash
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
       // get convert rate token erc20 -> our token
-      // TODO need get dynamic rate of each Erc20 token
+      // TODO need improve this code
+      let scCurrency;
+      switch (camp.accept_currency) {
+        case Const.ACCEPT_CURRENCY.USDT:
+          scCurrency = SMART_CONTRACT_USDT_ADDRESS;
+          break;
+        case Const.ACCEPT_CURRENCY.USDT:
+          scCurrency = SMART_CONTRACT_USDC_ADDRESS;
+          break;
+        default:
 
-      // ===========================================================================================
-      // Todo - Support multiple token buy from ETH, USDC, USDT. Need check supported currency
-      // => Different max Token amount
-      // => Support min buy amount and convert in response
-      // ===========================================================================================
-      const rate = await poolContract.methods.getErc20TokenConversionRate(SMART_CONTRACT_USDT_ADDRESS).call();
+      }
+      // TODO need improve this code
+      const rate = await poolContract.methods.getOfferedCurrencyRate(scCurrency).call();
+      const decimal = await poolContract.methods.getOfferedCurrencyDecimals(scCurrency).call();
+      let unit;
+      switch (decimal) {
+        case "18":
+          unit = "ether";
+          break;
+        case "6":
+          unit = "mwei";
+          break;
+        default:
+      }
       // calc min, max token user can buy
-      const maxTokenAmount = web3.utils.toWei((maxBuy * rate).toString(), "ether");
-      const minTokenAmount = web3.utils.toWei((minBuy * rate).toString(), "ether");
+      const maxTokenAmount = web3.utils.toWei((maxBuy * rate).toString(), unit);
+      const minTokenAmount = web3.utils.toWei((minBuy * rate).toString(), unit);
       console.log(rate, minTokenAmount, maxTokenAmount, userWalletAddress);
-
-      // ===========================================================================================
-      // Todo - Params getMessageHash changed. Please check new Smart contract
-      // ===========================================================================================
       // get message hash
-      const messageHash = await poolContract.methods.getMessageHash(userWalletAddress, maxTokenAmount, camp.start_time).call();
+      const messageHash = await poolContract.methods.getMessageHash(userWalletAddress, maxTokenAmount, minTokenAmount).call();
       console.log(`message hash ${messageHash}`);
       const privateKey = wallet.private_key;
       console.log(`private key ${privateKey}`)
