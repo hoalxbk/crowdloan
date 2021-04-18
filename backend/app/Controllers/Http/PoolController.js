@@ -61,6 +61,8 @@ class PoolController {
       'buy_type': inputParams.buy_type,
       'pool_type': inputParams.pool_type,
       'min_tier': inputParams.min_tier,
+
+      'is_display': true,
     };
 
     console.log('Create Pool with data: ', data);
@@ -73,7 +75,7 @@ class PoolController {
       const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
-          level: (index + 1),
+          level: index,
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
@@ -143,7 +145,7 @@ class PoolController {
       const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
-          level: (index + 1),
+          level: index,
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
