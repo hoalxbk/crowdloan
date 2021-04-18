@@ -57,6 +57,8 @@ function DisplaySwitch(props: any) {
                   await changeDisplay(switchValue);
                 }}
                 checked={value}
+                checkedChildren="Display"
+                unCheckedChildren="Hidden"
               />
             )
           }}

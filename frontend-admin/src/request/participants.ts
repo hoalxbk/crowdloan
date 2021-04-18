@@ -4,7 +4,8 @@ import {apiRoute} from "../utils";
 export const getParticipantUser = async (campaignId: any) => {
   const baseRequest = new BaseRequest();
 
-  let url = `/pool/${campaignId}/participants`;
+  // Fetch from API Protect by Auth Admin (with prefix)
+  let url = apiRoute(`/pool/${campaignId}/participants`);
   const response = await baseRequest.get(url) as any;
   const resObject = await response.json();
 

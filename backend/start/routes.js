@@ -65,6 +65,7 @@ Route.group(() => {
   Route.post('pool/create', 'PoolController.createPool');
   Route.post('pool/:campaignId/update', 'PoolController.updatePool');
   Route.get('pool/:campaignId', 'PoolController.getPool');
+  Route.get('pool/:campaignId/participants', 'WhiteListUserController.getParticipants');
   Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
   Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 
@@ -94,12 +95,15 @@ Route.group(() => {
   Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
   Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
-  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['auth', 'checkSignature']);
-  Route.post('deposit', 'CampaignController.deposit').middleware(['auth']);
-  Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList').middleware('auth');
-  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware('auth');
-  Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign').middleware('auth');
-  Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign').middleware('auth');
+  Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['checkSignature']);
+  Route.post('deposit', 'CampaignController.deposit');//.middleware(['auth']);
+  Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList');//.middleware(['auth']);
+  Route.get('whitelist-search/:campaignId', 'WhiteListUserController.search');//.middleware(['auth']);
+  Route.get('winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners');//.middleware(['auth']);
+  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList');//.middleware('auth');
+  Route.get('winner-search/:campaignId', 'WinnerListUserController.search').middleware('auth');
+  Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');//.middleware('auth');
+  Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');//.middleware('auth');
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
 
 Route.group(() => {

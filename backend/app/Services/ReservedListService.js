@@ -1,12 +1,11 @@
 'use strict'
 
 const ErrorFactory = use('App/Common/ErrorFactory');
-const WhitelistModel = use('App/Models/WhitelistUser');
+const ReservedListModel = use('App/Models/ReservedList');
 
-class WhitelistUserService {
+class ReservedListService {
   buildQueryBuilder(params) {
-    // create query
-    let builder = WhitelistModel.query();
+    let builder = ReservedListModel.query();
     if (params.id) {
       builder = builder.where('id', params.id);
     }
@@ -23,7 +22,7 @@ class WhitelistUserService {
   }
 
   buildSearchQuery(params) {
-    let builder = WhitelistModel.query();
+    let builder = ReservedListModel.query();
     if (params.email) {
       builder = builder.where('email', 'like', '%' + params.email + '%');
     }
@@ -36,7 +35,7 @@ class WhitelistUserService {
     return builder;
   }
 
-  async findWhitelistUser(params) {
+  async findByCampaign(params) {
     let builder = this.buildQueryBuilder(params);
     if (params.page && params.pageSize) {
       // pagination
@@ -44,24 +43,6 @@ class WhitelistUserService {
     }
     // return all result
     return await builder.fetch();
-  }
-
-  async countByCampaignId(campaign_id) {
-    return await WhitelistModel.query().
-      where('campaign_id', campaign_id).getCount();
-  }
-
-  async checkExisted(wallet_address, campaign_id) {
-    const wl = await WhitelistModel.query().
-    where('campaign_id', campaign_id).
-    where('wallet_address', wallet_address).first();
-    return wl != null ? true : false;
-  }
-
-  async getRandomWinners(number,campaign_id) {
-    return await WhitelistModel.query()
-      .where('campaign_id', campaign_id)
-      .orderByRaw('RAND()').limit(number).fetch();
   }
 
   async search(params) {
@@ -73,6 +54,22 @@ class WhitelistUserService {
     // return all result
     return await builder.fetch();
   }
+
+  async findOneByFilter(filterParams) {
+    return await this.buildSearchQuery(filterParams).first();
+  }
+
+  async create(params) {
+    const reserved =new ReservedListModel;
+    reserved.campaign_id = params.campaign_id;
+    reserved.wallet_address = params.wallet_address;
+    reserved.email = params.email;
+    reserved.start_time = params.start_time;
+    reserved.end_time = params.end_time;
+    reserved.max_buy = params.max_buy;
+    reserved.min_buy = params.min_buy;
+    reserved.save();
+  }
 }
 
-module.exports = WhitelistUserService
+module.exports = ReservedListService
