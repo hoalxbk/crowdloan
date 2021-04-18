@@ -94,5 +94,9 @@ module.exports = Object.freeze({
     BUY_WITH_ETHER_WITH_ETH_LINK: 'buyWithEtherWithETHLink',
     REFUND: 'Refund',
     TOKEN_CLAIMED: 'TokenClaimed',
+  },
+  BUY_TYPE: {
+    WHITELIST_LOTTERY: 'whitelist',
+    FCFS: 'fcfs',
   }
 });
