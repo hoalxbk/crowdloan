@@ -75,8 +75,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     estimateErr, 
     tokenDepositLoading, 
     tokenDepositTransaction,
-    setTokenDepositLoading
-  } = usePoolDepositAction({ poolAddress, poolId });
+    setTokenDepositLoading,
+    depositError
+  } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input });
 
   const { retrieveTokenAllowance } = useTokenAllowance();
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
@@ -154,6 +155,19 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     ableToFetchFromBlockchain && fetchTokenPoolAllowance();
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain]);
 
+  useEffect(() => {
+    depositError && setOpenSubmitModal(false);
+  }, [depositError]);
+
+  useEffect(() => {
+    if (tokenDepositTransaction) {
+      //  Clear input field and additional information field below and close modal
+      setInput("");
+      setEstimateTokens(0);
+      setTransactionFee(0);
+    }
+  }, [tokenDepositTransaction]);
+
   const handleInputChange = async (e: any) => {
     const val = e.target.value;
     setInput(val);
@@ -161,8 +175,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
       const tokens = new BigNumber(val).multipliedBy(rate).toNumber()
       setEstimateTokens(tokens);
-      const estimatedFee = await estimateFee(val, purchasableCurrency) 
-      estimatedFee && setTransactionFee(estimatedFee);
+      /* const estimatedFee = await estimateFee(val, purchasableCurrency) */ 
+      /* estimatedFee && setTransactionFee(estimatedFee); */
     } else {
       setEstimateTokens(0);
       setTransactionFee(0);
@@ -175,15 +189,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         setOpenSubmitModal(true);
 
         // Call to smart contract to deposit token and refetch user balance
-        await deposit(input, purchasableCurrency);
+        await deposit();
         await fetchUserBalance();
-
-        //  Clear input field and additional information field below and close modal
-        setInput("");
-        setEstimateTokens(0);
-        setTransactionFee(0);
       }
     } catch (err) {
+      console.log('run herer');
       setOpenSubmitModal(false);
     }
   }
@@ -207,7 +217,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     <div className={styles.buyTokenForm}>
       {
         appChainID !== BSC_CHAIN_ID && (
-          <p className={styles.buyTokenFormTitle}>You have {userPurchased} {tokenDetails?.symbol} BOUGHT from {maximumBuy} available for your TIER</p>
+          <p className={styles.buyTokenFormTitle}>You have {numberWithCommas(userPurchased.toString())} {tokenDetails?.symbol} BOUGHT from {maximumBuy} available for your TIER</p>
         ) 
       }
       <div className={styles.buyTokenInputForm}>
