@@ -1,21 +1,27 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
 import useAuth from '../../../hooks/useAuth';
 import useFetch from '../../../hooks/useFetch';
+import ModalVerifyEmail from '../ModalVerifyEmail';
 
 const AccountInformation = (props: any) => {
   const styles = useStyles();
   const { classNamePrefix = '', balance = {}, userInfo = {} } = props;
-  const [openModalVerify, setOpenModalVerify] = useState(false);
-  const { data: loginInvestor } = useSelector((state: any) => state.investor);
+  const [openModalVerifyEmail, setOpenModalVerifyEmail] = useState(false);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
-  const { data: email, loading, error } = useFetch<any>('/', false, {email: 'thanh.nguyen@devorip.com', wallet_address: connectedAccount})
+  const { data: data = {}, loading, error } = useFetch<any>(`/user/profile?wallet_address=${connectedAccount}`);
+  const [emailVerified, setEmailVeryfied] = useState(false);
+  const [email, setEmail] = useState<string>('');
 
   const handleKYC = () => {
     console.log('hande KYC')
   }
+
+  useEffect(() => {
+    data.user && data.user.email && setEmail(data.user.email)
+  }, [data]);
 
   return (
     <div className={`${classNamePrefix}__component`}>
@@ -23,8 +29,11 @@ const AccountInformation = (props: any) => {
       <div className={styles.mainInfomation}>
         <div className={styles.inputGroup}>
           <span>Email</span>
-          {email && <span>{email}</span>}
-          {!email && connectedAccount && <span className="verify-email" onClick={() => setOpenModalVerify(true)}>Verify email</span>}
+          {data.user?.email !== '' && !emailVerified && <>
+            <span>{data.user?.email}</span>
+            <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>Verify email</button></>}
+          {data.user?.email !== '' && emailVerified && <span>{data.user?.email}</span>}
+          {data.user?.email === '' && connectedAccount && <span className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>Verify email</span>}
         </div>
         <div className={styles.inputGroup}>
           <span>Your Wallet</span>
@@ -43,7 +52,12 @@ const AccountInformation = (props: any) => {
           </div>
         </div>
       </div>
-
+      {openModalVerifyEmail && <ModalVerifyEmail
+        setOpenModalVerifyEmail={setOpenModalVerifyEmail}
+        email={email}
+        setEmailVeryfied={setEmailVeryfied}
+        setEmail={setEmail}
+      />}
     </div>
   );
 };
