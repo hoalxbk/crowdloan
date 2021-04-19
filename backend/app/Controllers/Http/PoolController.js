@@ -18,7 +18,7 @@ const CONTRACT_FACTORY_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPA
 
 const { abi: CONTRACT_ABI } = CONTRACT_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
-const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Erc20.json');
+const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
 
 const Web3 = require('web3');
 const BadRequestException = require("../../Exceptions/BadRequestException");
@@ -30,35 +30,39 @@ const moment = require('moment');
 class PoolController {
 
   async createPool({request, auth}) {
-    const params = request.only([
+    const inputParams = request.only([
       'register_by',
-      'title', 'banner', 'description', 'address_receiver',
-      'token', 'token_by_eth', 'token_images', 'total_sold_coin',
+      'title', 'website', 'banner', 'description', 'address_receiver',
+      'token', 'token_by_eth',  'token_conversion_rate', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
       'min_tier', 'tier_configuration',
     ]);
 
     const data = {
-      'title': params.title,
-      'description': params.description,
-      'token': params.token,
-      'start_time': params.start_time,
-      'finish_time': params.finish_time,
-      'ether_conversion_rate': params.token_by_eth,
+      'title': inputParams.title,
+      'website': inputParams.website,
+      'description': inputParams.description,
+      'token': inputParams.token,
+      'start_time': inputParams.start_time,
+      'finish_time': inputParams.finish_time,
+      'ether_conversion_rate': inputParams.token_by_eth,
+      'token_conversion_rate': inputParams.token_conversion_rate,
 
-      'banner': params.banner,
-      'address_receiver': params.address_receiver,
-      'token_images': params.token_images,
-      'total_sold_coin': params.total_sold_coin,
-      'release_time': params.release_time,
-      'start_join_pool_time': params.start_join_pool_time,
-      'end_join_pool_time': params.end_join_pool_time,
-      'accept_currency': params.accept_currency,
-      'network_available': params.network_available,
-      'buy_type': params.buy_type,
-      'pool_type': params.pool_type,
-      'min_tier': params.min_tier,
+      'banner': inputParams.banner,
+      'address_receiver': inputParams.address_receiver,
+      'token_images': inputParams.token_images,
+      'total_sold_coin': inputParams.total_sold_coin,
+      'release_time': inputParams.release_time,
+      'start_join_pool_time': inputParams.start_join_pool_time,
+      'end_join_pool_time': inputParams.end_join_pool_time,
+      'accept_currency': inputParams.accept_currency,
+      'network_available': inputParams.network_available,
+      'buy_type': inputParams.buy_type,
+      'pool_type': inputParams.pool_type,
+      'min_tier': inputParams.min_tier,
+
+      'is_display': true,
     };
 
     console.log('Create Pool with data: ', data);
@@ -68,10 +72,10 @@ class PoolController {
       campaign.fill(data);
       await campaign.save();
 
-      const tiers = (params.tier_configuration || []).map((item, index) => {
+      const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
-          level: (index + 1),
+          level: index,
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
@@ -82,7 +86,7 @@ class PoolController {
       });
       await campaign.tiers().saveMany(tiers);
 
-      console.log('params.tier_configuration', JSON.stringify(tiers));
+      console.log('inputParams.tier_configuration', JSON.stringify(tiers));
 
       const campaignId = campaign.id;
       // Create Web3 Account
@@ -103,7 +107,6 @@ class PoolController {
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
       'min_tier', 'tier_configuration',
-      // 'is_deploy',
     ]);
 
     const data = {
@@ -142,7 +145,7 @@ class PoolController {
       const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
-          level: (index + 1),
+          level: index,
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
@@ -169,7 +172,7 @@ class PoolController {
 
   async updateDeploySuccess({ request, auth, params }) {
     const inputParams = request.only([
-      'campaign_hash', 'token_symbol',
+      'campaign_hash', 'token_symbol', 'token_name', 'token_decimals', 'token_address',
     ]);
 
     console.log('Update Deploy Success with data: ', inputParams);
@@ -182,7 +185,10 @@ class PoolController {
       await CampaignModel.query().where('id', campaignId).update({
         is_deploy: true,
         campaign_hash: inputParams.campaign_hash,
-        token: inputParams.token_symbol,
+        token: inputParams.token_address,
+        name: inputParams.name,
+        symbol: inputParams.symbol,
+        decimals: inputParams.decimals,
       });
 
       // Delete cache
@@ -264,11 +270,11 @@ class PoolController {
     console.log('Start Pool List with params: ', param);
 
     try {
-      if (await RedisUtils.checkExistRedisPoolList(param)) {
-        const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
-        console.log('Exist cache data Public Pool List: ', cachedPoolDetail);
-        return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
-      }
+      // if (await RedisUtils.checkExistRedisPoolList(param)) {
+      //   const cachedPoolDetail = await RedisUtils.getRedisPoolList(param);
+      //   console.log('Exist cache data Public Pool List: ', cachedPoolDetail);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
+      // }
 
       let listData = (new PoolService).buildSearchQuery(param);
       listData = listData.orderBy('id', 'DESC');

@@ -30,7 +30,7 @@ class AuthService extends BaseService {
     const user = await UserModel.query()
       .where('role', role)
       .where('email', email)
-      .where('is_active', Const.USER_ACTIVE)
+      .where('status', Const.USER_STATUS.ACTIVE)
       .first();
     return user;
   }
@@ -39,7 +39,7 @@ class AuthService extends BaseService {
     const user = await UserModel.query()
       .where('role', role)
       .where('wallet_address', wallet_address)
-      .where('is_active', Const.USER_ACTIVE)
+      .where('status', Const.USER_STATUS.ACTIVE)
       .first();
     return user;
   }

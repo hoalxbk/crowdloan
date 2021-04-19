@@ -58,6 +58,18 @@ class WinnerListUserService {
     // return all result
     return await builder.fetch();
   }
+
+  async save(winnerList) {
+    const data = winnerList.rows.map(item => {
+      let model = new WinnerListModel;
+      model.email = item.email;
+      model.wallet_address = item.wallet_address;
+      model.campaign_id = item.campaign_id;
+      return model;
+    });
+    console.log(data);
+    await WinnerListModel.createMany(data);
+  }
 }
 
 module.exports = WinnerListUserService

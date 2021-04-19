@@ -126,6 +126,34 @@ class UserAuthController {
       return HelperUtils.responseErrorInternal(e.message);
     }
   }
+
+  async registerVerifyEmail({ request, auth, params }) {
+    try {
+      const param = request.only(['email', 'signature', 'wallet_address']);
+      const role = Const.USER_ROLE.PUBLIC_USER; // Only public user verify email
+      const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address);
+
+      console.log('[registerEmail]: Wallet Address: ', wallet_address);
+
+      const authService = new AuthService();
+      let user = await authService.checkIssetUser({ email: param.email, role });
+      console.log('[registerEmail]: User:  ', user);
+
+      if (user && user.wallet_address === wallet_address) {
+        user.confirmation_token = await HelperUtils.randomString(50);
+        user.email = param.email;
+        user.save();
+      } else {
+        return HelperUtils.responseNotFound('User not found');
+      }
+
+      return HelperUtils.responseSuccess(null, 'Success! Register email success');
+    } catch(e) {
+      console.log('ERROR: ', e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
 }
 
 module.exports = UserAuthController;

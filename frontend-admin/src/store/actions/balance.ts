@@ -2,7 +2,7 @@ import { balanceActions } from '../constants/balance';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { convertFromWei, getContractInstance, getWeb3Instance } from '../../services/web3';
-import erc20ABI from '../../abi/Erc20.json';
+import erc20ABI from '../../abi/Swap/Erc20.json';
 import BigNumber from "bignumber.js";
 
 export const getBalance = (loginUser: string) => {
