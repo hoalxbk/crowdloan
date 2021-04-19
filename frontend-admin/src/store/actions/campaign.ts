@@ -584,7 +584,7 @@ export const deployPool = (campaign: any, history: any) => {
       const finishTimeUnix = finish_time;
 
       const durationTime = finishTimeUnix - startTimeUnix;
-
+// debugger;
       const tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals || 0)).dividedBy(Math.pow(10, 18));
       const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
       const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
