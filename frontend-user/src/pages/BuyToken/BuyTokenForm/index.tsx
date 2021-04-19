@@ -90,7 +90,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         address: USDT_ADDRESS as string,
         name: "USDT",
         symbol: "USDT",
-        decimals: 18
+        decimals: 6 
       };
     }
 
@@ -99,7 +99,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         address: USDC_ADDRESS as string,
         name: "USDC",
         symbol: "USDC",
-        decimals: 18
+        decimals: 6 
       };
     }
   }, [purchasableCurrency])
