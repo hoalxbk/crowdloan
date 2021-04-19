@@ -120,7 +120,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     && (purchasableCurrency && purchasableCurrency !== 'ETH') 
     && !wrongChain && ableToFetchFromBlockchain && isDeployed;
 
-  const validTier = minTier && userTier >= minTier;
+  // Plus one for userTier because tier in smart contract start by 0  
+  const validTier = minTier && new BigNumber(userTier + 1).gte(minTier);
   const purchasable = 
     (tokenAllowance > 0 
      && !estimateErr 
