@@ -50,7 +50,6 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
     if (data && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
       const buyLimit = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.max_buy): [0,0,0,0,0];
 
-      console.log(connectedAccountTier);
       return {
         method: data.buy_type,
         startTime: data.start_join_pool_time,
@@ -62,7 +61,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         tokenDetails,
         title: data.title,
         buyLimit,
-        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) - 1 || 0],
+        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) || 0],
         poolAddress: data.campaign_hash,
         joinTime: data.start_join_pool_time,
         endJoinTime: data.end_join_pool_time,
@@ -84,7 +83,6 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   }, [data, fetchPoolLoading, error, poolDetailDone, tokenDetails, connectedAccountTier]);
 
   useEffect(() => {
-    console.log(tokenDetails);
     tokenDetails && setPoolDetailDone(true);
   }, [tokenDetails]);
 

@@ -131,6 +131,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && validTier    
     );
 
+
   const fetchUserBalance = useCallback(async () => {
       if (appChainID && connectedAccount && connector) {
         const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, connector);
