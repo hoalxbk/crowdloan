@@ -6,7 +6,7 @@ import TransactionSubmitModal from '../../../components/Base/TransactionSubmitMo
 import Button from '../Button';
 import useStyles from './style';
 
-import { numberWithCommas } from '../../../utils/formatNumber';
+import { numberWithCommas, getDigitsAfterDecimals, INTEGER_NUMBER_KEY_CODE_LIST } from '../../../utils/formatNumber';
 import { isNotValidASCIINumber, isPreventASCIICharacters, trimLeadingZerosWithDecimal } from '../../../utils/formatNumber';
 import { BSC_CHAIN_ID } from '../../../constants/network';
 import { TokenType } from '../../../hooks/useTokenDetails';
@@ -245,7 +245,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             placeholder={'0'} 
             onChange={handleInputChange} 
             value={input} 
-            onKeyDown={e => isNotValidASCIINumber(e.keyCode, true) && e.preventDefault()}
+            onKeyDown={e => { 
+              if (getDigitsAfterDecimals(input) >= 6 && INTEGER_NUMBER_KEY_CODE_LIST.indexOf(e.keyCode) < 0) {
+                e.preventDefault();
+                return;
+              }
+
+              isNotValidASCIINumber(e.keyCode, true) && e.preventDefault() 
+            }}
             onKeyPress={e => isPreventASCIICharacters(e.key) && e.preventDefault()}
             onBlur={e => setInput(trimLeadingZerosWithDecimal(e.target.value))}
             onPaste={e => {

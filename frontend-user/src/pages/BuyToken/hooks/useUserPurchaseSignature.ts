@@ -30,14 +30,14 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
           }, config);
 
           if (response.data && response.status && response.status === 200) {
-            const { data, message } = response.data;
-            if (data) {
+            const { data, message, status } = response.data;
+            if (data && status === 200) {
               setSignature(data.signature);
               setMinBuy(data.min_buy);
               setMaxBuy(data.max_buy);
             } 
 
-            if (message) {
+            if (message && status !== 200) {
               dispatch(alertFailure(message));
               setError(message);
               setSignature("");
