@@ -38,6 +38,13 @@ const useStyles = makeStyles((theme) => {
       position: 'absolute',
       bottom: '-3px',
       right: '-7px'
+    },
+    [theme.breakpoints.down('xs')]: {
+      walletBox: {
+        '&:not(:first-child)': {
+          marginLeft: 0
+        }
+      },
     }
   };
 });

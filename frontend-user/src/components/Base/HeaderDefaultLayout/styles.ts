@@ -42,9 +42,6 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-end',
-      [theme.breakpoints.only('xs')]: {
-        marginTop: 30
-      }
     },
     btn: {
       fontStyle: 'normal',
@@ -160,6 +157,54 @@ const useStyles = makeStyles((theme) => {
 
       '&:hover': {
         color: 'white'
+      }
+    },
+
+    [theme.breakpoints.only('xs')]: {
+      rightBar: {
+        position: 'fixed',
+        backgroundColor: '#030926',
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+        margin: 0,
+        padding: '113px 32px',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        display: 'none',
+
+        '&.active': {
+          display: 'flex'
+        }
+      },
+      btnConnect: {
+        margin: '20px 0',
+      },
+      btn: {
+        '&.start p': {
+          padding: 0,
+          marginBottom: '20px'
+        }
+      },
+      sideBarLogo: {
+        position: 'absolute',
+        top: '10px',
+        left: '32'
+      },
+      closeBtn: {
+        position: 'absolute',
+        top: '28px',
+        right: '20px'
+      },
+      navBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      },
+      navbarLink: {
+        marginLeft: '12px'
       }
     }
   };
