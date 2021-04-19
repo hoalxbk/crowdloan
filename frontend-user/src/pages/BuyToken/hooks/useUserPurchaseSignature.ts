@@ -14,6 +14,9 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
 
   useEffect(() => {
       const getUserSignature = async () => {
+        setError("");
+        setSignature("");
+
         try {
           const config = {
             headers: {
@@ -37,11 +40,12 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
             if (message) {
               dispatch(alertFailure(message));
               setError(message);
-              return;
+              setSignature("");
             }
           } 
         } catch (err) {
           setError(err.message);
+          setSignature("");
         }
       }
     connectedAccount && campaignId && authSignature && getUserSignature();

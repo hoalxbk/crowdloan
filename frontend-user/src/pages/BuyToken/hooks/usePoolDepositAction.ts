@@ -18,6 +18,7 @@ type PoolDepositActionParams = {
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
 const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
+const USDT_OR_USDC_DECIMALS = 6;
 
 const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount }: PoolDepositActionParams) => {
   const dispatch = useDispatch();
@@ -43,11 +44,13 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
     depositWithSignature(poolAddress, purchasableCurrency, amount, signature, `${minBuy}`, maxBuy);
   }, [signature, authSignature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy, tokenDepositLoading]);
 
+
   useEffect(() => {
     if (error || buyError) {
       const errorMessage = error || buyError;
       setDepositError(errorMessage as string);
       setTokenDepositLoading(false);
+      setSignature("");
     }
   }, [error, buyError]);
 
@@ -64,6 +67,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
+        const decimals = acceptCurrency === 'ETH' ? 18: USDT_OR_USDC_DECIMALS;
 
         const params = acceptCurrency === 'ETH' ? [ 
           connectedAccount,
@@ -77,7 +81,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         ]: [
           connectedAccount,
           acceptCurrency ===  "USDT" ? USDT_ADDRESS: USDC_ADDRESS,
-          new BigNumber(amount).multipliedBy(10 ** 18).toFixed(),
+          new BigNumber(amount).multipliedBy(10 ** decimals).toFixed(),
           connectedAccount,
           maxBuy,
           minBuy,
@@ -105,16 +109,16 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   const deposit = useCallback(async () => {
     if (amount && new BigNumber(amount).gt(0) && poolAddress) {
       try {
-        setTokenDepositLoading(true);
         setTokenDepositTransaction("");
         setDepositError("");
+        setTokenDepositLoading(true);
 
         await signMessage();
       } catch (err) {
         dispatch(alertFailure(err.message));
         setSignature("");
         setTokenDepositLoading(false);
-        throw new Error(err.message);
+        setDepositError(err.message);
       }
     }
   }, [connectedAccount, library, poolAddress, amount])

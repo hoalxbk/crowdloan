@@ -25,7 +25,6 @@ import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
 import { ETH_CHAIN_ID } from '../../constants/network';
 
-import { getUserTierAlias } from '../../utils/getUserTierAlias';
 import { getPoolCountDown } from '../../utils/getPoolCountDown';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
@@ -111,8 +110,6 @@ const BuyToken: React.FC<any> = (props: any) => {
     endBuyTimeInDate,
     new BigNumber(tokenSold).div(poolDetails?.amount || 1).toFixed()
   );
-  // Get Pool mintier
-  const poolMinTier = getUserTierAlias(poolDetails?.minTier || 0);
 
   const displayCountDownTime = useCallback((
     method: string | undefined, 
@@ -126,7 +123,7 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   const { date: countDownDate, display } = displayCountDownTime(poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate)
 
-  const shortAdress = (address: string, digits: number = 4) => {
+  const shortenAddress = (address: string, digits: number = 4) => {
     return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
 
@@ -199,7 +196,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 </h2>
                 <p className={styles.poolHeaderAddress}>
                   {isWidthUp('sm', props.width) && poolDetails?.poolAddress}
-                  {isWidthDown('xs', props.width) && shortAdress(poolDetails?.poolAddress || '', 8)}
+                  {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.poolAddress || '', 8)}
 
                   <CopyToClipboard text={poolDetails?.poolAddress}
                     onCopy={() => { 
