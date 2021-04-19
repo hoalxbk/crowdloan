@@ -4,7 +4,6 @@ const useStyles = makeStyles((theme) => {
   return {
     dialog: {
       '& .MuiPaper-root': {
-        // background: '#020616',
         padding: 40,
         minWidth: 600,
         borderRadius: 15,
@@ -133,6 +132,20 @@ const useStyles = makeStyles((theme) => {
       color: '#59f',
       fontWeight: 600,
       cursor: 'pointer'
+    },
+    [theme.breakpoints.down('xs')]: {
+      dialog: {
+        '& .MuiPaper-root': {
+          padding: '20px',
+          minWidth: 'unset',
+          maxWidth: '100%',
+          width: '100%',
+          margin: '20px',
+          borderRadius: 15,
+          backgroundColor: '#191f2a',
+          border: '1px solid #273a55!important'
+        }
+      }
     }
   };
 });

@@ -8,8 +8,9 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import Typography from '@material-ui/core/Typography';
 import { ETH_CHAIN_ID } from '../../../../constants/network';
 import { AppContext } from '../../../../AppContext';
-
+import {withWidth, isWidthDown, isWidthUp} from '@material-ui/core';
 import useStyles from './style';
+import { trimMiddlePartAddress } from '../../../../utils/accountAddress';
 
 const linkIcon = '/images/hyperlink.svg';
 
@@ -37,7 +38,7 @@ const styles = (theme: Theme) =>
     },
     svgIcon: {
       fontSize: 5
-    }
+    },
   });
 
 export interface DialogTitleProps extends WithStyles<typeof styles> {
@@ -77,7 +78,7 @@ const DialogContent = withStyles((theme: Theme) => ({
   },
 }))(MuiDialogContent);
 
-const WalletDisconnect: React.FC<ComponentProps> = (props: ComponentProps) => {
+const WalletDisconnect: React.FC<ComponentProps> = (props: any) => {
   const styles = useStyles();
   const { logout: disconnectWallet } = useContext(AppContext);
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
@@ -133,7 +134,10 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: ComponentProps) => {
           {
             walletIconPath && <img src={walletIconPath} alt={walletName} className={styles.walletNameIcon} />
           }
-          <span className={styles.accountDetailAddressText}>{address}</span>
+          <span className={styles.accountDetailAddressText}>
+            {isWidthUp('sm', props.width) && address}
+            {isWidthDown('xs', props.width) && trimMiddlePartAddress(address, 10)}
+          </span>
         </div>
         <div className={styles.accountDetailCta}>
           <div className={styles.accountDetailDisconnect} onClick={handleAccountLogout}>
@@ -147,4 +151,4 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: ComponentProps) => {
 
 }
 
-export default WalletDisconnect;
+export default withWidth()(WalletDisconnect);

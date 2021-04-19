@@ -45,7 +45,7 @@
       {
         "indexed": false,
         "internalType": "bool",
-        "name": "isERC1155",
+        "name": "canStake",
         "type": "bool"
       }
     ],
@@ -135,6 +135,12 @@
         "internalType": "uint256",
         "name": "rate",
         "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "canStake",
+        "type": "bool"
       }
     ],
     "name": "ExternalTokenStatsChange",
@@ -352,7 +358,7 @@
       },
       {
         "internalType": "bool",
-        "name": "_isERC1155",
+        "name": "_canStake",
         "type": "bool"
       }
     ],
@@ -539,7 +545,7 @@
       },
       {
         "internalType": "bool",
-        "name": "isERC1155",
+        "name": "canStake",
         "type": "bool"
       }
     ],
@@ -654,6 +660,11 @@
         "internalType": "uint256",
         "name": "_rate",
         "type": "uint256"
+      },
+      {
+        "internalType": "bool",
+        "name": "_canStake",
+        "type": "bool"
       }
     ],
     "name": "setExternalToken",
@@ -822,11 +833,6 @@
   },
   {
     "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
       {
         "internalType": "address",
         "name": "_token",

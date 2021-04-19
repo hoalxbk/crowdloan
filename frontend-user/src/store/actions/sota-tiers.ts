@@ -167,7 +167,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
 
       const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
 
-      result = await contract?.withdrawERC20(address, process.env.REACT_APP_SOTA, convertToWei(amount));
+      result = await contract?.withdrawERC20(process.env.REACT_APP_SOTA, convertToWei(amount));
 
       if(result) {
         dispatch(getBalance(address || ''));
