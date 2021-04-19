@@ -56,13 +56,15 @@ const Tiers = (props: any) => {
     showMoreInfomation && setCurrentProcess(userTier*100/(tiersBuyLimit.length - 1));
   }, [tiers, userTier, userInfo])
 
+  console.log(userTier);
+
   return (
     <div className={`tiers__component`}>
       <div className={styles.title}>
         <>
           <img src={warningIcon} />
           <p>
-          You are in tier {userTier >= 0 && getUserTierAlias(userTier as number - 1).text}.&nbsp; 
+            You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}.&nbsp; 
           To upgrade your tier, please click&nbsp;
           <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
           </p> 
