@@ -16,6 +16,12 @@ const useStyles = makeStyles((theme: any) => {
       display: 'flex',
       alignItems: 'center',
     },
+    poolHeaderNetworkAvailable: {
+      fontWeight: 400, 
+      marginLeft: 10, 
+      color: '#999999',
+      fontSize: 14,
+    },
     poolTicketWinner: {
       color: 'white',
       borderRadius: 4,
@@ -25,7 +31,18 @@ const useStyles = makeStyles((theme: any) => {
       fontSize: 15,
       display: 'flex',
       alignItems: 'center',
-      marginTop: 10
+      marginTop: 20,
+
+      '& span': {
+        [theme.breakpoints.down('xs')]: {
+          textAlign: 'center',
+          marginLeft: '0 !important' as any
+        }
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column'
+      }
     },
     poolHeaderImage: {
 
@@ -48,6 +65,7 @@ const useStyles = makeStyles((theme: any) => {
       [theme.breakpoints.down('xs')]: {
         flexDirection: 'column',
         alignItems: 'flex-start',
+        fontSize: 25,
 
         '& > div': {
           display: 'flex',
@@ -57,17 +75,29 @@ const useStyles = makeStyles((theme: any) => {
       }
     },
     poolHeaderType: {
+      display: 'inline-block',
+      fontSize: 17,
+      padding: '6px 20px 6px 6px',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderRadius: 20
+    },
+    poolHeaderTypeInner: {
+      display: 'flex',
+      alignItems: 'center'
+    },
+    poolType: {
       display: 'flex',
       alignItems: 'center',
-      marginLeft: 30,
-      fontSize: 17,
+      marginTop: 30
     },
     poolStatus: {
       fontSize: 14,
       marginLeft: 10,
-      padding: '6px 30px',
+      padding: '6px 20px',
       backgroundColor: 'blue',
       borderRadius: 40,
+      color: 'white',
+      fontWeight: 700,
 
       '&--In-progress': {
         backgroundColor: '#ebc321'
@@ -131,12 +161,24 @@ const useStyles = makeStyles((theme: any) => {
       fontSize: 16,
       display: 'flex',
       alignItems: 'center',
-      marginLeft: 50
+      marginLeft: 50,
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+
+      '& span': {
+        textOverflow: 'ellipsis',
+        overflow: 'hidden',
+        display: 'inline-block'
+      },
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 15
+      }
     },
     poolDetailUtil: {
       marginLeft: 10,
       display: 'inline-block',
       cursor: 'pointer',
+      width: 18 
     },
     poolDetailTierWrapper: {
       display: 'flex',
@@ -294,12 +336,12 @@ const useStyles = makeStyles((theme: any) => {
       poolStatus: {
         paddingRight: '10px',
         paddingLeft: '10px',
-        marginLeft: '5px'
+        marginLeft: '8px'
       },
       poolsDetailBasicText: {
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         marginLeft: 0,
-        textAlign: 'right'
+        textAlign: 'left'
       },
     }
   };

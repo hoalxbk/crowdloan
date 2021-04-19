@@ -1,8 +1,9 @@
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { BeatLoader } from 'react-spinners';
 import { css } from "@emotion/core";
+import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 import useStyles from './styles';
 
 import ButtonLink from '../ButtonLink'
@@ -21,7 +22,7 @@ const WalletIcon = "wallet.svg";
 const EthereumIcon = "ethereum.svg";
 const BSCIcon = "bsc.svg";
 
-const HeaderDefaultLayout = () => {
+const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   const styles = useStyles();
 
   const [switchNetworkDialog, setSwitchNetworkDialog] = useState<boolean>(false);
@@ -93,7 +94,11 @@ const HeaderDefaultLayout = () => {
             </Link>
           </div>
           <div className={styles.rightBar}>
-            <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn}`} />
+            {
+              isWidthUp('sm', props.width) && (
+                <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn}`} />
+              )
+            }
               <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => setSwitchNetworkDialog(true)}>
               <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
                 <span className={styles.btnConnectText}>

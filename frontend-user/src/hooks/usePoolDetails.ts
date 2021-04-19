@@ -28,6 +28,7 @@ export type PoolDetails = {
   networkIcon: string;
   minTier: number;
   isDeployed: boolean;
+  isDisplay: boolean;
 }
 
 export type PoolDetailsReturnType ={
@@ -41,14 +42,13 @@ const BSC_ICON = '/images/bsc.svg';
 
 const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const [poolDetailDone, setPoolDetailDone] = useState<boolean>(false);
-  const { loading, error, data }  = useFetch<any>(`/pool/${poolId}`);
+  const { loading: fetchPoolLoading, error, data }  = useFetch<any>(`/pool/${poolId}`);
   const { tokenDetails } = useTokenDetails(data?.token, data?.network_available);
   const { data: connectedAccountTier } = useTypedSelector(state => state.userTier);
 
   const poolDetails = useMemo(() => {
-    if (data && !loading && !error && tokenDetails && poolDetailDone)  {
+    if (data && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
       const buyLimit = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.max_buy): [0,0,0,0,0];
-      console.log(connectedAccountTier);
 
       return {
         method: data.buy_type,
@@ -74,20 +74,22 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         networkAvailable: data.network_available,
         networkIcon: data.network_available === 'eth' ? ETH_ICON: BSC_ICON,
         minTier: data.min_tier,
-        isDeployed: data.is_deploy === 1
-      }
+        isDeployed: data.is_deploy === 1,
+        isDisplay: data.is_display === 1
+      } 
     }
 
     return;
-  }, [data, loading, error, poolDetailDone, tokenDetails, connectedAccountTier]);
+  }, [data, fetchPoolLoading, error, poolDetailDone, tokenDetails, connectedAccountTier]);
 
   useEffect(() => {
+    console.log(tokenDetails);
     tokenDetails && setPoolDetailDone(true);
   }, [tokenDetails]);
 
   return  {
     poolDetails,
-    loading: !poolDetailDone
+    loading: fetchPoolLoading || !poolDetailDone
   }
 }
 

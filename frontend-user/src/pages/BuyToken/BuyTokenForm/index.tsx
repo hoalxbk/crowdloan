@@ -34,6 +34,7 @@ type BuyTokenFormProps = {
   availablePurchase: boolean | undefined;
   ableToFetchFromBlockchain: boolean | undefined
   minTier: number | undefined
+  isDeployed: boolean | undefined
 }
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
@@ -61,7 +62,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     poolId,
     availablePurchase,
     ableToFetchFromBlockchain,
-    minTier
+    minTier,
+    isDeployed
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -71,7 +73,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   const { 
     deposit, 
-    estimateFee, 
     estimateErr, 
     tokenDepositLoading, 
     tokenDepositTransaction,
@@ -112,11 +113,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   );
 
   const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 
-  console.log(tokenAllowance, purchasableCurrency, new BigNumber(tokenAllowance).lt(new BigNumber(input)));
+
   const enableApprove = 
     (tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
     && (purchasableCurrency && purchasableCurrency !== 'ETH') 
-    && !wrongChain && ableToFetchFromBlockchain;
+    && !wrongChain && ableToFetchFromBlockchain && isDeployed;
 
   const validTier = minTier && userTier >= minTier;
   const purchasable = 
@@ -158,7 +159,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain]);
 
   useEffect(() => {
-    depositError && setOpenSubmitModal(false);
+    if (depositError) {
+      setOpenSubmitModal(false);
+    }
   }, [depositError]);
 
   useEffect(() => {
@@ -195,7 +198,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         await fetchUserBalance();
       }
     } catch (err) {
-      console.log('run herer');
       setOpenSubmitModal(false);
     }
   }
@@ -219,7 +221,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     <div className={styles.buyTokenForm}>
       {
         appChainID !== BSC_CHAIN_ID && (
-          <p className={styles.buyTokenFormTitle}>You have {numberWithCommas(userPurchased.toString())} {tokenDetails?.symbol} BOUGHT from {maximumBuy} available for your TIER</p>
+          <p className={styles.buyTokenFormTitle}>
+            You have {numberWithCommas(userPurchased.toString())} {purchasableCurrency} DEPOSITED from {maximumBuy} available for your TIER
+          </p>
         ) 
       }
       <div className={styles.buyTokenInputForm}>
@@ -278,7 +282,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         />
         <Button 
           text={'Buy'} 
-          backgroundColor={'#D01F36'} 
+          backgroundColor={'#3232DC'} 
           disabled={!purchasable}
           onClick={handleTokenDeposit}
           loading={tokenDepositLoading} 

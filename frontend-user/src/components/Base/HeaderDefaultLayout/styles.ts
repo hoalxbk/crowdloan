@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => {
       },
       [theme.breakpoints.only('xs')]: {
         padding: '10px 20px',
+        flexDirection: 'column'
       }
     },
     navbarLink: {
@@ -41,6 +42,9 @@ const useStyles = makeStyles((theme) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-end',
+      [theme.breakpoints.only('xs')]: {
+        marginTop: 30
+      }
     },
     btn: {
       fontStyle: 'normal',
@@ -66,7 +70,10 @@ const useStyles = makeStyles((theme) => {
       alignItems: 'center',
       color: '#999999',
       marginLeft: 40,
-      fontWeight: 600
+      fontWeight: 600,
+      [theme.breakpoints.only('xs')]: {
+        marginLeft: 0
+      }
     },
     btnConnect: {
       background: '#3232DC',
