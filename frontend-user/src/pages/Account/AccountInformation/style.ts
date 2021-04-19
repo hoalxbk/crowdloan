@@ -66,6 +66,7 @@ const useStyles = makeStyles((theme: any) => {
         boxSizing: 'border-box',
         borderRadius: '3px',
         background: 'none',
+        cursor: 'pointer'
       }
     },
     redKiteInfo: {
