@@ -1,5 +1,5 @@
-# lemonade-contracts
-Smart constracts for Lemonade Platform
+# RedKite smart contract
+Smart constracts for RedKite platform
 
 ## Deploy Factory smart contract
 
@@ -7,7 +7,7 @@ Project currently use hardhat for deployment. The variable should import from pr
 
 ## Plugins
 
-Lemonade is currently extended with the following plugins.
+RedKite is currently extended with the following plugins.
 Instructions on how to use them in your own application are linked below.
 Plugin should import from hardhat.config.js
 
@@ -19,7 +19,7 @@ Plugin should import from hardhat.config.js
 | hardhat-upgrades | https://www.npmjs.com/package/@openzeppelin/hardhat-upgrades |
 
 
-## Deploy Lemonade Factory contract
+## Deploy RedKite Factory contract
 1. Import hardhat library, embed ethers, upgrades modules
 ```javascript
 const hardhat = require('hardhat');
@@ -30,7 +30,7 @@ const { ethers, upgrades } = hardhat;
   const revenueAddress = process.env.RENEVUE_ADDRESS || '0xba535ade958703Ffb99B9325ca8db04A00937029';
   const feeRate = process.env.PLATFORM_FEE_RATE || 1;
 ```
-3. Get Lemonade contract factory prototype
+3. Get contract factory prototype
 ```javascript
   const PoolFactory = await ethers.getContractFactory(
     'PoolFactory',
@@ -64,15 +64,15 @@ const main = async () => {
 
 ## Script / Config
 
-Lemonade is currently extended with the following plugins.
+RedKite is currently extended with the following plugins.
 Instructions on how to use them in your own application are linked below.
 Plugin should import from hardhat.config.js
 
 | Scripts | github |
 | ------ | ------ |
-| Deploy Factory |  https://github.com/jigstack-dev/lemonade-contracts/blob/main/scripts/deploy-pool-factory.script.js|
-| Upgrade Factory | https://github.com/jigstack-dev/lemonade-contracts/blob/main/scripts/upgrade-pool-factory.script.js|
-| Config file | https://github.com/jigstack-dev/lemonade-contracts/blob/main/hardhat.config.js|
+| Deploy Factory |  ./scripts/deploy-pool-factory.script.js|
+| Upgrade Factory | ./scripts/upgrade-pool-factory.script.js|
+| Config file | .//hardhat.config.js|
 
 
 ## Components
@@ -102,7 +102,6 @@ parameters. PoolFactory is Ownable and has following parameters and structs:
     - address[] public allPools;
 
     - mapping(address => mapping(address => address[_])) public getPools;
-
 - PoolFactory contract has following functions:
 
     - constructor - public functions that sets  platformFeeRate and
@@ -192,37 +191,20 @@ parameters. PoolFactory is Ownable and has following parameters and structs:
     - refundTokenForIcoOwner - external function that returns unsold tokens to specified address. Has onlyOwner modifier
 
     - _preValidatePurchase - internal pure function that validates parameters for token purchase
-
     - _getEtherToTokenAmount - internal view function that returns amount of tokens that can be purchased with specified amount of ether
-
     - _getEtherToTokenAmount - internal view function that returns amount of tokens that can be purchased with specified amount of ERC20 token
-
     - _processPurchase - internal function that calls _deliverTokens function
-
     - _deliverTokens - internal function that performs ICO token transfer
-
     - _forwardFunds - internal function that sends ether to funding wallet
-
     - _forwardTokenFunds - internal function that sends ERC20 token to funding wallet
-
     - _validPurchase - internal view function that returns true if started and not ended
-
     - _payPlatformEtherFee - private function that transfer platform fee in ether to fee wallet
-
     - _payPlatformTokenFee - private function that transfer platform fee in ERC20 token to fee wallet
-
     - _getPlatformFeeRate - private view function that returns platform fee rate
-
     - _getPlatformRevenueAddress - private view function that returns platform revenue wallet
-
     - _processAffiliatePurchase - internal function that performs purchase by ether if it was done via ETHLink affiliate
-
     - _processTokenAffiliatePurchase - internal function that performs purchase by ERC20 token if it was done via ETHLink affiliate
-
     - _transfer - private function that transfers ether
-
     - _transferT oken - private function that transfers ERC20 token
-
 ## License
-
 MIT
