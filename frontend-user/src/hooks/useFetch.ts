@@ -18,7 +18,8 @@ const useFetch = <T>(uri: string, suspendRender: any = false, config: any = {}):
 
       try {
         const response = await axios.get(uri, config) as any;
-        response.data && setData(response.data.data);
+        response.data && setData(response?.data?.data);
+        console.log(response)
 
         setLoading(false);
       } catch (error: any) {

@@ -311,6 +311,28 @@ const useStyles = makeStyles((theme: any) => {
 
       }
     },
+    [theme.breakpoints.down('md')]: {
+      poolDetailTierWrapper: {
+        flexDirection: 'column',
+      },
+      poolDetailIntro: {
+        width: '100%',
+        marginRight: '0'
+      },
+      poolDetailTier: {
+        width: '100%',
+        marginRight: '0',
+        marginTop: '30px'
+      }
+    },
+    [theme.breakpoints.down('sm')]: {
+      poolDetailContainer: {
+        padding: '40px'
+      },
+      PoolAboutDesc: {
+        width: '100%'
+      }
+    },
     [theme.breakpoints.down('xs')]: {
       poolDetailLink: {
         marginRight: '20px',
@@ -343,7 +365,10 @@ const useStyles = makeStyles((theme: any) => {
         marginLeft: 0,
         textAlign: 'left'
       },
-    }
+      poolHeaderInfo: {
+        width: '100%'
+      }
+    },
   };
 });
 
