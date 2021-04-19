@@ -51,7 +51,7 @@ const Dashboard = (props: any) => {
   },
   {
     image: '/images/landing/image6.svg',
-    title: 'Tier và reputation ',
+    title: 'Tier and reputation ',
     description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet vestibulum elit. Aliquam sagittis massa ut ultrices tincidunt. Curabitur tincidunt pharetra erat vitae consectetur. ',
     backgroundColor: 'linear-gradient(180deg, #50A3CF 0%, #060B26 50%)'
   }]
