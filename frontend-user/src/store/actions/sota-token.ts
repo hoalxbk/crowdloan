@@ -3,8 +3,10 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getContractInstance, convertToWei } from '../../services/web3';
 import erc20ABI from '../../abi/Erc20.json';
-import { convertFromWei } from './../../services/web3'
-import BigNumber from 'bignumber.js'
+import { convertFromWei, MAX_INT } from './../../services/web3';
+import BN from 'bn.js';
+import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { getContract } from '../../utils/contract';
 
 export const getAllowance = (owner: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
@@ -14,8 +16,7 @@ export const getAllowance = (owner: string) => {
 
       const contract = getContractInstance(erc20ABI, process.env.REACT_APP_SOTA as string);
 
-      result = await contract?.methods.allowance(owner, process.env.REACT_APP_SOTATIER).call();
-      console.log('getAllowance', result)
+      result = await contract?.methods.allowance(owner, process.env.REACT_APP_PKFTIERS).call();
 
       dispatch({
         type: sotaTokenActions.ALLOWANCE_SUCCESS,
@@ -31,18 +32,18 @@ export const getAllowance = (owner: string) => {
   }
 };
 
-export const approve = (address: string | null | undefined, amount: string) => {
+export const approve = (address: string | null | undefined, library: Web3Provider) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     dispatch({ type: sotaTokenActions.APPROVE_LOADING });
     try {
       let result = {};
 
-      const contract = getContractInstance(erc20ABI, process.env.REACT_APP_SOTA as string);
+      const contract = getContract(process.env.REACT_APP_SOTA as string, erc20ABI, library, address || '');
+      result = await contract?.approve(process.env.REACT_APP_PKFTIERS, MAX_INT)
 
-      result = await contract?.methods.approve(process.env.REACT_APP_SOTATIER, convertToWei(amount)).send({from: address || ''})
-      console.log('approve', result)
-
-      // dispatch(getAllowance(address));
+      if(result) {
+        dispatch(getAllowance(address || ''));
+      }
 
       dispatch({
         type: sotaTokenActions.APPROVE_SUCCESS,

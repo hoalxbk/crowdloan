@@ -2,8 +2,11 @@ import { sotaTiersActions } from '../constants/sota-tiers';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getContractInstance, convertFromWei, convertToWei, SmartContractMethod } from '../../services/web3';
+import { getContract } from '../../utils/contract';
 import sotaTiersABI from '../../abi/SotaTiers.json';
+import PKFTiersABI from '../../abi/PKFTiers.json';
 import { getBalance } from './balance';
+import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
 import {approve, getAllowance} from './sota-token';
 
@@ -21,8 +24,8 @@ export const getTiers = (forceUsingEther?: string) => {
       const connector  = getState().connector.data;
 
       const contract = getContractInstance(
-        sotaTiersABI.abi,
-        process.env.REACT_APP_SOTATIER as string,
+        PKFTiersABI,
+        process.env.REACT_APP_PKFTIERS as string,
         connector, 
         appChainID,
         SmartContractMethod.Read,
@@ -60,8 +63,8 @@ export const getUserTier = (address: string, forceUsingEther?: string) => {
       let result = {};
 
       const contract = getContractInstance(
-        sotaTiersABI.abi, 
-        process.env.REACT_APP_SOTATIER as string, 
+        PKFTiersABI, 
+        process.env.REACT_APP_PKFTIERS as string, 
         connector, 
         appChainID,
         SmartContractMethod.Read,
@@ -92,15 +95,15 @@ export const getUserInfo = (address: string, forceUsingEther?: string) => {
       const { appChainID } = getState().appNetwork.data;
       const { connector } = getState().connector.data;
       const contract = getContractInstance(
-        sotaTiersABI.abi,
-        process.env.REACT_APP_SOTATIER as string,
+        PKFTiersABI,
+        process.env.REACT_APP_PKFTIERS as string,
         connector,
         appChainID,
         SmartContractMethod.Read,
         forceUsingEther === 'eth'
       );
 
-      let result = await contract?.methods.userInfo(address).call();
+      let result = await contract?.methods.userInfo(address, process.env.REACT_APP_SOTA).call();
       const staked = convertFromWei(result.staked)
       result = {
         ...result,
@@ -122,7 +125,7 @@ export const getUserInfo = (address: string, forceUsingEther?: string) => {
   }
 };
 
-export const deposit = (address: string | null | undefined, amount: string) => {
+export const deposit = (address: string | null | undefined, amount: string, library: Web3Provider) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
@@ -130,14 +133,15 @@ export const deposit = (address: string | null | undefined, amount: string) => {
       const connector = getState().connector.data;
       let result = {};
 
-      const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
+      const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
+      result = await contract?.depositERC20(process.env.REACT_APP_SOTA, convertToWei(amount))
 
-      result = await contract?.methods.deposit(convertToWei(amount)).send({from: address || ''})
-
-      dispatch(getBalance(address || ''));
-      dispatch(getAllowance(address || ''));
-      dispatch(getUserTier(address || ''));
-      dispatch(getUserInfo(address || ''));
+      if(result) {
+        dispatch(getBalance(address || ''));
+        dispatch(getAllowance(address || ''));
+        dispatch(getUserTier(address || ''));
+        dispatch(getUserInfo(address || ''));
+      }
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,
@@ -153,7 +157,7 @@ export const deposit = (address: string | null | undefined, amount: string) => {
   }
 };
 
-export const withdraw = (address: string | null | undefined, amount: string) => {
+export const withdraw = (address: string | null | undefined, amount: string, library: Web3Provider) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_LOADING });
     try {
@@ -161,14 +165,16 @@ export const withdraw = (address: string | null | undefined, amount: string) => 
       const connector = getState().connector.data;
       let result = {};
 
-      const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
+      const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
 
-      result = await contract?.methods.withdraw(convertToWei(amount)).send({from: address})
+      result = await contract?.withdrawERC20(address, process.env.REACT_APP_SOTA, convertToWei(amount));
 
-      dispatch(getBalance(address || ''));
-      dispatch(getAllowance(address || ''));
-      dispatch(getUserTier(address || ''));
-      dispatch(getUserInfo(address || ''));
+      if(result) {
+        dispatch(getBalance(address || ''));
+        dispatch(getAllowance(address || ''));
+        dispatch(getUserTier(address || ''));
+        dispatch(getUserInfo(address || ''));
+      }
 
       dispatch({
         type: sotaTiersActions.WITHDRAW_SUCCESS,
@@ -192,10 +198,9 @@ export const getWithdrawFee = (address: string | null | undefined, amount: strin
       const { appChainID } = getState().appNetwork.data;
       const connector = getState().connector.data;
       let data = {};
+      const contract = getContractInstance(PKFTiersABI, process.env.REACT_APP_PKFTIERS as string, connector, appChainID);
 
-      const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
-
-      data = await contract?.methods.calculateWithdrawFee(address, convertToWei(amount)).call();
+      data = await contract?.methods.calculateWithdrawFee(address, process.env.REACT_APP_SOTA, convertToWei(amount)).call();
       
       const fee = convertFromWei(data);
       const feePercent = parseFloat(fee || '0')*100/parseFloat(amount || '0')
@@ -229,10 +234,9 @@ export const getWithdrawPercent = () => {
       const { connector } = getState().connector.data || "Metamask";
       let result = {};
       let data = [];
-
-      const contract = getContractInstance(sotaTiersABI.abi, process.env.REACT_APP_SOTATIER as string, connector, appChainID);
-
-      result = await contract?.methods.withdrawFeePercent(0).call();
+      const contract = getContractInstance(PKFTiersABI, process.env.REACT_APP_PKFTIERS as string, connector, appChainID);
+ 
+     result = await contract?.methods.withdrawFeePercent(0).call();
       data.push(result)
       result = await contract?.methods.withdrawFeePercent(1).call();
       data.push(result)

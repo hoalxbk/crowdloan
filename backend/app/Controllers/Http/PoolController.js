@@ -61,6 +61,8 @@ class PoolController {
       'buy_type': inputParams.buy_type,
       'pool_type': inputParams.pool_type,
       'min_tier': inputParams.min_tier,
+
+      'is_display': true,
     };
 
     console.log('Create Pool with data: ', data);
@@ -73,7 +75,7 @@ class PoolController {
       const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
-          level: (index + 1),
+          level: index,
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
@@ -143,7 +145,7 @@ class PoolController {
       const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
-          level: (index + 1),
+          level: index,
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
@@ -170,7 +172,7 @@ class PoolController {
 
   async updateDeploySuccess({ request, auth, params }) {
     const inputParams = request.only([
-      'campaign_hash', 'token_symbol',
+      'campaign_hash', 'token_symbol', 'token_name', 'token_decimals', 'token_address',
     ]);
 
     console.log('Update Deploy Success with data: ', inputParams);
@@ -183,7 +185,10 @@ class PoolController {
       await CampaignModel.query().where('id', campaignId).update({
         is_deploy: true,
         campaign_hash: inputParams.campaign_hash,
-        token: inputParams.token_symbol,
+        token: inputParams.token_address,
+        name: inputParams.name,
+        symbol: inputParams.symbol,
+        decimals: inputParams.decimals,
       });
 
       // Delete cache

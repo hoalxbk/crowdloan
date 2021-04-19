@@ -600,7 +600,7 @@ export const deployPool = (campaign: any, history: any) => {
         const userWalletAddress = getState().user.data.wallet_address;
 
         const signerWallet = campaign.wallet.wallet_address;
-        console.log('userWallet', signerWallet)
+        console.log('userWallet', signerWallet);
 
         if (poolType === POOL_TYPE.CLAIMABLE) {
           createdCampaign = await factorySmartContract.methods.registerPool(
@@ -632,7 +632,6 @@ export const deployPool = (campaign: any, history: any) => {
           ).send({
             from: userWalletAddress,
           });
-
         }
 
         console.log('Deploy Response: ', createdCampaign);
@@ -643,16 +642,20 @@ export const deployPool = (campaign: any, history: any) => {
           if (createdCampaign?.events && createdCampaign?.events && createdCampaign?.events[0]) {
             campaignHash = createdCampaign?.events[0].address;
           }
+          const updateData = {
+            campaign_hash: campaignHash,
+            token_symbol: tokenInfo.symbol,
+            token_name: tokenInfo.name,
+            token_decimals: tokenInfo.decimals,
+            token_address: tokenInfo.address,
+          };
 
-          await updateDeploySuccess({
-            poolId: campaign.id,
-            campaignHash: campaignHash,
-            tokenSymbol: token,
-          });
-
+          await updateDeploySuccess(updateData, campaign.id);
         }
       }
     } catch (err) {
+      console.log('ERROR: ', err);
+
       dispatch({
         type: campaignActions.MY_CAMPAIGN_CREATE_FAIL,
         payload: err.message

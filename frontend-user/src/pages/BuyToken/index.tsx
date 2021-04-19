@@ -311,7 +311,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
                 {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
                   <span className={styles.poolDetailProgressPercent}>
-                    {soldProgress}%
+                    {numberWithCommas(soldProgress)}%
                   </span>
                   <span>
                     {numberWithCommas(tokenSold)} / {numberWithCommas(totalSell)}
