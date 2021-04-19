@@ -35,7 +35,7 @@ export const getPoolCountDown = (
 
   if (method && method === "fcfs" && startBuyTime && endBuyTime) {
     if (today < startBuyTime.getTime()) {
-      date = startJoinTime; 
+      date = startBuyTime; 
       display = "Start buy in"
     }
 
