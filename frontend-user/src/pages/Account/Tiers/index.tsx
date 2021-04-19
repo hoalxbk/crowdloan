@@ -62,7 +62,7 @@ const Tiers = (props: any) => {
         <>
           <img src={warningIcon} />
           <p>
-          You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}.&nbsp; 
+          You are in tier {userTier >= 0 && getUserTierAlias(userTier as number - 1).text}.&nbsp; 
           To upgrade your tier, please click&nbsp;
           <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
           </p> 
