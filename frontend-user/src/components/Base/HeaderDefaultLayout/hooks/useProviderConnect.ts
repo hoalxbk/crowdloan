@@ -58,8 +58,9 @@ const useProviderConnect = (
    useEffect(() => {
     const handleWeb3ReactUpdate = (updated: any) => {
       if (updated.account) {
-        console.log('updated');
-        setAccount(updated.account); 
+        if (updated.account) {
+          setAccount(updated.account); 
+        } else setAccount(undefined);
       } 
 
       if (updated.chainId) {
