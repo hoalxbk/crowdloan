@@ -104,7 +104,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     new Date() >= startBuyTimeInDate && 
     new Date() <= endBuyTimeInDate && 
     poolDetails?.isDeployed &&
-    alreadyJoinPool;
+    (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
   
   // Get Pool Status
   const poolStatus = getPoolStatus(
