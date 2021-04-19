@@ -31,7 +31,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
   const { account: connectedAccount, library } = useWeb3React();
   const { error, signMessage, signature: authSignature, setSignature } = useWalletSignature();
-  const { signature, minBuy, maxBuy, error: buyError } = useUserPurchaseSignature(connectedAccount, poolId, authSignature);
+  const { signature, minBuy, maxBuy, error: buyError, setSignature: setUserPurchasedSignature } = useUserPurchaseSignature(connectedAccount, poolId, authSignature);
 
   useEffect(() => {
     poolAddress && 
@@ -39,10 +39,8 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
     signature &&
     minBuy &&
     maxBuy &&
-    tokenDepositLoading &&
-    authSignature &&
     depositWithSignature(poolAddress, purchasableCurrency, amount, signature, `${minBuy}`, maxBuy);
-  }, [signature, authSignature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy, tokenDepositLoading]);
+  }, [signature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy]);
 
 
   useEffect(() => {
@@ -64,6 +62,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   ) => {
     try {
       if (minBuy && maxBuy && signature && amount) {
+        console.log('signature', signature, amount, minBuy);
         const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
@@ -90,11 +89,14 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
         const transaction = await poolContract[method](...params);
 
+        setUserPurchasedSignature("");
         setSignature("");
         setTokenDepositLoading(false);
         setTokenDepositTransaction(transaction.hash);
 
         await transaction.wait(1);
+
+        console.log(authSignature);
 
         dispatch(alertSuccess("Token Deposit Successful!"));
       }
@@ -104,7 +106,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
       setSignature("");
       setDepositError(err.message);
     }
-  }, [minBuy, maxBuy, signature, poolAddress]);
+  }, [minBuy, maxBuy, poolAddress]);
 
   const deposit = useCallback(async () => {
     if (amount && new BigNumber(amount).gt(0) && poolAddress) {

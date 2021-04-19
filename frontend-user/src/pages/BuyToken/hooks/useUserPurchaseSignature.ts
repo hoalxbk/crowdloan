@@ -53,6 +53,7 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
 
   return {
     signature,
+    setSignature,
     minBuy,
     maxBuy,
     error
