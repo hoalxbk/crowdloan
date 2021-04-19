@@ -5,6 +5,8 @@ import useStyles from './style';
 import useAuth from '../../../hooks/useAuth';
 import useFetch from '../../../hooks/useFetch';
 import ModalVerifyEmail from '../ModalVerifyEmail';
+import {isWidthDown, isWidthUp, withWidth} from '@material-ui/core';
+import { trimMiddlePartAddress } from '../../../utils/accountAddress';
 
 const AccountInformation = (props: any) => {
   const styles = useStyles();
@@ -29,15 +31,15 @@ const AccountInformation = (props: any) => {
       <div className={styles.mainInfomation}>
         <div className={styles.inputGroup}>
           <span>Email</span>
-          {data.user?.email !== '' && !emailVerified && <>
+          {isWidthUp('sm', props.width) && data.user?.email !== '' && !emailVerified && <>
             <span>{data.user?.email}</span>
             <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>Verify email</button></>}
-          {data.user?.email !== '' && emailVerified && <span>{data.user?.email}</span>}
+          {isWidthDown('xs', props.width) && data.user?.email !== '' && emailVerified && <span>{data.user?.email}</span>}
           {data.user?.email === '' && connectedAccount && <span className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>Verify email</span>}
         </div>
         <div className={styles.inputGroup}>
           <span>Your Wallet</span>
-          <span>{connectedAccount}</span>
+          <span>{trimMiddlePartAddress(connectedAccount || '')}</span>
         </div>
         <div className={styles.redKiteInfo}>
           <div className="kyc-info">
@@ -62,4 +64,4 @@ const AccountInformation = (props: any) => {
   );
 };
 
-export default AccountInformation;
+export default withWidth()(AccountInformation);

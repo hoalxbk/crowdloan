@@ -54,6 +54,30 @@ const useStyles = makeStyles((theme) => {
     },
     dialogNetworks: {
       display: 'flex'
+    },
+    [theme.breakpoints.down('xs')]: {
+      dialog: {
+        '& .MuiPaper-root': {
+          background: '#020616',
+          padding: '20px',
+          margin: '20px',
+          maxWidth: '100%',
+          width: '100%',
+        },
+      },
+      dialogContentBlock: {
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr',
+        gap: '20px',
+        '& .MuiPaper-root': {
+          padding: '20px 0'
+        }
+      },
+      dialogPrivacy: {
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 0,
+      }
     }
   };
 });

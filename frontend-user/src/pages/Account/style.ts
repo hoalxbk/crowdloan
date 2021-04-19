@@ -28,6 +28,7 @@ const useStyles = makeStyles((theme: any) => {
       [theme.breakpoints.only('xs')]: {
         gridTemplateColumns: '1fr',
         padding: '20px',
+        marginTop: '40px',
       },
     },
     leftPanel: {

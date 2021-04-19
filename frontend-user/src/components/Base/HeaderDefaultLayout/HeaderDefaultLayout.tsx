@@ -21,6 +21,9 @@ const BrightStartIcon = "bright-star.svg";
 const WalletIcon = "wallet.svg";
 const EthereumIcon = "ethereum.svg";
 const BSCIcon = "bsc.svg";
+const logo = "/images/logo-red-kite.svg";
+const iconClose = "/images/icons/close.svg";
+const iconHamburger = "/images/icons/hamburger.svg";
 
 const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   const styles = useStyles();
@@ -30,6 +33,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   const [agreedTerms, setAgreedTerms] = useState<boolean>(false);
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
   const walletsInfo = useSelector((state: any) => state.wallet).entities;
+  const [openSideBar, setOpenSideBar] = useState(false);
 
   const { 
     handleProviderChosen, 
@@ -53,10 +57,21 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
 
   const handleConnectWalletOpen = () => {
     setOpenConnectWallet && setOpenConnectWallet(true);
+    setOpenSideBar(false);
   }
 
   const handleDisconnectDialogOpen = () => {
     setDisconnectDialog(true);
+    setOpenSideBar(false)
+  }
+
+  const hamburgerStyle = (isSmartPhone: boolean) => {
+    if(isSmartPhone) {
+      return openSideBar ? 'flex' : 'none';
+    }
+    else {
+      return 'flex';
+    }
   }
 
   useEffect(() => {
@@ -89,18 +104,17 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
         <div className={styles.navBar}>
           <div>
             <Link to={'/'} className={styles.navbarLink}>
-            <img src="/images/logo.svg" className={styles.navbarLogo}/>
-            <h1 className={styles.navbarBrand}><strong className={styles.navbarBrandBold}>RED</strong> KITE</h1>
+            <img src={logo} className={styles.navbarLogo}/>
             </Link>
           </div>
-          <div className={styles.rightBar}>
-            {
-              isWidthUp('sm', props.width) && (
-                <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn}`} />
-              )
-            }
-              <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => setSwitchNetworkDialog(true)}>
-              <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
+          {isWidthDown('xs', props.width) && <img src={iconHamburger} onClick={() => setOpenSideBar(true)}/>}
+          <div className={styles.rightBar + (openSideBar ? ' active' : '')}>
+              {isWidthDown('xs', props.width) && 
+                <><img src={logo} className={styles.sideBarLogo}/>
+                <img src={iconClose} className={styles.closeBtn} onClick={() => setOpenSideBar(false)}/></>}
+              <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn} start`} />
+              <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => {setSwitchNetworkDialog(true); setOpenSideBar(false);}}>
+                <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
                 <span className={styles.btnConnectText}>
                 {appChainID === ETH_CHAIN_ID ? 'Ethereum': 'BSC Mainnet'}
                 </span>
@@ -139,7 +153,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
             />
             <WalletDisconnect 
               opened={disconnectDialog} 
-              handleClose={() => { setDisconnectDialog(false); setAgreedTerms(false) }} 
+              handleClose={() => { setDisconnectDialog(false); setAgreedTerms(false); setOpenSideBar(false); }} 
               currentWallet={currentConnectedWallet}
             />
         </HeaderContext.Provider>
@@ -155,7 +169,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
                 &nbsp; or &nbsp;
                 <button 
                   className={styles.btnChangeAppNetwork} 
-                  onClick={() => setSwitchNetworkDialog(true)}
+                  onClick={() => {setOpenSideBar(false); setSwitchNetworkDialog(true);}}
                 >
                   Change App Network
                 </button>
@@ -168,4 +182,4 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   );
 };
 
-export default HeaderDefaultLayout;
+export default withWidth()(HeaderDefaultLayout);

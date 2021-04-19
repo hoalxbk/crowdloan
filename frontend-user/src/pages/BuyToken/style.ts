@@ -339,6 +339,9 @@ const useStyles = makeStyles((theme: any) => {
       }
     },
     [theme.breakpoints.down('xs')]: {
+      poolDetailContainer: {
+        padding: '20px!important'
+      },
       poolDetailLink: {
         marginRight: '20px',
       },
