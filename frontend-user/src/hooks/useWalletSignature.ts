@@ -46,9 +46,9 @@ const useWalletSignature = () => {
         const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
         const provider = library.provider;
 
-        if (connector !== ConnectorNames.WalletConnect) {
-          setError("");
+        setError("");
 
+        if (connector !== ConnectorNames.WalletConnect) {
           await (provider as any).sendAsync({
             method: paramsWithConnector.method,
             params: paramsWithConnector.params
@@ -78,7 +78,6 @@ const useWalletSignature = () => {
     } catch(err) {
       dispatch(alertFailure(err.message));
       setError(err.message);
-      throw new Error(err.message);
     }
   }, [library, connector, connectedAccount]);
 
