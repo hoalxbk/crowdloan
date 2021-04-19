@@ -31,7 +31,6 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   const { account: connectedAccount, library } = useWeb3React();
   const { error, signMessage, signature: authSignature, setSignature } = useWalletSignature();
   const { signature, minBuy, maxBuy, error: buyError } = useUserPurchaseSignature(connectedAccount, poolId, authSignature);
-  console.log(authSignature, signature);
 
   useEffect(() => {
     poolAddress && 
@@ -46,7 +45,8 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
   useEffect(() => {
     if (error || buyError) {
-      setDepositError(error);
+      const errorMessage = error || buyError;
+      setDepositError(errorMessage as string);
       setTokenDepositLoading(false);
     }
   }, [error, buyError]);
@@ -61,7 +61,6 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   ) => {
     try {
       if (minBuy && maxBuy && signature && amount) {
-        console.log('run');
         const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
@@ -147,8 +146,6 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
           "299999999990",
           "0x450859e7066471c9e38a481908e3547240285db6af24eed2615a3d825f043e5052bffc0815e98b6a4365526307e2f18b9552bb747739789d624ea666e4fb87ea1b"
         ];
-
-        console.log(params);
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
 

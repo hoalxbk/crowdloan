@@ -1,9 +1,12 @@
+import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import axios from '../../../services/axios';
+import { alertFailure } from '../../../store/actions/alert';
 
 const MESSAGE_INVESTOR_SIGNATURE = process.env.REACT_APP_MESSAGE_INVESTOR_SIGNATURE || "";
 
 const useUserPurchaseSignature = (connectedAccount: string | undefined | null, campaignId: number | undefined, authSignature: string | undefined) => {
+  const dispatch = useDispatch();
   const [signature, setSignature] = useState<string | undefined>(undefined);
   const [minBuy, setMinBuy] = useState<string| undefined>("");
   const [maxBuy, setMaxBuy] = useState<string| undefined>("");
@@ -23,23 +26,20 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
             signature: authSignature
           }, config);
 
-          console.log(response);
           if (response.data && response.status && response.status === 200) {
-            const { data } = response.data;
-            if(data.message) {
-              console.log('err', data.message);
-              throw new Error(data.message);
-            }
+            const { data, message } = response.data;
             if (data) {
               setSignature(data.signature);
               setMinBuy(data.min_buy);
               setMaxBuy(data.max_buy);
             } 
+
+            if (message) {
+              dispatch(alertFailure(message));
+              setError(message);
+              return;
+            }
           } 
-          if (response.data && response.status && response.status !== 200) {
-            const { data } = response.data;
-            throw new Error(data.message);
-          }
         } catch (err) {
           setError(err.message);
         }
