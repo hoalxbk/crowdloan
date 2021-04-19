@@ -591,18 +591,17 @@ export const deployPool = (campaign: any, history: any) => {
       tokenByEthDecimals = getDigitsAfterDecimals(token_by_eth);
       if (token !== ACCEPT_CURRENCY.ETH) {
         if (tokenByEthDecimals > 0) {
-          tokenByETHActualRate = new BigNumber(1).dividedBy(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals - 6));
+          tokenByETHActualRate = new BigNumber(1).dividedBy(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals - 6)).toFixed();
         } else {
-          tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo.decimals - 6));
+          tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
         }
       } else {
-        tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).multipliedBy(Math.pow(10, 18 - 18));
+        tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).multipliedBy(Math.pow(10, 18 - 18)).toFixed();
       }
 
       // const tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals || 0)).dividedBy(Math.pow(10, 18));
       // const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
       // const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
-
 
       console.log('campaign======>', campaign);
 
