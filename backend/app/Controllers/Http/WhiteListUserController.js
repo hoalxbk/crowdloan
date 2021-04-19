@@ -18,11 +18,11 @@ class WhiteListUserController {
       if (page) {
         redisKey = redisKey.concat('_',page,'_',pageSize);
       }
-      if (await Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        const cachedWL = await Redis.get(redisKey);
-        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
-      }
+      // if (await Redis.exists(redisKey)) {
+      //   console.log(`existed key ${redisKey} on redis`);
+      //   const cachedWL = await Redis.get(redisKey);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      // }
       // if not existed whitelist on redis then get from db
       const filterParams = {
         'campaign_id': campaign_id,
@@ -53,11 +53,11 @@ class WhiteListUserController {
       if (page) {
         redisKey = redisKey.concat('_',page,'_',pageSize);
       }
-      if (await Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        const cachedWL = await Redis.get(redisKey);
-        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
-      }
+      // if (await Redis.exists(redisKey)) {
+      //   console.log(`existed key ${redisKey} on redis`);
+      //   const cachedWL = await Redis.get(redisKey);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      // }
       // if not existed whitelist on redis then get from db
       const filterParams = {
         'campaign_id': campaign_id,
@@ -114,6 +114,29 @@ class WhiteListUserController {
       return HelperUtils.responseErrorInternal('Find Whitelist Error !');
     }
   }
+
+  async addWhitelistUser({request}) {
+    const inputParams = request.only(['wallet_address', 'email', 'campaign_id']);
+    const params = {
+      wallet_address: inputParams.wallet_address,
+      email: inputParams.email,
+      campaign_id: inputParams.campaign_id,
+    };
+    const whitelistService = new WhitelistService();
+    const user = await whitelistService.buildQueryBuilder({
+      wallet_address: inputParams.wallet_address,
+      campaign_id: inputParams.campaign_id,
+    }).first();
+    console.log('user', user);
+
+    if (user) {
+      return HelperUtils.responseBadRequest('User Exist !');
+    }
+    const res = await whitelistService.addWhitelistUser(params);
+
+    return HelperUtils.responseSuccess(res);
+  }
+
 }
 
 module.exports = WhiteListUserController

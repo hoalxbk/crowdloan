@@ -70,6 +70,18 @@ class WinnerListUserService {
     console.log(data);
     await WinnerListModel.createMany(data);
   }
+
+  async addWinnerListUser(params) {
+    console.log('[addWinnerListUser] - Params: ', params);
+    const winnerlist = new WinnerListModel;
+    winnerlist.wallet_address = params.wallet_address;
+    winnerlist.campaign_id = params.campaign_id;
+    winnerlist.email = params.email;
+    await winnerlist.save();
+
+    console.log('Res: ', winnerlist);
+    return winnerlist;
+  }
 }
 
-module.exports = WinnerListUserService
+module.exports = WinnerListUserService;

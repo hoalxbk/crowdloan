@@ -17,11 +17,11 @@ class WinnerListUserController {
       if (page) {
         redisKey = redisKey.concat('_',page,'_',pageSize);
       }
-      if (await Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        const cachedWinners = await Redis.get(redisKey);
-        return HelperUtils.responseSuccess(JSON.parse(cachedWinners));
-      }
+      // if (await Redis.exists(redisKey)) {
+      //   console.log(`existed key ${redisKey} on redis`);
+      //   const cachedWinners = await Redis.get(redisKey);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedWinners));
+      // }
       // if not existed winners on redis then get from db
       // create params to query to db
       const filterParams = {
@@ -59,6 +59,30 @@ class WinnerListUserController {
       return HelperUtils.responseErrorInternal('Find Whitelist Error !');
     }
   }
+
+
+  async addWinnerUser({request}) {
+    const inputParams = request.only(['wallet_address', 'email', 'campaign_id']);
+    const params = {
+      wallet_address: inputParams.wallet_address,
+      email: inputParams.email,
+      campaign_id: inputParams.campaign_id,
+    };
+    const winnerListService = new WinnerListService();
+    const user = await winnerListService.buildQueryBuilder({
+      wallet_address: inputParams.wallet_address,
+      campaign_id: inputParams.campaign_id,
+    }).first();
+    console.log('user', user);
+
+    if (user) {
+      return HelperUtils.responseBadRequest('User Exist !');
+    }
+    const res = await winnerListService.addWinnerListUser(params);
+
+    return HelperUtils.responseSuccess(res);
+  }
+
 }
 
 module.exports = WinnerListUserController
