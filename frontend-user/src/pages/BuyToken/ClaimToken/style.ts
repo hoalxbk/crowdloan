@@ -7,8 +7,23 @@ const useStyles = makeStyles((theme: any) => {
       padding: '20px 40px',
       backgroundColor: 'rgba(255, 255, 255, 0.06)',
       borderRadius: 8,
-      maxWidth: 600,
-      width: 600
+      width: '60%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+
+      [theme.breakpoints.down('xs')]: {
+        width: '100%',
+        '& #countdown': {
+          marginTop: 30
+        },
+        '& ul': {
+          textAlign: 'center'
+        },
+        '& button': {
+          width: '100%'
+        }
+      }
     },
     poolDetailClaimTitle: {
       '& span': {
@@ -23,6 +38,9 @@ const useStyles = makeStyles((theme: any) => {
     poolDetailClaimInfoBlock: {
       display: 'grid',
       gridTemplateColumns: '1fr 2fr',
+      [theme.breakpoints.down('xs')]: {
+        gridTemplateColumns: '1fr 1fr'
+      },
 
       '&:not(:first-child)': {
         marginTop: 25

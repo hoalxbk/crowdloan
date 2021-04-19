@@ -61,7 +61,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         tokenDetails,
         title: data.title,
         buyLimit,
-        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) - 1 || 0],
+        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) || 0],
         poolAddress: data.campaign_hash,
         joinTime: data.start_join_pool_time,
         endJoinTime: data.end_join_pool_time,
@@ -83,7 +83,6 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   }, [data, fetchPoolLoading, error, poolDetailDone, tokenDetails, connectedAccountTier]);
 
   useEffect(() => {
-    console.log(tokenDetails);
     tokenDetails && setPoolDetailDone(true);
   }, [tokenDetails]);
 

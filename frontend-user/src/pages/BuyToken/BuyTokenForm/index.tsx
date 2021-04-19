@@ -51,6 +51,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const [estimateTokens, setEstimateTokens] = useState<number>(0);
   const [tokenAllowance, setTokenAllowance] = useState<number>(0);
   const [tokenBalance, setTokenBalance] = useState<number>(0);
+  const [walletBalance, setWalletBalance] = useState<number>(0);
   const [userPurchased, setUserPurchased] = useState<number>(0);
 
   const { 
@@ -130,6 +131,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && validTier    
     );
 
+
   const fetchUserBalance = useCallback(async () => {
       if (appChainID && connectedAccount && connector) {
         const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, connector);
@@ -152,6 +154,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         setTokenAllowance(await retrieveTokenAllowance(tokenToApprove, connectedAccount, poolAddress) as number);
         setUserPurchased(await retrieveUserPurchased(connectedAccount, poolAddress) as number);
         setTokenBalance(await retrieveTokenBalance(tokenToApprove, connectedAccount) as number);
+        setWalletBalance(await retrieveTokenBalance(tokenDetails, connectedAccount) as number);
       }
     }
 
@@ -274,6 +277,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         {
           (estimateErr && input) ? 'Error when estimate gas': `Transaction Fee: ~${transactionFee} ETH`
         }
+      </p>
+      <p className={styles.buyTokenFee}>
+        Your Balance: {numberWithCommas(`${walletBalance || 0}` )} {tokenDetails?.symbol}
       </p>
       <div className={styles.buyTokenEstimate}>
         <p className={styles.buyTokenEstimateLabel}>You will get approximately</p>

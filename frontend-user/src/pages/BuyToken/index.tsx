@@ -397,7 +397,14 @@ const BuyToken: React.FC<any> = (props: any) => {
                   activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
                 }
                 {
-                  poolDetails?.type === 'claimable' && <ClaimToken releaseTime={releaseTimeInDate} />
+                  poolDetails?.type === 'claimable' && ( 
+                    <ClaimToken 
+                      releaseTime={releaseTimeInDate} 
+                      ableToFetchFromBlockchain={ableToFetchFromBlockchain}
+                      poolAddress={poolDetails?.poolAddress}
+                      tokenDetails={poolDetails?.tokenDetails} 
+                    /> 
+                 )
                 }
               </div>
             </div>
