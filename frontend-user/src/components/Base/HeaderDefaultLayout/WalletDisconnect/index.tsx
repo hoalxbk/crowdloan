@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { withStyles, Theme, createStyles, WithStyles } from '@material-ui/core/styles';
 import { useSelector } from 'react-redux';
-
+import { Link } from 'react-router-dom'
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
@@ -10,6 +10,8 @@ import { ETH_CHAIN_ID } from '../../../../constants/network';
 import { AppContext } from '../../../../AppContext';
 
 import useStyles from './style';
+
+const linkIcon = '/images/hyperlink.svg';
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -97,7 +99,8 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: ComponentProps) => {
     <Dialog open={opened} onClose={handleClose} className={styles.dialog}>
       <DialogTitle id="customized-dialog-title" onClose={handleClose} customClass={styles.dialogTitle}>
         <span style={{ fontSize: 24 }}>
-          Account
+          Account&nbsp;&nbsp;
+          <Link to="/account"><img src={linkIcon}/></Link>
         </span>
       </DialogTitle>
       <DialogContent className={styles.dialogContent}>
