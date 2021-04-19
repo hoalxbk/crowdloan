@@ -72,7 +72,6 @@ class UserAuthController {
     }
     const param = request.all();
     const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address)
-
     const filterParams = {
       'wallet_address': wallet_address
     };
