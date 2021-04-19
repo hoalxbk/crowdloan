@@ -1,6 +1,7 @@
 'use strict'
 
 const WhitelistService = use('App/Services/WhitelistUserService')
+const WinnerListService = use('App/Services/WinnerListUserService')
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
 
@@ -84,8 +85,11 @@ class WhiteListUserController {
     }
     try {
       const whitelistService = new WhitelistService();
-      const result = await whitelistService.getRandomWinners(num, campaign_id);
-      return HelperUtils.responseSuccess(result);
+      const winnerList = await whitelistService.getRandomWinners(num, campaign_id);
+      // save to winner list
+      const winnerListService = new WinnerListService();
+      winnerListService.save(winnerList);
+      return HelperUtils.responseSuccess(winnerList);
     } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal('Get Random Winners Failed !');

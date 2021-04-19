@@ -241,26 +241,8 @@ class CampaignService {
       return listData
     }
 
-    // Investor join campaign
+    // investor join campaign
     async joinCampaign(campaign_id, wallet_address, email) {
-      // check exist campaign available to join
-
-      // ===========================================================================================
-      // Todo - Only join pool for Lottery campaign, does not accept for FCFS campaign
-
-      // ===========================================================================================
-      const currentDate = Date.now()/1000;
-      console.log(`joinCampaign with date ${currentDate} and campaign_id ${campaign_id}`);
-      const camp = await CampaignModel.query()
-        .where('id', campaign_id)
-        .where('start_join_pool_time', '<=', currentDate)
-        .where('end_join_pool_time', '>=', currentDate).first();
-      console.log(`Check campaign ${camp == null} `);
-      console.log(camp);
-      if (camp == null) {
-        console.log(`Do not found campaign with id ${campaign_id}`)
-        ErrorFactory.badRequest('Bad request do not found campaign with id ' + campaign_id + ' to join');
-      }
       // check exist whitelist with wallet and campaign
       const existWl = await WhitelistModel.query()
         .where('wallet_address',wallet_address)
@@ -275,11 +257,11 @@ class CampaignService {
       whitelist.campaign_id = campaign_id;
       whitelist.email = email;
       await whitelist.save();
+      // remove all old key of white list on redis
       // key regex
       const redisKeyRegex = 'whitelist_' + campaign_id + '*';
       // find all key matched with key regex
       const keys = await Redis.keys(redisKeyRegex);
-      // remove all old key
       for (const key of keys) {
         console.log(key);
         await Redis.del(key);

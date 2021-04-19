@@ -6,10 +6,12 @@ import { convertDateTimeToUnix, convertUnixTimeToDateTime } from '../../utils/co
 import { campaignActions } from '../constants/campaign';
 import { alertActions } from '../constants/alert';
 import { BaseRequest } from '../../request/Request';
-import campaignFactoryABI from '../../abi/CampaignFactory.json';
-import campaignABI from '../../abi/Campaign.json';
-import erc20ABI from '../../abi/Erc20.json';
-import ethLinkABI from '../../abi/Ethlink.json';
+import campaignFactoryABI from '../../abi/Swap/CampaignFactory.json';
+import campaignFactoryClaimABI from '../../abi/Claim/CampaignFactory.json';
+
+import campaignABI from '../../abi/Swap/Campaign.json';
+import erc20ABI from '../../abi/Swap/Erc20.json';
+import ethLinkABI from '../../abi/Swap/Ethlink.json';
 import { getContractInstance, getWeb3Instance } from '../../services/web3';
 import { getAffiliateByCampaign } from './affiliate';
 import { isReferral, isOwnerOfReferral } from '../../utils/affiliateCampaign';
@@ -17,7 +19,7 @@ import { getDigitsAfterDecimals } from '../../utils/formatNumber';
 import { TokenType } from '../../utils/token';
 import {adminRoute} from "../../utils";
 import {updateDeploySuccess} from "../../request/pool";
-import {ACCEPT_CURRENCY} from "../../constants";
+import {ACCEPT_CURRENCY, POOL_TYPE} from "../../constants";
 const queryString = require('query-string');
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
 const USDT_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS || "";
@@ -572,8 +574,6 @@ export const deployPool = (campaign: any, history: any) => {
       dispatch({ type: campaignActions.MY_CAMPAIGN_CREATE_REQUEST });
 
       const baseRequest = new BaseRequest();
-      const factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || "");
-
       const {
         title, affiliate, start_time, finish_time, release_time,
         token, address_receiver, token_by_eth, token_conversion_rate, tokenInfo,
@@ -589,32 +589,50 @@ export const deployPool = (campaign: any, history: any) => {
       const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
       const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
 
-      const tiers = tier_configuration.map((tier: any, index: number) => {
-        // let decimal = 18;
-        let decimal = 6;
-        if (campaign.accept_currency === ACCEPT_CURRENCY.ETH) {
-          decimal = 18;
-        }
-        return (new BigNumber(tier.maxBuy || 0)).multipliedBy(Math.pow(10, decimal)).toString();
-      });
-
-      for (let i = 0; i < 5; i++) {
-        tiers.push(0);
+      const poolType = campaign.pool_type;
+      let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');
+      if (poolType === POOL_TYPE.CLAIMABLE) {
+        factorySmartContract = getContractInstance(campaignFactoryClaimABI, process.env.REACT_APP_SMART_CONTRACT_PRESALE_FACTORY_ADDRESS || '');
       }
 
       if (factorySmartContract) {
         let createdCampaign;
         const userWalletAddress = getState().user.data.wallet_address;
 
-        createdCampaign = await factorySmartContract.methods.registerPool(
-          title, token, durationTime,
-          startTimeUnix, // releaseTimeUnix,
-          tokenByEthSendToBlock, tokenByEthDecimals,
-          tiers,
-          address_receiver
-        ).send({
-          from: userWalletAddress,
-        });
+        const signerWallet = campaign.wallet.wallet_address;
+        console.log('userWallet', signerWallet);
+
+        if (poolType === POOL_TYPE.CLAIMABLE) {
+          createdCampaign = await factorySmartContract.methods.registerPool(
+            token,
+            durationTime,
+            startTimeUnix,
+
+            // TODO: Fix switch USDT/USDC/ETH Address
+            process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS,
+            tokenByEthDecimals,
+            tokenByEthSendToBlock,
+            address_receiver,
+            signerWallet,
+          ).send({
+            from: userWalletAddress,
+          });
+        } else {
+          createdCampaign = await factorySmartContract.methods.registerPool(
+            token,
+            durationTime,
+            startTimeUnix,
+
+            // TODO: Fix switch USDT/USDC/ETH Address
+            process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS,
+            tokenByEthDecimals,
+            tokenByEthSendToBlock,
+            address_receiver,
+            signerWallet,
+          ).send({
+            from: userWalletAddress,
+          });
+        }
 
         console.log('Deploy Response: ', createdCampaign);
         if (createdCampaign) {
@@ -624,48 +642,20 @@ export const deployPool = (campaign: any, history: any) => {
           if (createdCampaign?.events && createdCampaign?.events && createdCampaign?.events[0]) {
             campaignHash = createdCampaign?.events[0].address;
           }
+          const updateData = {
+            campaign_hash: campaignHash,
+            token_symbol: tokenInfo.symbol,
+            token_name: tokenInfo.name,
+            token_decimals: tokenInfo.decimals,
+            token_address: tokenInfo.address,
+          };
 
-          await updateDeploySuccess({
-            poolId: campaign.id,
-            campaignHash: campaignHash,
-            tokenSymbol: token,
-          });
-
-          // await createdCampaign
-          //   .on('transactionHash', async (transactionHash: string) => {
-          //     const loginUser = getState().user.data.wallet_address;
-          //
-          //     const isAffiliate = affiliate === 'yes'? 1: 0;
-          //
-          //     if (tokenInfo) {
-          //       const { name, symbol, decimals } = tokenInfo;
-          //       await baseRequest.post('/campaign-create', {
-          //         title,
-          //         affiliate: isAffiliate,
-          //         start_time: startTimeUnix,
-          //         finish_time: finishTimeUnix,
-          //         addressReceiver: address_receiver,
-          //         tokenByETH,
-          //         owner: loginUser,
-          //         token,
-          //         name,
-          //         symbol,
-          //         decimals,
-          //         transactionHash
-          //       });
-          //     }
-          //
-          //     dispatch({ type: campaignActions.MY_CAMPAIGN_CREATE_SUCCESS });
-          //
-          //     history.push(adminRoute('/campaigns'));
-          //
-          //     dispatch({ type: alertActions.SUCCESS_MESSAGE, payload: 'Create Campaign Successful!'});
-          //   })
-
-
+          await updateDeploySuccess(updateData, campaign.id);
         }
       }
     } catch (err) {
+      console.log('ERROR: ', err);
+
       dispatch({
         type: campaignActions.MY_CAMPAIGN_CREATE_FAIL,
         payload: err.message

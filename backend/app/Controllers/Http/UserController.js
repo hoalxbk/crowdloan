@@ -9,7 +9,6 @@ const Helpers = use('Helpers')
 const HelperUtils = use('App/Common/HelperUtils');
 const Const = use('App/Common/Const');
 const Mail = use('Mail')
-// const Bcrypt = use('bcrypt')
 const Env = use('Env')
 const randomString = use('random-string');
 const Hash = use('Hash');
@@ -18,18 +17,21 @@ const Event = use('Event')
 const SendForgotPasswordJob = use('App/Jobs/SendForgotPasswordJob')
 
 class UserController {
-  async profile({ request, auth }) {
-    let user = auth.user;
-    const params = request.all();
+  async profile({ request }) {
     const userService = new UserService();
+    const params = request.all();
     const userAuthInfo = {
-      email: user.email,
-      username: user.username,
-      signature: params.signature,
+      wallet_address: params.wallet_address,
     };
+    const findedUser = await userService.findUser(userAuthInfo);
+    if (!findedUser) {
+      HelperUtils.responseNotFound();
+    }
 
     return HelperUtils.responseSuccess({
-      user: await userService.findUser(userAuthInfo)
+      user: {
+        email: findedUser.email,
+      }
     });
   }
 

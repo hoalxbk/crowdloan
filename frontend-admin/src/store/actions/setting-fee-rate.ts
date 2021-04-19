@@ -2,7 +2,7 @@ import { settingFeeRateActions } from '../constants/setting-fee-rate';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getContractInstance } from '../../services/web3';
-import campaignFactoryABI from '../../abi/CampaignFactory.json';
+import campaignFactoryABI from '../../abi/Swap/CampaignFactory.json';
 import { alertActions } from '../constants/alert';
 import { getSettingDetail } from './setting-detail';
 

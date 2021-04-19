@@ -58,16 +58,16 @@ module.exports = Object.freeze({
     WHITELISTED: 1,
     REGULAR: 2,
   },
-  // USER_TYPE_PREFIX: {
-  //   ICO_OWNER: 'user',
-  //   PUBLIC_USER: 'public',
-  // },
   USER_TYPE_PREFIX: {
     ICO_OWNER: 'admin',
     PUBLIC_USER: 'user',
   },
-  USER_INACTIVE: 0,
-  USER_ACTIVE: 1,
+  USER_STATUS: {
+    UNVERIFIED: 0,
+    ACTIVE: 1,
+    BLOCKED: 2,
+    DELETED: 3
+  },
   FILE_SITE: '2mb',
   FILE_EXT: ['png', 'gif', 'jpg', 'jpeg', 'JPEG'],
   TIME_EXPIRED: 300000,
@@ -94,5 +94,14 @@ module.exports = Object.freeze({
     BUY_WITH_ETHER_WITH_ETH_LINK: 'buyWithEtherWithETHLink',
     REFUND: 'Refund',
     TOKEN_CLAIMED: 'TokenClaimed',
+  },
+  BUY_TYPE: {
+    WHITELIST_LOTTERY: 'whitelist',
+    FCFS: 'fcfs',
+  },
+  ACCEPT_CURRENCY: {
+    ETH: 'eth',
+    USDT: 'usdt',
+    USDC: 'usdc',
   }
 });

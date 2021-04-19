@@ -36,7 +36,7 @@ class AuthAdminService extends BaseService {
     const user = await AdminModel.query()
       .where('role', role)
       .where('email', email)
-      .where('is_active', Const.USER_ACTIVE)
+      .where('status', Const.USER_STATUS.ACTIVE)
       .first();
     return user;
   }
@@ -45,7 +45,7 @@ class AuthAdminService extends BaseService {
     const user = await AdminModel.query()
       .where('role', role)
       .where('wallet_address', wallet_address)
-      .where('is_active', Const.USER_ACTIVE)
+      .where('status', Const.USER_STATUS.ACTIVE)
       .first();
     return user;
   }

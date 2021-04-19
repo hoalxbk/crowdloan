@@ -28,14 +28,11 @@ export const getPoolDetail = async (id: any) => {
   return resObject;
 };
 
-export const updateDeploySuccess = async (data: any) => {
+export const updateDeploySuccess = async (data: any, id: any) => {
   const baseRequest = new BaseRequest();
-  let url = apiRoute(`/pool/${data.poolId}/deploy-success`);
+  let url = apiRoute(`/pool/${id}/deploy-success`);
 
-  const response = await baseRequest.post(url, {
-    campaign_hash: data.campaignHash,
-    token_symbol: data.tokenSymbol,
-  }) as any;
+  const response = await baseRequest.post(url, data) as any;
   const resObject = await response.json();
   return resObject;
 };
