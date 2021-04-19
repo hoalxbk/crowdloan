@@ -194,6 +194,9 @@ const useStyles = makeStyles((theme: any) => {
       background: 'rgba(255, 255, 255, 0.06)',
       borderRadius: 8,
       width: '60%',
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+      }
     },
     poolDetailMaxBuy: {
       marginTop: 15,
@@ -282,7 +285,9 @@ const useStyles = makeStyles((theme: any) => {
     poolDetailBuyForm: {
       display: 'flex',
       justifyContent: 'space-between',
-      alignItems: 'flex-start'
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column'     
+      }
     },
     loader: {
       display: 'flex',

@@ -62,7 +62,6 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   ) => {
     try {
       if (minBuy && maxBuy && signature && amount) {
-        console.log('signature', signature, amount, minBuy);
         const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
@@ -95,8 +94,6 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         setTokenDepositTransaction(transaction.hash);
 
         await transaction.wait(1);
-
-        console.log(authSignature);
 
         dispatch(alertSuccess("Token Deposit Successful!"));
       }
