@@ -12,13 +12,13 @@ const FooterLandingLayout = () => {
           <Link to={'/'}>
             <img className={styles.logo} src={byTokenLogo} alt="" />
           </Link>
-          <p>Lorem ipsum dolor sit amet, consectetur adip. Rem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>Launch hand-picked projects and help them shine.</p>
           <ul className={styles.shareLink}>
             <li className={styles.teleGram}>
-              <a href="#"><i className="custom-icon-telegram"></i></a>
+              <a href="https://t.me/polkafoundry/"><i className="custom-icon-telegram"></i></a>
             </li>
             <li className={styles.twitter}>
-              <a href="#"><i className="custom-icon-twitter"></i></a>
+              <a href="https://twitter.com/polkafoundry/"><i className="custom-icon-twitter"></i></a>
             </li>
             <li className={styles.facebook}>
               <a href="#"><i className="custom-icon-facebook"></i></a>

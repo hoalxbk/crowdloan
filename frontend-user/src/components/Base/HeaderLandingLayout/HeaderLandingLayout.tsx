@@ -17,8 +17,8 @@ const HeaderDefaultLayout = () => {
           <img src={logo} alt=""/>
         </div>
         <div className="connects">
-          <a href="#"><i className="custom-icon-telegram"></i></a>
-          <a href="#"><i className="custom-icon-twitter"></i></a>
+          <a href="https://t.me/polkafoundry/"><i className="custom-icon-telegram"></i></a>
+          <a href="https://twitter.com/polkafoundry/"><i className="custom-icon-twitter"></i></a>
           <a href="#"><i className="custom-icon-facebook"></i></a>
           <a href="#"><i className="custom-icon-github"></i></a>
         </div>

@@ -22,31 +22,31 @@ const Dashboard = (props: any) => {
   const cardsInfo = [{
     image: '/images/landing/image1.svg',
     title: 'Multi-chain, flexible options',
-    description: 'Red Kite supports both Ethereum and BSC pools, and are testing Polkadot pools on PolkaFoundry testnet, with flexbile types of pools and whitelist conditions.',
+    description: 'Red Kite supports both Ethereum and BSC pools, and are testing Polkadot pools on PolkaFoundry testnet to become the first launchpad on Polkadot, with flexible pool types and whitelist conditions.',
     backgroundColor: 'linear-gradient(180deg, rgba(147, 19, 51, 0.69) 0%, #060B26 50%)'
   },
   {
     image: '/images/landing/image2.svg',
     title: 'Hand-picked projects',
-    description: 'We hand-pick project cautiously and verify the project team’s legitimacy, innovation of idea, and capacity to execute their vision.',
+    description: 'We hand-pick projects cautiously, scrutinize and verify the project team’s origin and legitimacy, innovation of idea, and their capacity to execute their vision.',
     backgroundColor: 'linear-gradient(180deg, #234650 0%, #060B26 50%)'
   },
   {
     image: '/images/landing/image6.svg',
     title: 'Tier and reputation ',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet vestibulum elit. Aliquam sagittis massa ut ultrices tincidunt. Curabitur tincidunt pharetra erat vitae consectetur. ',
+    description: "Our bot system automatically monitors participants' behavior to set reputation points for each partcicipants based on their actions. Reputation will affect a participant's tier and their ability to participate in next launches.",
     backgroundColor: 'linear-gradient(180deg, #50A3CF 0%, #060B26 50%)'
   },
   {
     image: '/images/landing/image3.svg',
     title: 'Fairness',
-    description: 'We understand that opportunity delivery must be fair instead of rushing. Red Kite’s lane-based swap system ensure everybody have a chance accordingly to their tiers without gas war.',
+    description: "We understand that opportunities should be delivered fairly and efficiently. Red Kite's lane-based swap system ensures everybody has a chance to join accordingly based on their tier without having to resort to gas war.",
     backgroundColor: 'linear-gradient(180deg, #50307D 0%, #060B26 50%)'
   },
   {
     image: '/images/landing/image4.svg',
     title: 'Integrated Vesting Schedule',
-    description: 'Red Kite goes with a Distribution Portal for projects to vest their sold tokens. This can even be used for secondary, post-IDO offerings.',
+    description: 'Red Kite goes with a Distribution Portal for projects to vest their sold tokens. This feature can also be used for pre-sale or post-sale secondary offerings.',
     backgroundColor: 'linear-gradient(180deg, #274F89 0%, #060B26 43.95%)'
   },
   {
