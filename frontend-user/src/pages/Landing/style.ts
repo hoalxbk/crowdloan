@@ -10,16 +10,18 @@ const useStyles = makeStyles((theme: any) => {
       },
       '& .main-content h1': {
         textAlign: 'center',
-        fontSize: '46px',
-        lineHeight: '52px',
+        fontSize: '68px',
+        lineHeight: '80px',
+        fontWeight: '700',
         color: '#FFFFFF',
         marginBottom: '12px'
       },
       '& .main-content h2': {
         textAlign: 'center',
-        fontSize: '24px',
-        lineHeight: '30px',
+        fontSize: '36px',
+        lineHeight: '40px',
         color: '#FFFFFF',
+        fontWeight: '700',
         marginBottom: '12px',
         maxWidth: 'calc(100% - 30px)',
         margin: 'auto',
@@ -50,7 +52,7 @@ const useStyles = makeStyles((theme: any) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: '60px',
-        margin: '60px 6px 0 6px',
+        margin: '36px 6px 0 6px',
 
         '&:first-child': {
           backgroundColor: '#D01F36'
@@ -74,8 +76,6 @@ const useStyles = makeStyles((theme: any) => {
           height: '600px'
         },
         '& .main-content h1': {
-          display: 'block',
-          width: '400px',
           margin: '15px auto'
         },
       },
