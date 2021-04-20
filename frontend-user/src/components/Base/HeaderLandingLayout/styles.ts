@@ -75,6 +75,7 @@ const useStyles = makeStyles((theme) => {
       font: 'normal normal 400 14px/24px Helvetica',
       display: 'flex',
       alignItems: 'center',
+      marginLeft: '10px'
     },
     btnChangeAppNetwork: {
       padding: '0 15px',
@@ -94,7 +95,29 @@ const useStyles = makeStyles((theme) => {
       '&:focus': {
         outline: 'none'
       },
+    },
+    closeBtn: {
+      position: 'absolute',
+      top: '12px',
+      right: '20px'
+    },
+    [theme.breakpoints.down('xs')]: {
+      banner: {
+        top: '60px',
+        '& img:first-child': {
+          display: 'none',
+        }
+      },
+      loginErrorBannerText: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        padding: '0 40px 0 20px',
+        marginLeft: '0',
 
+        '& button': {
+          marginTop: '10px'
+        }
+      }
     }
   };
 });

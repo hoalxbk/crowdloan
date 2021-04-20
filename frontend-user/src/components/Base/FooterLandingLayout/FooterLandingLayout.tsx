@@ -20,12 +20,12 @@ const FooterLandingLayout = () => {
             <li className={styles.twitter}>
               <a href="https://twitter.com/polkafoundry/"><i className="custom-icon-twitter"></i></a>
             </li>
-            <li className={styles.facebook}>
+            {/* <li className={styles.facebook}>
               <a href="#"><i className="custom-icon-facebook"></i></a>
             </li>
             <li className={styles.github}>
               <a href="#"><i className="custom-icon-github"></i></a>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>
