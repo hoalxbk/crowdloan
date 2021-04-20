@@ -599,6 +599,39 @@ export const deployPool = (campaign: any, history: any) => {
         tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).multipliedBy(Math.pow(10, 18 - 18)).toFixed();
       }
 
+      console.log('tokenByEthDecimals: ', tokenByEthDecimals);
+      console.log('tokenByETHActualRate: ', tokenByETHActualRate);
+
+
+
+
+      // // Old Code
+      // let tokenByEthDecimals: any;
+      // let tokenByETHActualRate: any;
+      // tokenByEthDecimals = 0;
+      // const reversedRate = new BigNumber(1).dividedBy(token_by_eth);
+      //
+      // console.log('Deploy Campaign: ', campaign);
+      // console.log('token_by_eth: ', token_by_eth);
+      //
+      // if (token !== ACCEPT_CURRENCY.ETH) {
+      //
+      //   console.log('token_by_eth: ', reversedRate);
+      //
+      //   if (getDigitsAfterDecimals(reversedRate.toFixed()) > 0) {
+      //     tokenByEthDecimals = getDigitsAfterDecimals(reversedRate.toFixed());
+      //   }
+      //
+      //   tokenByETHActualRate = reversedRate.multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+      //
+      // } else {
+      //   tokenByEthDecimals = getDigitsAfterDecimals(reversedRate.toFixed());
+      //   tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).multipliedBy(Math.pow(10, 18 - 18)).toFixed();
+      // }
+      //
+      // console.log('tokenByEthDecimals: ', tokenByEthDecimals);
+      // console.log('tokenByETHActualRate: ', tokenByETHActualRate);
+
       // const tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals || 0)).dividedBy(Math.pow(10, 18));
       // const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
       // const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
@@ -619,8 +652,6 @@ export const deployPool = (campaign: any, history: any) => {
       // let _offeredRate = new BigNumber(Math.pow(10, tokenInfo.decimals)).multipliedBy(tokenRateInput || 0).toString();
       // console.log('_offeredCurrencyDecimals', _offeredCurrencyDecimals);
       // console.log('_offeredRate', _offeredRate);
-
-      console.log('campaign======>', campaign);
 
       const poolType = campaign.pool_type;
       let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');
