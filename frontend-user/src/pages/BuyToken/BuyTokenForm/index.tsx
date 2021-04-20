@@ -102,6 +102,15 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         decimals: 6 
       };
     }
+
+    if (purchasableCurrency && purchasableCurrency === 'ETH') {
+      return {
+        address: "0x00",
+        name: 'ETH',
+        symbol: 'ETH',
+        decimals: 18
+      }
+    }
   }, [purchasableCurrency])
 
   const tokenToApprove = getApproveToken(); 
@@ -123,7 +132,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   // Plus one for userTier because tier in smart contract start by 0  
   const validTier = minTier && new BigNumber(userTier + 1).gte(minTier);
   const purchasable = 
-    (tokenAllowance > 0 
+    ((purchasableCurrency !== 'ETH' ? tokenAllowance > 0: true) 
      && !estimateErr 
      && availablePurchase 
      && estimateTokens > 0 
