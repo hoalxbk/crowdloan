@@ -22,6 +22,8 @@ const useStyles = makeStyles((theme) => {
       [theme.breakpoints.down('xs')]: {
         gap: '0',
         padding: '60px 0',
+        placeItems: 'center',
+        width: '100%',
       }
     },
     infoRedKite: {
@@ -43,6 +45,9 @@ const useStyles = makeStyles((theme) => {
       '& p': {
         textAlign: 'center',
         margin: '0 20px'
+      },
+      [theme.breakpoints.down('xs')]: {
+        width: '100%'
       }
     },
     logo: {
