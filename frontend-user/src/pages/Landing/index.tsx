@@ -83,7 +83,7 @@ const Dashboard = (props: any) => {
           <Fade bottom>
             <div className="buttons">
               <a onClick={() => setShowModal(true)}>
-              <button className={common.nnb1418d}>View all Pools</button>
+              <button className={common.nnb1418d}>View all project</button>
               </a>
               <a href="https://t.me/PolkaFoundryANN" target="_blank">
                 <button className={common.nnb1418d + ' btn'}>
@@ -110,7 +110,7 @@ const Dashboard = (props: any) => {
           <div className="main-content">
             <LightSpeed delay={1500} left>
               <div className="title">
-                {<h2 className={common.nnb1214d}>The first IDO will start on 1st half of May,<br/>subscribe to PolkaFoundry Telegram for updates</h2>}
+                {<h2 className={common.nnb1214d}>The first IDO will start in the first half of May,<br/>subscribe to PolkaFoundry Telegram for updates</h2>}
                 {/* {isWidthDown('xs', props.width) && <h2 className={common.nnb1214d}>Get Alerts For New Pools</h2>} */}
               </div>
               <div className="description">
@@ -119,7 +119,7 @@ const Dashboard = (props: any) => {
               <div className="buttons">
                 <a href="https://t.me/PolkaFoundryANN" target="_blank">
                   <button className={common.nnb1418d + ' btn'}>
-                    Subscribe to upcoming projects&nbsp;&nbsp;
+                    Subscribe to upcoming project&nbsp;&nbsp;
                     <img src={arrowRightIcon}/>
                   </button>
                 </a>
