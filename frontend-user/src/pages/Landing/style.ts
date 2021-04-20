@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme: any) => {
         justifyContent: 'center',
         borderRadius: '60px',
         margin: '36px 6px 0 6px',
+        cursor: 'pointer',
 
         '&:first-child': {
           backgroundColor: '#D01F36'
@@ -80,7 +81,7 @@ const useStyles = makeStyles((theme: any) => {
         },
       },
       [theme.breakpoints.down('xs')]: {
-        height: '600px',
+        height: '700px',
         overflow: 'hidden',
         '& img': {
           objectFit: 'unset',

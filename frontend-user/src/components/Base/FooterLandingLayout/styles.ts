@@ -19,11 +19,11 @@ const useStyles = makeStyles((theme) => {
       gridTemplateColumns: '1fr',
       gap: '20px',
       padding: '60px 20px',
+      width: '100%',
       [theme.breakpoints.down('xs')]: {
         gap: '0',
         padding: '60px 0',
         placeItems: 'center',
-        width: '100%',
       }
     },
     infoRedKite: {
@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => {
       fontSize: '14px',
       lineHeight: '24px',
       color: '#999999',
-      width: '320px',
+      width: '100%',
 
       '& > a': {
         display: 'block',
