@@ -2,12 +2,11 @@ import { useState, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { useWeb3React } from '@web3-react/core';
 
-import ERC20_ABI from '../../../abi/Pool.json';
+import PreSale_ABI from '../../../abi/PreSalePool.json';
 import { getContract } from '../../../utils/contract';
-import { TokenType } from '../../../hooks/useTokenDetails';
 import { alertSuccess, alertFailure } from '../../../store/actions/alert';
 
-const useTokenClaim = (token: TokenType | undefined) => {
+const useTokenClaim = (poolAddress: string | undefined) => {
   const { library, account } = useWeb3React();
   const dispatch = useDispatch();
 
@@ -16,12 +15,12 @@ const useTokenClaim = (token: TokenType | undefined) => {
   const [error, setError] = useState<string>("");
 
   const claimToken = useCallback(async () => {
-    if (token) {
+    if (poolAddress) {
       setError("");
       setClaimTokenLoading(true);
 
       try {
-         const contract = getContract(token.address, ERC20_ABI, library, account as string);
+         const contract = getContract(poolAddress, PreSale_ABI, library, account as string);
 
          if (contract) {
            const transaction = await contract.claimTokens();
@@ -31,14 +30,15 @@ const useTokenClaim = (token: TokenType | undefined) => {
 
            await transaction.wait(1);
 
-            dispatch(alertSuccess("Token Claim Successful"));
+          dispatch(alertSuccess("Token Claim Successful"));
          }
       } catch (err) {
         dispatch(alertFailure(err.message));
+        setClaimTokenLoading(false);
         setError(err.message);
       }
     }
-  }, [token, library, account]);
+  }, [poolAddress, library, account]);
 
   return {
     claimToken,

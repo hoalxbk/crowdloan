@@ -7,7 +7,7 @@ type useFetchReturnType<T> ={
   data: T | undefined
 }
 
-const useFetch = <T>(uri: string, suspendRender: any = false, config: any = {}): useFetchReturnType<T> => {
+const useFetch = <T>(uri: string | undefined, suspendRender: any = false, config: any = {}): useFetchReturnType<T> => {
   const [loading, setLoading] = useState<boolean>(false);
   const [data, setData] = useState<T | undefined>(undefined);
   const [error, setError] = useState<string>('');
@@ -17,7 +17,7 @@ const useFetch = <T>(uri: string, suspendRender: any = false, config: any = {}):
       setLoading(true);
 
       try {
-        const response = await axios.get(uri, config) as any;
+        const response = await axios.get(uri as string, config) as any;
         response.data && setData(response?.data?.data);
         console.log(response)
 

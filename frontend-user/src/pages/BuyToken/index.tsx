@@ -68,10 +68,13 @@ const BuyToken: React.FC<any> = (props: any) => {
   );
   const { joinPool, poolJoinLoading, joinPoolSuccess } = usePoolJoinAction({ poolId: poolDetails?.id });
   const { data: winners } = useFetch<Array<any>>(
-    `/pool/${poolDetails?.id}/winners`, poolDetails?.method !== "whitelist" 
+    poolDetails ? `/pool/${poolDetails?.id}/winners`: undefined, 
+    poolDetails?.method !== "whitelist" 
   );
   const { data: alreadyJoinPool } = useFetch<boolean>(
+    poolDetails && connectedAccount ?
     `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
+    : undefined
   );
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
