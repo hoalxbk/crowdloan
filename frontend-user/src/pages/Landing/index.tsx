@@ -105,28 +105,28 @@ const Dashboard = (props: any) => {
           </Fade>
         </div>
       </div>
-      <div className={styles.container}>
-        <img src={landingBackground2} alt="" className="bg2"/>
-        <div className="main-content">
-          <LightSpeed delay={2000} left>
-            <div className="title">
-              {<h2 className={common.nnb1214d}>The first IDO will start on 1st half of May,<br/>subscribe to PolkaFoundry Telegram for updates</h2>}
-              {/* {isWidthDown('xs', props.width) && <h2 className={common.nnb1214d}>Get Alerts For New Pools</h2>} */}
-            </div>
-            <div className="description">
-              {/* {isWidthDown('xs', props.width) && <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about <br/>new pools and other relevant events.</p>} */}
-            </div>
-            <div className="buttons">
-              <a href="https://t.me/PolkaFoundryANN" target="_blank">
-                <button className={common.nnb1418d + ' btn'}>
-                  Subscribe to upcoming projects&nbsp;&nbsp;
-                  <img src={arrowRightIcon}/>
-                </button>
-              </a>
-            </div>
-          </LightSpeed>
+        <div className={styles.container}>
+          <img src={landingBackground2} alt="" className="bg2"/>
+          <div className="main-content">
+            <LightSpeed delay={1500} left>
+              <div className="title">
+                {<h2 className={common.nnb1214d}>The first IDO will start on 1st half of May,<br/>subscribe to PolkaFoundry Telegram for updates</h2>}
+                {/* {isWidthDown('xs', props.width) && <h2 className={common.nnb1214d}>Get Alerts For New Pools</h2>} */}
+              </div>
+              <div className="description">
+                {/* {isWidthDown('xs', props.width) && <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about <br/>new pools and other relevant events.</p>} */}
+              </div>
+              <div className="buttons">
+                <a href="https://t.me/PolkaFoundryANN" target="_blank">
+                  <button className={common.nnb1418d + ' btn'}>
+                    Subscribe to upcoming projects&nbsp;&nbsp;
+                    <img src={arrowRightIcon}/>
+                  </button>
+                </a>
+              </div>
+            </LightSpeed>
+          </div>
         </div>
-      </div>
       {showModal && <ModalContent setShowModal={setShowModal}/>}
     </LandingLayout>
   );
