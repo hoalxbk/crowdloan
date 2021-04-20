@@ -2,6 +2,9 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: any) => {
   return {
+    animation: {
+
+    },
     container: {
       position: 'relative',
       '& img': {
@@ -54,14 +57,12 @@ const useStyles = makeStyles((theme: any) => {
         borderRadius: '60px',
         margin: '36px 6px 0 6px',
         cursor: 'pointer',
-
-        '&:first-child': {
-          backgroundColor: '#D01F36'
-        },
-
-        '&:last-child': {
-          backgroundColor: '#3232DC'
-        }
+      },
+      '& .buttons a:first-child button': {
+        backgroundColor: '#D01F36'
+      },
+      '& .buttons a:last-child button': {
+        backgroundColor: '#3232DC'
       },
       '& > div': {
         position: 'absolute',

@@ -9,6 +9,7 @@ import LandingLayout from '../../components/Layout/LandingLayout'
 import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 //@ts-ignore
 import { Fade, LightSpeed } from 'react-reveal';
+import ModalContent from './ModalContent';
 
 const cardImage = '/images/icons/card-image.jpg';
 const arrowRightIcon = '/images/icons/arrow-right.svg';
@@ -20,6 +21,7 @@ const landingBackgroundXs = '/images/landing/landing-bg-xs.svg'
 const Dashboard = (props: any) => {
   const styles = useStyles();
   const common = commonStyles();
+  const [showModal, setShowModal] = useState(false);
 
   const cardsInfo = [{
     image: '/images/landing/image1.svg',
@@ -60,7 +62,7 @@ const Dashboard = (props: any) => {
 
   return (
     <LandingLayout>
-      <div className={styles.container}>
+      <div className={styles.container + ' ' + styles.animation} style={{minHeight: '550px'}}>
         {isWidthUp('sm', props.width) && <img src={landingBackground} alt=""/>}
         {isWidthDown('xs', props.width) && <img src={landingBackgroundXs} alt=""/>}
         <div className="main-content">
@@ -80,10 +82,10 @@ const Dashboard = (props: any) => {
           </Fade>
           <Fade bottom>
             <div className="buttons">
-              <a href="https://t.me/polkafoundry/" target="_blank">
+              <a onClick={() => setShowModal(true)}>
               <button className={common.nnb1418d}>View all Pools</button>
               </a>
-              <a href="https://t.me/polkafoundry/" target="_blank">
+              <a href="https://t.me/PolkaFoundryANN" target="_blank">
                 <button className={common.nnb1418d + ' btn'}>
                 Subscribe to upcoming project&nbsp;&nbsp;
                 <img src={arrowRightIcon}/>
@@ -115,7 +117,7 @@ const Dashboard = (props: any) => {
                 {/* {isWidthDown('xs', props.width) && <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about <br/>new pools and other relevant events.</p>} */}
               </div>
               <div className="buttons">
-                <a href="#">
+                <a href="https://t.me/PolkaFoundryANN" target="_blank">
                   <button className={common.nnb1418d + ' btn'}>
                     Subscribe to upcoming projects&nbsp;&nbsp;
                     <img src={arrowRightIcon}/>
@@ -125,6 +127,7 @@ const Dashboard = (props: any) => {
             </LightSpeed>
           </div>
         </div>
+      {showModal && <ModalContent setShowModal={setShowModal}/>}
     </LandingLayout>
   );
 };
