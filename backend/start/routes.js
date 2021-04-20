@@ -101,7 +101,7 @@ Route.get('campaign-latest-active', 'CampaignController.campaignLastestActive')
 Route.group(() => {
   Route.post('/login', 'UserAuthController.login').validator('Login').middleware('checkSignature');
   Route.post('/register', 'UserAuthController.register').validator('Register').middleware('checkSignature');
-  Route.post('/register-email', 'UserAuthController.registerVerifyEmail').middleware('checkSignature');
+  Route.post('/register-email', 'UserAuthController.registerVerifyEmail');//.middleware('checkSignature');
 
   Route.get('confirm-email/:token', 'UserController.confirmEmail'); // Confirm email when register
   Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');

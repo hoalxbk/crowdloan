@@ -603,8 +603,6 @@ export const deployPool = (campaign: any, history: any) => {
       // const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
       // const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
 
-      console.log('campaign======>', campaign);
-
       // // _offeredCurrencyDecimals:
       // //   Decimal của USDT/USDC —> 6
       // //   Decimal của ETH: —> 0
@@ -621,6 +619,8 @@ export const deployPool = (campaign: any, history: any) => {
       // let _offeredRate = new BigNumber(Math.pow(10, tokenInfo.decimals)).multipliedBy(tokenRateInput || 0).toString();
       // console.log('_offeredCurrencyDecimals', _offeredCurrencyDecimals);
       // console.log('_offeredRate', _offeredRate);
+
+      console.log('campaign======>', campaign);
 
       const poolType = campaign.pool_type;
       let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');

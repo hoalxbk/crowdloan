@@ -8,6 +8,7 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import {makeStyles} from "@material-ui/core";
 import {useCommonStyle} from "../../../styles";
+import {getWinnerUser} from "../../../request/participants";
 
 const useStylesTable = makeStyles({
   table: {
@@ -24,13 +25,17 @@ function UserWinner(props: any) {
   const [editRow, setEditRow] = useState(0);
   const [isEdit, setIsEdit] = useState(true);
 
-  const { users } = props;
+  const { poolDetail } = props;
+  const [winners, setWinners] = useState([]);
 
   useEffect(() => {
-    if (users && users.length > 0) {
-      setRows(users);
+    if (poolDetail && poolDetail.id) {
+      getWinnerUser(poolDetail.id)
+        .then((res) => {
+          setWinners(res.data);
+        });
     }
-  }, [users]);
+  }, [poolDetail]);
 
   const deleteTier = (e: any, row: any, index: number) => {
     console.log('ROW: ', row, index);
@@ -58,7 +63,7 @@ function UserWinner(props: any) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row: any, index: number) => (
+            {winners.map((row: any, index: number) => (
               <TableRow key={row.id}>
                 <TableCell component="th" scope="row">
                   {row.email}

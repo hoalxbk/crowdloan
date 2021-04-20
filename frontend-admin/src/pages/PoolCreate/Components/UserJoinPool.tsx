@@ -16,26 +16,6 @@ const UserJoinPool = (props: any) => {
     poolDetail
   } = props;
 
-  const [winners, setWinners] = useState([]);
-  const [partipants, setPartipants] = useState([]);
-
-  useEffect(() => {
-    if (poolDetail && poolDetail.id) {
-      getWinnerUser(poolDetail.id)
-        .then((res) => {
-          setWinners(res.data);
-        });
-    }
-  }, [poolDetail]);
-
-  useEffect(() => {
-    if (poolDetail && poolDetail.id) {
-      getParticipantUser(poolDetail.id)
-        .then((res) => {
-          setPartipants(res.data);
-        });
-    }
-  }, [poolDetail]);
 
   return (
     <>
@@ -44,25 +24,18 @@ const UserJoinPool = (props: any) => {
       </div>
       <Tabs defaultActiveKey="1" onChange={callback}>
         <TabPane tab="Participant" key="1">
-          {partipants && partipants.length > 0 &&
-            <UserParticipant
-              users={partipants}
-            />
-          }
+          <UserParticipant poolDetail={poolDetail} />
         </TabPane>
         <TabPane tab="Winner" key="2">
-          {winners && winners.length > 0 &&
-            <UserWinner
-              users={winners}
-            />
-          }
+          <UserWinner poolDetail={poolDetail} />
         </TabPane>
         <TabPane tab="Reserve" key="3">
-          {winners && winners.length > 0 &&
-            <UserWinner
-              users={winners}
-            />
-          }
+          {/*{winners && winners.length > 0 &&*/}
+          {/*  <UserWinner*/}
+          {/*    users={winners}*/}
+          {/*  />*/}
+          {/*}*/}
+          <UserWinner poolDetail={poolDetail} s/>
         </TabPane>
       </Tabs>
 
