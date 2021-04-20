@@ -15,6 +15,15 @@ const useStyles = makeStyles((theme: any) => {
         color: '#FFFFFF',
         marginBottom: '12px'
       },
+      '& .main-content h2': {
+        textAlign: 'center',
+        fontSize: '24px',
+        lineHeight: '30px',
+        color: '#FFFFFF',
+        marginBottom: '12px',
+        maxWidth: 'calc(100% - 30px)',
+        margin: 'auto',
+      },
       '& .main-content p': {
         textAlign: 'center',
         color: '#FFFFFF'
