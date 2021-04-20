@@ -69,7 +69,7 @@ const FooterDefaultLayout = () => {
         </div>
       </div>
       <div className={styles.endContent}>
-        <p className={styles.copyRight}>Copyright © 2019 . All rights reserved.</p>
+        <p className={styles.copyRight}>Copyright © 2021 Icetea Labs. All rights reserved.</p>
       </div>
     </div>
   );
