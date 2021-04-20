@@ -30,7 +30,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     ableToFetchFromBlockchain
   } = props;
 
-  const { claimToken, setClaimTokenLoading, transactionHash, loading } = useTokenClaim(tokenDetails);
+  const { claimToken, setClaimTokenLoading, transactionHash, loading, error } = useTokenClaim(poolAddress);
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
   const availableClaim = releaseTime ? new Date() >= releaseTime: false;
 
@@ -44,9 +44,19 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     ableToFetchFromBlockchain && fetchUserPurchased();
   }, [connectedAccount, poolAddress, ableToFetchFromBlockchain]);
 
+  useEffect(() => {
+    setOpenClaimModal(false);
+  }, [error]);
+
   const handleTokenClaim = async () => {
-    await claimToken();
-  }
+    try {
+      setOpenClaimModal(true);
+      await claimToken();
+    } catch (err) {
+      setOpenClaimModal(false);
+    }
+  } 
+
 
   return (
     <div className={styles.poolDetailClaim}>
@@ -64,7 +74,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
       <Button 
         text={'Claim'} 
         backgroundColor={'#3232DC'} 
-        disabled={!availableClaim} 
+        disabled={!availableClaim || userPurchased <= 0} 
         loading={loading} 
         onClick={handleTokenClaim}
       />
