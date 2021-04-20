@@ -37,7 +37,7 @@ const Dashboard = (props: any) => {
   },
   {
     image: '/images/landing/image6.svg',
-    title: 'Tier and reputation ',
+    title: 'Tier and Reputation',
     description: "Our bot system automatically monitors participants' behavior to set reputation points for each partcicipants based on their actions. Reputation will affect a participant's tier and their ability to participate in next launches.",
     backgroundColor: 'linear-gradient(180deg, #50A3CF 0%, #060B26 50%)'
   },
