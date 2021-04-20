@@ -106,7 +106,7 @@ const Dashboard = (props: any) => {
         <div className={styles.container}>
           <img src={landingBackground2} alt="" className="bg2"/>
           <div className="main-content">
-            <LightSpeed delay={2000} left>
+            <LightSpeed delay={1500} left>
               <div className="title">
                 {<h2 className={common.nnb1214d}>The first IDO will start on 1st half of May,<br/>subscribe to PolkaFoundry Telegram for updates</h2>}
                 {/* {isWidthDown('xs', props.width) && <h2 className={common.nnb1214d}>Get Alerts For New Pools</h2>} */}

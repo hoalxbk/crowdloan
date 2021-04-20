@@ -13,7 +13,7 @@ export const LandingCard = (props: any) => {
 
   return (
       <div className={styles.cardContainer} style={{background: cardInfo.backgroundColor}}>
-        <Fade bottom delay={1200}>
+        <Fade bottom delay={800}>
           <div className={styles.cardImage}>
             <img src={cardInfo.image}/>
           </div>

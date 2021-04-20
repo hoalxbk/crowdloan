@@ -56,8 +56,6 @@ const Tiers = (props: any) => {
     showMoreInfomation && setCurrentProcess(userTier*100/(tiersBuyLimit.length - 1));
   }, [tiers, userTier, userInfo])
 
-  console.log(userTier);
-
   return (
     <div className={`tiers__component`}>
       <div className={styles.title}>
