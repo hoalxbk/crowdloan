@@ -159,5 +159,8 @@ Route.post('user/buy', 'UserBuyCampaignController.getUserBuy').validator('CheckU
 Route.get('coming-soon', 'ConfigController.getConfig')
 
 
+// For test
+Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
+Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
 
 

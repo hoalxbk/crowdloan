@@ -182,14 +182,23 @@ class PoolController {
       if (!campaign) {
         return HelperUtils.responseNotFound('Pool not found');
       }
-      await CampaignModel.query().where('id', campaignId).update({
-        is_deploy: true,
-        campaign_hash: inputParams.campaign_hash,
-        token: inputParams.token_address,
-        name: inputParams.name,
-        symbol: inputParams.symbol,
-        decimals: inputParams.decimals,
-      });
+      campaign.is_deploy = true;
+      campaign.campaign_hash = inputParams.campaign_hash;
+      campaign.token = inputParams.token_address;
+      campaign.name = inputParams.token_name;
+      campaign.symbol = inputParams.token_symbol;
+      campaign.decimals = inputParams.token_decimals;
+      campaign.save();
+
+      console.log('[updateDeploySuccess] - CAMPAIGN: ', campaign);
+      // const camp = await CampaignModel.query().where('id', campaignId).update({
+      //   is_deploy: true,
+      //   campaign_hash: inputParams.campaign_hash,
+      //   token: inputParams.token_address,
+      //   name: inputParams.name,
+      //   symbol: inputParams.symbol,
+      //   decimals: inputParams.decimals,
+      // });
 
       // Delete cache
       RedisUtils.deleteRedisPoolDetail(campaignId);

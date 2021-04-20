@@ -73,6 +73,18 @@ class WhitelistUserService {
     // return all result
     return await builder.fetch();
   }
+
+  async addWhitelistUser(params) {
+    console.log('[addWhitelistUser] - Params: ', params);
+    const whitelist = new WhitelistModel;
+    whitelist.wallet_address = params.wallet_address;
+    whitelist.campaign_id = params.campaign_id;
+    whitelist.email = params.email;
+    await whitelist.save();
+
+    console.log('Res: ', whitelist);
+    return whitelist;
+  }
 }
 
 module.exports = WhitelistUserService

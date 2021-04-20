@@ -8,6 +8,7 @@ import { withRouter } from 'react-router-dom';
 import InstallMetameask from './components/Base/InstallMetamask';
 import BigNumber from 'bignumber.js';
 import {adminRoute, checkIsAdminRoute, checkIsInvestorRoute, publicRoute} from "./utils";
+import {alertFailure} from "./store/actions/alert";
 BigNumber.config({ EXPONENTIAL_AT: 50 });
 
 const NETWORK_ID = process.env.REACT_APP_NETWORK_ID as string;
@@ -122,6 +123,12 @@ const AppContainer = (props: any) => {
 
       ethereum.on('chainChanged', (newNetworkId: string) => {
         console.log('chainChanged');
+
+        if (Number(NETWORK_ID) !== Number(newNetworkId)) {
+          console.log('Network change: NETWORK_ID:', newNetworkId);
+          dispatch(alertFailure('Please change to correct Network: Goerli'));
+        }
+
         // const { history } = props;
         // const pathName = history.location.pathname;
         // let backUrlKey = checkIsAdminRoute(pathName) ? BACK_URL_NETWORK_CHANGE_OWNER : BACK_URL_NETWORK_CHANGE;

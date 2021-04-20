@@ -245,7 +245,6 @@ function PoolForm(props: any) {
   };
 
   const watchBuyType = watch('buyType');
-  console.log('watchBuyType', watchBuyType);
   console.log('errors==========>', errors);
 
   return (
@@ -257,7 +256,7 @@ function PoolForm(props: any) {
 
           <div className="">
             <div className={classes.exchangeRate}>
-              {!!poolDetail?.is_deploy &&
+              {!!poolDetail?.id &&
                 <DisplaySwitch
                   poolDetail={poolDetail}
                   register={register}
