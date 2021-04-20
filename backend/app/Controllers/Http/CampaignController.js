@@ -445,7 +445,7 @@ class CampaignController {
           scCurrency = SMART_CONTRACT_USDT_ADDRESS;
           unit = 6;
           break;
-        case Const.ACCEPT_CURRENCY.USDT:
+        case Const.ACCEPT_CURRENCY.USDC:
           scCurrency = SMART_CONTRACT_USDC_ADDRESS;
           unit = 6;
           break;
@@ -453,6 +453,8 @@ class CampaignController {
           scCurrency = '0x0000000000000000000000000000000000000000';
           unit = 18;
         default:
+          console.log(`Do not found currency support of campaign ${camp.accept_currency}`);
+          return HelperUtils.responseErrorInternal("Internal Server Error !");
       }
       const receipt = await Promise.all([
         poolContract.methods.getOfferedCurrencyRate(scCurrency).call(),
@@ -485,7 +487,7 @@ class CampaignController {
       return HelperUtils.responseSuccess(response);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal("Internal Server Error !");
     }
   }
 
@@ -510,7 +512,7 @@ class CampaignController {
       return HelperUtils.responseSuccess(noOfParticipants);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal("Internal Server Error !");
     }
   }
 
