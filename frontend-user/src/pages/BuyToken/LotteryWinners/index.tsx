@@ -27,7 +27,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   const [searchedWinners, setSearchedWinners] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
-  const { data: totalParticipants } = useFetch<number>(`/user/counting/${poolId}`);
+  const { data: totalParticipants } = useFetch<number>(poolId ? `/user/counting/${poolId}`: undefined);
   const { data: winnersList } = useFetch<any>(
     `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&wallet_address=${input}`
   );
