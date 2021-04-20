@@ -26,7 +26,7 @@ const Account = (props: any) => {
       dispatch(getUserInfo(connectedAccount));
       dispatch(getTiers());
       dispatch(getUserTier(connectedAccount));
-      dispatch(getAllowance(connectedAccount))
+      dispatch(getAllowance(connectedAccount));
     }
   }, [isAuth, wrongChain]);
 

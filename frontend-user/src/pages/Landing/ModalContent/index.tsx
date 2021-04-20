@@ -21,7 +21,7 @@ const ModalContent = (props: any) => {
           <img src={background} className="bg"/>
           <img src={iconClose} onClick={() => setShowModal(false)} className="btn-close"/>
           <div className="modal-content__head">
-            <h2 className="title">The first IDO will start in the first half of May.</h2>
+            <h2 className="title">The first IDO will start in the first half of May</h2>
           </div>
           <div className="modal-content__body">
             <div className="subtitle">
