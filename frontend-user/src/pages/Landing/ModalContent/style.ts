@@ -6,8 +6,9 @@ const useStyles = makeStyles((theme: any) => {
       borderRadius: '4px',
       '& .modal-content': {
         minHeight: '336px',
-        width: '600px',
-        padding: '80px 60px',
+        width: '50%',
+        padding: '80px 20px',
+        overflow: 'hidden',
 
         '& .bg': {
           position: 'absolute',
@@ -34,6 +35,7 @@ const useStyles = makeStyles((theme: any) => {
         lineHeight: '40px',
         textAlign: 'center',
         color: '#FFFFFF',
+        marginBottom: '8px',
       },
       '& .modal-content__body': {
         margin: '0 0 40px 0',
