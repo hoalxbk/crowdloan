@@ -3,6 +3,7 @@ import { useState } from 'react'
 
 const BrightStartIcon = "/images/bright-star.svg";
 const logo = '/images/logo-red-kite.svg';
+const iconClose = "/images/icons/close.svg";
 
 const HeaderDefaultLayout = () => {
   const styles = useStyles();
@@ -21,13 +22,14 @@ const HeaderDefaultLayout = () => {
         <div className="connects">
           <a href="https://t.me/polkafoundry/"><i className="custom-icon-telegram"></i></a>
           <a href="https://twitter.com/polkafoundry/"><i className="custom-icon-twitter"></i></a>
-          <a href="#"><i className="custom-icon-facebook"></i></a>
-          <a href="#"><i className="custom-icon-github"></i></a>
+          {/* <a href="#"><i className="custom-icon-facebook"></i></a>
+          <a href="#"><i className="custom-icon-github"></i></a> */}
         </div>
         {showBanner && <div className={styles.banner}>
           <img src="/images/icons/ring.svg" alt="red-warning icon" />
+          <img src={iconClose} onClick={() => setShowBanner(false)} className={styles.closeBtn}/>
           <span className={styles.loginErrorBannerText}>
-          &nbsp;&nbsp;The first IDO will start on the 1st half of May. Subscribe PolkaFoundry Telegram for the latest updates.
+          The first IDO will start on the 1st half of May. Subscribe PolkaFoundry Telegram for the latest updates.
           &nbsp;&nbsp;<button 
             className={styles.btnChangeAppNetwork}
             onClick={() => {window.open('https://t.me/PolkaFoundryANN', '_blank')}}

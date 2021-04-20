@@ -80,6 +80,7 @@ const useStyles = makeStyles((theme: any) => {
         },
       },
       [theme.breakpoints.down('xs')]: {
+        height: '600px',
         overflow: 'hidden',
         '& img': {
           objectFit: 'unset',
@@ -135,6 +136,7 @@ const useStyles = makeStyles((theme: any) => {
         },
       },
       [theme.breakpoints.only('xs')]: {
+        margin: '20px 0',
         '& .main-content': {
           display: 'grid',
           gridTemplateColumns: '1fr',
