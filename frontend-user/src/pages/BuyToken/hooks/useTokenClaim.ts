@@ -10,6 +10,7 @@ const useTokenClaim = (poolAddress: string | undefined) => {
   const { library, account } = useWeb3React();
   const dispatch = useDispatch();
 
+  const [claimTokenSuccess, setClaimTokenSuccess] = useState<boolean>(false);
   const [claimTransactionHash, setClaimTransactionHash] = useState("");
   const [claimTokenLoading, setClaimTokenLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
@@ -18,6 +19,7 @@ const useTokenClaim = (poolAddress: string | undefined) => {
     if (poolAddress) {
       setError("");
       setClaimTokenLoading(true);
+      setClaimTokenSuccess(false);
 
       try {
          const contract = getContract(poolAddress, PreSale_ABI, library, account as string);
@@ -26,15 +28,17 @@ const useTokenClaim = (poolAddress: string | undefined) => {
            const transaction = await contract.claimTokens();
 
            setClaimTransactionHash(transaction.hash);
-           setClaimTokenLoading(false);
 
            await transaction.wait(1);
 
-          dispatch(alertSuccess("Token Claim Successful"));
+           setClaimTokenSuccess(true);
+           setClaimTokenLoading(false);
+            dispatch(alertSuccess("Token Claim Successful"));
          }
       } catch (err) {
         dispatch(alertFailure(err.message));
         setClaimTokenLoading(false);
+        setClaimTokenSuccess(false);
         setError(err.message);
       }
     }
@@ -46,6 +50,7 @@ const useTokenClaim = (poolAddress: string | undefined) => {
     loading: claimTokenLoading,
     setClaimTokenLoading,
     setClaimTransactionHash,
+    claimTokenSuccess,
     error
   }
 }
