@@ -32,6 +32,12 @@ const Dashboard = (props: any) => {
     backgroundColor: 'linear-gradient(180deg, #234650 0%, #060B26 50%)'
   },
   {
+    image: '/images/landing/image6.svg',
+    title: 'Tier and reputation ',
+    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet vestibulum elit. Aliquam sagittis massa ut ultrices tincidunt. Curabitur tincidunt pharetra erat vitae consectetur. ',
+    backgroundColor: 'linear-gradient(180deg, #50A3CF 0%, #060B26 50%)'
+  },
+  {
     image: '/images/landing/image3.svg',
     title: 'Fairness',
     description: 'We understand that opportunity delivery must be fair instead of rushing. Red Kite’s lane-based swap system ensure everybody have a chance accordingly to their tiers without gas war.',
@@ -48,12 +54,6 @@ const Dashboard = (props: any) => {
     title: 'Parachain Crowdloan',
     description: 'Kusama and Polkadot parachain auctions are around the corner. Red Kite supports crownloan campaigns for projects to collect KSM and DOT tokens effectively for winning the auction.',
     backgroundColor: 'linear-gradient(180deg, #5C274F 0%, #060B26 43.33%)'
-  },
-  {
-    image: '/images/landing/image6.svg',
-    title: 'Tier and reputation ',
-    description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In sit amet vestibulum elit. Aliquam sagittis massa ut ultrices tincidunt. Curabitur tincidunt pharetra erat vitae consectetur. ',
-    backgroundColor: 'linear-gradient(180deg, #50A3CF 0%, #060B26 50%)'
   }]
 
   return (
@@ -63,14 +63,14 @@ const Dashboard = (props: any) => {
         {isWidthDown('xs', props.width) && <img src={landingBackgroundXs} alt=""/>}
         <div className="main-content">
           {isWidthUp('sm', props.width) && <div className="title">
-            <h1 className={common.nnb1214d}>Flying with Red Kite</h1>
+            <h1 className={common.nnb1214d}>Soar with Red Kite</h1>
           </div>}
           {isWidthDown('xs', props.width) && <div className="title">
-            <h1 className={common.nnb1214d}>Flying with</h1>
+            <h1 className={common.nnb1214d}>Soar with</h1>
             <h1 className={common.nnb1214d}>Red Kite</h1>
           </div>}
           <div className="description">
-            <p className={common.nnb1824d}>Launch hand-picked projects in a fair way</p>
+            <p className={common.nnb1824d}>Launch hand-picked projects and help them shine.<br/>Hold $PKF to participate.</p>
           </div>
           <div className="buttons">
             <button className={common.nnb1418d}>View all Pools</button>
@@ -82,7 +82,7 @@ const Dashboard = (props: any) => {
         </div>
       </div>
       <div className={styles.cardContainer}>
-        <h2 className={common.nnb2832d}>Innovative Features</h2>
+        <h2 className={common.nnb2832d}>Unparalleled Features</h2>
         <div className="main-content">
           {cardsInfo.map((cardInfo, index) => {
             return <LandingCard key={index} cardInfo={cardInfo} />
@@ -93,10 +93,11 @@ const Dashboard = (props: any) => {
         <img src={landingBackground2} alt="" className="bg2"/>
         <div className="main-content">
           <div className="title">
-            <h1 className={common.nnb1214d}>Get Alerts For New Pools</h1>
+          {<h2 className={common.nnb1214d}>The first IDO will start on 1st half of May,<br/>subscribe to PolkaFoundry Telegram for updates</h2>}
+          {/* {isWidthDown('xs', props.width) && <h2 className={common.nnb1214d}>Get Alerts For New Pools</h2>} */}
           </div>
           <div className="description">
-            <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about new pools and other relevant events.</p>
+            {/* {isWidthDown('xs', props.width) && <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about <br/>new pools and other relevant events.</p>} */}
           </div>
           <div className="buttons">
             <button className={common.nnb1418d + ' btn'}>
