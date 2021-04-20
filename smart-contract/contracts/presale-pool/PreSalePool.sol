@@ -272,7 +272,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
 
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
-
+        require(getAvailableTokensForSale() >= tokens, "POOL::NOT_ENOUGHT_TOKENS_FOR_SALE");
         require(tokens >= _minAmount || userPurchased[msg.sender].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
         require(userPurchased[msg.sender].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
@@ -303,7 +303,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         _preValidatePurchase(_beneficiary, _amount);
 
         uint256 tokens = _getOfferedCurrencyToTokenAmount(_token, _amount);
-
+        require(getAvailableTokensForSale() >= tokens, "POOL::NOT_ENOUGHT_TOKENS_FOR_SALE");
         require(tokens >= _minAmount || userPurchased[msg.sender].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
         require(userPurchased[msg.sender].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
