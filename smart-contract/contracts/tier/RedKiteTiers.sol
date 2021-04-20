@@ -7,14 +7,22 @@ import "../token/ERC20/ERC20.sol";
 import "../token/ERC721/IERC721.sol";
 import "../token/ERC721/IERC721Receiver.sol";
 
-contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
+contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     using SafeMath for uint256;
 
+    // Info of each user
     struct UserInfo {
-        uint256 staked;
-        uint256 stakedTime;
+        uint256 staked;     // How many tokens the user has provided
+        uint256 stakedTime; // Block timestamp when the user provided token
     }
 
+    // RedKiteTiers allow to stake multi tokens to up your tier. Please
+    // visit the website to get token list or use the token contract to
+    // check it is supported or not.
+
+    // Info of each Token
+    // Currency Rate with PKF: amount * rate / 10 ** decimals
+    // Default PKF: rate=1, decimals=0
     struct ExternalToken {
         address contractAddress;
         uint256 decimals;
@@ -26,16 +34,22 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     uint256 constant MAX_NUM_TIERS = 10;
     uint8 currentMaxTier = 4;
 
+    // Address take user's withdraw fee
     address public penaltyWallet;
-
+    // The POLKAFOUNDRY TOKEN!
     address public PKF;
 
+    // Info of each user that stakes tokens
     mapping(address => mapping(address => UserInfo)) public userInfo;
+    // Info of total Non-PKF token staked, converted with rate
     mapping(address => uint256) public userExternalStaked;
+    // Minimum PKF need to stake each tier
     uint256[MAX_NUM_TIERS] tierPrice;
-
+    // Percentage of penalties
     uint256[] public withdrawFeePercent;
+    // The maximum number of days of penalties
     uint256[] public daysLockLevel;
+    // Info of each token can stake
     mapping(address => ExternalToken) public externalToken;
 
     bool public canEmergencyWithdraw;
@@ -101,8 +115,8 @@ contract PKFTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         ExternalToken storage token = externalToken[PKF];
 
         token.contractAddress = PKF;
-        token.decimals = 18;
-        token.rate = 1000000000000000000;
+        token.decimals = 0;
+        token.rate = 1;
         token.isERC721 = false;
         token.canStake = true;
 

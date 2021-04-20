@@ -7,9 +7,9 @@ import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../libraries/SafeMath.sol";
 import "../libraries/Pausable.sol";
-import "../extensions/PKFWhitelist.sol";
+import "../extensions/RedKiteWhitelist.sol";
 
-contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
+contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     using SafeMath for uint256;
 
     struct OfferedCurrency {
@@ -312,7 +312,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
         _updatePurchasingState(_amount, tokens);
 
         investedAmountOf[_token][msg.sender] = investedAmountOf[address(0)][msg.sender].add(_amount);
-        
+
         emit TokenPurchaseByToken(
             msg.sender,
             _beneficiary,
@@ -335,20 +335,19 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
      * @notice Owner can receive their remaining tokens when ICO Ended
      * @dev  Can refund remainning token if the ico ended
      * @param _wallet Address wallet who receive the remainning tokens when Ico end
-     * @param _amount Value of amount will exchange of tokens
      */
-    function refundRemainingTokens(address _wallet, uint256 _amount)
+    function refundRemainingTokens(address _wallet)
         external
         onlyOwner
     {
         require(isFinalized(), "POOL::ICO_NOT_ENDED");
         require(token.balanceOf(address(this)) > 0, "POOL::EMPTY_BALANCE");
-        
+
         uint256 remainingTokens = getAvailableTokensForSale();
         _deliverTokens(_wallet, remainingTokens);
         emit RefundedIcoToken(_wallet, remainingTokens);
     }
-    
+
     /**
      * @notice User can receive their tokens when pool finished
      */

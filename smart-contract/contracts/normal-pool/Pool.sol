@@ -7,9 +7,9 @@ import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../libraries/SafeMath.sol";
 import "../libraries/Pausable.sol";
-import "../extensions/PKFWhitelist.sol";
+import "../extensions/RedKiteWhitelist.sol";
 
-contract Pool is Ownable, ReentrancyGuard, Pausable, PKFWhitelist {
+contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     using SafeMath for uint256;
 
     struct OfferedCurrency {
