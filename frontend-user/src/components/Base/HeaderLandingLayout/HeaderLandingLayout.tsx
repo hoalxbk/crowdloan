@@ -32,7 +32,7 @@ const HeaderDefaultLayout = () => {
             className={styles.btnChangeAppNetwork}
             onClick={() => {window.open('https://t.me/PolkaFoundryANN', '_blank')}}
           >
-            Change App Network
+            Subscribe
           </button>
           </span>
         </div>}

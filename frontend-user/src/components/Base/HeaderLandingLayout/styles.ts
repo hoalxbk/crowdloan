@@ -89,6 +89,7 @@ const useStyles = makeStyles((theme) => {
       height: '28px',
       display: 'flex',
       alignItems: 'center',
+      font: 'normal normal 700 12px/14px DM Sans',
 
       '&:focus': {
         outline: 'none'
