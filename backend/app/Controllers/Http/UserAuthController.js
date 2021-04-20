@@ -133,11 +133,12 @@ class UserAuthController {
       const role = Const.USER_ROLE.PUBLIC_USER; // Only public user verify email
       const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address);
 
-      console.log('[registerEmail]: Wallet Address: ', wallet_address);
+      console.log('[registerVerifyEmail]: Wallet Address: ', wallet_address);
       let user = await (new UserService).findUser({ wallet_address });
-      console.log('[registerEmail]: User:  ', user);
+      console.log('[registerVerifyEmail]: User:  ', user);
 
       if (!user) {
+        console.log('[registerVerifyEmail]: Create User:  ');
         user = new UserModel;
         user.email = param.email;
         user.username = param.email;

@@ -120,9 +120,6 @@ Route.group(() => {
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
 
-Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
-Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
-
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
   .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);
 
@@ -162,5 +159,8 @@ Route.post('user/buy', 'UserBuyCampaignController.getUserBuy').validator('CheckU
 Route.get('coming-soon', 'ConfigController.getConfig')
 
 
+// For test
+Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
+Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
 
 

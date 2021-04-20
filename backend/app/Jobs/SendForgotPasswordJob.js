@@ -33,7 +33,7 @@ class SendForgotPasswordJob {
       message
         .to(mailData.email)
         .from(from)
-        .subject('Request password reset at LEMONADE.')
+        .subject('Request password reset at SotatekStarter.')
     }).catch(e => {
       console.log('ERROR Send Mail: ', e);
       throw e;

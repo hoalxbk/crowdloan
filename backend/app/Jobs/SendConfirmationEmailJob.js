@@ -28,12 +28,12 @@ class SendConfirmationEmailJob {
   async handle (data) {
     console.log('SendConfirmationEmailJob-job started', data);
     const mailData = data;
-    const from = Env.get('MAIL_FROM_ADDRESS')
+    const from = Env.get('MAIL_FROM_ADDRESS');
     await Mail.send('confirmEmail', mailData, (message) => {
       message
         .to(mailData.email)
         .from(from)
-        .subject('[LEMONADE] Verify your account.')
+        .subject('[SotatekStarter] Verify your email.')
     }).catch(e => {
       console.log('ERROR Send Mail: ', e);
       throw e;
@@ -43,7 +43,7 @@ class SendConfirmationEmailJob {
     //   message
     //     .to(mailData.email)
     //     .from(Env.get('MAIL_FROM'))
-    //     .subject('[LEMONADE] Verify your account.')
+    //     .subject('[SotatekStarter] Verify your account.')
     // });
   }
 
