@@ -30,7 +30,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     ableToFetchFromBlockchain
   } = props;
 
-  const { claimToken, setClaimTokenLoading, transactionHash, claimTokenSucces, loading, error } = useTokenClaim(poolAddress);
+  const { claimToken, setClaimTokenLoading, transactionHash, claimTokenSuccess, loading, error } = useTokenClaim(poolAddress);
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
   const availableClaim = releaseTime ? new Date() >= releaseTime: false;
 
@@ -42,7 +42,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     }
     
     ableToFetchFromBlockchain && fetchUserPurchased();
-  }, [connectedAccount, poolAddress, ableToFetchFromBlockchain, claimTokenSucces]);
+  }, [connectedAccount, poolAddress, ableToFetchFromBlockchain, claimTokenSuccess]);
 
   useEffect(() => {
     if (error) {
