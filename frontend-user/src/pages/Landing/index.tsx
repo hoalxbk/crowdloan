@@ -83,11 +83,11 @@ const Dashboard = (props: any) => {
           <Fade bottom>
             <div className="buttons">
               <a onClick={() => setShowModal(true)}>
-              <button className={common.nnb1418d}>View all project</button>
+              <button className={common.nnb1418d}>View all projects</button>
               </a>
               <a href="https://t.me/PolkaFoundryANN" target="_blank">
                 <button className={common.nnb1418d + ' btn'}>
-                Subscribe to upcoming project&nbsp;&nbsp;
+                Subscribe to upcoming projects&nbsp;&nbsp;
                 <img src={arrowRightIcon}/>
                 </button>
               </a>
@@ -119,7 +119,7 @@ const Dashboard = (props: any) => {
               <div className="buttons">
                 <a href="https://t.me/PolkaFoundryANN" target="_blank">
                   <button className={common.nnb1418d + ' btn'}>
-                    Subscribe to upcoming project&nbsp;&nbsp;
+                    Subscribe to upcoming projects&nbsp;&nbsp;
                     <img src={arrowRightIcon}/>
                   </button>
                 </a>
