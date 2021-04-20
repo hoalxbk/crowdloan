@@ -73,11 +73,15 @@ const Dashboard = (props: any) => {
             <p className={common.nnb1824d}>Launch hand-picked projects and help them shine.<br/>Hold $PKF to participate.</p>
           </div>
           <div className="buttons">
-            <button className={common.nnb1418d}>View all Pools</button>
-            <button className={common.nnb1418d + ' btn'}>
-              Subscribe to upcoming project&nbsp;&nbsp;
-              <img src={arrowRightIcon}/>
-            </button>
+            <a href="https://t.me/polkafoundry/" target="_blank">
+              <button className={common.nnb1418d}>View all Pools</button>
+            </a>
+            <a href="https://t.me/polkafoundry/" target="_blank">
+              <button className={common.nnb1418d + ' btn'}>
+                Subscribe to upcoming project&nbsp;&nbsp;
+                <img src={arrowRightIcon}/>
+              </button>
+            </a>
           </div>
         </div>
       </div>
