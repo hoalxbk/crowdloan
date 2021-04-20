@@ -80,7 +80,7 @@ const useStyles = makeStyles((theme: any) => {
         },
       },
       [theme.breakpoints.down('xs')]: {
-        height: '600px',
+        height: '700px',
         overflow: 'hidden',
         '& img': {
           objectFit: 'unset',
