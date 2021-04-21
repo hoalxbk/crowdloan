@@ -8,6 +8,7 @@ import useWalletSignature from '../../../hooks/useWalletSignature';
 import { alertSuccess, alertFailure } from '../../../store/actions/alert';
 import Pool_ABI from '../../../abi/Pool.json';
 import { getContract } from '../../../utils/contract';
+import { TRANSACTION_ERROR_MESSAGE } from '../../../constants/alert';
 
 type PoolDepositActionParams = {
   poolAddress?: string;
@@ -120,7 +121,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         dispatch(alertFailure(err.message));
         setSignature("");
         setTokenDepositLoading(false);
-        setDepositError(err.message);
+        setDepositError(TRANSACTION_ERROR_MESSAGE);
       }
     }
   }, [connectedAccount, library, poolAddress, amount])

@@ -68,9 +68,9 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         label: 'Type'
       },
       [PoolDetailKey.minTier]: {
-        display: getUserTierAlias(minTier - 1).text,
+        display: getUserTierAlias(minTier).text,
         label: 'Min Tier',
-        utilIcon: getUserTierAlias(minTier - 1).icon
+        utilIcon: getUserTierAlias(minTier).icon
       }
     }
 
