@@ -15,7 +15,8 @@ const useStyles = makeStyles((theme: any) => {
     buyTokenFormTitle: {
       fontSize: 15,
       fontWeight: 700,
-      marginBottom: 20
+      marginBottom: 20,
+      lineHeight: '24px'
     },
     buyTokenInputForm: {
       background: '#11152A',
