@@ -1,8 +1,8 @@
 import React from 'react';
-import ConfirmDialog from "../../../components/Base/ConfirmDialog";
-import useStyles from "../style";
+import ConfirmDialog from "../../../../components/Base/ConfirmDialog";
+import useStyles from "../../style";
 import {useForm} from "react-hook-form";
-import {renderErrorCreatePool} from "../../../utils/validate";
+import {renderErrorCreatePool} from "../../../../utils/validate";
 
 function UserParticipantCreatePopup(props: any) {
   const classes = useStyles();

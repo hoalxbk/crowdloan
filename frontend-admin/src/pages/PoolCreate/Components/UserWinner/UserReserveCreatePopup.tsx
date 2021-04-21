@@ -1,12 +1,12 @@
 import React from 'react';
-import ConfirmDialog from "../../../components/Base/ConfirmDialog";
-import useStyles from "../style";
+import ConfirmDialog from "../../../../components/Base/ConfirmDialog";
+import useStyles from "../../style";
 import {Controller, useForm} from "react-hook-form";
 import {DatePicker} from 'antd';
 import moment from "moment";
-import CurrencyInputWithValidate from "./CurrencyInputWithValidate";
-import {DATETIME_FORMAT} from "../../../constants";
-import {renderErrorCreatePool} from "../../../utils/validate";
+import CurrencyInputWithValidate from "../CurrencyInputWithValidate";
+import {DATETIME_FORMAT} from "../../../../constants";
+import {renderErrorCreatePool} from "../../../../utils/validate";
 
 function UserReserveCreatePopup(props: any) {
   const classes = useStyles();

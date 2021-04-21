@@ -7,13 +7,13 @@ import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import {Button, makeStyles} from "@material-ui/core";
-import {useCommonStyle} from "../../../styles";
-import {deleteParticipantUser, getParticipantUser} from "../../../request/participants";
+import {useCommonStyle} from "../../../../styles";
+import {deleteParticipantUser, getParticipantUser} from "../../../../request/participants";
 import {useDispatch} from "react-redux";
 import {withRouter} from "react-router";
-import {alertSuccess} from "../../../store/actions/alert";
-import useGetList from "./hooks/useGetList";
-import useDeleteItem from "./hooks/useDeleteItem";
+import {alertSuccess} from "../../../../store/actions/alert";
+import useGetList from "../hooks/useGetList";
+import useDeleteItem from "../hooks/useDeleteItem";
 
 const useStylesTable = makeStyles({
   table: {
@@ -123,14 +123,19 @@ function UserParticipant(props: any) {
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell align="right">Actions</TableCell>
               <TableCell size={'small'}>Email</TableCell>
               <TableCell align="center" size={'medium'}>Wallet Address</TableCell>
+              <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row: any, index: number) => (
               <TableRow key={row.id}>
+
+                <TableCell component="th" scope="row" size={'small'}>
+                  {row.email}
+                </TableCell>
+                <TableCell align="center" size={'medium'}>{row.wallet_address}</TableCell>
 
 
                 <TableCell align="right">
@@ -142,12 +147,6 @@ function UserParticipant(props: any) {
                   >Delete</Button>
                 </TableCell>
 
-
-
-                <TableCell component="th" scope="row" size={'small'}>
-                  {row.email}
-                </TableCell>
-                <TableCell align="center" size={'medium'}>{row.wallet_address}</TableCell>
 
               </TableRow>
             ))}

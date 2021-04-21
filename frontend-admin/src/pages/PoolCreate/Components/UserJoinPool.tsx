@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import useStyles from "../style";
-import UserParticipant from "./UserParticipant";
-import UserWinner from "./UserWinner";
+import UserParticipant from "./UserWinner/UserParticipant";
+import UserWinner from "./UserWinner/UserWinner";
 
 import {Tabs} from 'antd';
-import UserReverse from "./UserReverse";
+import UserReverse from "./UserWinner/UserReverse";
 const { TabPane } = Tabs;
 function callback(key: any) {
   console.log(key);
