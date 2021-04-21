@@ -18,6 +18,15 @@ class ReservedListService {
     if (params.campaign_id) {
       builder = builder.where('campaign_id', params.campaign_id);
     }
+
+    // For search box
+    if (params.search_term) {
+      builder = builder.where(query => {
+        query.where('wallet_address', 'like', '%'+ params.search_term +'%')
+          .orWhere('email', 'like', '%'+ params.search_term +'%');
+      })
+    }
+
     return builder;
   }
 

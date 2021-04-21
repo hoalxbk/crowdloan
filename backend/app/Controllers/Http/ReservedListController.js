@@ -27,7 +27,8 @@ class ReservedListController {
       const filterParams = {
         'campaign_id': campaign_id,
         'page': page,
-        'pageSize': pageSize
+        'pageSize': pageSize,
+        'search_term': request.input('search_term') || '',
       };
       const reservedListService = new ReservedListService();
       // get winner list

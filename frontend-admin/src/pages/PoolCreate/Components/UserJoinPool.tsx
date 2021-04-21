@@ -29,11 +29,6 @@ const UserJoinPool = (props: any) => {
           <UserWinner poolDetail={poolDetail} />
         </TabPane>
         <TabPane tab="Reserve" key="3">
-          {/*{winners && winners.length > 0 &&*/}
-          {/*  <UserWinner*/}
-          {/*    users={winners}*/}
-          {/*  />*/}
-          {/*}*/}
           <UserReverse poolDetail={poolDetail} />
         </TabPane>
       </Tabs>
