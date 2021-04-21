@@ -452,6 +452,7 @@ class CampaignController {
         case Const.ACCEPT_CURRENCY.ETH:
           scCurrency = '0x0000000000000000000000000000000000000000';
           unit = 18;
+          break;
         default:
           console.log(`Do not found currency support of campaign ${camp.accept_currency}`);
           return HelperUtils.responseErrorInternal("Internal Server Error !");
