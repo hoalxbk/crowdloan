@@ -579,7 +579,7 @@ export const deployPool = (campaign: any, history: any) => {
       const {
         title, affiliate, start_time, finish_time, release_time,
         token, address_receiver, token_by_eth, token_conversion_rate, tokenInfo,
-        tier_configuration
+        tier_configuration, accept_currency
       } = campaign;
       const releaseTimeUnix = release_time;
       const startTimeUnix = start_time;
@@ -606,15 +606,17 @@ export const deployPool = (campaign: any, history: any) => {
 
       let paidTokenAddress = '0x00';
 
-      if (token === ACCEPT_CURRENCY.USDC) {
+      if (accept_currency === ACCEPT_CURRENCY.USDC) {
         paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS as string;
       }
 
-      if (token === ACCEPT_CURRENCY.USDT) {
+      if (accept_currency === ACCEPT_CURRENCY.USDT) {
         paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS as string;
       }
 
+
       let tokenByEthDecimals = 0;
+
       let tokenByETHActualRate: any;
       let reversedRate = removeTrailingZeros(new BigNumber(1).dividedBy(token_by_eth).toFixed());
       let digitsAfterDecimals = getDigitsAfterDecimals(reversedRate);
@@ -626,7 +628,7 @@ export const deployPool = (campaign: any, history: any) => {
         digitsAfterDecimals = 6;
       }
 
-      if (token !== ACCEPT_CURRENCY.ETH) {
+      if (accept_currency !== ACCEPT_CURRENCY.ETH) {
         tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
       
       } else {

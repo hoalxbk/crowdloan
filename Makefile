@@ -23,7 +23,6 @@ deploy-crawler:
 
 
 
-
 # For Server:
 cd-server-sotatek-starter:
 	cd /var/www/sotatek_starter
