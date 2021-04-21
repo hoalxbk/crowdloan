@@ -5,6 +5,8 @@ import _ from 'lodash';
 import { TIERS } from '../../../constants';
 import useStyles from './style';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
+//@ts-ignore
+import { Fade } from 'react-reveal';
 
 const warningIcon = '/images/icons/warning.svg';
 
@@ -14,6 +16,7 @@ const Tiers = (props: any) => {
   const { data: userTier = {} } = useSelector((state: any) => state.userTier);
   const { data: tiers = {} } = useSelector((state: any) => state.tiers);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
+  const [loading, setLoading] = useState(true);
 
   const {
     showMoreInfomation = false,
@@ -21,7 +24,7 @@ const Tiers = (props: any) => {
     tokenSymbol,
   } = props;
 
-  const [currentProcess, setCurrentProcess] = useState(0)
+  const [currentProcess, setCurrentProcess] = useState(undefined) as any;
 
   const calculateProcess = (ListData: any, current: any) => {
     let tierA = 0;
@@ -47,6 +50,7 @@ const Tiers = (props: any) => {
 
     let process = (parseInt(userTier)) * 100 / ListData.length + (parseFloat(current) - tierA) * 100 /((tierB - tierA) * ListData.length)
     if(process > 100) process = 100
+    setLoading(false);
     return process;
   }
   
@@ -57,7 +61,7 @@ const Tiers = (props: any) => {
   }, [tiers, userTier, userInfo])
 
   return (
-    <div className={`tiers__component`}>
+    <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>
       <div className={styles.title}>
         <>
           <img src={warningIcon} />
@@ -69,7 +73,7 @@ const Tiers = (props: any) => {
         </>
       </div>
       <ul className={styles.tierList}>
-        <li className="process" style={{width:`${currentProcess}%`}}></li>
+        <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{width:`${currentProcess}%`}}></li>
         <li className={styles.tierInfo + ' active'}>
           <div className="icon">
             <img src={TIERS[0].icon} />

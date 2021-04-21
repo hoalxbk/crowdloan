@@ -120,7 +120,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
           <Route path={'/login'} component={InvestorLogin} />
           <Route path={'/forgot-password/investor'} exact component={InvestorForgotPassword} />
           <Route path={'/reset-password/investor/:token'} component={InvestorResetPassword} />
-          <Route path={'/confirm-email/:role?/:token'} component={ConfirmEmail} />
+          <Route path={'/confirm-email/:token'} component={ConfirmEmail} />
           <Route path={'/network-change'} component={NetworkChange} />
           <Route path={'/change-password/:role?'} component={ChangePassword} />
           <Route path={'/account'} component={Account} />

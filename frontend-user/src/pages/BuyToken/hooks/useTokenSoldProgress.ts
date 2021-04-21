@@ -33,23 +33,23 @@ const useTokenSoldProgress = (poolAddress: string | undefined, totalTokens: numb
 
           const tokensSoldCal = new BigNumber(tokensSold).div(new BigNumber(10).pow(18));
 
-          // setTokenSold(tokensSoldCal.toFixed(DECIMAL_PLACES));
-          // setSoldProgress(
-          //   !tokensSoldCal.eq(new BigNumber(0)) ? 
-          //   tokensSoldCal.div(new BigNumber(totalTokens)).multipliedBy(100).toFixed(DECIMAL_PLACES): 
-          //   new BigNumber(0).toFixed(DECIMAL_PLACES)
-         // );
+          setTokenSold(tokensSoldCal.toFixed(DECIMAL_PLACES));
+          setSoldProgress(
+            !tokensSoldCal.eq(new BigNumber(0)) ? 
+            tokensSoldCal.div(new BigNumber(totalTokens)).multipliedBy(100).toFixed(DECIMAL_PLACES): 
+            new BigNumber(0).toFixed(DECIMAL_PLACES)
+         );
         }
       }
     }
 
     if (poolAddress && networkAvailable) {
-      // calSoldProgress();
-      // soldProgressInterval = setInterval(() => calSoldProgress(), 20000);
+      calSoldProgress();
+      soldProgressInterval = setInterval(() => calSoldProgress(), 20000);
     }
 
     return () => {
-      // soldProgressInterval && clearInterval(soldProgressInterval);
+      soldProgressInterval && clearInterval(soldProgressInterval);
     }
   }, [poolAddress, appChainID, connector, networkAvailable, totalTokens]);
    

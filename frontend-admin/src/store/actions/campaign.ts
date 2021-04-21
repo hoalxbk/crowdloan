@@ -604,7 +604,7 @@ export const deployPool = (campaign: any, history: any) => {
       // console.log('tokenByEthDecimals: ', tokenByEthDecimals);
       // console.log('tokenByETHActualRate: ', tokenByETHActualRate);
 
-      let paidTokenAddress = '0x00';
+      let paidTokenAddress = '0x0000000000000000000000000000000000000000';
 
       if (accept_currency === ACCEPT_CURRENCY.USDC) {
         paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS as string;
