@@ -10,6 +10,9 @@ import ModalWithdraw from '../ModalWithdraw';
 import ModalTransaction from '../ModalTransaction';
 import useTokenDetails from '../../../hooks/useTokenDetails';
 import useAuth from '../../../hooks/useAuth';
+//@ts-ignore
+import AnimatedNumber from "animated-number-react";
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 const TOKEN_ADDRESS = process.env.REACT_APP_SOTA || '';
 const iconClose = '/images/icons/close.svg'
@@ -78,7 +81,12 @@ const ManageTier = (props: any) => {
     <div className={`${classNamePrefix}__component`}>
       <div className={styles.content}>
         <p className={styles.textDefault}>Available balance</p>
-        <p className={styles.balance}>{ parseFloat(balance.token || 0).toFixed(2) }</p>
+        <p className={styles.balance}>
+          <AnimatedNumber
+            value={balance.token}
+            formatValue={numberWithCommas}
+          />
+        </p>
         <div className="button-area">
           <button className="btn btn-lock" onClick={() => {setOpenModalDeposit(true)}}>
             Lock - in
