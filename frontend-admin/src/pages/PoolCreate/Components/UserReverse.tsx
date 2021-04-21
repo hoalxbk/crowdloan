@@ -8,10 +8,13 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import {Button, makeStyles} from "@material-ui/core";
 import {useCommonStyle} from "../../../styles";
-import {deleteParticipantUser, getParticipantUser} from "../../../request/participants";
-import {useDispatch} from "react-redux";
+import {
+  deleteParticipantUser,
+  deleteReservesUser,
+  getParticipantUser,
+  getReserveUser
+} from "../../../request/participants";
 import {withRouter} from "react-router";
-import {alertSuccess} from "../../../store/actions/alert";
 import useGetList from "./hooks/useGetList";
 import useDeleteItem from "./hooks/useDeleteItem";
 
@@ -21,15 +24,13 @@ const useStylesTable = makeStyles({
   },
   middleColumn: {
     width: 60,
-    // backgroundColor: 'red',
   },
   smallColumn: {
     width: 60,
-    // backgroundColor: 'green',
   },
 });
 
-function UserParticipant(props: any) {
+function UserReverse(props: any) {
   const commonStyle = useCommonStyle();
   const classesTable = useStylesTable();
 
@@ -38,13 +39,13 @@ function UserParticipant(props: any) {
     rows,
     search,
     searchDelay,
-  } = useGetList({ poolDetail, handleSearchFunction: getParticipantUser });
+  } = useGetList({ poolDetail, handleSearchFunction: getReserveUser });
 
   const {
     deleteItem
   } = useDeleteItem({
     poolDetail,
-    handleDeleteFunction: deleteParticipantUser,
+    handleDeleteFunction: deleteReservesUser,
     handleSearchFunction: search
   });
 
@@ -111,14 +112,6 @@ function UserParticipant(props: any) {
       {/*</div>*/}
 
 
-
-
-
-
-
-
-
-
       <TableContainer component={Paper} className={commonStyle.tableScroll}>
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
@@ -158,5 +151,5 @@ function UserParticipant(props: any) {
   );
 }
 
-export default withRouter(UserParticipant);
+export default withRouter(UserReverse);
 

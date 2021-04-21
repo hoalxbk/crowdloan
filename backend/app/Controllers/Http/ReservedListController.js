@@ -18,11 +18,11 @@ class ReservedListController {
       if (page) {
         redisKey = redisKey.concat('_', page, '_', pageSize);
       }
-      if (await Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        const cachedWL = await Redis.get(redisKey);
-        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
-      }
+      // if (await Redis.exists(redisKey)) {
+      //   console.log(`existed key ${redisKey} on redis`);
+      //   const cachedWL = await Redis.get(redisKey);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      // }
       // if not existed whitelist on redis then get from db
       const filterParams = {
         'campaign_id': campaign_id,
@@ -79,6 +79,24 @@ class ReservedListController {
       console.log(e);
       return HelperUtils.responseErrorInternal('Insert New Reserved Error !');
     }
+  }
+
+
+  async deleteReserve({request, params}) {
+    console.log('[deleteReserve] - Delete Winner with params: ', params, request.params);
+
+    const { campaignId, walletAddress } = params;
+    const reservedService = new ReservedListService();
+    const existRecord = await reservedService.buildQueryBuilder({
+      campaign_id: campaignId,
+      wallet_address: walletAddress,
+    }).first();
+    if (existRecord) {
+      await existRecord.delete();
+    }
+    console.log('existRecord', existRecord);
+
+    return HelperUtils.responseSuccess(existRecord);
   }
 
 }

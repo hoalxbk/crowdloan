@@ -41,26 +41,6 @@ class WhiteListUserController {
     }
   }
 
-  async deleteWhiteList({request, params}) {
-
-    console.log('params', params, request.params);
-    const { campaignId, walletAddress } = params;
-
-    const whitelistService = new WhitelistService();
-    const existWhitelist = await whitelistService.buildQueryBuilder({
-      campaign_id: campaignId,
-      wallet_address: walletAddress,
-    }).first();
-
-    if (existWhitelist) {
-      await existWhitelist.delete();
-    }
-    console.log('existWhitelist', existWhitelist);
-
-    return HelperUtils.responseSuccess(existWhitelist);
-
-  }
-
   async getParticipants({request}) {
     // get request params
     const campaign_id = request.params.campaignId;
@@ -95,6 +75,23 @@ class WhiteListUserController {
       console.log(e);
       return HelperUtils.responseErrorInternal('Get Whitelist Failed !');
     }
+  }
+
+  async deleteWhiteList({request, params}) {
+    console.log('[deleteWhiteList] - Delete WhiteList with params: ', params, request.params);
+
+    const { campaignId, walletAddress } = params;
+    const whitelistService = new WhitelistService();
+    const existRecord = await whitelistService.buildQueryBuilder({
+      campaign_id: campaignId,
+      wallet_address: walletAddress,
+    }).first();
+    if (existRecord) {
+      await existRecord.delete();
+    }
+    console.log('existRecord', existRecord);
+
+    return HelperUtils.responseSuccess(existRecord);
   }
 
   async getRandomWinners({request}) {

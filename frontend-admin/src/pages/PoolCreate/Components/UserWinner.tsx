@@ -6,10 +6,11 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
-import {makeStyles} from "@material-ui/core";
+import {Button, makeStyles} from "@material-ui/core";
 import {useCommonStyle} from "../../../styles";
-import {getWinnerUser} from "../../../request/participants";
+import {deleteParticipantUser, deleteWinnerUser, getWinnerUser} from "../../../request/participants";
 import useGetList from "./hooks/useGetList";
+import useDeleteItem from "./hooks/useDeleteItem";
 
 const useStylesTable = makeStyles({
   table: {
@@ -27,29 +28,23 @@ function UserWinner(props: any) {
   const [editRow, setEditRow] = useState(0);
   const [isEdit, setIsEdit] = useState(true);
 
+
+
   const { poolDetail } = props;
   const {
     rows, setRows,
     search,
     searchDelay,
-  } = useGetList({
+  } = useGetList({ poolDetail, handleSearchFunction: getWinnerUser });
+
+  const {
+    deleteItem
+  } = useDeleteItem({
     poolDetail,
-    handleSearchFunction: getWinnerUser
+    handleDeleteFunction: deleteWinnerUser,
+    handleSearchFunction: search
   });
 
-  const deleteTier = (e: any, row: any, index: number) => {
-    console.log('ROW: ', row, index);
-    // eslint-disable-next-line no-restricted-globals
-    if (!confirm('Do you want delete this user?')) {
-      return false;
-    }
-
-    const newRows = [...rows];
-    if (index > -1) {
-      newRows.splice(index, 1);
-    }
-    setRows(newRows);
-  };
 
   return (
     <>
@@ -62,32 +57,30 @@ function UserWinner(props: any) {
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
             <TableRow>
+              <TableCell align="right">Actions</TableCell>
               <TableCell>Email</TableCell>
               <TableCell align="center">Wallet Address</TableCell>
-              <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row: any, index: number) => (
               <TableRow key={row.id}>
+
+
+                <TableCell align="right">
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={(e) => deleteItem(e, row, index)}
+                    style={{marginLeft: 10, marginTop: 10}}
+                  >Delete</Button>
+                </TableCell>
+
+
                 <TableCell component="th" scope="row">
                   {row.email}
                 </TableCell>
                 <TableCell align="center">{row.wallet_address}</TableCell>
-                <TableCell align="right">
-                  {/*<Button*/}
-                  {/*  variant="contained"*/}
-                  {/*  color="primary"*/}
-                  {/*  onClick={(e) => openPopupEdit(e, row, index)}*/}
-                  {/*>Edit</Button>*/}
-
-                  {/*<Button*/}
-                  {/*  variant="contained"*/}
-                  {/*  color="secondary"*/}
-                  {/*  onClick={(e) => deleteTier(e, row, index)}*/}
-                  {/*  style={{marginLeft: 10, marginTop: 10}}*/}
-                  {/*>Delete</Button>*/}
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>

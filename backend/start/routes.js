@@ -77,7 +77,12 @@ Route.group(() => {
 
   // Winners
   Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
-  Route.delete('pool/:campaignId/winners/:walletAddress/delete', 'WhiteListUserController.deleteWhiteList');
+  Route.delete('pool/:campaignId/winners/:walletAddress/delete', 'WinnerListUserController.deleteWinner');
+
+  // Reserve
+  Route.get('pool/:campaignId/reserves', 'ReservedListController.getReservedList');
+  Route.delete('pool/:campaignId/reserves/:walletAddress/delete', 'ReservedListController.deleteReserve');
+
   Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
   Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 

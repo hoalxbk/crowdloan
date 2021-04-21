@@ -2,9 +2,9 @@ import React, {useEffect, useState} from 'react';
 import useStyles from "../style";
 import UserParticipant from "./UserParticipant";
 import UserWinner from "./UserWinner";
-import {getParticipantUser, getWinnerUser} from "../../../request/participants";
 
 import {Tabs} from 'antd';
+import UserReverse from "./UserReverse";
 const { TabPane } = Tabs;
 function callback(key: any) {
   console.log(key);
@@ -34,7 +34,7 @@ const UserJoinPool = (props: any) => {
           {/*    users={winners}*/}
           {/*  />*/}
           {/*}*/}
-          <UserWinner poolDetail={poolDetail} s/>
+          <UserReverse poolDetail={poolDetail} />
         </TabPane>
       </Tabs>
 

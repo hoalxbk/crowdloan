@@ -84,6 +84,23 @@ class WinnerListUserController {
     return HelperUtils.responseSuccess(res);
   }
 
+  async deleteWinner({request, params}) {
+    console.log('[deleteWinner] - Delete Winner with params: ', params, request.params);
+
+    const { campaignId, walletAddress } = params;
+    const winnerService = new WinnerListService();
+    const existRecord = await winnerService.buildQueryBuilder({
+      campaign_id: campaignId,
+      wallet_address: walletAddress,
+    }).first();
+    if (existRecord) {
+      await existRecord.delete();
+    }
+    console.log('existRecord', existRecord);
+
+    return HelperUtils.responseSuccess(existRecord);
+  }
+
 }
 
 module.exports = WinnerListUserController
