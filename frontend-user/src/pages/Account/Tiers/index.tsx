@@ -50,7 +50,6 @@ const Tiers = (props: any) => {
 
     let process = (parseInt(userTier)) * 100 / ListData.length + (parseFloat(current) - tierA) * 100 /((tierB - tierA) * ListData.length)
     if(process > 100) process = 100
-    setLoading(false);
     return process;
   }
   
@@ -58,6 +57,7 @@ const Tiers = (props: any) => {
     if(_.isEmpty(tiers) || _.isEmpty(userTier) || _.isEmpty(userInfo)) return
     !showMoreInfomation && setCurrentProcess(calculateProcess(tiers, userInfo.staked));
     showMoreInfomation && setCurrentProcess(userTier*100/(tiersBuyLimit.length - 1));
+    setLoading(false);
   }, [tiers, userTier, userInfo])
 
   return (
