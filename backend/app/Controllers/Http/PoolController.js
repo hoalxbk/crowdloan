@@ -31,7 +31,7 @@ class PoolController {
 
   async createPool({request, auth}) {
     const inputParams = request.only([
-      'register_by',
+      'registed_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
       'token', 'token_by_eth',  'token_conversion_rate', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
@@ -40,7 +40,7 @@ class PoolController {
     ]);
 
     const data = {
-      'register_by': inputParams.register_by,
+      'registed_by': inputParams.registed_by,
 
       'title': inputParams.title,
       'website': inputParams.website,
@@ -103,7 +103,7 @@ class PoolController {
 
   async updatePool({ request, auth, params }) {
     const inputParams = request.only([
-      'register_by',
+      'registed_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
       'token', 'token_by_eth', 'token_conversion_rate', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
@@ -112,7 +112,7 @@ class PoolController {
     ]);
 
     const data = {
-      'register_by': inputParams.register_by,
+      'registed_by': inputParams.registed_by,
 
       'title': inputParams.title,
       'website': inputParams.website,

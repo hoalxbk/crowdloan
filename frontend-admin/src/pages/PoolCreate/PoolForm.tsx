@@ -76,7 +76,7 @@ function PoolForm(props: any) {
 
     const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
     const submitData = {
-      register_by: loginUser?.wallet_address,
+      registed_by: loginUser?.wallet_address,
       is_display: data.is_display,
 
       // Pool general
@@ -188,7 +188,7 @@ function PoolForm(props: any) {
       const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
       const submitData = {
         id: poolDetail.id,
-        register_by: loginUser?.wallet_address,
+        registed_by: loginUser?.wallet_address,
 
         // Pool general
         title: data.title,
