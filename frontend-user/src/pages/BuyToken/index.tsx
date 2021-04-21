@@ -179,7 +179,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       )
     } 
 
-    if (!poolDetails && !loadingPoolDetail) {
+    if ((!poolDetails || !poolDetails?.isDisplay) && !loadingPoolDetail) {
       return <p style={{ 
         color: 'white', 
         textAlign: 'center', 
