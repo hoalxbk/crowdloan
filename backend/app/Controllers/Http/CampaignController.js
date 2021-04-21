@@ -454,7 +454,7 @@ class CampaignController {
           unit = 18;
           break;
         default:
-          console.log(`Do not found currency support of campaign ${camp.accept_currency}`);
+          console.log(`Do not found currency support ${camp.accept_currency} of campaignId ${campaign_id} `);
           return HelperUtils.responseErrorInternal("Internal Server Error !");
       }
       const receipt = await Promise.all([
