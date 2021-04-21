@@ -632,8 +632,7 @@ export const deployPool = (campaign: any, history: any) => {
         tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
       
       } else {
-        tokenByEthDecimals = getDigitsAfterDecimals(removeTrailingZeros(token_by_eth));
-        tokenByETHActualRate = new BigNumber(removeTrailingZeros(token_by_eth)).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
+        tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
       }
 
       const poolType = campaign.pool_type;
