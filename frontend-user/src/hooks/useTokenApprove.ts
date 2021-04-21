@@ -43,7 +43,9 @@ const useTokenAllowance = (
                setTokenApproveLoading(false);
 
                await transaction.wait(1);
-                dispatch(alertSuccess("Token Approve Successful!"));
+
+              dispatch(alertSuccess("Token Approve Successful!"));
+               setTokenApproveLoading(false);
              }
            }
       } catch (err) {

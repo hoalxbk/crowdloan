@@ -39,8 +39,9 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
     signature &&
     minBuy &&
     maxBuy &&
+    !depositError &&
     depositWithSignature(poolAddress, purchasableCurrency, amount, signature, `${minBuy}`, maxBuy);
-  }, [signature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy]);
+  }, [signature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy, depositError]);
 
 
   useEffect(() => {
@@ -49,6 +50,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
       setDepositError(errorMessage as string);
       setTokenDepositLoading(false);
       setSignature("");
+      setUserPurchasedSignature("");
     }
   }, [error, buyError]);
 
@@ -90,17 +92,18 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
         setUserPurchasedSignature("");
         setSignature("");
-        setTokenDepositLoading(false);
         setTokenDepositTransaction(transaction.hash);
 
         await transaction.wait(1);
 
         dispatch(alertSuccess("Token Deposit Successful!"));
+        setTokenDepositLoading(false);
       }
     } catch (err) {
       dispatch(alertFailure(err.message));
       setTokenDepositLoading(false);
       setSignature("");
+      setUserPurchasedSignature("");
       setDepositError(err.message);
     }
   }, [minBuy, maxBuy, poolAddress]);

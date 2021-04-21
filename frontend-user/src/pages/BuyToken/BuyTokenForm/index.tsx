@@ -136,7 +136,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && !estimateErr 
      && availablePurchase 
      && estimateTokens > 0 
-     && estimateTokens <= maximumBuy
+     && input <= maximumBuy
      && !wrongChain
      && validTier    
     );
@@ -191,7 +191,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     setInput(val);
 
     if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
-      const tokens = new BigNumber(val).multipliedBy(rate).toNumber()
+      const tokens = new BigNumber(val).multipliedBy(new BigNumber(1).div(rate)).toNumber()
       setEstimateTokens(tokens);
       /* const estimatedFee = await estimateFee(val, purchasableCurrency) */ 
       /* estimatedFee && setTransactionFee(estimatedFee); */
@@ -235,7 +235,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       {
         appChainID !== BSC_CHAIN_ID && (
           <p className={styles.buyTokenFormTitle}>
-            You have {numberWithCommas(userPurchased.toString())} {purchasableCurrency} DEPOSITED from {maximumBuy} available for your TIER
+            You have {new BigNumber(userPurchased).multipliedBy(rate).toFixed()} {purchasableCurrency} BOUGHT from {maximumBuy} available for your TIER. <br/> 
+            The remaining amount is {new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()}
           </p>
         ) 
       }
