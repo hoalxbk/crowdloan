@@ -35,6 +35,7 @@ type BuyTokenFormProps = {
   ableToFetchFromBlockchain: boolean | undefined
   minTier: number | undefined
   isDeployed: boolean | undefined
+  addressReceiver: string | undefined
 }
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
@@ -64,7 +65,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     availablePurchase,
     ableToFetchFromBlockchain,
     minTier,
-    isDeployed
+    isDeployed,
+    addressReceiver
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -79,7 +81,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     tokenDepositTransaction,
     setTokenDepositLoading,
     depositError
-  } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input });
+  } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input, addressReceiver });
 
   const { retrieveTokenAllowance } = useTokenAllowance();
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
@@ -136,7 +138,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && !estimateErr 
      && availablePurchase 
      && estimateTokens > 0 
-     && input <= maximumBuy
+     && (purchasableCurrency !== 'ETH' ? input <= maximumBuy: new BigNumber(input).lte(tokenBalance))
      && !wrongChain
      && validTier    
     );
