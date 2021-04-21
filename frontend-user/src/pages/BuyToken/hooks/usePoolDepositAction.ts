@@ -13,15 +13,14 @@ type PoolDepositActionParams = {
   poolAddress?: string;
   poolId?: number;
   purchasableCurrency: string;
-  amount: string;
-  addressReceiver: string;
+  amount: string
 }
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
 const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
 const USDT_OR_USDC_DECIMALS = 6;
 
-const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount, addressReceiver }: PoolDepositActionParams) => {
+const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount }: PoolDepositActionParams) => {
   const dispatch = useDispatch();
 
   const [depositError, setDepositError] = useState("");
@@ -41,9 +40,8 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
     minBuy &&
     maxBuy &&
     !depositError &&
-    addressReceiver &&
-    depositWithSignature(poolAddress, purchasableCurrency, amount, signature, `${minBuy}`, maxBuy, addressReceiver);
-  }, [signature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy, addressReceiver, depositError]);
+    depositWithSignature(poolAddress, purchasableCurrency, amount, signature, `${minBuy}`, maxBuy);
+  }, [signature, poolAddress, purchasableCurrency, amount, minBuy, maxBuy, depositError]);
 
 
   useEffect(() => {
@@ -62,8 +60,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
     amount: string, 
     signature: string,
     minBuy: string,
-    maxBuy: string,
-    addressReceiver: string
+    maxBuy: string
   ) => {
     try {
       if (minBuy && maxBuy && signature && amount) {
@@ -73,7 +70,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         const decimals = acceptCurrency === 'ETH' ? 18: USDT_OR_USDC_DECIMALS;
 
         const params = acceptCurrency === 'ETH' ? [ 
-          addressReceiver,
+          connectedAccount,
           connectedAccount,
           maxBuy,
           minBuy,
@@ -82,7 +79,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
             value: new BigNumber(amount).multipliedBy(10 ** 18).toFixed()
           }
         ]: [
-          addressReceiver,
+          connectedAccount,
           acceptCurrency ===  "USDT" ? USDT_ADDRESS: USDC_ADDRESS,
           new BigNumber(amount).multipliedBy(10 ** decimals).toFixed(),
           connectedAccount,
@@ -109,7 +106,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
       setUserPurchasedSignature("");
       setDepositError(err.message);
     }
-  }, [minBuy, maxBuy, poolAddress, addressReceiver]);
+  }, [minBuy, maxBuy, poolAddress]);
 
   const deposit = useCallback(async () => {
     if (amount && new BigNumber(amount).gt(0) && poolAddress) {
