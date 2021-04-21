@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -9,6 +9,7 @@ import TableBody from "@material-ui/core/TableBody";
 import {Button, makeStyles} from "@material-ui/core";
 import {useCommonStyle} from "../../../styles";
 import {
+  addReservesUser,
   deleteParticipantUser,
   deleteReservesUser,
   getParticipantUser,
@@ -17,6 +18,9 @@ import {
 import {withRouter} from "react-router";
 import useGetList from "./hooks/useGetList";
 import useDeleteItem from "./hooks/useDeleteItem";
+import UserParticipantCreatePopup from "./UserParticipantCreatePopup";
+import {useDispatch} from "react-redux";
+import {alertFailure, alertSuccess} from "../../../store/actions/alert";
 
 const useStylesTable = makeStyles({
   table: {
@@ -33,7 +37,6 @@ const useStylesTable = makeStyles({
 function UserReverse(props: any) {
   const commonStyle = useCommonStyle();
   const classesTable = useStylesTable();
-
   const { poolDetail } = props;
   const {
     rows,
@@ -49,39 +52,36 @@ function UserReverse(props: any) {
     handleSearchFunction: search
   });
 
-
-  // const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
-  // const [editData, setEditData] = useState({});
-  // const [editRow, setEditRow] = useState(0);
-  // const [isEdit, setIsEdit] = useState(true);
-  // // const openPopupEdit = (e: any, row: any, index: number) => {
-  // //   console.log('ROW: ', row, index);
-  // //   setEditData(row);
-  // //   setEditRow(index);
-  // //   setIsEdit(true);
-  // //   setIsOpenEditPopup(true);
-  // // };
-  //
-  // const openPopupCreate = (e: any) => {
-  //   setEditData({});
-  //   setEditRow(-1);
-  //   setIsEdit(false);
+  const dispatch = useDispatch();
+  const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
+  const [editData, setEditData] = useState({});
+  const [editRow, setEditRow] = useState(0);
+  const [isEdit, setIsEdit] = useState(true);
+  // const openPopupEdit = (e: any, row: any, index: number) => {
+  //   console.log('ROW: ', row, index);
+  //   setEditData(row);
+  //   setEditRow(index);
+  //   setIsEdit(true);
   //   setIsOpenEditPopup(true);
   // };
-  //
-  // const handleCreateUpdateData = async (responseData: any) => {
-  //   console.log('responseData', editRow, responseData);
-  //   // if (isEdit && editRow !== -1) {
-  //   //   // Update
-  //   //   // @ts-ignore
-  //   //   rows[editRow] = responseData;
-  //   // } else {
-  //   //   // Create
-  //   //   // @ts-ignore
-  //   //   rows.push(responseData);
-  //   // }
-  //   // setIsOpenEditPopup(false);
-  // };
+
+  const openPopupCreate = (e: any) => {
+    setEditData({});
+    setEditRow(-1);
+    setIsEdit(false);
+    setIsOpenEditPopup(true);
+  };
+
+  const handleCreateUpdateData = async (responseData: any) => {
+    const response = await addReservesUser(poolDetail.id, responseData);
+    if (response?.status === 200) {
+      dispatch(alertSuccess('Create Successful !!!'));
+      search();
+      setIsOpenEditPopup(false);
+    } else {
+      dispatch(alertFailure('Create Fail !!!'));
+    }
+  };
 
 
   return (
@@ -89,27 +89,31 @@ function UserReverse(props: any) {
       <div className={commonStyle.boxSearch}>
         <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
         <img src="/images/icon-search.svg" alt="" />
+
+
+        <div style={{float: 'right'}}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={openPopupCreate}
+            style={{marginLeft: 10, marginTop: 10}}
+          >Add</Button>
+
+          {isOpenEditPopup &&
+          <UserParticipantCreatePopup
+            isOpenEditPopup={isOpenEditPopup}
+            setIsOpenEditPopup={setIsOpenEditPopup}
+            editData={editData}
+            isEdit={isEdit}
+            handleCreateUpdateData={handleCreateUpdateData}
+          />
+          }
+        </div>
+
       </div>
 
-      {/*<div style={{float: 'right'}}>*/}
-      {/*  <Button*/}
-      {/*    variant="contained"*/}
-      {/*    color="primary"*/}
-      {/*    onClick={openPopupCreate}*/}
-      {/*    style={{marginLeft: 10, marginTop: 10}}*/}
-      {/*  >Add</Button>*/}
 
-      {/*  {isOpenEditPopup &&*/}
-      {/*    <CreateEditTierForm*/}
-      {/*      isOpenEditPopup={isOpenEditPopup}*/}
-      {/*      setIsOpenEditPopup={setIsOpenEditPopup}*/}
-      {/*      // renderError={renderError}*/}
-      {/*      editData={editData}*/}
-      {/*      isEdit={isEdit}*/}
-      {/*      handleCreateUpdateData={handleCreateUpdateData}*/}
-      {/*    />*/}
-      {/*  }*/}
-      {/*</div>*/}
+
 
 
       <TableContainer component={Paper} className={commonStyle.tableScroll}>

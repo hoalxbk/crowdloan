@@ -81,6 +81,7 @@ Route.group(() => {
 
   // Reserve
   Route.get('pool/:campaignId/reserves', 'ReservedListController.getReservedList');
+  Route.post('pool/:campaignId/reserves/add', 'ReservedListController.addReserveUser');
   Route.delete('pool/:campaignId/reserves/:walletAddress/delete', 'ReservedListController.deleteReserve');
 
   Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');

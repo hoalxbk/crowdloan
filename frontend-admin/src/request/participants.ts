@@ -72,3 +72,12 @@ export const deleteReservesUser = async (campaignId: any, data: any = {}) => {
 };
 
 
+export const addReservesUser = async (campaignId: any, data: any = {}) => {
+  const baseRequest = new BaseRequest();
+
+  let url = apiRoute(`/pool/${campaignId}/reserves/add`);
+  const response = await baseRequest.post(url, data) as any;
+  const resObject = await response.json();
+
+  return resObject;
+};

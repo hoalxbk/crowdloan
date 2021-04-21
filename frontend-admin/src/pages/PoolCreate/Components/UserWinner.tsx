@@ -52,6 +52,10 @@ function UserWinner(props: any) {
         <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
         <img src="/images/icon-search.svg" alt="" />
       </div>
+      <div style={{color: 'red'}}>
+        <div>These Winner list accounts still have to check their tier when buying tokens.</div>
+        <div>If you want to skip this check, please add accounts to the Reserve list.</div>
+      </div>
 
       <TableContainer component={Paper} className={commonStyle.tableScroll}>
         <Table className={classesTable.table} aria-label="simple table">

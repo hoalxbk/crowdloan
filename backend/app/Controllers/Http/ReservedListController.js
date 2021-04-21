@@ -2,6 +2,9 @@
 
 const ReservedListService = use('App/Services/ReservedListService')
 const HelperUtils = use('App/Common/HelperUtils');
+const ReservedListModel = use('App/Models/ReservedList');
+const UserModel = use('App/Models/User');
+
 const Redis = use('Redis');
 
 class ReservedListController {
@@ -82,22 +85,48 @@ class ReservedListController {
     }
   }
 
-
   async deleteReserve({request, params}) {
-    console.log('[deleteReserve] - Delete Winner with params: ', params, request.params);
+    try {
+      console.log('[deleteReserve] - Delete Winner with params: ', params, request.params);
 
-    const { campaignId, walletAddress } = params;
-    const reservedService = new ReservedListService();
-    const existRecord = await reservedService.buildQueryBuilder({
-      campaign_id: campaignId,
-      wallet_address: walletAddress,
-    }).first();
-    if (existRecord) {
-      await existRecord.delete();
+      const { campaignId, walletAddress } = params;
+      const reservedService = new ReservedListService();
+      const existRecord = await reservedService.buildQueryBuilder({
+        campaign_id: campaignId,
+        wallet_address: walletAddress,
+      }).first();
+      if (existRecord) {
+        await existRecord.delete();
+      }
+      console.log('existRecord', existRecord);
+
+      return HelperUtils.responseSuccess(existRecord);
+
+    } catch (e) {
+      return HelperUtils.responseErrorInternal();
     }
-    console.log('existRecord', existRecord);
+  }
 
-    return HelperUtils.responseSuccess(existRecord);
+  async addReserveUser({ request, params }) {
+    try {
+      console.log('[addReserveUser] - Params: ', params);
+
+      const { campaignId } = params;
+      const inputParams = request.only(['email', 'wallet_address']);
+
+      // TODO: Check user exist in system
+
+      const reservedUser = new ReservedListModel;
+      reservedUser.campaign_id = campaignId;
+      reservedUser.email = inputParams.email;
+      reservedUser.wallet_address = inputParams.wallet_address;
+      await reservedUser.save();
+
+      console.log('Res: ', reservedUser);
+      return HelperUtils.responseSuccess(reservedUser);
+    } catch (e) {
+      return HelperUtils.responseErrorInternal();
+    }
   }
 
 }
