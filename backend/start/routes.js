@@ -71,6 +71,7 @@ Route.group(() => {
   Route.post('pool/:campaignId/update', 'PoolController.updatePool');
   Route.get('pool/:campaignId', 'PoolController.getPool');
   Route.get('pool/:campaignId/participants', 'WhiteListUserController.getParticipants');
+  Route.delete('pool/:campaignId/participants/:walletAddress/delete', 'WhiteListUserController.deleteWhiteList');
   Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
   Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 

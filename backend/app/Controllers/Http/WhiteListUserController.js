@@ -41,6 +41,26 @@ class WhiteListUserController {
     }
   }
 
+  async deleteWhiteList({request, params}) {
+
+    console.log('params', params, request.params);
+    const { campaignId, walletAddress } = params;
+
+    const whitelistService = new WhitelistService();
+    const existWhitelist = await whitelistService.buildQueryBuilder({
+      campaign_id: campaignId,
+      wallet_address: walletAddress,
+    }).first();
+
+    if (existWhitelist) {
+      await existWhitelist.delete();
+    }
+    console.log('existWhitelist', existWhitelist);
+
+    return HelperUtils.responseSuccess(existWhitelist);
+
+  }
+
   async getParticipants({request}) {
     // get request params
     const campaign_id = request.params.campaignId;
@@ -62,7 +82,8 @@ class WhiteListUserController {
       const filterParams = {
         'campaign_id': campaign_id,
         'page': page,
-        'pageSize': pageSize
+        'pageSize': pageSize,
+        'search_term': request.input('search_term') || '',
       };
       const whitelistService = new WhitelistService();
       // get winner list
