@@ -101,11 +101,11 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         setTokenDepositLoading(false);
       }
     } catch (err) {
-      dispatch(alertFailure(err.message));
+      dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
+      setDepositError(TRANSACTION_ERROR_MESSAGE);
       setTokenDepositLoading(false);
       setSignature("");
       setUserPurchasedSignature("");
-      setDepositError(err.message);
     }
   }, [minBuy, maxBuy, poolAddress]);
 
@@ -118,10 +118,10 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
         await signMessage();
       } catch (err) {
-        dispatch(alertFailure(err.message));
+        dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
+        setDepositError(TRANSACTION_ERROR_MESSAGE);
         setSignature("");
         setTokenDepositLoading(false);
-        setDepositError(TRANSACTION_ERROR_MESSAGE);
       }
     }
   }, [connectedAccount, library, poolAddress, amount])
