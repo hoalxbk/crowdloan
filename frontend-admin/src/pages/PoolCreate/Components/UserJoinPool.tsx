@@ -16,7 +16,6 @@ const UserJoinPool = (props: any) => {
     poolDetail
   } = props;
 
-
   return (
     <>
       <div className={classes.formControl}>
