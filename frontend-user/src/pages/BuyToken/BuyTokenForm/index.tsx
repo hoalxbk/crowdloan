@@ -13,6 +13,7 @@ import { TokenType } from '../../../hooks/useTokenDetails';
 import getAccountBalance from '../../../utils/getAccountBalance';
 import { connectWalletSuccess } from '../../../store/actions/wallet';
 
+import { ETH_CHAIN_ID } from '../../../constants/network';
 import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import useTokenBalance from '../../../hooks/useTokenBalance';
 import useTokenAllowance from '../../../hooks/useTokenAllowance';
@@ -39,6 +40,8 @@ type BuyTokenFormProps = {
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
 const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
+const USDC_BSC_ADDRESS = process.env.REACT_APP_USDC_BSC_SMART_CONTRACT;
+const USDT_BSC_ADDRESS = process.env.REACT_APP_USDT_BSC_SMART_CONTRACT;
 
 const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const styles = useStyles();
@@ -84,10 +87,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const { retrieveTokenAllowance } = useTokenAllowance();
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
 
-  const getApproveToken = useCallback(() => {
+  const getApproveToken = useCallback((appChainID: string) => {
     if (purchasableCurrency && purchasableCurrency === "USDT") {
       return {
-        address: USDT_ADDRESS as string,
+        address: appChainID === ETH_CHAIN_ID ?  USDT_ADDRESS as string: "0x00",
         name: "USDT",
         symbol: "USDT",
         decimals: 6 
@@ -111,9 +114,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         decimals: 18
       }
     }
-  }, [purchasableCurrency])
+  }, [purchasableCurrency, appChainID])
 
-  const tokenToApprove = getApproveToken(); 
+  const tokenToApprove = getApproveToken(appChainID); 
 
   const { approveToken, tokenApproveLoading, transactionHash, setTokenApproveLoading } = useTokenApprove(
     tokenToApprove,
