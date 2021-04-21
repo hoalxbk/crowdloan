@@ -136,7 +136,7 @@ export const getDigitsAfterDecimals = (input: string): number => {
   return totalDigits;     
 }
 
-export function numberWithCommas(x: string, decimals: number = 8) {
+export function numberWithCommas(x: string, decimals: number = 6) {
   return removeTrailingZeros(commaNumber(new BigNumber(x).toFixed(decimals)));
 }
 export const nFormatter = (number: string, digits: any = 0) => {

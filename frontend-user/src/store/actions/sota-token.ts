@@ -36,11 +36,11 @@ export const approve = (address: string | null | undefined, library: Web3Provide
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
     dispatch({ type: sotaTokenActions.APPROVE_LOADING });
     try {
-      let result = {};
+      let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_SOTA as string, erc20ABI, library, address || '');
       result = await contract?.approve(process.env.REACT_APP_PKFTIERS, MAX_INT)
-
+      await result.wait(1);
       if(result) {
         dispatch(getAllowance(address || ''));
       }

@@ -7,6 +7,10 @@ import useFetch from '../../../hooks/useFetch';
 import ModalVerifyEmail from '../ModalVerifyEmail';
 import {isWidthDown, isWidthUp, withWidth} from '@material-ui/core';
 import { trimMiddlePartAddress } from '../../../utils/accountAddress';
+import { USER_STATUS } from '../../../constants';
+//@ts-ignore
+import AnimatedNumber from "animated-number-react";
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 const AccountInformation = (props: any) => {
   const styles = useStyles();
@@ -14,7 +18,7 @@ const AccountInformation = (props: any) => {
   const [openModalVerifyEmail, setOpenModalVerifyEmail] = useState(false);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
   const { data: data = {}, loading, error } = useFetch<any>(`/user/profile?wallet_address=${connectedAccount}`);
-  const [emailVerified, setEmailVeryfied] = useState(false);
+  const [emailVerified, setEmailVeryfied] = useState(0);
   const [email, setEmail] = useState<string>('');
 
   const handleKYC = () => {
@@ -22,8 +26,11 @@ const AccountInformation = (props: any) => {
   }
 
   useEffect(() => {
-    data.user && data.user.email && setEmail(data.user.email)
+    data && data.user && data.user.email && setEmail(data.user.email)
+    data && data.user && data.user.status && setEmailVeryfied(data.user.status)
   }, [data]);
+
+  const formatValue = (value: string) => parseFloat(value).toFixed(2);
 
   return (
     <div className={`${classNamePrefix}__component`}>
@@ -31,15 +38,28 @@ const AccountInformation = (props: any) => {
       <div className={styles.mainInfomation}>
         <div className={styles.inputGroup}>
           <span>Email</span>
-          {isWidthUp('sm', props.width) && data.user?.email !== '' && !emailVerified && <>
-            <span>{data.user?.email}</span>
-            <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>Verify email</button></>}
-          {isWidthDown('xs', props.width) && data.user?.email !== '' && emailVerified && <span>{data.user?.email}</span>}
-          {data.user?.email === '' && connectedAccount && <span className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>Verify email</span>}
+          {isWidthUp('sm', props.width) && <>
+            {email && <span>{email}</span>}
+            {(emailVerified == USER_STATUS.UNVERIFIED || !email) &&
+              <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
+                Verify Email
+              </button>}
+          </>}
+          {isWidthDown('xs', props.width) && <>
+            {email && <span>{email}</span>}
+            {(emailVerified == USER_STATUS.UNVERIFIED || !email) &&
+              <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
+                Verify Email
+              </button>}
+          </>}
+          {email === '' && connectedAccount && <span className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>Verify email</span>}
         </div>
         <div className={styles.inputGroup}>
           <span>Your Wallet</span>
-          <span>{trimMiddlePartAddress(connectedAccount || '')}</span>
+          <span>
+            {isWidthUp('sm', props.width) && connectedAccount}
+            {isWidthDown('xs', props.width) && trimMiddlePartAddress(connectedAccount || '')}
+          </span>
         </div>
         <div className={styles.redKiteInfo}>
           <div className="kyc-info">
@@ -48,16 +68,21 @@ const AccountInformation = (props: any) => {
           </div>
           <div className={styles.walletInfo}>
             <p>Wallet balance</p>
-            <span>{ parseFloat(balance.token || 0).toFixed(2) }</span>
+            <AnimatedNumber
+              value={balance.token}
+              formatValue={numberWithCommas}
+            />
             <p>Locked-in </p>
-            <span>{ parseFloat(userInfo.staked || 0).toFixed(2) }</span>
+            <AnimatedNumber
+              value={userInfo.staked}
+              formatValue={numberWithCommas}
+            />
           </div>
         </div>
       </div>
       {openModalVerifyEmail && <ModalVerifyEmail
         setOpenModalVerifyEmail={setOpenModalVerifyEmail}
         email={email}
-        setEmailVeryfied={setEmailVeryfied}
         setEmail={setEmail}
       />}
     </div>
