@@ -19,6 +19,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "@web3-react/walletconnect-connector": "^6.1.9",
     "ag-grid-community": "^24.1.0",
+    "animated-number-react": "^0.1.2",
     "axios": "^0.21.1",
     "bootstrap": "^4.5.3",
     "cogo-toast": "^4.2.3",

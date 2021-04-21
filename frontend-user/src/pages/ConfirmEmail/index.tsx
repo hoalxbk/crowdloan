@@ -9,6 +9,8 @@ import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
 import {adminRoute, apiRoute, publicRoute} from "../../utils";
+import DefaultLayout from '../../components/Layout/DefaultLayout';
+import useAuth from '../../hooks/useAuth';
 
 const loginLogo = '/images/login-logo.png';
 
@@ -18,18 +20,7 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
 
   const [confirmEmailLoading, setConfirmEmailLoading] = useState(false);
 
-  const { data: loginInvestor } = useSelector((state: any) => state.investor);
-  const { data: loginUser } = useSelector((state: any) => state.user);
-
-  const { handleConnectorDisconnect } = useContext(AppContext);
-  const { role, token } = useParams() as any;
-
-  if (role === 'investor' && loginInvestor) {
-    props.history.push(publicRoute('/'));
-  }
-  if (role !== 'investor' && loginUser) {
-    props.history.push(adminRoute('/'));
-  }
+  const { token } = useParams() as any;
 
   useEffect(() => {
     const confirmEmail = async () => {
@@ -49,48 +40,28 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
       }
 
       setConfirmEmailLoading(false);
-
-      if (role === 'investor') {
-        handleConnectorDisconnect && handleConnectorDisconnect();
-        props.history.push(publicRoute('/'));
-      }
-      if (role !== 'investor') {
-        props.history.push(adminRoute('/'));
-      }
     }
 
     confirmEmail();
   }, []);
 
-  const render = () => {
-    return (
-      <>
-        {
-          confirmEmailLoading && (
+  return (
+    <DefaultLayout>
+      <Container fixed>
+      <div className={classes.forgotPassword}>
+        <div className="forgot-ps__wrap">
+          {confirmEmailLoading && (
             <div style={{ textAlign: 'center' }}>
               <CircularProgress size={80} />
-              <p style={{ marginTop: 10, fontSize: 17, fontWeight: 600 }}>Email Confirmation Processing ...</p>
+              <p style={{ marginTop: 10, fontSize: 17, fontWeight: 600 }}>
+                Email Confirmation Processing ...
+              </p>
             </div>
-          )
-        }
-      </>
-    )
-  }
-
-  return (
-    <Container fixed>
-      <div className={classes.forgotPassword}>
-        <span className="forgot-ps__logo">
-          <img src={loginLogo} alt="login-logo" />
-          <h2 className="forgot-ps__brand">Red Kite</h2>
-        </span>
-        <div className="forgot-ps__wrap">
-          {
-            render()
-          }
+          )}
         </div>
       </div>
     </Container>
+    </DefaultLayout>
   )
 };
 

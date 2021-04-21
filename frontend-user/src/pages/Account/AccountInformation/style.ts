@@ -132,6 +132,8 @@ const useStyles = makeStyles((theme: any) => {
         color: '#FFFFFF',
         fontSize: '28px',
         lineHeight: '32px',
+        fontFamily: 'DM Sans',
+        fontStyle: 'normal',
       }
     }
   };

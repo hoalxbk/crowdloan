@@ -2,6 +2,15 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: any) => {
   return {
+    tierComponent: {
+      transition: '1s',
+      '&.inactive': {
+        opacity: 0,
+      },
+      '&.active': {
+        opacity: 1,
+      }
+    },
     title: {
       display: 'flex',
       flexDirection: 'row',
@@ -49,7 +58,14 @@ const useStyles = makeStyles((theme: any) => {
         top: '11.5px',
         left: '0',
         backgroundColor: '#232394',
-        zIndex: 1
+        zIndex: 1,
+        transition: '1s',
+        transitionDelay: '0.5s',
+        transitionTimingFunction: 'easy-in',
+
+        '&.inactive': {
+          width: '0!important'
+        }
       }
     },
     tierInfo: {

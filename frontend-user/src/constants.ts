@@ -31,6 +31,13 @@ export const POOL_TYPE = {
   CLAIMABLE: 'claimable',
 };
 
+export const USER_STATUS = {
+  UNVERIFIED: 0,
+  ACTIVE: 1,
+  BLOCKED: 2,
+  DELETED: 3
+}
+
 export const TIERS = [
   {
     name: 'Start',

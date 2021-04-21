@@ -22,13 +22,11 @@ const ModalVerifyEmail = (props: any) => {
   const { account: connectedAccount } = useWeb3React();
   const { signature, signMessage, setSignature, error } = useWalletSignature();
   const [inputEmail, setInputEmail] = useState('');
-  const [lockEmail, setLockEmail] = useState('');
 
   const {
     setOpenModalVerifyEmail,
     email,
-    setEmail,
-    setEmailVeryfied
+    setEmail
   } = props;
   
   useEffect(() => {
@@ -48,17 +46,11 @@ const ModalVerifyEmail = (props: any) => {
           msgSignature: process.env.REACT_APP_MESSAGE_INVESTOR_SIGNATURE
         }
       }
-      setLockEmail(inputEmail)
       axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register-email`, data, options)
       .then(res => {
-        if(res.data.status == 200) {
-          dispatch(alertSuccess('Register success, please check verify email'));
-          setEmail(lockEmail)
-          setOpenModalVerifyEmail(false);
-        } else if(res.data.status == 400) {
-          dispatch(alertSuccess('Email registered, you need to check verify email'));
-          setEmailVeryfied(false)
-        }
+        !email && setEmail(inputEmail)
+        dispatch(alertSuccess('Register success, please check verify email'));
+        setOpenModalVerifyEmail(false);
       }).catch(() => {
         dispatch(alertFailure('email register failure, please try again later'));
       })
@@ -87,6 +79,7 @@ const ModalVerifyEmail = (props: any) => {
                 value={inputEmail}
                 onChange={e => setInputEmail(e.target.value)}
                 placeholder="Please enter email"
+                disabled={email}
               />
             </div>
           </div>
