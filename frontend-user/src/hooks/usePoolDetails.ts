@@ -29,6 +29,7 @@ export type PoolDetails = {
   minTier: number;
   isDeployed: boolean;
   isDisplay: boolean;
+  addressReceiver: string;
 }
 
 export type PoolDetailsReturnType ={
@@ -75,7 +76,8 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         networkIcon: data.network_available === 'eth' ? ETH_ICON: BSC_ICON,
         minTier: data.min_tier,
         isDeployed: data.is_deploy === 1,
-        isDisplay: data.is_display === 1
+        isDisplay: data.is_display === 1,
+        addressReceiver: data.address_receiver
       } 
     }
 
