@@ -145,12 +145,10 @@ class UserAuthController {
         user.password = param.email;
         user.wallet_address = wallet_address;
         user.signature = param.email;
-        user.is_active = Const.USER_STATUS.UNVERIFIED; // Not verify email
-        user.save();
-      // } else {
-        // if (!user.email) {
-        //   user.email = param.email;
-        // }
+        user.status = Const.USER_STATUS.UNVERIFIED; // Not verify email
+        console.log('user.status', user.status);
+
+        await user.save();
       }
       if (user.is_active === Const.USER_STATUS.ACTIVE) {
         return HelperUtils.responseBadRequest('User is actived!');
@@ -158,7 +156,7 @@ class UserAuthController {
 
       user.email = param.email;
       user.confirmation_token = await HelperUtils.randomString(50);
-      user.save();
+      await user.save();
 
       console.log('[registerVerifyEmail]: SendEmail:  ', param);
       const authService = new AuthService();
