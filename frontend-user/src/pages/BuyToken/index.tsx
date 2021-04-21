@@ -232,7 +232,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {isWinner && 
+            {isWinner && new Date() >= startBuyTimeInDate &&
               <p className={styles.poolTicketWinner}>
                 <div>
                   {
