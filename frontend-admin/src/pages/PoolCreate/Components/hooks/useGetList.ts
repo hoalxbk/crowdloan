@@ -17,7 +17,8 @@ const useGetList = (props: any) => {
       const serchParams = {
         search_term: query,
       };
-      handleSearchFunction && handleSearchFunction(poolDetail.id, serchParams)
+      handleSearchFunction &&
+      handleSearchFunction(poolDetail.id, serchParams)
         .then((res: any) => setRows(res.data));
     }
   };
@@ -27,7 +28,7 @@ const useGetList = (props: any) => {
   }, [poolDetail, currentPage, query]);
 
   return {
-    search: search,
+    search,
     rows,
     setRows,
     searchDelay,

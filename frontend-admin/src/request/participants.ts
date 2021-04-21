@@ -24,10 +24,12 @@ export const deleteParticipantUser = async (campaignId: any, data: any = {}) => 
   return resObject;
 };
 
-export const getWinnerUser = async (campaignId: any) => {
+export const getWinnerUser = async (campaignId: any, params: any = {}) => {
   const baseRequest = new BaseRequest();
 
-  let url = `/pool/${campaignId}/winners`;
+  // Fetch from API Protect by Auth Admin (with prefix)
+  const queryParams = queryString.stringify(params);
+  let url = apiRoute(`/pool/${campaignId}/winners?${queryParams}`);
   const response = await baseRequest.get(url) as any;
   const resObject = await response.json();
 

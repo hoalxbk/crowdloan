@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -9,6 +9,7 @@ import TableBody from "@material-ui/core/TableBody";
 import {makeStyles} from "@material-ui/core";
 import {useCommonStyle} from "../../../styles";
 import {getWinnerUser} from "../../../request/participants";
+import useGetList from "./hooks/useGetList";
 
 const useStylesTable = makeStyles({
   table: {
@@ -19,23 +20,22 @@ const useStylesTable = makeStyles({
 function UserWinner(props: any) {
   const commonStyle = useCommonStyle();
   const classesTable = useStylesTable();
-  const [rows, setRows] = useState([]);
+
+
   const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
   const [editData, setEditData] = useState({});
   const [editRow, setEditRow] = useState(0);
   const [isEdit, setIsEdit] = useState(true);
 
   const { poolDetail } = props;
-  const [winners, setWinners] = useState([]);
-
-  useEffect(() => {
-    if (poolDetail && poolDetail.id) {
-      getWinnerUser(poolDetail.id)
-        .then((res) => {
-          setWinners(res.data);
-        });
-    }
-  }, [poolDetail]);
+  const {
+    rows, setRows,
+    search,
+    searchDelay,
+  } = useGetList({
+    poolDetail,
+    handleSearchFunction: getWinnerUser
+  });
 
   const deleteTier = (e: any, row: any, index: number) => {
     console.log('ROW: ', row, index);
@@ -53,6 +53,11 @@ function UserWinner(props: any) {
 
   return (
     <>
+      <div className={commonStyle.boxSearch}>
+        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
+        <img src="/images/icon-search.svg" alt="" />
+      </div>
+
       <TableContainer component={Paper} className={commonStyle.tableScroll}>
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
@@ -63,7 +68,7 @@ function UserWinner(props: any) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {winners.map((row: any, index: number) => (
+            {rows.map((row: any, index: number) => (
               <TableRow key={row.id}>
                 <TableCell component="th" scope="row">
                   {row.email}

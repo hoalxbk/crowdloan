@@ -31,8 +31,8 @@ const useStylesTable = makeStyles({
 function UserParticipant(props: any) {
   const commonStyle = useCommonStyle();
   const classesTable = useStylesTable();
-
   const dispatch = useDispatch();
+
   const { poolDetail } = props;
   const {
     rows, setRows,

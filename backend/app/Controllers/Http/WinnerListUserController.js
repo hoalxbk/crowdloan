@@ -27,7 +27,8 @@ class WinnerListUserController {
       const filterParams = {
         'campaign_id': campaign_id,
         'page': page,
-        'pageSize': pageSize
+        'pageSize': pageSize,
+        'search_term': request.input('search_term') || '',
       };
       const winnerListService = new WinnerListService();
       // get winner list
