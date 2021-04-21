@@ -131,11 +131,11 @@ export const deposit = (address: string | null | undefined, amount: string, libr
     try {
       const { appChainID } = getState().appNetwork.data;
       const connector = getState().connector.data;
-      let result = {};
+      let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
       result = await contract?.depositERC20(process.env.REACT_APP_SOTA, convertToWei(amount))
-
+      await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
         dispatch(getAllowance(address || ''));
@@ -163,12 +163,12 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
     try {
       const { appChainID } = getState().appNetwork.data;
       const connector = getState().connector.data;
-      let result = {};
+      let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
 
       result = await contract?.withdrawERC20(process.env.REACT_APP_SOTA, convertToWei(amount));
-
+      await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
         dispatch(getAllowance(address || ''));
