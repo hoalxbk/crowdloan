@@ -25,7 +25,7 @@ class UserController {
     };
     const findedUser = await userService.findUser(userAuthInfo);
     if (!findedUser) {
-      HelperUtils.responseNotFound();
+      return HelperUtils.responseNotFound();
     }
 
     return HelperUtils.responseSuccess({
