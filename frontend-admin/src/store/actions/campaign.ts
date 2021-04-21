@@ -604,10 +604,16 @@ export const deployPool = (campaign: any, history: any) => {
       // console.log('tokenByEthDecimals: ', tokenByEthDecimals);
       // console.log('tokenByETHActualRate: ', tokenByETHActualRate);
 
+      let paidTokenAddress = '0x00';
 
+      if (token === ACCEPT_CURRENCY.USDC) {
+        paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS as string;
+      }
 
+      if (token === ACCEPT_CURRENCY.USDT) {
+        paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS as string;
+      }
 
-      // // Old Code
       let tokenByEthDecimals = 0;
       let tokenByETHActualRate: any;
       let reversedRate = removeTrailingZeros(new BigNumber(1).dividedBy(token_by_eth).toFixed());
@@ -619,7 +625,7 @@ export const deployPool = (campaign: any, history: any) => {
         reversedRate = splittedComma[0].concat(".", splittedComma[1].substr(0, 6));
         digitsAfterDecimals = 6;
       }
-      
+
       if (token !== ACCEPT_CURRENCY.ETH) {
         tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
       
@@ -627,30 +633,6 @@ export const deployPool = (campaign: any, history: any) => {
         tokenByEthDecimals = getDigitsAfterDecimals(removeTrailingZeros(token_by_eth));
         tokenByETHActualRate = new BigNumber(removeTrailingZeros(token_by_eth)).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
       }
-
-      // console.log('tokenByEthDecimals: ', tokenByEthDecimals);
-      // console.log('tokenByETHActualRate: ', tokenByETHActualRate);
-
-      // const tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals || 0)).dividedBy(Math.pow(10, 18));
-      // const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
-      // const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
-
-      // _offeredCurrencyDecimals:
-      //   Decimal của USDT/USDC —> 6
-      //   Decimal của ETH: —> 0
-      
-      // _offeredRate:
-      //   =  10^ ( Decimal của token mà mình muốn nhận (Token nhập khi tạo Pool) )  *  Rate (Nhập trong input khi tạo Pool)
-      
-      let _offeredCurrencyDecimals = 6;
-      if (token === ACCEPT_CURRENCY.ETH) {
-        _offeredCurrencyDecimals = 0;
-      }
-
-      const tokenRateInput = token == ACCEPT_CURRENCY.ETH ? campaign.ether_conversion_rate : token_conversion_rate;
-      let _offeredRate = new BigNumber(Math.pow(10, tokenInfo.decimals)).multipliedBy(tokenRateInput || 0).toString();
-      console.log('_offeredCurrencyDecimals', _offeredCurrencyDecimals);
-      console.log('_offeredRate', _offeredRate);
 
       const poolType = campaign.pool_type;
       let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');
@@ -672,7 +654,7 @@ export const deployPool = (campaign: any, history: any) => {
             startTimeUnix,
 
             // TODO: Fix switch USDT/USDC/ETH Address
-            process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS,
+            paidTokenAddress,
             tokenByEthDecimals,
             tokenByETHActualRate,
             address_receiver,
@@ -687,7 +669,7 @@ export const deployPool = (campaign: any, history: any) => {
             startTimeUnix,
 
             // TODO: Fix switch USDT/USDC/ETH Address
-            process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS,
+            paidTokenAddress,
             tokenByEthDecimals,
             tokenByETHActualRate,
             address_receiver,

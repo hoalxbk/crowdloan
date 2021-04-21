@@ -5,7 +5,7 @@ deploy-all:
 	make deploy-backend && make deploy-frontend-user && make deploy-frontend-admin && make deploy-crawler
 
 cd-sotatek-starter:
-	cd /Applications/MAMP/htdocs/PROJECTS/SOTATEK_STARTER/sotatek_starter
+	cd /home/dynamo/Projects/launchpad-starter
 
 deploy-backend:
 	make cd-sotatek-starter && cd ./backend && make deploy-v2
