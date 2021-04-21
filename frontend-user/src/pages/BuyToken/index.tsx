@@ -390,7 +390,6 @@ const BuyToken: React.FC<any> = (props: any) => {
                         ableToFetchFromBlockchain={ableToFetchFromBlockchain}
                         minTier={poolDetails?.minTier}
                         isDeployed={poolDetails?.isDeployed}
-                        addressReceiver={poolDetails?.addressReceiver}
                       /> 
                    )
                 }
