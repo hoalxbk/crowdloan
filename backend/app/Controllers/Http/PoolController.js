@@ -40,6 +40,8 @@ class PoolController {
     ]);
 
     const data = {
+      'register_by': inputParams.register_by,
+
       'title': inputParams.title,
       'website': inputParams.website,
       'description': inputParams.description,
@@ -110,6 +112,8 @@ class PoolController {
     ]);
 
     const data = {
+      'register_by': inputParams.register_by,
+
       'title': inputParams.title,
       'website': inputParams.website,
       'description': inputParams.description,
@@ -253,10 +257,12 @@ class PoolController {
         .first();
 
       const walletAccount = await WalletAccountModel.query().where('campaign_id', poolId).first();
-      pool.wallet = {
-        id: walletAccount.id,
-        wallet_address: walletAccount.wallet_address,
-      };
+      if (walletAccount) {
+        pool.wallet = {
+          id: walletAccount.id,
+          wallet_address: walletAccount.wallet_address,
+        };
+      }
 
       // Cache data
       RedisUtils.createRedisPoolDetail(poolId, pool);

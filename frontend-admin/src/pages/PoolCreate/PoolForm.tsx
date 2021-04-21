@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import useStyles from "./style";
 import {useCommonStyle} from "../../styles";
 import {useForm} from "react-hook-form";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
 import {CircularProgress, Grid} from "@material-ui/core";
 import {getTokenInfo, TokenType} from "../../utils/token";
@@ -41,9 +41,10 @@ function PoolForm(props: any) {
   const dispatch = useDispatch();
   const history = props.history;
 
+  const { data: loginUser } = useSelector(( state: any ) => state.user);
+
   const { isEdit, poolDetail } = props;
   const [isSuspend, setIsSuspend] = useState(true);
-  // const { loading } = useSelector(( state: any ) => state.campaignCreate);
   const [loading, setLoading] = useState(false);
   const [loadingDeploy, setLoadingDeploy] = useState(false);
   const [deployed, setDeployed] = useState(false);
@@ -75,7 +76,7 @@ function PoolForm(props: any) {
 
     const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
     const submitData = {
-      register_by: '',
+      register_by: loginUser?.wallet_address,
       is_display: data.is_display,
 
       // Pool general
@@ -187,7 +188,7 @@ function PoolForm(props: any) {
       const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
       const submitData = {
         id: poolDetail.id,
-        register_by: '',
+        register_by: loginUser?.wallet_address,
 
         // Pool general
         title: data.title,
@@ -425,7 +426,7 @@ function PoolForm(props: any) {
             />
           </div>
 
-          {isEdit && poolDetail && watchBuyType === 'whitelist' &&
+          {isEdit && poolDetail?.id && watchBuyType === 'whitelist' &&
             <div className={classes.exchangeRate}>
               <UserJoinPool
                 poolDetail={poolDetail}
