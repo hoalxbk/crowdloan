@@ -41,7 +41,6 @@ const useTokenAllowance = (
                console.log('Approve Token', transaction);
 
               setTransactionHash(transaction.hash);
-               setTokenApproveLoading(false);
 
                await transaction.wait(1);
 
