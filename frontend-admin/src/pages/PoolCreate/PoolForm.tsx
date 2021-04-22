@@ -338,34 +338,7 @@ function PoolForm(props: any) {
               />
             </div>
 
-            <ExchangeRate
-              poolDetail={poolDetail}
-              register={register}
-              token={token}
-              setValue={setValue}
-              errors={errors}
-              control={control}
-              watch={watch}
-            />
 
-            <button
-              disabled={!isEdit || !poolDetail?.id || poolDetail?.is_deploy || loading || loadingDeploy || deployed }
-              className={(!isEdit || poolDetail?.is_deploy || deployed) ? classes.formButtonDeployed : classes.formButtonDeploy}
-              onClick={handlerDeploy}
-            >
-              {loadingDeploy && <CircularProgress size={25} />}
-              {!loadingDeploy && 'Deploy'}
-            </button>
-
-            <button
-              disabled={loading || loadingDeploy || poolDetail?.is_deploy}
-              className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}
-              onClick={handleCampaignCreate}
-            >
-              {
-                (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
-              }
-            </button>
 
           </div>
         </Grid>
@@ -426,16 +399,60 @@ function PoolForm(props: any) {
             />
           </div>
 
-          {isEdit && poolDetail?.id && watchBuyType === 'whitelist' &&
-            <div className={classes.exchangeRate}>
-              <UserJoinPool
-                poolDetail={poolDetail}
-              />
-            </div>
-          }
+
+          <ExchangeRate
+            poolDetail={poolDetail}
+            register={register}
+            token={token}
+            setValue={setValue}
+            errors={errors}
+            control={control}
+            watch={watch}
+          />
+
         </Grid>
 
       </Grid>
+
+
+
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+
+          {isEdit && poolDetail?.id && watchBuyType === 'whitelist' &&
+          <div className={classes.exchangeRate}>
+            <UserJoinPool
+              poolDetail={poolDetail}
+            />
+          </div>
+          }
+
+          <button
+            disabled={!isEdit || !poolDetail?.id || poolDetail?.is_deploy || loading || loadingDeploy || deployed }
+            className={(!isEdit || poolDetail?.is_deploy || deployed) ? classes.formButtonDeployed : classes.formButtonDeploy}
+            onClick={handlerDeploy}
+          >
+            {loadingDeploy && <CircularProgress size={25} />}
+            {!loadingDeploy && 'Deploy'}
+          </button>
+
+          <button
+            disabled={loading || loadingDeploy || poolDetail?.is_deploy}
+            className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}
+            onClick={handleCampaignCreate}
+          >
+            {
+              (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
+            }
+          </button>
+
+
+        </Grid>
+      </Grid>
+
+
+
+
     </div>
 
   </>

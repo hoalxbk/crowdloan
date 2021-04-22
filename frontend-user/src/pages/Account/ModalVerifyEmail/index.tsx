@@ -3,16 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
-import { approve } from '../../../store/actions/sota-token';
-import { deposit } from '../../../store/actions/sota-tiers';
-import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
 import { useWeb3React } from '@web3-react/core';
-import useEmail from '../../../hooks/useEmail';
 import useWalletSignature from '../../../hooks/useWalletSignature';
 import axios from 'axios';
 import { alertFailure, alertSuccess } from '../../../store/actions/alert';
 
 const closeIcon = '/images/icons/close.svg';
+const REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
 const ModalVerifyEmail = (props: any) => {
   const styles = useStyles();
@@ -22,6 +19,7 @@ const ModalVerifyEmail = (props: any) => {
   const { account: connectedAccount } = useWeb3React();
   const { signature, signMessage, setSignature, error } = useWalletSignature();
   const [inputEmail, setInputEmail] = useState('');
+  const [invalidEmail, setInvalidEmail] = useState(false);
 
   const {
     setOpenModalVerifyEmail,
@@ -58,7 +56,12 @@ const ModalVerifyEmail = (props: any) => {
   }, [signature])
 
   const handleVerifyEmail = () => {
-    signMessage()
+    if(inputEmail != '' && REGEX.test(inputEmail) == false || inputEmail == '') {
+      setInvalidEmail(true);
+      return;
+    }
+    setInvalidEmail(false);
+    signMessage();
   }
 
   return (
@@ -82,6 +85,7 @@ const ModalVerifyEmail = (props: any) => {
                 disabled={email}
               />
             </div>
+            {invalidEmail && <span style={{color: '#D01F36'}}>Invalid Email</span>}
           </div>
           <div className="modal-content__foot">
             <button
