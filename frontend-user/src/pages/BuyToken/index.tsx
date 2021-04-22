@@ -25,6 +25,7 @@ import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
 import { ETH_CHAIN_ID } from '../../constants/network';
 
+import { NETWORK_ETH_NAME, NETWORK_BSC_NAME } from '../../constants/network';
 import { getPoolCountDown } from '../../utils/getPoolCountDown';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
@@ -79,11 +80,12 @@ const BuyToken: React.FC<any> = (props: any) => {
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
   // Use for check whether pool exist in selected network or not
-  const networkAvailable = poolDetails?.networkAvailable === 'eth'? 'Ethereum': 'BinanceChain' ;
+  const networkAvailable = poolDetails?.networkAvailable === 'eth'? NETWORK_ETH_NAME: NETWORK_BSC_NAME;
   const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
   const ableToFetchFromBlockchain = appNetwork === poolDetails?.networkAvailable && !wrongChain;
 
   const userBuyLimit = poolDetails?.connectedAccountBuyLimit || 0;
+  const userBuyMinimum = poolDetails?.connectedAccountBuyMinimum || 0;
   
   // With Whitelist situation, Enable when join time < current < end join time
   // With FCFS, always disable join button
@@ -91,12 +93,17 @@ const BuyToken: React.FC<any> = (props: any) => {
   const endJoinTimeInDate = new Date(Number(poolDetails?.endJoinTime) * 1000);
   const startBuyTimeInDate = new Date(Number(poolDetails?.startBuyTime) * 1000);
   const endBuyTimeInDate = new Date(Number(poolDetails?.endBuyTime) * 1000);
+  const tierStartBuyInDate = new Date(Number(poolDetails?.tierStartTime) * 1000);
+  const tierEndBuyInDate = new Date(Number(poolDetails?.tierEndTime) * 1000);
   const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
 
+  const today = new Date();
   const availableJoin = poolDetails?.method === 'whitelist' 
     ? (
-      new Date() >= joinTimeInDate && 
-      new Date() <= endJoinTimeInDate && 
+      today >= joinTimeInDate && 
+      today <= endJoinTimeInDate && 
+      today >= tierStartBuyInDate &&
+      today <= tierEndBuyInDate &&
       connectedAccount && 
       !wrongChain &&
       userTier >= poolDetails?.minTier
@@ -104,11 +111,11 @@ const BuyToken: React.FC<any> = (props: any) => {
     )
     : false;
   const availablePurchase = 
-    new Date() >= startBuyTimeInDate && 
-    new Date() <= endBuyTimeInDate && 
+    today >= startBuyTimeInDate && 
+    today <= endBuyTimeInDate && 
     poolDetails?.isDeployed &&
     (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
-  
+
   // Get Pool Status
   const poolStatus = getPoolStatus(
     joinTimeInDate, 
@@ -232,7 +239,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {isWinner && new Date() >= startBuyTimeInDate &&
+            {isWinner && new Date() >= startBuyTimeInDate && ableToFetchFromBlockchain &&
               <p className={styles.poolTicketWinner}>
                 <div>
                   {
@@ -331,10 +338,13 @@ const BuyToken: React.FC<any> = (props: any) => {
                   <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
                   {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
                     <span className={styles.poolDetailProgressPercent}>
-                      {numberWithCommas(soldProgress)}%
+                      {numberWithCommas(new BigNumber(soldProgress).gt(100) ? '100': soldProgress)}%
                     </span>
                     <span>
-                      {numberWithCommas(tokenSold)} / {numberWithCommas(`${poolDetails?.amount}` || "")}
+                      {
+                        numberWithCommas(new BigNumber(tokenSold).gt(`${poolDetails?.amount}`) ? `${poolDetails?.amount}`: tokenSold)}&nbsp; 
+                        / {numberWithCommas(`${poolDetails?.amount}` || "0")
+                      }
                     </span>
                   </div>}
                   {isWidthDown('xs', props.width) && <div className={styles.poolDetailProgressStat}>
@@ -342,11 +352,14 @@ const BuyToken: React.FC<any> = (props: any) => {
                       {parseFloat(soldProgress).toFixed(2)}%
                     </span>
                     <span>
-                      {numberWithCommas(tokenSold)} / {numberWithCommas(`${poolDetails?.amount}` || "0")}
+                      {
+                        numberWithCommas(new BigNumber(tokenSold).gt(`${poolDetails?.amount}`) ? `${poolDetails?.amount}`: tokenSold)}&nbsp;
+                        / {numberWithCommas(`${poolDetails?.amount}` || "0")
+                      }
                     </span>
                   </div>}
                   <div className={styles.progress}>
-                    <div className={styles.achieved} style={{ width: `${soldProgress}%` }}></div>
+                    <div className={styles.achieved} style={{ width: `${new BigNumber(soldProgress).gt(100) ? '100': soldProgress}%` }}></div>
                   </div>
                 </div>
                 <div className={styles.poolDetailStartTime}>
@@ -382,6 +395,8 @@ const BuyToken: React.FC<any> = (props: any) => {
                         rate={poolDetails?.ethRate}
                         poolAddress={poolDetails?.poolAddress}
                         maximumBuy={userBuyLimit}
+                        minimumBuy={userBuyMinimum}
+                        poolAmount={poolDetails?.amount}
                         purchasableCurrency={poolDetails?.purchasableCurrency?.toUpperCase()}
                         poolId={poolDetails?.id}
                         joinTime={joinTimeInDate}
@@ -390,6 +405,9 @@ const BuyToken: React.FC<any> = (props: any) => {
                         ableToFetchFromBlockchain={ableToFetchFromBlockchain}
                         minTier={poolDetails?.minTier}
                         isDeployed={poolDetails?.isDeployed}
+                        startBuyTimeInDate={startBuyTimeInDate}
+                        endBuyTimeInDate={endBuyTimeInDate}
+                        tokenSold={tokenSold}
                       /> 
                    )
                 }

@@ -1,13 +1,41 @@
-export const ETH_CHAIN_ID = process.env.REACT_APP_ETH_CHAIN_ID;
-export const BSC_CHAIN_ID = process.env.REACT_APP_BSC_CHAIN_ID;
+export const ETH_CHAIN_ID = process.env.REACT_APP_ETH_CHAIN_ID as string;
+export const BSC_CHAIN_ID = process.env.REACT_APP_BSC_CHAIN_ID as string;
 export const BSC_RPC_URL = process.env.REACT_APP_BSC_RPC_URL || "";
+
+export const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
+export const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
+export const USDC_BSC_ADDRESS = process.env.REACT_APP_USDC_BSC_SMART_CONTRACT;
+export const USDT_BSC_ADDRESS = process.env.REACT_APP_USDT_BSC_SMART_CONTRACT;
 
 export enum ChainId  {
   MAINNET = 1,
   ROPSTEN = 3,
   RINKEBY = 4,
   GOERLI = 5,
-  KOVAN = 42
+  KOVAN = 42,
+  BSC_TESTNET = 97,
+  BSC_MAINNET = 56
+}
+
+export type chainId = 
+  Extract< ChainId, 
+    ChainId.MAINNET | 
+    ChainId.ROPSTEN | 
+    ChainId.RINKEBY | 
+    ChainId.GOERLI | 
+    ChainId.KOVAN | 
+    ChainId.BSC_MAINNET | 
+    ChainId.BSC_TESTNET
+  >;
+
+export const ChainIdNameMapping: { [key in ChainId]: string }  = {
+  [ChainId.MAINNET]: 'Mainnet',
+  [ChainId.ROPSTEN]: 'Ropsten',
+  [ChainId.GOERLI]: 'Goerli',
+  [ChainId.KOVAN]: 'Kovan',
+  [ChainId.RINKEBY]: 'Rinkeby',
+  [ChainId.BSC_MAINNET]: 'BSC Mainnet',
+  [ChainId.BSC_TESTNET]: 'BSC Testnet'
 }
 
 export interface NetworkInfo {
@@ -43,3 +71,11 @@ export const APP_NETWORKS_ID: (string | undefined)[] = [ETH_CHAIN_ID, BSC_CHAIN_
 export const NETWORK_URL = process.env.REACT_APP_NETWORK_URL;
 export const FORMATIC_KEY = process.env.REACT_APP_FORMATIC_KEY;
 export const FORMATIC_KEY_TEST = process.env.REACT_APP_FORMATIC_KEY_TEST;
+
+export const NETWORK_ETH_NAME = process.env.REACT_APP_NETWORK_ETH_NAME;
+export const NETWORK_BSC_NAME = process.env.REACT_APP_NETWORK_BSC_NAME;
+
+export const appNetwork: { [key: string]: string } = {
+  [ETH_CHAIN_ID]: NETWORK_ETH_NAME as string,
+  [BSC_CHAIN_ID]: NETWORK_BSC_NAME as string
+}

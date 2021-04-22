@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import BigNumber from 'bignumber.js';
 
@@ -6,14 +6,14 @@ import TransactionSubmitModal from '../../../components/Base/TransactionSubmitMo
 import Button from '../Button';
 import useStyles from './style';
 
+import { getUSDCAddress, getUSDTAddress } from '../../../utils/contractAddress/getAddresses';
 import { numberWithCommas, getDigitsAfterDecimals, INTEGER_NUMBER_KEY_CODE_LIST } from '../../../utils/formatNumber';
 import { isNotValidASCIINumber, isPreventASCIICharacters, trimLeadingZerosWithDecimal } from '../../../utils/formatNumber';
 import { BSC_CHAIN_ID } from '../../../constants/network';
+import { PurchaseCurrency } from '../../../constants/purchasableCurrency';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import getAccountBalance from '../../../utils/getAccountBalance';
 import { connectWalletSuccess } from '../../../store/actions/wallet';
-
-import { ETH_CHAIN_ID } from '../../../constants/network';
 import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import useTokenBalance from '../../../hooks/useTokenBalance';
 import useTokenAllowance from '../../../hooks/useTokenAllowance';
@@ -28,6 +28,8 @@ type BuyTokenFormProps = {
   rate: number | undefined,
   poolAddress: string | undefined;
   maximumBuy: number;
+  minimumBuy: number;
+  poolAmount: number | undefined;
   purchasableCurrency: string | undefined;
   poolId: number | undefined;
   joinTime: Date | undefined;
@@ -36,12 +38,10 @@ type BuyTokenFormProps = {
   ableToFetchFromBlockchain: boolean | undefined
   minTier: number | undefined
   isDeployed: boolean | undefined
-}
-
-const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
-const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
-const USDC_BSC_ADDRESS = process.env.REACT_APP_USDC_BSC_SMART_CONTRACT;
-const USDT_BSC_ADDRESS = process.env.REACT_APP_USDT_BSC_SMART_CONTRACT;
+  endBuyTimeInDate: Date | undefined
+  startBuyTimeInDate: Date | undefined
+  tokenSold: string | undefined
+}  
 
 const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const styles = useStyles();
@@ -56,6 +56,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const [tokenBalance, setTokenBalance] = useState<number>(0);
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [userPurchased, setUserPurchased] = useState<number>(0);
+  const [poolBalance, setPoolBalance] = useState<number>(0);
 
   const { 
     tokenDetails, 
@@ -68,6 +69,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     ableToFetchFromBlockchain,
     minTier,
     isDeployed,
+    minimumBuy,
+    poolAmount,
+    startBuyTimeInDate,
+    tokenSold
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -88,25 +93,25 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
 
   const getApproveToken = useCallback((appChainID: string) => {
-    if (purchasableCurrency && purchasableCurrency === "USDT") {
+    if (purchasableCurrency && purchasableCurrency === PurchaseCurrency.USDT) {
       return {
-        address: appChainID === ETH_CHAIN_ID ?  USDT_ADDRESS as string: "0x00",
+        address: getUSDTAddress(appChainID),
         name: "USDT",
         symbol: "USDT",
         decimals: 6 
       };
     }
 
-    if (purchasableCurrency && purchasableCurrency === "USDC") {
+    if (purchasableCurrency && purchasableCurrency === PurchaseCurrency.USDC) {
       return {
-        address: USDC_ADDRESS as string,
+        address: getUSDCAddress(appChainID),
         name: "USDC",
         symbol: "USDC",
         decimals: 6 
       };
     }
 
-    if (purchasableCurrency && purchasableCurrency === 'ETH') {
+    if (purchasableCurrency && purchasableCurrency === PurchaseCurrency.ETH) {
       return {
         address: "0x00",
         name: 'ETH',
@@ -127,24 +132,43 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 
 
+  // Check if user already buy ICO token at the first time or not ?
+  const firstBuy = localStorage.getItem('firstBuy');
+
+  const poolErrorBeforeBuy = useMemo(() => {
+    if (
+      poolBalance && poolAmount && startBuyTimeInDate && new BigNumber(poolBalance).gt(0) &&
+      !(new BigNumber(poolBalance).gte(poolAmount) && new Date() >= startBuyTimeInDate)
+    ) {
+      return `This pool is not ready to buy, please contact the administrator for more information.`;
+    }
+    if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !firstBuy) {
+        return `The minimum amount you must trade is ${minimumBuy} ${purchasableCurrency}.`
+    }
+
+    return;
+  }, [minimumBuy, poolBalance, poolAmount, purchasableCurrency, input, startBuyTimeInDate]);
+
   const enableApprove = 
     (tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
-    && (purchasableCurrency && purchasableCurrency !== 'ETH') 
+    && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH) 
     && !wrongChain && ableToFetchFromBlockchain && isDeployed;
 
   // Plus one for userTier because tier in smart contract start by 0  
   const validTier = new BigNumber(userTier).gte(minTier);
   const purchasable = 
-    ((purchasableCurrency !== 'ETH' ? tokenAllowance > 0: true) 
+    ((purchasableCurrency !== PurchaseCurrency.ETH ? tokenAllowance > 0: true) 
      && !estimateErr 
      && availablePurchase 
      && estimateTokens > 0 
-     && (purchasableCurrency !== 'ETH' ? input <= maximumBuy: new BigNumber(input).lte(tokenBalance))
+     && (purchasableCurrency !== PurchaseCurrency.ETH ? input <= maximumBuy: new BigNumber(input).lte(tokenBalance))
+     && !poolErrorBeforeBuy
+     && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
      && !wrongChain
      && validTier    
     );
 
-
+  // Fetch User balance
   const fetchUserBalance = useCallback(async () => {
       if (appChainID && connectedAccount && connector) {
         const accountBalance = await getAccountBalance(appChainID, walletChainID, connectedAccount as string, connector);
@@ -168,6 +192,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         setUserPurchased(await retrieveUserPurchased(connectedAccount, poolAddress) as number);
         setTokenBalance(await retrieveTokenBalance(tokenToApprove, connectedAccount) as number);
         setWalletBalance(await retrieveTokenBalance(tokenDetails, connectedAccount) as number);
+        setPoolBalance(await retrieveTokenBalance(tokenDetails, poolAddress) as number);
       }
     }
 
@@ -212,6 +237,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         // Call to smart contract to deposit token and refetch user balance
         await deposit();
         await fetchUserBalance();
+
+        if (!firstBuy) {
+          localStorage.setItem("firstBuy", "done");
+        }
       }
     } catch (err) {
       setOpenSubmitModal(false);
@@ -299,6 +328,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         <p className={styles.buyTokenEstimateLabel}>You will get approximately</p>
         <strong className={styles.buyTokenEstimateAmount}>{estimateTokens} Tokens</strong>
       </div>
+      {
+        <p className={styles.minimumBuyWarning}>
+          {poolErrorBeforeBuy}          
+        </p>
+      }
       <div className={styles.btnGroup}>
         <Button 
         text={'Approve'} 
