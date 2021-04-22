@@ -91,7 +91,7 @@ function UserParticipant(props: any) {
     <>
       <div className={commonStyle.boxSearch}>
         <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
-        <img src="/images/icon-search.svg" alt="" />
+        <img src="/images/icon-search.svg" alt="" style={{ marginLeft: -30 }} />
 
         <UserPickerToWinner
           poolDetail={poolDetail}
@@ -102,7 +102,7 @@ function UserParticipant(props: any) {
             variant="contained"
             color="primary"
             onClick={openPopupCreate}
-          >Add</Button>
+          >Add To Winner</Button>
 
           {isOpenEditPopup &&
           <UserParticipantCreatePopup

@@ -46,6 +46,7 @@ module.exports = Object.freeze({
     CHECK_STATUS: 'CheckTxStatus-job',
     SEND_FORGOT_PASSWORD: 'SendForgotPasswordJob-job',
     SEND_CONFIRMATION_EMAIL: 'SendConfirmationEmailJob-job',
+    SEND_ADMIN_INFO_EMAIL: 'SendAdminInfoEmailJob-job',
   },
   ACTIVE: 0,
   SUSPEND: 1,

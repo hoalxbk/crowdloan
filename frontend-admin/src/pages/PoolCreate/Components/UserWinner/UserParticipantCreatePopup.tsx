@@ -49,7 +49,6 @@ function UserParticipantCreatePopup(props: any) {
     console.log('USSSS+=============>', selected);
 
     setCheckedList(e.target.checked ? selected : []);
-    // setCheckedList(e.target.checked ? users : []);
     setIndeterminate(false);
     setCheckAll(e.target.checked);
   };
@@ -111,7 +110,6 @@ function UserParticipantCreatePopup(props: any) {
           Check all
         </Checkbox>
         <Divider />
-        {/*<CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />*/}
         <CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />
 
         {/*{users && users.map((item: any) => {*/}
@@ -125,16 +123,6 @@ function UserParticipantCreatePopup(props: any) {
         {/*    </>*/}
         {/*  );*/}
         {/*})}*/}
-
-
-
-
-
-
-
-
-
-
 
 
 

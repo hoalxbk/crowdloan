@@ -89,7 +89,7 @@ function UserReverse(props: any) {
     <>
       <div className={commonStyle.boxSearch}>
         <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
-        <img src="/images/icon-search.svg" alt="" />
+        <img src="/images/icon-search.svg" alt="" style={{ marginLeft: -30 }} />
 
 
         <div style={{float: 'right'}}>

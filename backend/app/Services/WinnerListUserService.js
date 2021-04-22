@@ -83,6 +83,7 @@ class WinnerListUserService {
 
   async saveRandomWinner(winnerList) {
     const data = winnerList.rows.map(async item => {
+
       const isExist = await WinnerListModel.query()
         .where('wallet_address', item.wallet_address)
         .where('campaign_id', item.campaign_id)

@@ -37,23 +37,15 @@ function UserWinner(props: any) {
     handleSearchFunction: search
   });
 
-
-  const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
-  const [editData, setEditData] = useState({});
-  const [editRow, setEditRow] = useState(0);
-  const [isEdit, setIsEdit] = useState(true);
-
-
-
   return (
     <>
-      <div className={commonStyle.boxSearch}>
-        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
-        <img src="/images/icon-search.svg" alt="" />
-      </div>
       <div style={{color: 'red'}}>
         <div>These Winner list accounts still have to check their tier when buying tokens.</div>
         <div>If you want to skip this check, please add accounts to the Reserve list.</div>
+      </div>
+      <div className={commonStyle.boxSearch}>
+        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
+        <img src="/images/icon-search.svg" alt="" style={{ marginLeft: -30 }} />
       </div>
 
       <TableContainer component={Paper} className={commonStyle.tableScroll}>
