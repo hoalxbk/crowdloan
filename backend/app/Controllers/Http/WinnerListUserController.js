@@ -1,8 +1,12 @@
 'use strict'
 
 const WinnerListService = use('App/Services/WinnerListUserService')
+const WhitelistService = use('App/Services/WhitelistUserService')
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
+const WhitelistModel = use('App/Models/WhitelistUser');
+const WinnerListModel = use('App/Models/WinnerListUser');
+const Database = use('Database')
 
 class WinnerListUserController {
   async getWinnerList({request}) {
@@ -100,6 +104,43 @@ class WinnerListUserController {
 
     return HelperUtils.responseSuccess(existRecord);
   }
+
+
+  async addParticipantsToWinner({ request, params }) {
+    console.log('[addParticipantsToWinner] - Add participants to Winner with params: ', params, request.params);
+    const { campaignId } = params;
+    const winners = request.input('winners') || [];
+    console.log('campaignIdcampaignIdcampaignId==> ', campaignId, params, request.all());
+
+    const resExist = await WhitelistModel.query()
+      .whereIn('wallet_address', winners)
+      .where('campaign_id', campaignId)
+      .fetch();
+
+    console.log('resExist', resExist);
+
+    const data = resExist.rows.map(async item => {
+      const isExist = await WinnerListModel.query()
+        .where('wallet_address', item.wallet_address)
+        .where('campaign_id', item.campaign_id)
+        .first();
+
+      if (isExist) return item;
+
+      console.log('Not Exist=========>', item);
+
+      let model = new WinnerListModel;
+      model.email = item.email;
+      model.wallet_address = item.wallet_address;
+      model.campaign_id = item.campaign_id;
+      model.save();
+
+      return model;
+    });
+
+    return HelperUtils.responseSuccess(data);
+  }
+
 
 }
 

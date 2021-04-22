@@ -21,6 +21,7 @@ import useDeleteItem from "../hooks/useDeleteItem";
 import UserParticipantCreatePopup from "./UserParticipantCreatePopup";
 import {useDispatch} from "react-redux";
 import {alertFailure, alertSuccess} from "../../../../store/actions/alert";
+import UserReserveCreatePopup from "./UserReserveCreatePopup";
 
 const useStylesTable = makeStyles({
   table: {
@@ -100,7 +101,7 @@ function UserReverse(props: any) {
           >Add</Button>
 
           {isOpenEditPopup &&
-          <UserParticipantCreatePopup
+          <UserReserveCreatePopup
             isOpenEditPopup={isOpenEditPopup}
             setIsOpenEditPopup={setIsOpenEditPopup}
             editData={editData}

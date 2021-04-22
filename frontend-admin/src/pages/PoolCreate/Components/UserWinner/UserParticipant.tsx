@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -8,12 +8,14 @@ import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
 import {Button, makeStyles} from "@material-ui/core";
 import {useCommonStyle} from "../../../../styles";
-import {deleteParticipantUser, getParticipantUser} from "../../../../request/participants";
+import {addParticipantUserToWinner, deleteParticipantUser, getParticipantUser} from "../../../../request/participants";
 import {useDispatch} from "react-redux";
 import {withRouter} from "react-router";
-import {alertSuccess} from "../../../../store/actions/alert";
+import {alertFailure, alertSuccess} from "../../../../store/actions/alert";
 import useGetList from "../hooks/useGetList";
 import useDeleteItem from "../hooks/useDeleteItem";
+import UserParticipantCreatePopup from "./UserParticipantCreatePopup";
+import UserPickerToWinner from "./UserPickerToWinner";
 
 const useStylesTable = makeStyles({
   table: {
@@ -48,75 +50,77 @@ function UserParticipant(props: any) {
     handleSearchFunction: search
   });
 
-
-  // const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
-  // const [editData, setEditData] = useState({});
-  // const [editRow, setEditRow] = useState(0);
-  // const [isEdit, setIsEdit] = useState(true);
-  // // const openPopupEdit = (e: any, row: any, index: number) => {
-  // //   console.log('ROW: ', row, index);
-  // //   setEditData(row);
-  // //   setEditRow(index);
-  // //   setIsEdit(true);
-  // //   setIsOpenEditPopup(true);
-  // // };
-  //
-  // const openPopupCreate = (e: any) => {
-  //   setEditData({});
-  //   setEditRow(-1);
-  //   setIsEdit(false);
+  const dispatch = useDispatch();
+  const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
+  const [editData, setEditData] = useState([]);
+  const [editRow, setEditRow] = useState(0);
+  const [isEdit, setIsEdit] = useState(true);
+  // const openPopupEdit = (e: any, row: any, index: number) => {
+  //   console.log('ROW: ', row, index);
+  //   setEditData(row);
+  //   setEditRow(index);
+  //   setIsEdit(true);
   //   setIsOpenEditPopup(true);
   // };
-  //
-  // const handleCreateUpdateData = async (responseData: any) => {
-  //   console.log('responseData', editRow, responseData);
-  //   // if (isEdit && editRow !== -1) {
-  //   //   // Update
-  //   //   // @ts-ignore
-  //   //   rows[editRow] = responseData;
-  //   // } else {
-  //   //   // Create
-  //   //   // @ts-ignore
-  //   //   rows.push(responseData);
-  //   // }
-  //   // setIsOpenEditPopup(false);
-  // };
 
+  const openPopupCreate = (e: any) => {
+    setEditData(rows);
+    setEditRow(-1);
+    setIsEdit(false);
+    setIsOpenEditPopup(true);
+  };
+
+  const handleCreateUpdateData = async (responseData: any) => {
+    console.log('responseData', editRow, responseData);
+
+    // Call API Add to Winner
+    addParticipantUserToWinner(poolDetail?.id, {winners: responseData})
+      .then((res: any) => {
+        console.log('[addParticipantUserToWinner] - res', res);
+        if (res.status === 200) {
+          dispatch(alertSuccess('Add Participant User to Winner Success'));
+          search();
+          setIsOpenEditPopup(false);
+        } else {
+          dispatch(alertFailure('Add Participant User to Winner Fail'));
+        }
+      })
+  };
 
   return (
     <>
       <div className={commonStyle.boxSearch}>
         <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
         <img src="/images/icon-search.svg" alt="" />
+
+        <UserPickerToWinner
+          poolDetail={poolDetail}
+        />
+
+        <div style={{float: 'right'}}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={openPopupCreate}
+          >Add</Button>
+
+          {isOpenEditPopup &&
+          <UserParticipantCreatePopup
+            isOpenEditPopup={isOpenEditPopup}
+            setIsOpenEditPopup={setIsOpenEditPopup}
+            editData={editData}
+            isEdit={isEdit}
+            handleCreateUpdateData={handleCreateUpdateData}
+          />
+          }
+
+
+        </div>
+
+
+
+
       </div>
-
-      {/*<div style={{float: 'right'}}>*/}
-      {/*  <Button*/}
-      {/*    variant="contained"*/}
-      {/*    color="primary"*/}
-      {/*    onClick={openPopupCreate}*/}
-      {/*    style={{marginLeft: 10, marginTop: 10}}*/}
-      {/*  >Add</Button>*/}
-
-      {/*  {isOpenEditPopup &&*/}
-      {/*    <CreateEditTierForm*/}
-      {/*      isOpenEditPopup={isOpenEditPopup}*/}
-      {/*      setIsOpenEditPopup={setIsOpenEditPopup}*/}
-      {/*      // renderError={renderError}*/}
-      {/*      editData={editData}*/}
-      {/*      isEdit={isEdit}*/}
-      {/*      handleCreateUpdateData={handleCreateUpdateData}*/}
-      {/*    />*/}
-      {/*  }*/}
-      {/*</div>*/}
-
-
-
-
-
-
-
-
 
 
       <TableContainer component={Paper} className={commonStyle.tableScroll}>

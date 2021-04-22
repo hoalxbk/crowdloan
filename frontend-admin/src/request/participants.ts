@@ -2,7 +2,9 @@ import {BaseRequest} from "./Request";
 import {apiRoute} from "../utils";
 const queryString = require('query-string');
 
-// Participants
+/**
+ * PARTICIPANTS
+ */
 export const getParticipantUser = async (campaignId: any, params: any = {}) => {
   const baseRequest = new BaseRequest();
 
@@ -25,7 +27,41 @@ export const deleteParticipantUser = async (campaignId: any, data: any = {}) => 
   return resObject;
 };
 
-// Winners
+export const addParticipantUser = async (campaignId: any, data: any = {}) => {
+  const baseRequest = new BaseRequest();
+
+  let url = apiRoute(`/pool/${campaignId}/participants/add`);
+  const response = await baseRequest.post(url, data) as any;
+  const resObject = await response.json();
+
+  return resObject;
+};
+
+export const pickerRandomWinner = async (campaignId: any, numberRandom: any = 100) => {
+  const baseRequest = new BaseRequest();
+  console.log('campaignId', campaignId);
+
+  // pool/winner-random/:campaignId/:number
+  let url = apiRoute(`/pool/winner-random/${campaignId}/${numberRandom}`);
+  const response = await baseRequest.post(url, {}) as any;
+  const resObject = await response.json();
+
+  return resObject;
+};
+
+export const addParticipantUserToWinner = async (campaignId: any, data: any = {}) => {
+  const baseRequest = new BaseRequest();
+
+  let url = apiRoute(`/pool/${campaignId}/winners/add-to-winner`);
+  const response = await baseRequest.post(url, data) as any;
+  const resObject = await response.json();
+
+  return resObject;
+};
+
+/**
+ * WINNERS
+ */
 export const getWinnerUser = async (campaignId: any, params: any = {}) => {
   const baseRequest = new BaseRequest();
 
@@ -48,7 +84,9 @@ export const deleteWinnerUser = async (campaignId: any, data: any = {}) => {
   return resObject;
 };
 
-// Reserve Users
+/**
+ * RESERVE USERS
+ */
 export const getReserveUser = async (campaignId: any, params: any = {}) => {
   const baseRequest = new BaseRequest();
 

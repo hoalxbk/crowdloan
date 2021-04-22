@@ -106,7 +106,7 @@ class WhiteListUserController {
       const winnerList = await whitelistService.getRandomWinners(num, campaign_id);
       // save to winner list
       const winnerListService = new WinnerListService();
-      winnerListService.save(winnerList);
+      await winnerListService.saveRandomWinner(winnerList);
       return HelperUtils.responseSuccess(winnerList);
     } catch (e) {
       console.log(e);
@@ -145,7 +145,7 @@ class WhiteListUserController {
       wallet_address: inputParams.wallet_address,
       campaign_id: inputParams.campaign_id,
     }).first();
-    console.log('user', user);
+    console.log('[addWhitelistUser] - user: ', user);
 
     if (user) {
       return HelperUtils.responseBadRequest('User Exist !');

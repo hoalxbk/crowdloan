@@ -32,7 +32,6 @@ const UserJoinPool = (props: any) => {
           <UserReverse poolDetail={poolDetail} />
         </TabPane>
       </Tabs>
-
     </>
   );
 };

@@ -73,6 +73,14 @@ class WhitelistUserService {
       .orderByRaw('RAND()').limit(number).fetch();
   }
 
+  async getRandomWinnersUnique(number,campaign_id) {
+    // TODO: Please Use getRandomWinnersUnique
+    return await WhitelistModel.query()
+      .where('campaign_id', campaign_id)
+      .orderByRaw('RAND()').limit(number)
+      .fetch();
+  }
+
   async search(params) {
     let builder = this.buildSearchQuery(params);
     if (params.page && params.pageSize) {
