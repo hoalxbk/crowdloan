@@ -68,10 +68,10 @@ class PoolController {
 
       'is_display': false,  // Default is hidden
 
-      'symbol': tokenInfo.symbol,
-      'name': tokenInfo.name,
-      'decimals': tokenInfo.decimals,
-      'token': tokenInfo.address,
+      'symbol': tokenInfo && tokenInfo.symbol,
+      'name': tokenInfo && tokenInfo.name,
+      'decimals': tokenInfo && tokenInfo.decimals,
+      'token': tokenInfo && tokenInfo.address,
     };
 
     console.log('Create Pool with data: ', data);
@@ -145,10 +145,10 @@ class PoolController {
       'pool_type': inputParams.pool_type,
       'min_tier': inputParams.min_tier,
 
-      'symbol': tokenInfo.symbol,
-      'name': tokenInfo.name,
-      'decimals': tokenInfo.decimals,
-      'token': tokenInfo.address,
+      'symbol': tokenInfo && tokenInfo.symbol,
+      'name': tokenInfo && tokenInfo.name,
+      'decimals': tokenInfo && tokenInfo.decimals,
+      'token': tokenInfo && tokenInfo.address,
     };
 
     console.log('[updatePool] - tokenInfo:', inputParams.tokenInfo);

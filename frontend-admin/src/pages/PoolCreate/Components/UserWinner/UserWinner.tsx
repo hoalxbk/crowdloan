@@ -76,7 +76,6 @@ function UserWinner(props: any) {
                   >Delete</Button>
                 </TableCell>
 
-
               </TableRow>
             ))}
           </TableBody>

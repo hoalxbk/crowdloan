@@ -75,7 +75,6 @@ function ExchangeRate(props: any) {
           <label className={`${classes.formControlLabel} ${classes.formControlBlurLabel}`}>You have</label>
 
 
-
           <div className={classes.formControlRate}>
             <input
               type="number"
