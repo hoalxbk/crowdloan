@@ -23,7 +23,9 @@ class UserController {
     const userAuthInfo = {
       wallet_address: params.wallet_address,
     };
-    const findedUser = await userService.findUser(userAuthInfo);
+
+    const findedUser = await UserModel.query().where('wallet_address', params.wallet_address).first();
+    console.log('[profile] - findedUser', findedUser);
     if (!findedUser) {
       return HelperUtils.responseNotFound();
     }
@@ -31,6 +33,8 @@ class UserController {
     return HelperUtils.responseSuccess({
       user: {
         email: findedUser.email,
+        id: findedUser.id,
+        status: findedUser.status,
       }
     });
   }

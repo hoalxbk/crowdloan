@@ -19,6 +19,15 @@ class WhitelistUserService {
     if (params.campaign_id) {
       builder = builder.where('campaign_id', params.campaign_id);
     }
+
+    // For search box
+    if (params.search_term) {
+      builder = builder.where(query => {
+        query.where('wallet_address', 'like', '%'+ params.search_term +'%')
+          .orWhere('email', 'like', '%'+ params.search_term +'%');
+      })
+    }
+
     return builder;
   }
 
@@ -62,6 +71,14 @@ class WhitelistUserService {
     return await WhitelistModel.query()
       .where('campaign_id', campaign_id)
       .orderByRaw('RAND()').limit(number).fetch();
+  }
+
+  async getRandomWinnersUnique(number,campaign_id) {
+    // TODO: Please Use getRandomWinnersUnique
+    return await WhitelistModel.query()
+      .where('campaign_id', campaign_id)
+      .orderByRaw('RAND()').limit(number)
+      .fetch();
   }
 
   async search(params) {

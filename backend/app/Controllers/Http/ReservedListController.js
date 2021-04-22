@@ -2,6 +2,9 @@
 
 const ReservedListService = use('App/Services/ReservedListService')
 const HelperUtils = use('App/Common/HelperUtils');
+const ReservedListModel = use('App/Models/ReservedList');
+const UserModel = use('App/Models/User');
+
 const Redis = use('Redis');
 
 class ReservedListController {
@@ -18,16 +21,17 @@ class ReservedListController {
       if (page) {
         redisKey = redisKey.concat('_', page, '_', pageSize);
       }
-      if (await Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        const cachedWL = await Redis.get(redisKey);
-        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
-      }
+      // if (await Redis.exists(redisKey)) {
+      //   console.log(`existed key ${redisKey} on redis`);
+      //   const cachedWL = await Redis.get(redisKey);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      // }
       // if not existed whitelist on redis then get from db
       const filterParams = {
         'campaign_id': campaign_id,
         'page': page,
-        'pageSize': pageSize
+        'pageSize': pageSize,
+        'search_term': request.input('search_term') || '',
       };
       const reservedListService = new ReservedListService();
       // get winner list
@@ -78,6 +82,50 @@ class ReservedListController {
     } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal('Insert New Reserved Error !');
+    }
+  }
+
+  async deleteReserve({request, params}) {
+    try {
+      console.log('[deleteReserve] - Delete Winner with params: ', params, request.params);
+
+      const { campaignId, walletAddress } = params;
+      const reservedService = new ReservedListService();
+      const existRecord = await reservedService.buildQueryBuilder({
+        campaign_id: campaignId,
+        wallet_address: walletAddress,
+      }).first();
+      if (existRecord) {
+        await existRecord.delete();
+      }
+      console.log('existRecord', existRecord);
+
+      return HelperUtils.responseSuccess(existRecord);
+
+    } catch (e) {
+      return HelperUtils.responseErrorInternal();
+    }
+  }
+
+  async addReserveUser({ request, params }) {
+    try {
+      console.log('[addReserveUser] - Params: ', params);
+
+      const { campaignId } = params;
+      const inputParams = request.only(['email', 'wallet_address']);
+
+      // TODO: Check user exist in system
+
+      const reservedUser = new ReservedListModel;
+      reservedUser.campaign_id = campaignId;
+      reservedUser.email = inputParams.email;
+      reservedUser.wallet_address = inputParams.wallet_address;
+      await reservedUser.save();
+
+      console.log('Res: ', reservedUser);
+      return HelperUtils.responseSuccess(reservedUser);
+    } catch (e) {
+      return HelperUtils.responseErrorInternal();
     }
   }
 
