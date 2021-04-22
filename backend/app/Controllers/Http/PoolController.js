@@ -66,7 +66,7 @@ class PoolController {
       'pool_type': inputParams.pool_type,
       'min_tier': inputParams.min_tier,
 
-      'is_display': true,
+      'is_display': false,  // Default is hidden
 
       'symbol': tokenInfo.symbol,
       'name': tokenInfo.name,

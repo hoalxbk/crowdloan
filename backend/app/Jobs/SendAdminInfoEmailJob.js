@@ -33,7 +33,8 @@ class SendAdminInfoEmailJob {
       message
         .to(mailData.email)
         .from(from)
-        .subject(`[${Env.get('APP_NAME')}] Verify your email.`)
+        .subject(`[RedKite] Verify your email.`)
+        // .subject(`[${Env.get('APP_NAME')}] Verify your email.`)
     }).catch(e => {
       console.log('ERROR Send Mail: ', e);
       throw e;
