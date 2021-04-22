@@ -136,7 +136,7 @@ function PoolForm(props: any) {
     try {
       const response: any = await createUpdatePool(data);
       if (response?.status === 200) {
-        dispatch(alertSuccess('Update Pool Successful!'));
+        dispatch(alertSuccess('Successful!'));
         history.push(adminRoute('/campaigns'));
       } else {
         dispatch(alertFailure('Fail!'));

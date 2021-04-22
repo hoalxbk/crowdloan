@@ -10,14 +10,12 @@ import FormControlLabel from "@material-ui/core/FormControlLabel";
 function ExchangeRate(props: any) {
   const classes = useStyles();
   const commonStyle = useCommonStyle();
-
   const {
     register, setValue, errors, control, watch,
     poolDetail,
     token
   } = props;
   const [rateValue, setRateValue] = useState(0);
-
 
   useEffect(() => {
     if (poolDetail) {
@@ -99,7 +97,7 @@ function ExchangeRate(props: any) {
           <div className={classes.formControlRate}>
             <CurrencyInput
               value={rateValue}
-              decimalsLimit={8}
+              decimalsLimit={ acceptCurrency === ACCEPT_CURRENCY.ETH ? 18 : 6}
               maxLength={255}
               onValueChange={(value: any, name: any) => {
                 setRateValue(value);

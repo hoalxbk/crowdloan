@@ -7,6 +7,7 @@ import moment from "moment";
 import CurrencyInputWithValidate from "./CurrencyInputWithValidate";
 import {DATETIME_FORMAT} from "../../../constants";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import BigNumber from 'bignumber.js';
 
 function CreateEditTierForm(props: any) {
   const classes = useStyles();
@@ -176,8 +177,23 @@ function CreateEditTierForm(props: any) {
               errors={errors}
               initValue={editData.minBuy}
               controlName={'minBuy'}
+              validateRule={{
+                required: true,
+                validate: {
+                  minBuyGreaterMaxBuy: (value: any) => {
+                    const maxBuy = getValues('maxBuy');
+                    const maxBuyBigNumber = (new BigNumber(maxBuy));
+                    return maxBuyBigNumber.comparedTo(value) > 0;
+                  }
+                },
+              }}
             />
           </div>
+          <p className={classes.formErrorMessage}>
+            {
+              renderError(errors, 'minBuyGreaterMaxBuy')
+            }
+          </p>
         </div>
 
         <div className={classes.formControl}>
@@ -188,6 +204,11 @@ function CreateEditTierForm(props: any) {
               errors={errors}
               initValue={editData.maxBuy}
               controlName={'maxBuy'}
+              validateRule={{
+                required: true,
+                validate: {
+                },
+              }}
             />
           </div>
 

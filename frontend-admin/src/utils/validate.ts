@@ -60,6 +60,9 @@ export const renderErrorCreatePool = (errors: any, prop: string) => {
       }
 
 
+      case 'minBuyGreaterMaxBuy': {
+        return 'Min Buy must by less than Max Buy';
+      }
 
       case 'validAddress': {
         return "Address receive is invalid.";
