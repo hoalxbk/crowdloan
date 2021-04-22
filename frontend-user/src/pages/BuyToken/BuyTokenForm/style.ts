@@ -78,6 +78,12 @@ const useStyles = makeStyles((theme: any) => {
           width: '130px'
         }
       }
+    },
+    minimumBuyWarning: {
+      marginTop: 25,
+      fontWeight: 'bold',
+      color: '#fff100',
+      fontSize: 15
     }
   };
 });

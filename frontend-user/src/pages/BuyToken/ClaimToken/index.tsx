@@ -65,7 +65,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     <div className={styles.poolDetailClaim}>
       <p className={styles.poolDetailClaimTitle}>
         <span>{'Token can claim from'}</span>
-        <strong>{moment(releaseTime).format("h:mm, DD MMMM YYYY") }</strong>
+        <strong>{moment(releaseTime).format("h:mm A, DD MMMM YYYY") }</strong>
       </p>
       <Countdown startDate={releaseTime} />
       <div className={styles.poolDetailClaimInfo}>

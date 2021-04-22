@@ -16,6 +16,7 @@ export type PoolDetails = {
   title: string;
   buyLimit: number[],
   connectedAccountBuyLimit: number,
+  connectedAccountBuyMinimum: number,
   poolAddress: string;
   joinTime: string;
   endJoinTime: string;
@@ -30,6 +31,9 @@ export type PoolDetails = {
   isDeployed: boolean;
   isDisplay: boolean;
   addressReceiver: string;
+  minimumBuy: number[];
+  tierStartTime: Date,
+  tierEndTime: Date
 }
 
 export type PoolDetailsReturnType ={
@@ -50,6 +54,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const poolDetails = useMemo(() => {
     if (data && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
       const buyLimit = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.max_buy): [0,0,0,0,0];
+      const minimumBuy = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.min_buy): [0,0,0,0,0];
 
       return {
         method: data.buy_type,
@@ -62,7 +67,9 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         tokenDetails,
         title: data.title,
         buyLimit,
+        minimumBuy,
         connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) || 0],
+        connectedAccountBuyMinimum: minimumBuy[Number(connectedAccountTier) || 0],
         poolAddress: data.campaign_hash,
         joinTime: data.start_join_pool_time,
         endJoinTime: data.end_join_pool_time,
@@ -77,7 +84,9 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         minTier: data.min_tier,
         isDeployed: data.is_deploy === 1,
         isDisplay: data.is_display === 1,
-        addressReceiver: data.address_receiver
+        addressReceiver: data.address_receiver,
+        tierStartTime: data.tiers[Number(connectedAccountTier) || 0].start_time,
+        tierEndTime: data.tiers[Number(connectedAccountTier) || 0].finish_time
       } 
     }
 
