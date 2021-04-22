@@ -2,7 +2,6 @@ import React from 'react';
 import ConfirmDialog from "../../../components/Base/ConfirmDialog";
 import useStyles from "../style";
 import {Controller, useForm} from "react-hook-form";
-import FormControl from "@material-ui/core/FormControl";
 import {DatePicker} from 'antd';
 import moment from "moment";
 import CurrencyInputWithValidate from "./CurrencyInputWithValidate";

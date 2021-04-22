@@ -34,18 +34,20 @@ class PoolController {
       'registed_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
       'token', 'token_by_eth',  'token_conversion_rate', 'token_images', 'total_sold_coin',
+      'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
       'min_tier', 'tier_configuration',
     ]);
 
+    const tokenInfo = inputParams.tokenInfo;
     const data = {
       'registed_by': inputParams.registed_by,
 
       'title': inputParams.title,
       'website': inputParams.website,
       'description': inputParams.description,
-      'token': inputParams.token,
+      // 'token': inputParams.token,
       'start_time': inputParams.start_time,
       'finish_time': inputParams.finish_time,
       'ether_conversion_rate': inputParams.token_by_eth,
@@ -65,6 +67,11 @@ class PoolController {
       'min_tier': inputParams.min_tier,
 
       'is_display': true,
+
+      'symbol': tokenInfo.symbol,
+      'name': tokenInfo.name,
+      'decimals': tokenInfo.decimals,
+      'token': tokenInfo.address,
     };
 
     console.log('Create Pool with data: ', data);
@@ -106,18 +113,19 @@ class PoolController {
       'registed_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
       'token', 'token_by_eth', 'token_conversion_rate', 'token_images', 'total_sold_coin',
+      'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
       'min_tier', 'tier_configuration',
     ]);
 
+    const tokenInfo = inputParams.tokenInfo;
     const data = {
       'registed_by': inputParams.registed_by,
 
       'title': inputParams.title,
       'website': inputParams.website,
       'description': inputParams.description,
-      'token': inputParams.token,
       'start_time': inputParams.start_time,
       'finish_time': inputParams.finish_time,
       'ether_conversion_rate': inputParams.token_by_eth,
@@ -135,9 +143,15 @@ class PoolController {
       'buy_type': inputParams.buy_type,
       'pool_type': inputParams.pool_type,
       'min_tier': inputParams.min_tier,
+
+      'symbol': tokenInfo.symbol,
+      'name': tokenInfo.name,
+      'decimals': tokenInfo.decimals,
+      'token': tokenInfo.address,
     };
 
-    console.log('Update Pool with data: ', data, params);
+    console.log('[updatePool] - tokenInfo:', inputParams.tokenInfo);
+    console.log('[updatePool] - Update Pool with data: ', data, params);
     const campaignId = params.campaignId;
     try {
       const campaign = await CampaignModel.query().where('id', campaignId).first();
@@ -145,7 +159,6 @@ class PoolController {
         return HelperUtils.responseNotFound('Pool not found');
       }
       await CampaignModel.query().where('id', campaignId).update(data);
-
       const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
         tierObj.fill({
