@@ -21,8 +21,8 @@ const useStylesTable = makeStyles({
 function UserWinner(props: any) {
   const commonStyle = useCommonStyle();
   const classesTable = useStylesTable();
-
   const { poolDetail } = props;
+
   const {
     rows, setRows,
     search,
