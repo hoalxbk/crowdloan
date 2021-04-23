@@ -86,7 +86,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         isDisplay: data.is_display === 1,
         addressReceiver: data.address_receiver,
         tierStartTime: data.tiers[Number(connectedAccountTier) || 0].start_time,
-        tierEndTime: data.tiers[Number(connectedAccountTier) || 0].finish_time
+        tierEndTime: data.tiers[Number(connectedAccountTier) || 0].end_time
       } 
     }
 
