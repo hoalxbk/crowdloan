@@ -102,8 +102,6 @@ const BuyToken: React.FC<any> = (props: any) => {
     ? (
       today >= joinTimeInDate && 
       today <= endJoinTimeInDate && 
-      today >= tierStartBuyInDate &&
-      today <= tierEndBuyInDate &&
       connectedAccount && 
       !wrongChain &&
       userTier >= poolDetails?.minTier
@@ -113,6 +111,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const availablePurchase = 
     today >= startBuyTimeInDate && 
     today <= endBuyTimeInDate && 
+    today >= tierStartBuyInDate &&
+    today <= tierEndBuyInDate &&
     poolDetails?.isDeployed &&
     (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
 
