@@ -3,7 +3,7 @@ import moment from "moment";
 import BigNumber from 'bignumber.js';
 import {getContractInstance, getWeb3Instance} from "../services/web3";
 import campaignABI from "../abi/Swap/Campaign.json";
-import erc20ABI from "../abi/Swap/Erc20.json";
+import erc20ABI from "../abi/Erc20.json";
 import {convertUnixTimeToDateTime} from "./convertDate";
 
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";

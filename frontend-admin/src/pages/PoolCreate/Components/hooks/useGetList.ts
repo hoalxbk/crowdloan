@@ -15,11 +15,11 @@ const useGetList = (props: any) => {
   const search = () => {
     console.log('SEARCH Query: ', query );
     if (poolDetail && poolDetail.id) {
-      const serchParams = {
+      const searchParams = {
         search_term: query,
       };
       handleSearchFunction &&
-      handleSearchFunction(poolDetail.id, serchParams)
+      handleSearchFunction(poolDetail.id, searchParams)
         .then((res: any) => setRows(res.data));
     }
   };

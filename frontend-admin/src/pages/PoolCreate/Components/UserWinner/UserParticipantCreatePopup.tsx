@@ -24,8 +24,6 @@ function UserParticipantCreatePopup(props: any) {
     reValidateMode: 'onChange',
     defaultValues: {
       ...editData,
-      // startTime: isEdit ? moment(editData.startTime, DATETIME_FORMAT) : null,
-      // endTime: isEdit ? moment(editData.endTime, DATETIME_FORMAT) : null,
     },
   });
 

@@ -14,8 +14,13 @@ import {withRouter} from "react-router";
 import {alertFailure, alertSuccess} from "../../../../store/actions/alert";
 import useGetList from "../hooks/useGetList";
 import useDeleteItem from "../hooks/useDeleteItem";
-import UserParticipantCreatePopup from "./UserParticipantCreatePopup";
 import UserPickerToWinner from "./UserPickerToWinner";
+import {getContractInstance} from "../../../../services/web3";
+import tierABI from "../../../../abi/Tier.json";
+import { Checkbox } from 'antd';
+import {filter, cloneDeep, includes} from 'lodash';
+
+const REACT_APP_SOTATIER = process.env.REACT_APP_SOTATIER || '';
 
 const useStylesTable = makeStyles({
   table: {
@@ -23,24 +28,46 @@ const useStylesTable = makeStyles({
   },
   middleColumn: {
     width: 60,
-    // backgroundColor: 'red',
   },
   smallColumn: {
     width: 60,
-    // backgroundColor: 'green',
   },
 });
 
 function UserParticipant(props: any) {
   const commonStyle = useCommonStyle();
   const classesTable = useStylesTable();
-
   const { poolDetail } = props;
+  const dispatch = useDispatch();
+
+  const getParticipantUserWithTier = async (poolId: any, searchParams: any) => {
+    if (getParticipantUser) {
+      let participantsUsers = await getParticipantUser(poolId, searchParams);
+
+      // Call Multi get Tiers
+      let users = participantsUsers.data || [];
+      const campaignContract = getContractInstance(tierABI, REACT_APP_SOTATIER);
+      const userAddressesPromises = users.map((item: any) => {
+        return campaignContract?.methods.getUserTier(item.wallet_address).call();
+      });
+
+      const response = await Promise.all(userAddressesPromises);
+      for (let i = 0; i < users.length; i++) {
+        users[i].tier = response[i] || 0;
+      }
+      participantsUsers.data = users;
+      return participantsUsers;
+    }
+  };
+
   const {
     rows,
     search,
     searchDelay,
-  } = useGetList({ poolDetail, handleSearchFunction: getParticipantUser });
+  } = useGetList({
+    poolDetail,
+    handleSearchFunction: getParticipantUserWithTier
+  });
 
   const {
     deleteItem
@@ -50,11 +77,10 @@ function UserParticipant(props: any) {
     handleSearchFunction: search
   });
 
-  const dispatch = useDispatch();
-  const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
-  const [editData, setEditData] = useState([]);
-  const [editRow, setEditRow] = useState(0);
-  const [isEdit, setIsEdit] = useState(true);
+  // const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
+  // const [editData, setEditData] = useState([]);
+  // const [editRow, setEditRow] = useState(0);
+  // const [isEdit, setIsEdit] = useState(true);
   // const openPopupEdit = (e: any, row: any, index: number) => {
   //   console.log('ROW: ', row, index);
   //   setEditData(row);
@@ -63,29 +89,69 @@ function UserParticipant(props: any) {
   //   setIsOpenEditPopup(true);
   // };
 
-  const openPopupCreate = (e: any) => {
-    setEditData(rows);
-    setEditRow(-1);
-    setIsEdit(false);
-    setIsOpenEditPopup(true);
-  };
+  // const openPopupCreate = (e: any) => {
+  //   setEditData(rows);
+  //   setEditRow(-1);
+  //   setIsEdit(false);
+  //   setIsOpenEditPopup(true);
+  // };
 
-  const handleCreateUpdateData = async (responseData: any) => {
-    console.log('responseData', editRow, responseData);
-
+  const [addedUsers, setAddedUsers] = useState([]);
+  const handleCreateUpdateData = async () => {
+    // eslint-disable-next-line no-restricted-globals
+    if (!confirm('Do you want add to winner')) {
+      return false;
+    }
     // Call API Add to Winner
-    addParticipantUserToWinner(poolDetail?.id, {winners: responseData})
+    addParticipantUserToWinner(poolDetail?.id, {winners: addedUsers})
       .then((res: any) => {
         console.log('[addParticipantUserToWinner] - res', res);
         if (res.status === 200) {
           dispatch(alertSuccess('Add Participant User to Winner Success'));
           search();
-          setIsOpenEditPopup(false);
+          setAddedUsers([]);
+          onChange([]);
         } else {
           dispatch(alertFailure('Add Participant User to Winner Fail'));
         }
       })
   };
+
+  const onCheckToAdd = (e: any, row: any, index: number) => {
+    console.log('[onCheckToAdd]: ', e.target.value, row, index);
+    const isChecked = e.target.checked;
+    let newArr = cloneDeep(addedUsers);
+    if (isChecked) {
+      // @ts-ignore
+      newArr.push(row.wallet_address);
+    } else {
+      newArr = filter(newArr, (it) => row.wallet_address != it);
+    }
+    onChange(newArr);
+  };
+
+  const [indeterminate, setIndeterminate] = React.useState(false);
+  const [checkAll, setCheckAll] = React.useState(false);
+  const onChange = (list: any) => {
+    setAddedUsers(list);
+    setIndeterminate(!!list.length && list.length < rows.length);
+    setCheckAll(list.length === rows.length);
+  };
+
+  const onCheckAllChange = (e: any) => {
+    setAddedUsers(e.target.checked ? addedUsers : []);
+    setIndeterminate(false);
+    setCheckAll(e.target.checked);
+
+    if (e.target.checked) {
+      // @ts-ignore
+      setAddedUsers(rows.map(it => it.wallet_address));
+    } else {
+      setAddedUsers([]);
+    }
+  };
+
+  console.log('addedUsers', addedUsers);
 
   return (
     <>
@@ -101,24 +167,26 @@ function UserParticipant(props: any) {
           <Button
             variant="contained"
             color="primary"
-            onClick={openPopupCreate}
+            onClick={handleCreateUpdateData}
           >Add To Winner</Button>
 
-          {isOpenEditPopup &&
-          <UserParticipantCreatePopup
-            isOpenEditPopup={isOpenEditPopup}
-            setIsOpenEditPopup={setIsOpenEditPopup}
-            editData={editData}
-            isEdit={isEdit}
-            handleCreateUpdateData={handleCreateUpdateData}
-          />
-          }
+          {/*<Button*/}
+          {/*  variant="contained"*/}
+          {/*  color="primary"*/}
+          {/*  onClick={openPopupCreate}*/}
+          {/*>Add To Winner</Button>*/}
 
+          {/*{isOpenEditPopup &&*/}
+          {/*<UserParticipantCreatePopup*/}
+          {/*  isOpenEditPopup={isOpenEditPopup}*/}
+          {/*  setIsOpenEditPopup={setIsOpenEditPopup}*/}
+          {/*  editData={editData}*/}
+          {/*  isEdit={isEdit}*/}
+          {/*  handleCreateUpdateData={handleCreateUpdateData}*/}
+          {/*/>*/}
+          {/*}*/}
 
         </div>
-
-
-
 
       </div>
 
@@ -127,20 +195,34 @@ function UserParticipant(props: any) {
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
             <TableRow>
+              <TableCell size={'small'}>
+
+                <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
+                  Check all
+                </Checkbox>
+
+              </TableCell>
               <TableCell size={'small'}>Email</TableCell>
               <TableCell align="center" size={'medium'}>Wallet Address</TableCell>
+              <TableCell align="center">Tier</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row: any, index: number) => (
               <TableRow key={row.id}>
-
-                <TableCell component="th" scope="row" size={'small'}>
-                  {row.email}
+                <TableCell size={'small'}>
+                  <Checkbox
+                    onChange={(e) => onCheckToAdd(e, row, index)}
+                    checked={includes(addedUsers, row.wallet_address)}
+                  ></Checkbox>
                 </TableCell>
-                <TableCell align="center" size={'medium'}>{row.wallet_address}</TableCell>
 
+                <TableCell component="th" scope="row" size={'small'}>{row.email}</TableCell>
+                <TableCell align="center" size={'medium'}>{row.wallet_address}</TableCell>
+                <TableCell component="th" scope="row" size={'small'} align="center">
+                  {row.tier}
+                </TableCell>
 
                 <TableCell align="right">
                   <Button
@@ -150,7 +232,6 @@ function UserParticipant(props: any) {
                     style={{marginLeft: 10, marginTop: 10}}
                   >Delete</Button>
                 </TableCell>
-
 
               </TableRow>
             ))}

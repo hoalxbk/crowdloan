@@ -2,7 +2,7 @@ import { usdtDetailActions } from '../constants/usdt-detail';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getContractInstance } from '../../services/web3';
-import ErcABI from '../../abi/Swap/Erc20.json';
+import ErcABI from '../../abi/Erc20.json';
 
 export const getUsdtDetail = () => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {

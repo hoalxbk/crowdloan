@@ -3,7 +3,7 @@ import {usdtAllowanceActions} from '../constants/usdt-allowance';
 import {AnyAction} from 'redux';
 import {ThunkDispatch} from 'redux-thunk';
 import {getContractInstance} from '../../services/web3';
-import ErcABI from '../../abi/Swap/Erc20.json';
+import ErcABI from '../../abi/Erc20.json';
 import {alertActions} from '../constants/alert';
 import {convertAmountToUsdt, isAllowanceUsdt} from '../../utils/usdt';
 import {TRANSACTION_ERROR} from '../../constants';
