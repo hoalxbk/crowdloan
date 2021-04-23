@@ -8,8 +8,9 @@ import BigNumber from 'bignumber.js';
 import usePrevious from '../../../../hooks/usePrevious';
 import { useTypedSelector } from '../../../../hooks/useTypedSelector';
 import { ConnectorNames } from '../../../../constants/connectors';
-import { APP_NETWORKS_ID, ETH_CHAIN_ID, BSC_CHAIN_ID } from '../../../../constants/network';
+import { APP_NETWORKS_ID, ETH_CHAIN_ID, BSC_CHAIN_ID, ChainIdNameMapping, chainId } from '../../../../constants/network';
 import { requestSupportNetwork } from '../../../../utils/setupNetwork';
+import { getAppNetworkName } from '../../../../utils/network/getAppNetworkName';
 import { connectWalletSuccess, disconnectWallet } from '../../../../store/actions/wallet';
 import getAccountBalance from '../../../../utils/getAccountBalance';
 
@@ -58,8 +59,9 @@ const useProviderConnect = (
    useEffect(() => {
     const handleWeb3ReactUpdate = (updated: any) => {
       if (updated.account) {
-        console.log('updated');
-        setAccount(updated.account); 
+        if (updated.account) {
+          setAccount(updated.account); 
+        } else setAccount(undefined);
       } 
 
       if (updated.chainId) {
@@ -144,7 +146,8 @@ const useProviderConnect = (
 
   const switchNetwork = (appChainID: string, walletChainID: string) => {
     if (appChainID && walletChainID) {
-      Number(appChainID) !== Number(walletChainID) ? setLoginError(`App network (${appChainID}) doesn't mach to network selected in wallet: ${Number(walletChainID)}.`) : setLoginError('');
+      Number(appChainID) !== Number(walletChainID) ? 
+        setLoginError(`App network (${getAppNetworkName(appChainID)}) doesn't mach to network selected in wallet: ${ChainIdNameMapping[Number(walletChainID) as chainId]}.`) : setLoginError('');
       currentConnector && activate(currentConnector, undefined, true).catch(err =>
         console.log('Fail when switch between network:', err.message)
       );

@@ -1,9 +1,12 @@
+import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
 import axios from '../../../services/axios';
+import { alertFailure } from '../../../store/actions/alert';
 
 const MESSAGE_INVESTOR_SIGNATURE = process.env.REACT_APP_MESSAGE_INVESTOR_SIGNATURE || "";
 
 const useUserPurchaseSignature = (connectedAccount: string | undefined | null, campaignId: number | undefined, authSignature: string | undefined) => {
+  const dispatch = useDispatch();
   const [signature, setSignature] = useState<string | undefined>(undefined);
   const [minBuy, setMinBuy] = useState<string| undefined>("");
   const [maxBuy, setMaxBuy] = useState<string| undefined>("");
@@ -11,6 +14,9 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
 
   useEffect(() => {
       const getUserSignature = async () => {
+        setError("");
+        setSignature("");
+
         try {
           const config = {
             headers: {
@@ -24,15 +30,22 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
           }, config);
 
           if (response.data && response.status && response.status === 200) {
-            const { data } = response.data;
-            if (data) {
+            const { data, message, status } = response.data;
+            if (data && status === 200) {
               setSignature(data.signature);
               setMinBuy(data.min_buy);
               setMaxBuy(data.max_buy);
+            } 
+
+            if (message && status !== 200) {
+              dispatch(alertFailure(message));
+              setError(message);
+              setSignature("");
             }
-          }
+          } 
         } catch (err) {
           setError(err.message);
+          setSignature("");
         }
       }
     connectedAccount && campaignId && authSignature && getUserSignature();
@@ -40,6 +53,7 @@ const useUserPurchaseSignature = (connectedAccount: string | undefined | null, c
 
   return {
     signature,
+    setSignature,
     minBuy,
     maxBuy,
     error

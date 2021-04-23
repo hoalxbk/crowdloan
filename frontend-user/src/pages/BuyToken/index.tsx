@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js'; 
+import Tooltip from '@material-ui/core/Tooltip';
 
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
@@ -24,7 +25,7 @@ import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
 import { ETH_CHAIN_ID } from '../../constants/network';
 
-import { getUserTierAlias } from '../../utils/getUserTierAlias';
+import { NETWORK_ETH_NAME, NETWORK_BSC_NAME } from '../../constants/network';
 import { getPoolCountDown } from '../../utils/getPoolCountDown';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
@@ -60,28 +61,31 @@ const BuyToken: React.FC<any> = (props: any) => {
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
-  const tokenDetails = poolDetails?.tokenDetails;
-  // Should replace hard string by pool address
-  const { tokenSold, totalSell, soldProgress } = useTokenSoldProgress(
+  // Fetch token sold, total tokens sold
+  const { tokenSold, soldProgress } = useTokenSoldProgress(
       poolDetails?.poolAddress, 
-      tokenDetails, 
+      poolDetails?.amount,
       poolDetails?.networkAvailable 
   );
   const { joinPool, poolJoinLoading, joinPoolSuccess } = usePoolJoinAction({ poolId: poolDetails?.id });
   const { data: winners } = useFetch<Array<any>>(
-    `/pool/${poolDetails?.id}/winners`, poolDetails?.method !== "whitelist" 
+    poolDetails ? `/pool/${poolDetails?.id}/winners`: undefined, 
+    poolDetails?.method !== "whitelist" 
   );
   const { data: alreadyJoinPool } = useFetch<boolean>(
+    poolDetails && connectedAccount ?
     `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
+    : undefined
   );
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
   // Use for check whether pool exist in selected network or not
-  const networkAvailable = poolDetails?.networkAvailable === 'eth'? 'Ethereum': 'BinanceChain' ;
+  const networkAvailable = poolDetails?.networkAvailable === 'eth'? NETWORK_ETH_NAME: NETWORK_BSC_NAME;
   const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
   const ableToFetchFromBlockchain = appNetwork === poolDetails?.networkAvailable && !wrongChain;
 
   const userBuyLimit = poolDetails?.connectedAccountBuyLimit || 0;
+  const userBuyMinimum = poolDetails?.connectedAccountBuyMinimum || 0;
   
   // With Whitelist situation, Enable when join time < current < end join time
   // With FCFS, always disable join button
@@ -89,29 +93,37 @@ const BuyToken: React.FC<any> = (props: any) => {
   const endJoinTimeInDate = new Date(Number(poolDetails?.endJoinTime) * 1000);
   const startBuyTimeInDate = new Date(Number(poolDetails?.startBuyTime) * 1000);
   const endBuyTimeInDate = new Date(Number(poolDetails?.endBuyTime) * 1000);
+  const tierStartBuyInDate = new Date(Number(poolDetails?.tierStartTime) * 1000);
+  const tierEndBuyInDate = new Date(Number(poolDetails?.tierEndTime) * 1000);
   const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
 
+  const today = new Date();
   const availableJoin = poolDetails?.method === 'whitelist' 
     ? (
-      new Date() >= joinTimeInDate && 
-      new Date() <= endJoinTimeInDate && 
+      today >= joinTimeInDate && 
+      today <= endJoinTimeInDate && 
+      today >= tierStartBuyInDate &&
+      today <= tierEndBuyInDate &&
       connectedAccount && 
       !wrongChain &&
       userTier >= poolDetails?.minTier
-      )
+      && poolDetails?.isDeployed
+    )
     : false;
-  const availablePurchase = new Date() >= startBuyTimeInDate && new Date() <= endBuyTimeInDate;
-  
+  const availablePurchase = 
+    today >= startBuyTimeInDate && 
+    today <= endBuyTimeInDate && 
+    poolDetails?.isDeployed &&
+    (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
+
   // Get Pool Status
   const poolStatus = getPoolStatus(
     joinTimeInDate, 
     endJoinTimeInDate, 
     startBuyTimeInDate, 
     endBuyTimeInDate,
-    new BigNumber(tokenSold).div(totalSell).toFixed()
+    new BigNumber(tokenSold).div(poolDetails?.amount || 1).toFixed()
   );
-  // Get Pool mintier
-  const poolMinTier = getUserTierAlias(poolDetails?.minTier || 0);
 
   const displayCountDownTime = useCallback((
     method: string | undefined, 
@@ -125,7 +137,7 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   const { date: countDownDate, display } = displayCountDownTime(poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate)
 
-  const shortAdress = (address: string, digits: number = 4) => {
+  const shortenAddress = (address: string, digits: number = 4) => {
     return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
 
@@ -162,228 +174,271 @@ const BuyToken: React.FC<any> = (props: any) => {
     }
   }, [isAuth, connectedAccount, userTier, ableToFetchFromBlockchain, poolDetails]);
 
+  const render = () => {
+    if (loadingPoolDetail)  {
+      return (
+        <div className={styles.loader} style={{ marginTop: 70 }}>
+          <HashLoader loading={true} color={'#3232DC'} />
+          <p className={styles.loaderText}>
+            <span style={{ marginRight: 10 }}>Loading Pool Details ...</span>
+          </p>
+        </div>
+      )
+    } 
+
+    if ((!poolDetails || !poolDetails?.isDisplay) && !loadingPoolDetail) {
+      return <p style={{ 
+        color: 'white', 
+        textAlign: 'center', 
+        fontSize: 16, 
+        fontWeight: 700,
+        marginTop: 20
+      }}>
+        This pool does not exist. Try later! 🙂
+      </p>
+    } else {
+      return (
+        <>
+          <header className={styles.poolDetailHeader}> 
+            <div className={styles.poolHeaderWrapper}>
+              <div className={styles.poolHeaderImage}>
+                <img src={poolDetails?.banner || poolImage} alt="pool-image" className={styles.poolImage}/>
+              </div>
+              <div className={styles.poolHeaderInfo}>
+                <h2 className={styles.poolHeaderTitle}>
+                  {poolDetails?.title}
+                </h2>
+                <p className={styles.poolHeaderAddress}>
+                  {isWidthUp('sm', props.width) && poolDetails?.poolAddress}
+                  {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.poolAddress || '', 8)}
+
+                  <CopyToClipboard text={poolDetails?.poolAddress}
+                    onCopy={() => { 
+                      setCopiedAddress(true);
+                      setTimeout(() => {
+                        setCopiedAddress(false);
+                      }, 2000);
+                    }}
+                  >
+                    {
+                      !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
+                      : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
+                    }
+                  </CopyToClipboard>
+                </p>
+              </div>
+            </div>
+            <div className={styles.poolType}>
+              <span className={styles.poolHeaderType}>
+                <div className={styles.poolHeaderTypeInner}>
+                  <img src={poolDetails?.networkIcon} />
+                  <strong className={styles.poolHeaderNetworkAvailable}>{networkAvailable}</strong>
+                </div>
+              </span>
+              <span className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
+                {poolStatus}
+              </span>
+            </div>
+            {isWinner && new Date() >= startBuyTimeInDate && ableToFetchFromBlockchain &&
+              <p className={styles.poolTicketWinner}>
+                <div>
+                  {
+                    [...Array(3)].map((num, index) => (
+                      <img src="/images/fire-cracker.svg" alt="file-cracker" key={index} />
+                    ))
+                  }
+                </div>
+                <span style={{ marginLeft: 14 }}>
+                  Congratulations on your purchase of the lottery ticket at this pool !
+                </span>
+              </p>
+            }
+          </header>
+          <main className={styles.poolDetailInfo}>
+            <div className={styles.poolDetailTierWrapper}>
+              <div className={styles.poolDetailIntro}>
+              {
+                (loadingPoolDetail) ? (
+                  <div className={styles.loader}>
+                    <HashLoader loading={true} color={'#3232DC'} />
+                    <p className={styles.loaderText}>
+                      <span style={{ marginRight: 10 }}>Loading Pool Details ...</span>
+                    </p>
+                  </div>
+                ):  poolDetailsMapping && 
+                ( 
+                  <>
+                    {
+                      Object.keys(poolDetailsMapping).map((key: string) => {
+                        const poolDetail = poolDetailsMapping[key as poolDetailKey];
+                        return (
+                          <div className={styles.poolDetailBasic} key={key}>
+                            <span className={styles.poolDetailBasicLabel}>{poolDetail.label}</span>
+                            <p className={styles.poolsDetailBasicText}>
+                              <Tooltip title={<p style={{ fontSize: 15 }}>{poolDetail.display}</p>}>
+                                  <span>
+                                  {
+                                    key !== PoolDetailKey.exchangeRate ? poolDetail.display: (
+                                      showRateReserve ? poolDetail.reverse: poolDetail.display 
+                                    )
+                                  }
+                                  </span>
+                                </Tooltip>
+                              {
+                                poolDetail.utilIcon && ( 
+                                  <img 
+                                    src={poolDetail.utilIcon} 
+                                    className={styles.poolDetailUtil} 
+                                    onClick={() => {
+                                      if (key === PoolDetailKey.website) {
+                                        window.open(poolDetail.display as string, '_blank')
+                                      }
+
+                                      if (key === PoolDetailKey.exchangeRate) {
+                                        setShowRateReverse(!showRateReserve);
+                                      }
+                                    }} 
+                                    key={key}
+                                  />)
+                              }
+                            </p>
+                          </div>
+                        )})
+                    }
+                    <div className={styles.btnGroup}>
+                      {
+                        <Button 
+                          text={'Join Pool'} 
+                          backgroundColor={'#D01F36'} 
+                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess} 
+                          loading={poolJoinLoading}
+                          onClick={joinPool}
+                        />
+                      }
+                      <Button 
+                        text={'Etherscan'} 
+                        backgroundColor={'#3232DC'} 
+                        onClick={() => {
+                          poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails.poolAddress}` as string, '_blank')
+                        }} 
+                      />
+                    </div>
+                  </>
+                )
+              }
+              </div>
+              <div className={styles.poolDetailTier}>
+                <Tiers 
+                  showMoreInfomation 
+                  tiersBuyLimit={poolDetails?.buyLimit || [] }
+                  tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
+                />
+                <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
+                <div className={styles.poolDetailProgress}>
+                  <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
+                  {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
+                    <span className={styles.poolDetailProgressPercent}>
+                      {numberWithCommas(new BigNumber(soldProgress).gt(100) ? '100': soldProgress)}%
+                    </span>
+                    <span>
+                      {
+                        numberWithCommas(new BigNumber(tokenSold).gt(`${poolDetails?.amount}`) ? `${poolDetails?.amount}`: tokenSold)}&nbsp; 
+                        / {numberWithCommas(`${poolDetails?.amount}` || "0")
+                      }
+                    </span>
+                  </div>}
+                  {isWidthDown('xs', props.width) && <div className={styles.poolDetailProgressStat}>
+                    <span className={styles.poolDetailProgressPercent}>
+                      {parseFloat(soldProgress).toFixed(2)}%
+                    </span>
+                    <span>
+                      {
+                        numberWithCommas(new BigNumber(tokenSold).gt(`${poolDetails?.amount}`) ? `${poolDetails?.amount}`: tokenSold)}&nbsp;
+                        / {numberWithCommas(`${poolDetails?.amount}` || "0")
+                      }
+                    </span>
+                  </div>}
+                  <div className={styles.progress}>
+                    <div className={styles.achieved} style={{ width: `${new BigNumber(soldProgress).gt(100) ? '100': soldProgress}%` }}></div>
+                  </div>
+                </div>
+                <div className={styles.poolDetailStartTime}>
+                  <span className={styles.poolDetailStartTimeTitle}>{display}</span>
+                  <Countdown startDate={countDownDate} />
+                </div>
+              </div> 
+            </div>
+            <div className={styles.poolDetailBuy}>
+              <nav className={styles.poolDetailBuyNav}>
+                <ul className={styles.poolDetailLinks}>
+                  {
+                    headers.map((header) => {
+                      if (header === HeaderType.Main && new Date() > endBuyTimeInDate) {
+                        return null;
+                      }
+                      return <li 
+                        className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`} 
+                        onClick={() => setActiveNav(header)}
+                        key={header}
+                      >
+                        {header}
+                      </li>
+                    })
+                  }
+                </ul>
+              </nav>
+              <div className={styles.poolDetailBuyForm}>
+                {
+                  activeNav === HeaderType.Main && new Date() <= endBuyTimeInDate && ( 
+                      <BuyTokenForm 
+                        tokenDetails={poolDetails?.tokenDetails} 
+                        rate={poolDetails?.ethRate}
+                        poolAddress={poolDetails?.poolAddress}
+                        maximumBuy={userBuyLimit}
+                        minimumBuy={userBuyMinimum}
+                        poolAmount={poolDetails?.amount}
+                        purchasableCurrency={poolDetails?.purchasableCurrency?.toUpperCase()}
+                        poolId={poolDetails?.id}
+                        joinTime={joinTimeInDate}
+                        method={poolDetails?.method}
+                        availablePurchase={availablePurchase}
+                        ableToFetchFromBlockchain={ableToFetchFromBlockchain}
+                        minTier={poolDetails?.minTier}
+                        isDeployed={poolDetails?.isDeployed}
+                        startBuyTimeInDate={startBuyTimeInDate}
+                        endBuyTimeInDate={endBuyTimeInDate}
+                        tokenSold={tokenSold}
+                      /> 
+                   )
+                }
+                {
+                  activeNav === HeaderType.About && <PoolAbout /> 
+                }
+                {
+                  activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
+                }
+                {
+                  poolDetails?.type === 'claimable' && ( 
+                    <ClaimToken 
+                      releaseTime={releaseTimeInDate} 
+                      ableToFetchFromBlockchain={ableToFetchFromBlockchain}
+                      poolAddress={poolDetails?.poolAddress}
+                      tokenDetails={poolDetails?.tokenDetails} 
+                    /> 
+                 )
+                }
+              </div>
+            </div>
+          </main>
+        </>
+      )
+    }
+  }
+
   return (
     <DefaultLayout>
       <div className={styles.poolDetailContainer}>
-        <header className={styles.poolDetailHeader}> 
-          <div className={styles.poolHeaderWrapper}>
-            <div className={styles.poolHeaderImage}>
-              <img src={poolDetails?.banner || poolImage} alt="pool-image" className={styles.poolImage}/>
-            </div>
-            <div className={styles.poolHeaderInfo}>
-              {isWidthUp('sm', props.width) && <h2 className={styles.poolHeaderTitle}>
-                {poolDetails?.title}
-                <p className={styles.poolHeaderType}>
-                  <img src={poolDetails?.networkIcon} />
-                  <span style={{ fontWeight: 600, marginLeft: 10 }}>{networkAvailable}</span>
-                </p>
-                <p className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
-                  {poolStatus}
-                </p>
-                <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
-              </h2>}
-              {isWidthDown('xs', props.width) && <h2 className={styles.poolHeaderTitle}>
-                <div>
-                  {poolDetails?.title}
-                  <img src={poolMinTier?.icon} alt={poolMinTier?.text} style={{ marginLeft: 20, width: 20 }} />
-                </div>
-                <div>
-                  <p className={styles.poolHeaderType}>
-                    <img src={poolDetails?.networkIcon} />
-                    <span style={{ fontWeight: 600, marginLeft: 10 }}>{networkAvailable}</span>
-                  </p>
-                  <p className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
-                    {poolStatus}
-                  </p>
-                </div>
-              </h2>}
-              <p className={styles.poolHeaderAddress}>
-                {isWidthUp('sm', props.width) && poolDetails?.poolAddress}
-                {isWidthDown('xs', props.width) && shortAdress(poolDetails?.poolAddress || '', 8)}
-                <CopyToClipboard text={poolDetails?.poolAddress}
-                  onCopy={() => { 
-                    setCopiedAddress(true);
-                    setTimeout(() => {
-                      setCopiedAddress(false);
-                    }, 2000);
-                  }}
-                >
-                  {
-                    !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
-                    : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
-                  }
-                </CopyToClipboard>
-              </p>
-            </div>
-          </div>
-          {isWinner && 
-            <p className={styles.poolTicketWinner}>
-              {
-                [...Array(3)].map((num, index) => (
-                  <img src="/images/fire-cracker.svg" alt="file-cracker" key={index} />
-                ))
-              }
-              <span style={{ marginLeft: 14 }}>
-                Congratulations on your purchase of the lottery ticket at this pool !
-              </span>
-            </p>
-          }
-        </header>
-        <main className={styles.poolDetailInfo}>
-          <div className={styles.poolDetailTierWrapper}>
-            <div className={styles.poolDetailIntro}>
-            {
-              (loadingPoolDetail) ? (
-                <div className={styles.loader}>
-                  <HashLoader loading={true} color={'#3232DC'} />
-                  <p className={styles.loaderText}>
-                    <span style={{ marginRight: 10 }}>Loading Pool Details ...</span>
-                  </p>
-                </div>
-              ):  poolDetailsMapping && 
-              ( 
-                <>
-                  {
-                    Object.keys(poolDetailsMapping).map((key: string) => {
-                      const poolDetail = poolDetailsMapping[key as poolDetailKey];
-                      return (
-                        <div className={styles.poolDetailBasic} key={key}>
-                          <span className={styles.poolDetailBasicLabel}>{poolDetail.label}</span>
-                          <p className={styles.poolsDetailBasicText}>
-                            <span>
-                            {
-                              key !== PoolDetailKey.exchangeRate ? poolDetail.display: (
-                                showRateReserve ? poolDetail.reverse: poolDetail.display 
-                              )
-                            }
-                            </span>
-                            {
-                              poolDetail.utilIcon && ( 
-                                <img 
-                                  src={poolDetail.utilIcon} 
-                                  className={styles.poolDetailUtil} 
-                                  onClick={() => {
-                                    if (key === PoolDetailKey.website) {
-                                      window.open(poolDetail.display as string, '_blank')
-                                    }
-
-                                    if (key === PoolDetailKey.exchangeRate) {
-                                      setShowRateReverse(!showRateReserve);
-                                    }
-                                  }} 
-                                  key={key}
-                                />)
-                            }
-                          </p>
-                        </div>
-                      )})
-                  }
-                  <div className={styles.btnGroup}>
-                    {
-                      <Button 
-                        text={'Join Pool'} 
-                        backgroundColor={'#D01F36'} 
-                        disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess} 
-                        loading={poolJoinLoading}
-                        onClick={joinPool}
-                      />
-                    }
-                    <Button 
-                      text={'Etherscan'} 
-                      backgroundColor={'#3232DC'} 
-                      onClick={() => {
-                        poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails.poolAddress}` as string, '_blank')
-                      }} 
-                    />
-                  </div>
-                </>
-              )
-            }
-            </div>
-            <div className={styles.poolDetailTier}>
-              <Tiers 
-                showMoreInfomation 
-                tiersBuyLimit={poolDetails?.buyLimit || [] }
-                tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
-              />
-              <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
-              <div className={styles.poolDetailProgress}>
-                <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
-                {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
-                  <span className={styles.poolDetailProgressPercent}>
-                    {numberWithCommas(soldProgress)}%
-                  </span>
-                  <span>
-                    {numberWithCommas(tokenSold)} / {numberWithCommas(totalSell)}
-                  </span>
-                </div>}
-                {isWidthDown('xs', props.width) && <div className={styles.poolDetailProgressStat}>
-                  <span className={styles.poolDetailProgressPercent}>
-                    {parseFloat(soldProgress).toFixed(2)}%
-                  </span>
-                  <span>
-                    {numberWithCommas(parseFloat(tokenSold).toFixed(2))} / {numberWithCommas(parseFloat(totalSell).toFixed(2))}
-                  </span>
-                </div>}
-                <div className={styles.progress}>
-                  <div className={styles.achieved} style={{ width: `${soldProgress}%` }}></div>
-                </div>
-              </div>
-              <div className={styles.poolDetailStartTime}>
-                <span className={styles.poolDetailStartTimeTitle}>{display}</span>
-                <Countdown startDate={countDownDate} />
-              </div>
-            </div> 
-          </div>
-          <div className={styles.poolDetailBuy}>
-            <nav className={styles.poolDetailBuyNav}>
-              <ul className={styles.poolDetailLinks}>
-                {
-                  headers.map((header) => {
-                    if (header === HeaderType.Main && new Date() > endBuyTimeInDate) {
-                      return null;
-                    }
-                    return <li 
-                      className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`} 
-                      onClick={() => setActiveNav(header)}
-                      key={header}
-                    >
-                      {header}
-                    </li>
-                  })
-                }
-              </ul>
-            </nav>
-            <div className={styles.poolDetailBuyForm}>
-              {
-                activeNav === HeaderType.Main && new Date() <= endBuyTimeInDate && ( 
-                    <BuyTokenForm 
-                      tokenDetails={poolDetails?.tokenDetails} 
-                      rate={poolDetails?.ethRate}
-                      poolAddress={poolDetails?.poolAddress}
-                      maximumBuy={userBuyLimit}
-                      purchasableCurrency={poolDetails?.purchasableCurrency?.toUpperCase()}
-                      poolId={poolDetails?.id}
-                      joinTime={joinTimeInDate}
-                      method={poolDetails?.method}
-                      availablePurchase={availablePurchase}
-                      ableToFetchFromBlockchain={ableToFetchFromBlockchain}
-                      minTier={poolDetails?.minTier}
-                    /> 
-                 )
-              }
-              {
-                activeNav === HeaderType.About && <PoolAbout /> 
-              }
-              {
-                activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
-              }
-              {
-                poolDetails?.type === 'claimable' && <ClaimToken releaseTime={releaseTimeInDate} />
-              }
-            </div>
-          </div>
-        </main>
+        {render()}
      </div>
     </DefaultLayout>
   )

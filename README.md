@@ -1,3 +1,3 @@
-# Sotatek Starter
+# Red Kite project
 
 ## High-level description

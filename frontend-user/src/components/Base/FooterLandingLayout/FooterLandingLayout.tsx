@@ -12,25 +12,25 @@ const FooterLandingLayout = () => {
           <Link to={'/'}>
             <img className={styles.logo} src={byTokenLogo} alt="" />
           </Link>
-          <p>Lorem ipsum dolor sit amet, consectetur adip. Rem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+          <p>Launch hand-picked projects and help them shine.</p>
           <ul className={styles.shareLink}>
             <li className={styles.teleGram}>
-              <a href="#"><i className="custom-icon-telegram"></i></a>
+              <a href="https://t.me/polkafoundry/" target="_blank"><i className="custom-icon-telegram"></i></a>
             </li>
             <li className={styles.twitter}>
-              <a href="#"><i className="custom-icon-twitter"></i></a>
+              <a href="https://twitter.com/polkafoundry/" target="_blank"><i className="custom-icon-twitter"></i></a>
             </li>
-            <li className={styles.facebook}>
+            {/* <li className={styles.facebook}>
               <a href="#"><i className="custom-icon-facebook"></i></a>
             </li>
             <li className={styles.github}>
               <a href="#"><i className="custom-icon-github"></i></a>
-            </li>
+            </li> */}
           </ul>
         </div>
       </div>
       <div className={styles.endContent}>
-        <p className={styles.copyRight}>Copyright © 2019 . All rights reserved.</p>
+        <p className={styles.copyRight}>Copyright © 2021 Icetea Labs. All rights reserved.</p>
       </div>
     </div>
   );

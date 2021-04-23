@@ -3,6 +3,7 @@ import { ethers } from 'ethers';
 import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
 
+import { TRANSACTION_ERROR_MESSAGE } from '../constants/alert';
 import { MAX_INT } from '../services/web3';
 import { alertSuccess, alertFailure } from '../store/actions/alert';
 import { getContract } from '../utils/contract';
@@ -40,14 +41,15 @@ const useTokenAllowance = (
                console.log('Approve Token', transaction);
 
               setTransactionHash(transaction.hash);
-               setTokenApproveLoading(false);
 
                await transaction.wait(1);
-                dispatch(alertSuccess("Token Approve Successful!"));
+
+              dispatch(alertSuccess("Token Approve Successful!"));
+               setTokenApproveLoading(false);
              }
            }
       } catch (err) {
-        dispatch(alertFailure(err.message));
+        dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
         setTokenApproveLoading(false);
         throw new Error(err.message);
       }

@@ -18,11 +18,11 @@ class WhiteListUserController {
       if (page) {
         redisKey = redisKey.concat('_',page,'_',pageSize);
       }
-      if (await Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        const cachedWL = await Redis.get(redisKey);
-        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
-      }
+      // if (await Redis.exists(redisKey)) {
+      //   console.log(`existed key ${redisKey} on redis`);
+      //   const cachedWL = await Redis.get(redisKey);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      // }
       // if not existed whitelist on redis then get from db
       const filterParams = {
         'campaign_id': campaign_id,
@@ -53,16 +53,17 @@ class WhiteListUserController {
       if (page) {
         redisKey = redisKey.concat('_',page,'_',pageSize);
       }
-      if (await Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        const cachedWL = await Redis.get(redisKey);
-        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
-      }
+      // if (await Redis.exists(redisKey)) {
+      //   console.log(`existed key ${redisKey} on redis`);
+      //   const cachedWL = await Redis.get(redisKey);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      // }
       // if not existed whitelist on redis then get from db
       const filterParams = {
         'campaign_id': campaign_id,
         'page': page,
-        'pageSize': pageSize
+        'pageSize': pageSize,
+        'search_term': request.input('search_term') || '',
       };
       const whitelistService = new WhitelistService();
       // get winner list
@@ -74,6 +75,23 @@ class WhiteListUserController {
       console.log(e);
       return HelperUtils.responseErrorInternal('Get Whitelist Failed !');
     }
+  }
+
+  async deleteWhiteList({request, params}) {
+    console.log('[deleteWhiteList] - Delete WhiteList with params: ', params, request.params);
+
+    const { campaignId, walletAddress } = params;
+    const whitelistService = new WhitelistService();
+    const existRecord = await whitelistService.buildQueryBuilder({
+      campaign_id: campaignId,
+      wallet_address: walletAddress,
+    }).first();
+    if (existRecord) {
+      await existRecord.delete();
+    }
+    console.log('existRecord', existRecord);
+
+    return HelperUtils.responseSuccess(existRecord);
   }
 
   async getRandomWinners({request}) {
@@ -88,7 +106,7 @@ class WhiteListUserController {
       const winnerList = await whitelistService.getRandomWinners(num, campaign_id);
       // save to winner list
       const winnerListService = new WinnerListService();
-      winnerListService.save(winnerList);
+      await winnerListService.saveRandomWinner(winnerList);
       return HelperUtils.responseSuccess(winnerList);
     } catch (e) {
       console.log(e);
@@ -114,6 +132,29 @@ class WhiteListUserController {
       return HelperUtils.responseErrorInternal('Find Whitelist Error !');
     }
   }
+
+  async addWhitelistUser({request}) {
+    const inputParams = request.only(['wallet_address', 'email', 'campaign_id']);
+    const params = {
+      wallet_address: inputParams.wallet_address,
+      email: inputParams.email,
+      campaign_id: inputParams.campaign_id,
+    };
+    const whitelistService = new WhitelistService();
+    const user = await whitelistService.buildQueryBuilder({
+      wallet_address: inputParams.wallet_address,
+      campaign_id: inputParams.campaign_id,
+    }).first();
+    console.log('[addWhitelistUser] - user: ', user);
+
+    if (user) {
+      return HelperUtils.responseBadRequest('User Exist !');
+    }
+    const res = await whitelistService.addWhitelistUser(params);
+
+    return HelperUtils.responseSuccess(res);
+  }
+
 }
 
 module.exports = WhiteListUserController

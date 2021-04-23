@@ -5,6 +5,7 @@ const HelperUtils = use('App/Common/HelperUtils');
 const Const = use('App/Common/Const');
 const Config = use('Config');
 const Web3 = require('web3')
+const UserModel = use('App/Models/User');
 
 class UserAuthController {
 
@@ -71,7 +72,6 @@ class UserAuthController {
     }
     const param = request.all();
     const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address)
-
     const filterParams = {
       'wallet_address': wallet_address
     };
@@ -127,25 +127,40 @@ class UserAuthController {
     }
   }
 
-  async registerVerifyEmail({ request, auth, params }) {
+  async registerVerifyEmail({ request, params }) {
     try {
       const param = request.only(['email', 'signature', 'wallet_address']);
       const role = Const.USER_ROLE.PUBLIC_USER; // Only public user verify email
       const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address);
 
-      console.log('[registerEmail]: Wallet Address: ', wallet_address);
+      console.log('[registerVerifyEmail]: Wallet Address: ', wallet_address);
+      let user = await (new UserService).findUser({ wallet_address });
+      console.log('[registerVerifyEmail]: User:  ', user);
 
-      const authService = new AuthService();
-      let user = await authService.checkIssetUser({ email: param.email, role });
-      console.log('[registerEmail]: User:  ', user);
-
-      if (user && user.wallet_address === wallet_address) {
-        user.confirmation_token = await HelperUtils.randomString(50);
+      if (!user) {
+        console.log('[registerVerifyEmail]: Create User:  ');
+        user = new UserModel;
         user.email = param.email;
-        user.save();
-      } else {
-        return HelperUtils.responseNotFound('User not found');
+        user.username = param.email;
+        user.password = param.email;
+        user.wallet_address = wallet_address;
+        user.signature = param.email;
+        user.status = Const.USER_STATUS.UNVERIFIED; // Not verify email
+        console.log('user.status', user.status);
+
+        await user.save();
       }
+      if (user.is_active === Const.USER_STATUS.ACTIVE) {
+        return HelperUtils.responseBadRequest('User is actived!');
+      }
+
+      user.email = param.email;
+      user.confirmation_token = await HelperUtils.randomString(50);
+      await user.save();
+
+      console.log('[registerVerifyEmail]: SendEmail:  ', param);
+      const authService = new AuthService();
+      await authService.sendNewVerifyEmail({ user });
 
       return HelperUtils.responseSuccess(null, 'Success! Register email success');
     } catch(e) {

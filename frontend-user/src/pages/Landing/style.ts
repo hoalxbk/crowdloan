@@ -2,6 +2,9 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: any) => {
   return {
+    animation: {
+
+    },
     container: {
       position: 'relative',
       '& img': {
@@ -10,10 +13,21 @@ const useStyles = makeStyles((theme: any) => {
       },
       '& .main-content h1': {
         textAlign: 'center',
-        fontSize: '46px',
-        lineHeight: '52px',
+        fontSize: '68px',
+        lineHeight: '80px',
+        fontWeight: '700',
         color: '#FFFFFF',
         marginBottom: '12px'
+      },
+      '& .main-content h2': {
+        textAlign: 'center',
+        fontSize: '36px',
+        lineHeight: '40px',
+        color: '#FFFFFF',
+        fontWeight: '700',
+        marginBottom: '12px',
+        maxWidth: 'calc(100% - 30px)',
+        margin: 'auto',
       },
       '& .main-content p': {
         textAlign: 'center',
@@ -41,15 +55,14 @@ const useStyles = makeStyles((theme: any) => {
         alignItems: 'center',
         justifyContent: 'center',
         borderRadius: '60px',
-        margin: '60px 6px 0 6px',
-
-        '&:first-child': {
-          backgroundColor: '#D01F36'
-        },
-
-        '&:last-child': {
-          backgroundColor: '#3232DC'
-        }
+        margin: '36px 6px 0 6px',
+        cursor: 'pointer',
+      },
+      '& .buttons a:first-child button': {
+        backgroundColor: '#D01F36'
+      },
+      '& .buttons a:last-child button': {
+        backgroundColor: '#3232DC'
       },
       '& > div': {
         position: 'absolute',
@@ -65,12 +78,11 @@ const useStyles = makeStyles((theme: any) => {
           height: '600px'
         },
         '& .main-content h1': {
-          display: 'block',
-          width: '400px',
           margin: '15px auto'
         },
       },
       [theme.breakpoints.down('xs')]: {
+        height: '700px',
         overflow: 'hidden',
         '& img': {
           objectFit: 'unset',
@@ -126,6 +138,7 @@ const useStyles = makeStyles((theme: any) => {
         },
       },
       [theme.breakpoints.only('xs')]: {
+        margin: '20px 0',
         '& .main-content': {
           display: 'grid',
           gridTemplateColumns: '1fr',

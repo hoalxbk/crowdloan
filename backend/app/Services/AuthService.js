@@ -86,6 +86,21 @@ class AuthService extends BaseService {
 
     return true;
   }
+
+  async sendNewVerifyEmail(params) {
+    const { user } = params;
+    const mailData = {};
+    mailData.username = user.username;
+    mailData.email = user.email;
+
+    const baseUrl = Env.get('FRONTEND_USER_APP_URL');
+    mailData.url = baseUrl + '/#/confirm-email/' + user.confirmation_token;
+
+    SendConfirmationEmailJob.doDispatch(mailData);
+
+    return true;
+  }
+
 }
 
 module.exports = AuthService;

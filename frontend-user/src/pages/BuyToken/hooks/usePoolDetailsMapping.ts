@@ -1,18 +1,20 @@
 import BigNumber from 'bignumber.js';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import { numberWithCommas } from '../../../utils/formatNumber';
+import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 
 export enum PoolDetailKey {
   website = 'website',
   swapAmount = 'swapAmount',
   exchangeRate = 'exchangeRate',
   method = 'method',
-  type = 'type'
+  type = 'type',
+  minTier = 'minTier'
 }
 
 export type poolDetailKey = Extract<
   PoolDetailKey, 
-  PoolDetailKey.website | PoolDetailKey.swapAmount | PoolDetailKey.type | PoolDetailKey.method | PoolDetailKey.exchangeRate
+  PoolDetailKey.website | PoolDetailKey.swapAmount | PoolDetailKey.type | PoolDetailKey.method | PoolDetailKey.exchangeRate | PoolDetailKey.minTier
 >
 
 export type PoolDetailMapping = {
@@ -32,12 +34,13 @@ export type PoolDetailMappingProps = {
   type: string;
   tokenDetails: TokenType;
   purchasableCurrency: string;
+  minTier: number;
 }
 
 
 const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined): PoolDetailMapping | undefined => {
   if (poolDetails) {
-    const { website, amount, ethRate, type, method, tokenDetails, purchasableCurrency } = poolDetails;
+    const { website, amount, ethRate, type, method, tokenDetails, purchasableCurrency, minTier } = poolDetails;
     const poolDetailsBasic = {
       [PoolDetailKey.website]: { 
         display: website,
@@ -63,6 +66,11 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
       [PoolDetailKey.type]: { 
         display: type ===  'swap' ? 'Swap': 'Claimable',
         label: 'Type'
+      },
+      [PoolDetailKey.minTier]: {
+        display: getUserTierAlias(minTier).text,
+        label: 'Min Tier',
+        utilIcon: getUserTierAlias(minTier).icon
       }
     }
 

@@ -19,6 +19,15 @@ class WhitelistUserService {
     if (params.campaign_id) {
       builder = builder.where('campaign_id', params.campaign_id);
     }
+
+    // For search box
+    if (params.search_term) {
+      builder = builder.where(query => {
+        query.where('wallet_address', 'like', '%'+ params.search_term +'%')
+          .orWhere('email', 'like', '%'+ params.search_term +'%');
+      })
+    }
+
     return builder;
   }
 
@@ -64,6 +73,14 @@ class WhitelistUserService {
       .orderByRaw('RAND()').limit(number).fetch();
   }
 
+  async getRandomWinnersUnique(number,campaign_id) {
+    // TODO: Please Use getRandomWinnersUnique
+    return await WhitelistModel.query()
+      .where('campaign_id', campaign_id)
+      .orderByRaw('RAND()').limit(number)
+      .fetch();
+  }
+
   async search(params) {
     let builder = this.buildSearchQuery(params);
     if (params.page && params.pageSize) {
@@ -72,6 +89,18 @@ class WhitelistUserService {
     }
     // return all result
     return await builder.fetch();
+  }
+
+  async addWhitelistUser(params) {
+    console.log('[addWhitelistUser] - Params: ', params);
+    const whitelist = new WhitelistModel;
+    whitelist.wallet_address = params.wallet_address;
+    whitelist.campaign_id = params.campaign_id;
+    whitelist.email = params.email;
+    await whitelist.save();
+
+    console.log('Res: ', whitelist);
+    return whitelist;
   }
 }
 

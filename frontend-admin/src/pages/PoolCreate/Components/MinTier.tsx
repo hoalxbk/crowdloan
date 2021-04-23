@@ -29,7 +29,7 @@ function MinTier(props: any) {
         <Controller
           rules={{ required: true }}
           control={control}
-          defaultValue={1}
+          defaultValue={0}
           name="minTier"
           as={
             <Select
@@ -43,8 +43,8 @@ function MinTier(props: any) {
                 [1,2,3,4,5].map((value, index) => {
                   return (
                     <MenuItem
-                      key={value}
-                      value={value}
+                      key={index}
+                      value={index}
                     >
                       {'Tier ' + value}
                     </MenuItem>

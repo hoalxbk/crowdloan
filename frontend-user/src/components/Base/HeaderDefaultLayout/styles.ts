@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => {
       },
       [theme.breakpoints.only('xs')]: {
         padding: '10px 20px',
+        flexDirection: 'column'
       }
     },
     navbarLink: {
@@ -66,7 +67,10 @@ const useStyles = makeStyles((theme) => {
       alignItems: 'center',
       color: '#999999',
       marginLeft: 40,
-      fontWeight: 600
+      fontWeight: 600,
+      [theme.breakpoints.only('xs')]: {
+        marginLeft: 0
+      }
     },
     btnConnect: {
       background: '#3232DC',
@@ -124,11 +128,9 @@ const useStyles = makeStyles((theme) => {
       }
     },
     loginErrorBanner: {
-      position: 'absolute',
-      left: 0, 
       top: '100%',
       width: '100%',
-      backgroundColor: '#d01f3666',
+      backgroundColor: '#5b0712fa',
       fontSize: 15,
       color: 'white',
       padding: 12,
@@ -155,6 +157,54 @@ const useStyles = makeStyles((theme) => {
 
       '&:hover': {
         color: 'white'
+      }
+    },
+
+    [theme.breakpoints.only('xs')]: {
+      rightBar: {
+        position: 'fixed',
+        backgroundColor: '#030926',
+        width: '100%',
+        height: '100%',
+        top: 0,
+        left: 0,
+        margin: 0,
+        padding: '113px 32px',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'flex-start',
+        display: 'none',
+
+        '&.active': {
+          display: 'flex'
+        }
+      },
+      btnConnect: {
+        margin: '20px 0',
+      },
+      btn: {
+        '&.start p': {
+          padding: 0,
+          marginBottom: '20px'
+        }
+      },
+      sideBarLogo: {
+        position: 'absolute',
+        top: '10px',
+        left: '32'
+      },
+      closeBtn: {
+        position: 'absolute',
+        top: '28px',
+        right: '20px'
+      },
+      navBar: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between'
+      },
+      navbarLink: {
+        marginLeft: '12px'
       }
     }
   };

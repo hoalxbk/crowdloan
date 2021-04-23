@@ -23,14 +23,18 @@ class UserController {
     const userAuthInfo = {
       wallet_address: params.wallet_address,
     };
-    const findedUser = await userService.findUser(userAuthInfo);
+
+    const findedUser = await UserModel.query().where('wallet_address', params.wallet_address).first();
+    console.log('[profile] - findedUser', findedUser);
     if (!findedUser) {
-      HelperUtils.responseNotFound();
+      return HelperUtils.responseNotFound();
     }
 
     return HelperUtils.responseSuccess({
       user: {
         email: findedUser.email,
+        id: findedUser.id,
+        status: findedUser.status,
       }
     });
   }
@@ -210,9 +214,9 @@ class UserController {
   async confirmEmail({request}) {
     try {
       const token = request.params.token;
-      const role = request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
+      // const role = Const.USER_ROLE.PUBLIC_USER;
       const userService = new UserService();
-      const checkToken = await userService.confirmEmail(token, role);
+      const checkToken = await userService.confirmEmail(token);
       if (!checkToken) {
         return HelperUtils.responseErrorInternal('Active account link has expried.');
       }

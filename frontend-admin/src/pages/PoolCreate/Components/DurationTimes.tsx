@@ -72,6 +72,9 @@ function DurationTime(props: any) {
                       defaultValue: moment("00:00:00", "HH:mm:ss"),
                       format: "HH:mm"
                     }}
+                    onSelect={(datetimeSelected: any) => {
+                      setValue(field.name, datetimeSelected, {shouldValidate: true});
+                    }}
                     minuteStep={15}
                     className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
                     disabled={isDeployed || isBuyTypeFCFS}
@@ -140,6 +143,9 @@ function DurationTime(props: any) {
                       defaultValue: moment("00:00:00", "HH:mm:ss"),
                       format: "HH:mm"
                     }}
+                    onSelect={(datetimeSelected: any) => {
+                      setValue(field.name, datetimeSelected, {shouldValidate: true});
+                    }}
                     minuteStep={15}
                     className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
                     disabled={isDeployed || isBuyTypeFCFS}
@@ -175,6 +181,9 @@ function DurationTime(props: any) {
                     showTime={{
                       defaultValue: moment("00:00:00", "HH:mm:ss"),
                       format: "HH:mm"
+                    }}
+                    onSelect={(datetimeSelected: any) => {
+                      setValue(field.name, datetimeSelected, {shouldValidate: true});
                     }}
                     minuteStep={15}
                     className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
@@ -218,6 +227,9 @@ function DurationTime(props: any) {
                     showTime={{
                       defaultValue: moment("00:00:00", "HH:mm:ss"),
                       format: "HH:mm"
+                    }}
+                    onSelect={(datetimeSelected: any) => {
+                      setValue(field.name, datetimeSelected, {shouldValidate: true});
                     }}
                     minuteStep={15}
                     className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
@@ -264,6 +276,9 @@ function DurationTime(props: any) {
                   showTime={{
                     defaultValue: moment("00:00:00", "HH:mm:ss"),
                     format: "HH:mm"
+                  }}
+                  onSelect={(datetimeSelected: any) => {
+                    setValue(field.name, datetimeSelected, {shouldValidate: true});
                   }}
                   minuteStep={15}
                   className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}

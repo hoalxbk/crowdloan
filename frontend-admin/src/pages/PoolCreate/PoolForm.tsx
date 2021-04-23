@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import useStyles from "./style";
 import {useCommonStyle} from "../../styles";
 import {useForm} from "react-hook-form";
-import {useDispatch} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
 
 import {CircularProgress, Grid} from "@material-ui/core";
 import {getTokenInfo, TokenType} from "../../utils/token";
@@ -41,9 +41,10 @@ function PoolForm(props: any) {
   const dispatch = useDispatch();
   const history = props.history;
 
+  const { data: loginUser } = useSelector(( state: any ) => state.user);
+
   const { isEdit, poolDetail } = props;
   const [isSuspend, setIsSuspend] = useState(true);
-  // const { loading } = useSelector(( state: any ) => state.campaignCreate);
   const [loading, setLoading] = useState(false);
   const [loadingDeploy, setLoadingDeploy] = useState(false);
   const [deployed, setDeployed] = useState(false);
@@ -75,7 +76,7 @@ function PoolForm(props: any) {
 
     const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
     const submitData = {
-      register_by: '',
+      registed_by: loginUser?.wallet_address,
       is_display: data.is_display,
 
       // Pool general
@@ -187,7 +188,7 @@ function PoolForm(props: any) {
       const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
       const submitData = {
         id: poolDetail.id,
-        register_by: '',
+        registed_by: loginUser?.wallet_address,
 
         // Pool general
         title: data.title,
@@ -245,7 +246,6 @@ function PoolForm(props: any) {
   };
 
   const watchBuyType = watch('buyType');
-  console.log('watchBuyType', watchBuyType);
   console.log('errors==========>', errors);
 
   return (
@@ -257,7 +257,7 @@ function PoolForm(props: any) {
 
           <div className="">
             <div className={classes.exchangeRate}>
-              {!!poolDetail?.is_deploy &&
+              {!!poolDetail?.id &&
                 <DisplaySwitch
                   poolDetail={poolDetail}
                   register={register}
@@ -338,34 +338,7 @@ function PoolForm(props: any) {
               />
             </div>
 
-            <ExchangeRate
-              poolDetail={poolDetail}
-              register={register}
-              token={token}
-              setValue={setValue}
-              errors={errors}
-              control={control}
-              watch={watch}
-            />
 
-            <button
-              disabled={!isEdit || !poolDetail?.id || poolDetail?.is_deploy || loading || loadingDeploy || deployed }
-              className={(!isEdit || poolDetail?.is_deploy || deployed) ? classes.formButtonDeployed : classes.formButtonDeploy}
-              onClick={handlerDeploy}
-            >
-              {loadingDeploy && <CircularProgress size={25} />}
-              {!loadingDeploy && 'Deploy'}
-            </button>
-
-            <button
-              disabled={loading || loadingDeploy || poolDetail?.is_deploy}
-              className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}
-              onClick={handleCampaignCreate}
-            >
-              {
-                (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
-              }
-            </button>
 
           </div>
         </Grid>
@@ -426,16 +399,60 @@ function PoolForm(props: any) {
             />
           </div>
 
-          {isEdit && poolDetail && watchBuyType === 'whitelist' &&
-            <div className={classes.exchangeRate}>
-              <UserJoinPool
-                poolDetail={poolDetail}
-              />
-            </div>
-          }
+
+          <ExchangeRate
+            poolDetail={poolDetail}
+            register={register}
+            token={token}
+            setValue={setValue}
+            errors={errors}
+            control={control}
+            watch={watch}
+          />
+
         </Grid>
 
       </Grid>
+
+
+
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+
+          {isEdit && poolDetail?.id && watchBuyType === 'whitelist' &&
+          <div className={classes.exchangeRate}>
+            <UserJoinPool
+              poolDetail={poolDetail}
+            />
+          </div>
+          }
+
+          <button
+            disabled={!isEdit || !poolDetail?.id || poolDetail?.is_deploy || loading || loadingDeploy || deployed }
+            className={(!isEdit || poolDetail?.is_deploy || deployed) ? classes.formButtonDeployed : classes.formButtonDeploy}
+            onClick={handlerDeploy}
+          >
+            {loadingDeploy && <CircularProgress size={25} />}
+            {!loadingDeploy && 'Deploy'}
+          </button>
+
+          <button
+            disabled={loading || loadingDeploy || poolDetail?.is_deploy}
+            className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}
+            onClick={handleCampaignCreate}
+          >
+            {
+              (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
+            }
+          </button>
+
+
+        </Grid>
+      </Grid>
+
+
+
+
     </div>
 
   </>

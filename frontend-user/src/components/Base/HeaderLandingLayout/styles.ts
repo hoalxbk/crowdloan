@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => {
       width: '100%',
       color: '#FFFFFF',
       font: 'normal normal bold 16px/24px DM Sans',
-      position: 'absolute',
+      position: 'relative',
       top: 0,
       left: 0,
       zIndex: 1,
@@ -59,6 +59,65 @@ const useStyles = makeStyles((theme) => {
           flexDirection: 'column'
         }
       },
+    },
+    banner: {
+      position: 'absolute',
+      top: '80px',
+      backgroundColor: 'rgba(50, 50, 200, 0.4)',
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center!important',
+      padding: '10px 0',
+      left: '0'
+    },
+    loginErrorBannerText: {
+      font: 'normal normal 400 14px/24px Helvetica',
+      display: 'flex',
+      alignItems: 'center',
+      marginLeft: '10px'
+    },
+    btnChangeAppNetwork: {
+      padding: '0 15px',
+      background: 'transparent',
+      fontWeight: 600,
+      color: 'white',
+      cursor: 'pointer',
+      transition: '.2s all ease-in',
+      border: '1px solid #FFFFFF',
+      boxSizing: 'border-box',
+      borderRadius: '30px',
+      height: '28px',
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal 700 12px/14px DM Sans',
+
+      '&:focus': {
+        outline: 'none'
+      },
+    },
+    closeBtn: {
+      position: 'absolute',
+      top: '12px',
+      right: '20px'
+    },
+    [theme.breakpoints.down('xs')]: {
+      banner: {
+        top: '60px',
+        '& img:first-child': {
+          display: 'none',
+        }
+      },
+      loginErrorBannerText: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        padding: '0 40px 0 20px',
+        marginLeft: '0',
+
+        '& button': {
+          marginTop: '10px'
+        }
+      }
     }
   };
 });

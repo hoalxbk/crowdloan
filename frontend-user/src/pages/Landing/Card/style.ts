@@ -13,7 +13,8 @@ const useStyles = makeStyles((theme: any) => {
         padding: '0 32px',
         textAlign: 'center',
         color: '#FFFFFF',
-        marginBottom: '8px'
+        marginBottom: '8px',
+        minHeight: '64px'
       },
 
       '& p': {

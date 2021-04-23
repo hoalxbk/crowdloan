@@ -6,6 +6,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Controller } from "react-hook-form";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import {POOL_TYPE} from "../../../constants";
 
 function PoolType(props: any) {
   const classes = useStyles();
@@ -36,12 +37,12 @@ function PoolType(props: any) {
             as={
               <RadioGroup row>
                 <FormControlLabel
-                  value="swap" control={<Radio />}
+                  value={POOL_TYPE.SWAP} control={<Radio />}
                   label="Swap"
                   disabled={isDeployed}
                 />
                 <FormControlLabel
-                  value="claimable" control={<Radio />}
+                  value={POOL_TYPE.CLAIMABLE} control={<Radio />}
                   label="Claimable"
                   disabled={isDeployed}
                 />

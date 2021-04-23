@@ -31,7 +31,7 @@ class PoolController {
 
   async createPool({request, auth}) {
     const inputParams = request.only([
-      'register_by',
+      'registed_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
       'token', 'token_by_eth',  'token_conversion_rate', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
@@ -40,6 +40,8 @@ class PoolController {
     ]);
 
     const data = {
+      'registed_by': inputParams.registed_by,
+
       'title': inputParams.title,
       'website': inputParams.website,
       'description': inputParams.description,
@@ -101,7 +103,7 @@ class PoolController {
 
   async updatePool({ request, auth, params }) {
     const inputParams = request.only([
-      'register_by',
+      'registed_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
       'token', 'token_by_eth', 'token_conversion_rate', 'token_images', 'total_sold_coin',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
@@ -110,6 +112,8 @@ class PoolController {
     ]);
 
     const data = {
+      'registed_by': inputParams.registed_by,
+
       'title': inputParams.title,
       'website': inputParams.website,
       'description': inputParams.description,
@@ -182,14 +186,23 @@ class PoolController {
       if (!campaign) {
         return HelperUtils.responseNotFound('Pool not found');
       }
-      await CampaignModel.query().where('id', campaignId).update({
-        is_deploy: true,
-        campaign_hash: inputParams.campaign_hash,
-        token: inputParams.token_address,
-        name: inputParams.name,
-        symbol: inputParams.symbol,
-        decimals: inputParams.decimals,
-      });
+      campaign.is_deploy = true;
+      campaign.campaign_hash = inputParams.campaign_hash;
+      campaign.token = inputParams.token_address;
+      campaign.name = inputParams.token_name;
+      campaign.symbol = inputParams.token_symbol;
+      campaign.decimals = inputParams.token_decimals;
+      campaign.save();
+
+      console.log('[updateDeploySuccess] - CAMPAIGN: ', campaign);
+      // const camp = await CampaignModel.query().where('id', campaignId).update({
+      //   is_deploy: true,
+      //   campaign_hash: inputParams.campaign_hash,
+      //   token: inputParams.token_address,
+      //   name: inputParams.name,
+      //   symbol: inputParams.symbol,
+      //   decimals: inputParams.decimals,
+      // });
 
       // Delete cache
       RedisUtils.deleteRedisPoolDetail(campaignId);
@@ -244,10 +257,12 @@ class PoolController {
         .first();
 
       const walletAccount = await WalletAccountModel.query().where('campaign_id', poolId).first();
-      pool.wallet = {
-        id: walletAccount.id,
-        wallet_address: walletAccount.wallet_address,
-      };
+      if (walletAccount) {
+        pool.wallet = {
+          id: walletAccount.id,
+          wallet_address: walletAccount.wallet_address,
+        };
+      }
 
       // Cache data
       RedisUtils.createRedisPoolDetail(poolId, pool);

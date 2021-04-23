@@ -44,7 +44,7 @@ export const getPoolStatus = (
     && today > startJoinTime.getTime() 
     && today < endBuyTime.getTime() 
   ) {
-    return new BigNumber(soldProgress || 0).gte(99) ?  PoolStatus.Filled: PoolStatus.Progress;
+    return new BigNumber(soldProgress || 0).multipliedBy(100).gte(99) ?  PoolStatus.Filled: PoolStatus.Progress;
   }
 
   if (endBuyTime && today > endBuyTime?.getTime()) {

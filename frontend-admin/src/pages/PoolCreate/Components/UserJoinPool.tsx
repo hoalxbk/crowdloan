@@ -1,10 +1,10 @@
 import React, {useEffect, useState} from 'react';
 import useStyles from "../style";
-import UserParticipant from "./UserParticipant";
-import UserWinner from "./UserWinner";
-import {getParticipantUser, getWinnerUser} from "../../../request/participants";
+import UserParticipant from "./UserWinner/UserParticipant";
+import UserWinner from "./UserWinner/UserWinner";
 
 import {Tabs} from 'antd';
+import UserReverse from "./UserWinner/UserReverse";
 const { TabPane } = Tabs;
 function callback(key: any) {
   console.log(key);
@@ -16,27 +16,6 @@ const UserJoinPool = (props: any) => {
     poolDetail
   } = props;
 
-  const [winners, setWinners] = useState([]);
-  const [partipants, setPartipants] = useState([]);
-
-  useEffect(() => {
-    if (poolDetail && poolDetail.id) {
-      getWinnerUser(poolDetail.id)
-        .then((res) => {
-          setWinners(res.data);
-        });
-    }
-  }, [poolDetail]);
-
-  useEffect(() => {
-    if (poolDetail && poolDetail.id) {
-      getParticipantUser(poolDetail.id)
-        .then((res) => {
-          setPartipants(res.data);
-        });
-    }
-  }, [poolDetail]);
-
   return (
     <>
       <div className={classes.formControl}>
@@ -44,28 +23,15 @@ const UserJoinPool = (props: any) => {
       </div>
       <Tabs defaultActiveKey="1" onChange={callback}>
         <TabPane tab="Participant" key="1">
-          {partipants && partipants.length > 0 &&
-            <UserParticipant
-              users={partipants}
-            />
-          }
+          <UserParticipant poolDetail={poolDetail} />
         </TabPane>
         <TabPane tab="Winner" key="2">
-          {winners && winners.length > 0 &&
-            <UserWinner
-              users={winners}
-            />
-          }
+          <UserWinner poolDetail={poolDetail} />
         </TabPane>
         <TabPane tab="Reserve" key="3">
-          {winners && winners.length > 0 &&
-            <UserWinner
-              users={winners}
-            />
-          }
+          <UserReverse poolDetail={poolDetail} />
         </TabPane>
       </Tabs>
-
     </>
   );
 };

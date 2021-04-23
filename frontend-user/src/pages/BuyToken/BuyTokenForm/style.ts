@@ -15,7 +15,8 @@ const useStyles = makeStyles((theme: any) => {
     buyTokenFormTitle: {
       fontSize: 15,
       fontWeight: 700,
-      marginBottom: 20
+      marginBottom: 20,
+      lineHeight: '24px'
     },
     buyTokenInputForm: {
       background: '#11152A',
@@ -77,6 +78,12 @@ const useStyles = makeStyles((theme: any) => {
           width: '130px'
         }
       }
+    },
+    minimumBuyWarning: {
+      marginTop: 25,
+      fontWeight: 'bold',
+      color: '#fff100',
+      fontSize: 15
     }
   };
 });

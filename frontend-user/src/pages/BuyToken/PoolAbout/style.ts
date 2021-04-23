@@ -18,7 +18,11 @@ const useStyles = makeStyles((theme: any) => {
     },
     PoolAboutText: {
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      [theme.breakpoints.down('xs')]: {
+        lineHeight: '20px',
+        wordBreak: 'break-all'
+      }
     },
     PoolAboutIcon: {
       marginLeft: 10
@@ -27,7 +31,11 @@ const useStyles = makeStyles((theme: any) => {
       width: 580, 
       marginTop: 25,
       lineHeight: '1.6rem' ,
-      color: '#999999'
+      color: '#999999', 
+
+      [theme.breakpoints.down('xs')]: {
+        width: '100%'
+      }
     }
   };
 });

@@ -16,6 +16,7 @@ export type PoolDetails = {
   title: string;
   buyLimit: number[],
   connectedAccountBuyLimit: number,
+  connectedAccountBuyMinimum: number,
   poolAddress: string;
   joinTime: string;
   endJoinTime: string;
@@ -27,6 +28,12 @@ export type PoolDetails = {
   networkAvailable: string;
   networkIcon: string;
   minTier: number;
+  isDeployed: boolean;
+  isDisplay: boolean;
+  addressReceiver: string;
+  minimumBuy: number[];
+  tierStartTime: Date,
+  tierEndTime: Date
 }
 
 export type PoolDetailsReturnType ={
@@ -40,13 +47,14 @@ const BSC_ICON = '/images/bsc.svg';
 
 const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const [poolDetailDone, setPoolDetailDone] = useState<boolean>(false);
-  const { loading, error, data }  = useFetch<any>(`/pool/${poolId}`);
+  const { loading: fetchPoolLoading, error, data }  = useFetch<any>(`/pool/${poolId}`);
   const { tokenDetails } = useTokenDetails(data?.token, data?.network_available);
   const { data: connectedAccountTier } = useTypedSelector(state => state.userTier);
 
   const poolDetails = useMemo(() => {
-    if (data && !loading && !error && tokenDetails && poolDetailDone)  {
+    if (data && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
       const buyLimit = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.max_buy): [0,0,0,0,0];
+      const minimumBuy = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.min_buy): [0,0,0,0,0];
 
       return {
         method: data.buy_type,
@@ -59,7 +67,9 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         tokenDetails,
         title: data.title,
         buyLimit,
-        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) - 1 || 0],
+        minimumBuy,
+        connectedAccountBuyLimit: buyLimit[Number(connectedAccountTier) || 0],
+        connectedAccountBuyMinimum: minimumBuy[Number(connectedAccountTier) || 0],
         poolAddress: data.campaign_hash,
         joinTime: data.start_join_pool_time,
         endJoinTime: data.end_join_pool_time,
@@ -71,12 +81,17 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         releaseTime: data.release_time,
         networkAvailable: data.network_available,
         networkIcon: data.network_available === 'eth' ? ETH_ICON: BSC_ICON,
-        minTier: data.min_tier
-      }
+        minTier: data.min_tier,
+        isDeployed: data.is_deploy === 1,
+        isDisplay: data.is_display === 1,
+        addressReceiver: data.address_receiver,
+        tierStartTime: data.tiers[Number(connectedAccountTier) || 0].start_time,
+        tierEndTime: data.tiers[Number(connectedAccountTier) || 0].finish_time
+      } 
     }
 
     return;
-  }, [data, loading, error, poolDetailDone, tokenDetails, connectedAccountTier]);
+  }, [data, fetchPoolLoading, error, poolDetailDone, tokenDetails, connectedAccountTier]);
 
   useEffect(() => {
     tokenDetails && setPoolDetailDone(true);
@@ -84,7 +99,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
 
   return  {
     poolDetails,
-    loading: !poolDetailDone
+    loading: fetchPoolLoading || !poolDetailDone
   }
 }
 

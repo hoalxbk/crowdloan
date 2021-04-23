@@ -1,8 +1,9 @@
-import { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { BeatLoader } from 'react-spinners';
 import { css } from "@emotion/core";
+import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 import useStyles from './styles';
 
 import ButtonLink from '../ButtonLink'
@@ -20,8 +21,11 @@ const BrightStartIcon = "bright-star.svg";
 const WalletIcon = "wallet.svg";
 const EthereumIcon = "ethereum.svg";
 const BSCIcon = "bsc.svg";
+const logo = "/images/logo-red-kite.svg";
+const iconClose = "/images/icons/close.svg";
+const iconHamburger = "/images/icons/hamburger.svg";
 
-const HeaderDefaultLayout = () => {
+const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   const styles = useStyles();
 
   const [switchNetworkDialog, setSwitchNetworkDialog] = useState<boolean>(false);
@@ -29,6 +33,7 @@ const HeaderDefaultLayout = () => {
   const [agreedTerms, setAgreedTerms] = useState<boolean>(false);
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
   const walletsInfo = useSelector((state: any) => state.wallet).entities;
+  const [openSideBar, setOpenSideBar] = useState(false);
 
   const { 
     handleProviderChosen, 
@@ -52,10 +57,21 @@ const HeaderDefaultLayout = () => {
 
   const handleConnectWalletOpen = () => {
     setOpenConnectWallet && setOpenConnectWallet(true);
+    setOpenSideBar(false);
   }
 
   const handleDisconnectDialogOpen = () => {
     setDisconnectDialog(true);
+    setOpenSideBar(false)
+  }
+
+  const hamburgerStyle = (isSmartPhone: boolean) => {
+    if(isSmartPhone) {
+      return openSideBar ? 'flex' : 'none';
+    }
+    else {
+      return 'flex';
+    }
   }
 
   useEffect(() => {
@@ -84,46 +100,51 @@ const HeaderDefaultLayout = () => {
 
   return (
     <>
-      <div className={styles.navBar}>
-        <div>
-          <Link to={'/'} className={styles.navbarLink}>
-          <img src="/images/logo.svg" className={styles.navbarLogo}/>
-          <h1 className={styles.navbarBrand}><strong className={styles.navbarBrandBold}>RED</strong> KITE</h1>
-          </Link>
-        </div>
-        <div className={styles.rightBar}>
-        <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn}`} />
-        <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => setSwitchNetworkDialog(true)}>
-        <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
-          <span className={styles.btnConnectText}>
-            {appChainID === ETH_CHAIN_ID ? 'Ethereum': 'BSC Mainnet'}
-          </span>
-        </button>
-        <button 
-          className={`${styles.btn} ${styles.btnConnect}`} 
-          onClick={!currentAccount ? handleConnectWalletOpen: handleDisconnectDialogOpen}
-        >
-          {
-            !connectWalletLoading ? (
-              <>
-                <span>
-                {
-                  currentAccount && (!loginError ? `${balance} ${appChainID === ETH_CHAIN_ID ? "ETH": "BNB"}`: '0' ) 
-                }
+      <div>
+        <div className={styles.navBar}>
+          <div>
+            <Link to={'/'} className={styles.navbarLink}>
+            <img src={logo} className={styles.navbarLogo}/>
+            </Link>
+          </div>
+          {isWidthDown('xs', props.width) && <img src={iconHamburger} onClick={() => setOpenSideBar(true)}/>}
+          <div className={styles.rightBar + (openSideBar ? ' active' : '')}>
+              {isWidthDown('xs', props.width) && 
+                <><img src={logo} className={styles.sideBarLogo}/>
+                <img src={iconClose} className={styles.closeBtn} onClick={() => setOpenSideBar(false)}/></>}
+              <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn} start`} />
+              <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => {setSwitchNetworkDialog(true); setOpenSideBar(false);}}>
+                <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
+                <span className={styles.btnConnectText}>
+                {appChainID === ETH_CHAIN_ID ? 'Ethereum': 'BSC Mainnet'}
                 </span>
-                {
-                  !currentAccount && <img src={ `/images/${WalletIcon}`} />
-                }
-                <span className={`${styles.btnConnectText} ${currentAccount ? styles.btnAccount: ''}`}>
-                {
-                  currentAccount && `${trimMiddlePartAddress(currentAccount)}` || "Connect Wallet"
-                }
-                </span>
-              </> 
-            ): <BeatLoader color={'white'} css={css`margin-top: 3px`} size={10} />
-          }
-          </button>
-        </div>
+              </button>
+              <button 
+                className={`${styles.btn} ${styles.btnConnect}`} 
+                onClick={!currentAccount ? handleConnectWalletOpen: handleDisconnectDialogOpen}
+              >
+              {
+                !connectWalletLoading ? (
+                  <>
+                  <span>
+                  {
+                    currentAccount && (!loginError ? `${balance} ${appChainID === ETH_CHAIN_ID ? "ETH": "BNB"}`: '0' ) 
+                  }
+                  </span>
+                  {
+                    !currentAccount && <img src={ `/images/${WalletIcon}`} />
+                  }
+                  <span className={`${styles.btnConnectText} ${currentAccount ? styles.btnAccount: ''}`}>
+                  {
+                    currentAccount && `${trimMiddlePartAddress(currentAccount)}` || "Connect Wallet"
+                  }
+                  </span>
+                  </> 
+                ): <BeatLoader color={'white'} css={css`margin-top: 3px`} size={10} />
+              }
+              </button>
+            </div>
+          </div>
         <HeaderContext.Provider value={{ agreedTerms, setAgreedTerms }}>
             <ConnectWalletModal opened={openConnectWallet as boolean} handleClose={handleConnectWalletClose}/>
             <AppNetworkSwitch 
@@ -132,7 +153,7 @@ const HeaderDefaultLayout = () => {
             />
             <WalletDisconnect 
               opened={disconnectDialog} 
-              handleClose={() => { setDisconnectDialog(false); setAgreedTerms(false) }} 
+              handleClose={() => { setDisconnectDialog(false); setAgreedTerms(false); setOpenSideBar(false); }} 
               currentWallet={currentConnectedWallet}
             />
         </HeaderContext.Provider>
@@ -148,7 +169,7 @@ const HeaderDefaultLayout = () => {
                 &nbsp; or &nbsp;
                 <button 
                   className={styles.btnChangeAppNetwork} 
-                  onClick={() => setSwitchNetworkDialog(true)}
+                  onClick={() => {setOpenSideBar(false); setSwitchNetworkDialog(true);}}
                 >
                   Change App Network
                 </button>
@@ -161,4 +182,4 @@ const HeaderDefaultLayout = () => {
   );
 };
 
-export default HeaderDefaultLayout;
+export default withWidth()(HeaderDefaultLayout);

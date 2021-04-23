@@ -16,8 +16,8 @@ const C_KEY_CODE = 67;
 const START_NUMBER_KEY_CODE = 48;
 const END_NUMBER_KEY_CODE = 57;
 
-const INTEGER_NUMBER_KEY_CODE_LIST = [ARROW_LEFT_KEY_CODE, ARROW_RIGHT_KEY_CODE, BACKSPACE_KEY_CODE, DELETE_KEY_CODE];
-const FLOAT_NUMBER_KEY_CODE_LIST = [...INTEGER_NUMBER_KEY_CODE_LIST, DECIMAL_KEY_CODE];
+export const INTEGER_NUMBER_KEY_CODE_LIST = [ARROW_LEFT_KEY_CODE, ARROW_RIGHT_KEY_CODE, BACKSPACE_KEY_CODE, DELETE_KEY_CODE];
+export const FLOAT_NUMBER_KEY_CODE_LIST = [...INTEGER_NUMBER_KEY_CODE_LIST, DECIMAL_KEY_CODE];
 
 export const formatToNumber = (yourNumber: any) => {
   if (yourNumber && !isNaN(Number(yourNumber))) {
@@ -136,7 +136,7 @@ export const getDigitsAfterDecimals = (input: string): number => {
   return totalDigits;     
 }
 
-export function numberWithCommas(x: string, decimals: number = 18) {
+export function numberWithCommas(x: string, decimals: number = 6) {
   return removeTrailingZeros(commaNumber(new BigNumber(x).toFixed(decimals)));
 }
 export const nFormatter = (number: string, digits: any = 0) => {

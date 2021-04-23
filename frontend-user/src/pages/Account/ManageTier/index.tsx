@@ -10,6 +10,9 @@ import ModalWithdraw from '../ModalWithdraw';
 import ModalTransaction from '../ModalTransaction';
 import useTokenDetails from '../../../hooks/useTokenDetails';
 import useAuth from '../../../hooks/useAuth';
+//@ts-ignore
+import AnimatedNumber from "animated-number-react";
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 const TOKEN_ADDRESS = process.env.REACT_APP_SOTA || '';
 const iconClose = '/images/icons/close.svg'
@@ -48,23 +51,23 @@ const ManageTier = (props: any) => {
   }, [])
 
   useEffect(() => {
-    if(depositTransaction.transactionHash) {
-      setTransactionHashes([...transactionHashes, depositTransaction.transactionHash]);
+    if(depositTransaction.hash) {
+      setTransactionHashes([...transactionHashes, depositTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
   }, [depositTransaction])
 
   useEffect(() => {
-    if(approveTransaction.transactionHash) {
-      setTransactionHashes([...transactionHashes, approveTransaction.transactionHash]);
+    if(approveTransaction.hash) {
+      setTransactionHashes([...transactionHashes, approveTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
   }, [approveTransaction])
 
   useEffect(() => {
     console.log(withdrawTransaction)
-    if(withdrawTransaction.transactionHash) {
-      setTransactionHashes([...transactionHashes, withdrawTransaction.transactionHash]);
+    if(withdrawTransaction.hash) {
+      setTransactionHashes([...transactionHashes, withdrawTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
   }, [withdrawTransaction])
@@ -78,7 +81,12 @@ const ManageTier = (props: any) => {
     <div className={`${classNamePrefix}__component`}>
       <div className={styles.content}>
         <p className={styles.textDefault}>Available balance</p>
-        <p className={styles.balance}>{ parseFloat(balance.token || 0).toFixed(2) }</p>
+        <p className={styles.balance}>
+          <AnimatedNumber
+            value={balance.token}
+            formatValue={numberWithCommas}
+          />
+        </p>
         <div className="button-area">
           <button className="btn btn-lock" onClick={() => {setOpenModalDeposit(true)}}>
             Lock - in

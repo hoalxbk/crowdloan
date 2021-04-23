@@ -5,7 +5,12 @@ const useStyles = makeStyles((theme: any) => {
     card: {
       borderRadius: '20px',
       background: 'linear-gradient(360deg, rgba(55, 57, 73, 0.4) 0%, rgba(37, 39, 50, 0.4) 23.38%)',
-      overflow: 'hidden'
+      overflow: 'hidden',
+
+      '&:hover': {
+        border: '1px solid rgba(208, 31, 54, 0.4)',
+        boxShadow: '0 10px 20px rgba(208, 31, 54), 0 15px 12px rgba(99, 152, 255, 0.4)'
+      }
     },
     cardHeader: {
       position: 'relative',
@@ -94,7 +99,7 @@ const useStyles = makeStyles((theme: any) => {
         '& li': {
           display: 'flex',
           flexDirection: 'row',
-          alignItems: 'flex-end',
+          alignItems: 'center',
           justifyContent: 'space-between',
           marginTop: '10px',
 

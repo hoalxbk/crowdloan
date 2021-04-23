@@ -39,11 +39,11 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
         const data = res.data;
         const newData = {
           ...data,
-          start_time: moment.unix(data.start_time).format(DATETIME_FORMAT),
-          finish_time: moment.unix(data.finish_time).format(DATETIME_FORMAT),
-          release_time: moment.unix(data.release_time).format(DATETIME_FORMAT),
-          start_join_pool_time: moment.unix(data.start_join_pool_time).format(DATETIME_FORMAT),
-          end_join_pool_time: moment.unix(data.end_join_pool_time).format(DATETIME_FORMAT),
+          start_time: moment.unix(data?.start_time).format(DATETIME_FORMAT),
+          finish_time: moment.unix(data?.finish_time).format(DATETIME_FORMAT),
+          release_time: moment.unix(data?.release_time).format(DATETIME_FORMAT),
+          start_join_pool_time: moment.unix(data?.start_join_pool_time).format(DATETIME_FORMAT),
+          end_join_pool_time: moment.unix(data?.end_join_pool_time).format(DATETIME_FORMAT),
         };
         setPoolDetail(newData);
 

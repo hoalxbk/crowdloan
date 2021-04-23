@@ -3,6 +3,7 @@ import { useWeb3React } from '@web3-react/core';
 import { useDispatch } from 'react-redux';
 import { ethers } from 'ethers';
 
+import { TRANSACTION_ERROR_MESSAGE } from '../constants/alert';
 import { alertFailure } from '../store/actions/alert';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import { ConnectorNames, connectorNames } from '../constants/connectors';
@@ -46,9 +47,9 @@ const useWalletSignature = () => {
         const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
         const provider = library.provider;
 
-        if (connector !== ConnectorNames.WalletConnect) {
-          setError("");
+        setError("");
 
+        if (connector !== ConnectorNames.WalletConnect) {
           await (provider as any).sendAsync({
             method: paramsWithConnector.method,
             params: paramsWithConnector.params
@@ -56,7 +57,7 @@ const useWalletSignature = () => {
             if (err || result.error) {
               const errMsg = (err.message || (err as any).error) || result.error.message
               console.log('Error when signing message: ', errMsg);
-              dispatch(alertFailure(errMsg));
+              dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
               setError(errMsg);
             } else {
               console.log(result.result);
@@ -76,9 +77,8 @@ const useWalletSignature = () => {
         }
       }
     } catch(err) {
-      dispatch(alertFailure(err.message));
+      dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
       setError(err.message);
-      throw new Error(err.message);
     }
   }, [library, connector, connectedAccount]);
 

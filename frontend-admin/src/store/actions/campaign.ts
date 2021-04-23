@@ -1,6 +1,8 @@
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import BigNumber from 'bignumber.js';
+//@ts-ignore
+import removeTrailingZeros from 'remove-trailing-zeros';
 
 import { convertDateTimeToUnix, convertUnixTimeToDateTime } from '../../utils/convertDate';
 import { campaignActions } from '../constants/campaign';
@@ -577,7 +579,7 @@ export const deployPool = (campaign: any, history: any) => {
       const {
         title, affiliate, start_time, finish_time, release_time,
         token, address_receiver, token_by_eth, token_conversion_rate, tokenInfo,
-        tier_configuration
+        tier_configuration, accept_currency
       } = campaign;
       const releaseTimeUnix = release_time;
       const startTimeUnix = start_time;
@@ -585,9 +587,53 @@ export const deployPool = (campaign: any, history: any) => {
 
       const durationTime = finishTimeUnix - startTimeUnix;
 
-      const tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals || 0)).dividedBy(Math.pow(10, 18));
-      const tokenByEthDecimals = getDigitsAfterDecimals(tokenByETHActualRate.toString());
-      const tokenByEthSendToBlock = tokenByETHActualRate.multipliedBy(Math.pow(10, tokenByEthDecimals)).toString();
+      // Old Code
+      // let tokenByEthDecimals: any;
+      // let tokenByETHActualRate: any;
+      // tokenByEthDecimals = getDigitsAfterDecimals(token_by_eth);
+      // if (token !== ACCEPT_CURRENCY.ETH) {
+      //   if (tokenByEthDecimals > 0) {
+      //     tokenByETHActualRate = new BigNumber(1).dividedBy(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals - 6)).toFixed();
+      //   } else {
+      //     tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+      //   }
+      // } else {
+      //   tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).multipliedBy(Math.pow(10, 18 - 18)).toFixed();
+      // }
+
+      // console.log('tokenByEthDecimals: ', tokenByEthDecimals);
+      // console.log('tokenByETHActualRate: ', tokenByETHActualRate);
+
+      let paidTokenAddress = '0x0000000000000000000000000000000000000000';
+
+      if (accept_currency === ACCEPT_CURRENCY.USDC) {
+        paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS as string;
+      }
+
+      if (accept_currency === ACCEPT_CURRENCY.USDT) {
+        paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS as string;
+      }
+
+
+      let tokenByEthDecimals = 0;
+
+      let tokenByETHActualRate: any;
+      let reversedRate = removeTrailingZeros(new BigNumber(1).dividedBy(token_by_eth).toFixed());
+      let digitsAfterDecimals = getDigitsAfterDecimals(reversedRate);
+
+      if (digitsAfterDecimals > 6) {
+        // get 6 decimals after comma if decimals part is too long
+        const splittedComma = reversedRate.split('.');
+        reversedRate = splittedComma[0].concat(".", splittedComma[1].substr(0, 6));
+        digitsAfterDecimals = 6;
+      }
+
+      if (accept_currency !== ACCEPT_CURRENCY.ETH) {
+        tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+      
+      } else {
+        tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
+      }
 
       const poolType = campaign.pool_type;
       let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');
@@ -596,7 +642,7 @@ export const deployPool = (campaign: any, history: any) => {
       }
 
       if (factorySmartContract) {
-        let createdCampaign;
+        let createdCampaign; 
         const userWalletAddress = getState().user.data.wallet_address;
 
         const signerWallet = campaign.wallet.wallet_address;
@@ -609,9 +655,9 @@ export const deployPool = (campaign: any, history: any) => {
             startTimeUnix,
 
             // TODO: Fix switch USDT/USDC/ETH Address
-            process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS,
+            paidTokenAddress,
             tokenByEthDecimals,
-            tokenByEthSendToBlock,
+            tokenByETHActualRate,
             address_receiver,
             signerWallet,
           ).send({
@@ -624,9 +670,9 @@ export const deployPool = (campaign: any, history: any) => {
             startTimeUnix,
 
             // TODO: Fix switch USDT/USDC/ETH Address
-            process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS,
+            paidTokenAddress,
             tokenByEthDecimals,
-            tokenByEthSendToBlock,
+            tokenByETHActualRate,
             address_receiver,
             signerWallet,
           ).send({
