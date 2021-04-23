@@ -108,6 +108,7 @@ Route.group(() => {
   Route.get('check-token/:token', 'UserController.checkToken');
   Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.get('profile', 'UserController.profile');
+  Route.post('check-active', 'UserController.checkUserActive');
 
   Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['checkSignature']);
   Route.post('deposit', 'CampaignController.deposit').middleware(['checkSignature']);
