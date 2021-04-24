@@ -8,7 +8,7 @@ import { convertFromWei, convertToWei, convertToBN } from '../../../services/web
 import { useWeb3React } from '@web3-react/core';
 
 const closeIcon = '/images/icons/close.svg';
-const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,}$/;
+const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
 
 const ModalWithdraw = (props: any) => {
   const styles = useStyles();
