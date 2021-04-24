@@ -34,7 +34,7 @@ const ManageTier = (props: any) => {
   const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee)
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = {} } = useSelector((state: any) => state.balance);
-  const { connectedAccount } = useAuth();
+  const { connectedAccount, isAuth, wrongChain } = useAuth();
 
   const { 
     classNamePrefix = '',
@@ -81,24 +81,28 @@ const ManageTier = (props: any) => {
       <div className={styles.content}>
         <p className={styles.textDefault}>Available balance</p>
         <p className={styles.balance}>
-          <AnimatedNumber
+          {(wrongChain || !isAuth) && <AnimatedNumber
+            value={0}
+            formatValue={numberWithCommas}
+          />}
+          {!wrongChain && isAuth && <AnimatedNumber
             value={balance.token}
             formatValue={numberWithCommas}
-          />
+          />}
           &nbsp;{tokenDetails?.symbol}
         </p>
         <div className="button-area">
           <button
-            className={`btn btn-lock ${emailVerified == USER_STATUS.UNVERIFIED ? 'disabled' : ''}`}
+            className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalDeposit(true)}}
-            disabled={emailVerified == USER_STATUS.UNVERIFIED}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
             Lock - in
           </button>
           <button
-            className={`btn btn-unlock ${emailVerified == USER_STATUS.UNVERIFIED ? 'disabled' : ''}`}
+            className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalWithdraw(true)}}
-            disabled={emailVerified == USER_STATUS.UNVERIFIED}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
             Unlock
           </button>

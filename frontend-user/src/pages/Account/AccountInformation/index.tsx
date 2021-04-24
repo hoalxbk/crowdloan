@@ -68,14 +68,14 @@ const AccountInformation = (props: any) => {
             <p>Wallet balance</p>
             <span>
               <AnimatedNumber
-                value={balance.token}
+                value={(wrongChain || !isAuth) ? 0 : balance.token}
                 formatValue={numberWithCommas}
               />&nbsp;{tokenDetails?.symbol}
             </span>
             <p>Locked-in </p>
             <span>
               <AnimatedNumber
-                value={userInfo.staked}
+                value={(wrongChain || !isAuth) ? 0 : userInfo.staked}
                 formatValue={numberWithCommas}
               />&nbsp;{tokenDetails?.symbol}
             </span>
