@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
@@ -11,6 +11,14 @@ import AccountInformation from './AccountInformation';
 import ManageTier from './ManageTier';
 import useStyles from './style';
 import useAuth from '../../hooks/useAuth';
+import useTokenDetails from '../../hooks/useTokenDetails';
+import useFetch from '../../hooks/useFetch';
+import { USER_STATUS } from '../../constants';
+
+const TOKEN_ADDRESS = process.env.REACT_APP_SOTA || '';
+
+const iconWarning = "/images/icons/warning.svg";
+const iconClose = "/images/icons/close.svg";
 
 const Account = (props: any) => {
   const classes = useStyles();
@@ -19,7 +27,11 @@ const Account = (props: any) => {
   const { data: balance = {} } = useSelector((state: any) => state.balance);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
-
+  const { tokenDetails } = useTokenDetails(TOKEN_ADDRESS, 'eth');
+  const { data: data = {}, loading, error } = useFetch<any>(`/user/profile?wallet_address=${connectedAccount}`);
+  const [emailVerified, setEmailVeryfied] = useState(0);
+  const [email, setEmail] = useState<string>('');
+  const [showAlertVerifyEmail, setShowAlertVerifyEmail] = useState(true);
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
       dispatch(getBalance(connectedAccount));
@@ -28,24 +40,38 @@ const Account = (props: any) => {
       dispatch(getUserTier(connectedAccount));
       dispatch(getAllowance(connectedAccount));
     }
-  }, [isAuth, wrongChain]);
+  }, [isAuth, wrongChain, connectedAccount]);
+
+  useEffect(() => {
+    data && data.user && data.user.email && setEmail(data.user.email)
+    data && data.user && data.user.status && setEmailVeryfied(data.user.status)
+  }, [data]);
 
   return (
     <DefaultLayout>
       <div className={classes.accountContainer}>
+        {emailVerified == USER_STATUS.UNVERIFIED && !loading && showAlertVerifyEmail && <div className={classes.alertVerifyEmail}>
+          <img src={iconWarning}/>
+          <img src={iconClose} className="btn-close" onClick={() => setShowAlertVerifyEmail(false)}/>
+          <span>&nbsp;&nbsp;Your account has not been verified. To verify your account, please click on Verify Email button</span>
+        </div>}
         <div className={classes.leftPanel}>
           <AccountInformation
             classNamePrefix="account-infomation"
             balance={balance}
             userInfo={userInfo}
+            tokenDetails={tokenDetails}
+            email={email}
+            emailVerified={emailVerified}
+            setEmail={setEmail}
           ></AccountInformation>
           <Tiers
             showMoreInfomation={false}
-            tokenSymbol={`PKF`}
+            tokenSymbol={tokenDetails?.symbol}
           />
         </div>
         <div className={classes.rightPanel}>
-          <ManageTier/>
+          <ManageTier tokenDetails={tokenDetails} emailVerified={emailVerified}/>
         </div>
       </div>
     </DefaultLayout>

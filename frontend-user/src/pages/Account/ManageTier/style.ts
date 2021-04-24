@@ -37,6 +37,10 @@ const useStyles = makeStyles((theme: any) => {
 
         '&:hover': {
           cursor: 'pointer'
+        },
+
+        '&.disabled': {
+          backgroundColor: 'silver'
         }
       },
 

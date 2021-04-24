@@ -8,13 +8,12 @@ import { getWithdrawPercent, getWithdrawFee } from '../../../store/actions/sota-
 import ModalDeposit from '../ModalDeposit';
 import ModalWithdraw from '../ModalWithdraw';
 import ModalTransaction from '../ModalTransaction';
-import useTokenDetails from '../../../hooks/useTokenDetails';
 import useAuth from '../../../hooks/useAuth';
 //@ts-ignore
 import AnimatedNumber from "animated-number-react";
 import { numberWithCommas } from '../../../utils/formatNumber';
+import { USER_STATUS } from '../../../constants';
 
-const TOKEN_ADDRESS = process.env.REACT_APP_SOTA || '';
 const iconClose = '/images/icons/close.svg'
 
 const ManageTier = (props: any) => {
@@ -35,11 +34,12 @@ const ManageTier = (props: any) => {
   const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee)
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = {} } = useSelector((state: any) => state.balance);
-  const { tokenDetails } = useTokenDetails(TOKEN_ADDRESS, 'eth');
   const { connectedAccount } = useAuth();
 
   const { 
     classNamePrefix = '',
+    tokenDetails,
+    emailVerified
   } = props;
 
   const handleKYC = () => {
@@ -86,12 +86,21 @@ const ManageTier = (props: any) => {
             value={balance.token}
             formatValue={numberWithCommas}
           />
+          &nbsp;{tokenDetails?.symbol}
         </p>
         <div className="button-area">
-          <button className="btn btn-lock" onClick={() => {setOpenModalDeposit(true)}}>
+          <button
+            className={`btn btn-lock ${emailVerified == USER_STATUS.UNVERIFIED ? 'disabled' : ''}`}
+            onClick={() => {setOpenModalDeposit(true)}}
+            // disabled={emailVerified == USER_STATUS.UNVERIFIED}
+          >
             Lock - in
           </button>
-          <button className="btn btn-unlock" onClick={() => {setOpenModalWithdraw(true)}}>
+          <button
+            className={`btn btn-unlock ${emailVerified == USER_STATUS.UNVERIFIED ? 'disabled' : ''}`}
+            onClick={() => {setOpenModalWithdraw(true)}}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED}
+          >
             Unlock
           </button>
         </div>

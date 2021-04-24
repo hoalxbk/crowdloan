@@ -7,6 +7,7 @@ import { nFormatter } from '../../../utils/formatNumber';
 import { Link } from 'react-router-dom';
 import { POOL_STATUS, NETWORK, POOL_TYPE, ACCEPT_CURRENCY, BUY_TYPE } from '../../../constants';
 import useFetch from '../../../hooks/useFetch';
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 const dotIcon = '/images/icons/dot.svg'
 const EthereumIcon = "/images/ethereum.svg";
@@ -30,7 +31,7 @@ const Card = (props: any): JSX.Element => {
   useEffect(() => {
     console.log(pool)
     const currentTime = moment().unix()
-    var diffTime = pool.startTime - currentTime;
+    var diffTime = parseInt(pool.start_time) - currentTime;
     let intervalCount: any;
     if (diffTime > 0) {
       let timeLeftToStart = diffTime * 1000
@@ -40,10 +41,10 @@ const Card = (props: any): JSX.Element => {
         timeLeftToStart -= interval;
         const timeLeftDuration = moment.duration(timeLeftToStart, 'milliseconds');
         let timeLeftString = '';
-        if (timeLeftToStart / 86400 >= 1) {
-          timeLeftString = 'In' + timeLeftDuration.days() + "days"
+        if (timeLeftToStart >= 86400000) {
+          timeLeftString = 'In ' + timeLeftDuration.days() + " days"
         } else {
-          timeLeftString = 'In' + timeLeftDuration.hours() + ":" + timeLeftDuration.minutes() + ":" + timeLeftDuration.seconds()
+          timeLeftString = 'In ' + timeLeftDuration.hours() + ":" + timeLeftDuration.minutes() + ":" + timeLeftDuration.seconds()
         }
         setTimeLeft(timeLeftString)
       }, interval);
@@ -63,7 +64,7 @@ const Card = (props: any): JSX.Element => {
           {pool.status == POOL_STATUS.FILLED && <div className="time filled">
             <span>Filled</span>
           </div>}
-          {pool.status == POOL_STATUS.IN_PROGRESS && <div className="time filled">
+          {pool.status == POOL_STATUS.IN_PROGRESS && <div className="time in-progress">
             <span>In Progress</span>
           </div>}
           {pool.status == POOL_STATUS.JOINING && <div className="time filled">
@@ -86,24 +87,24 @@ const Card = (props: any): JSX.Element => {
             <li>
               <span>Rate</span>
               <span className="total">1 {pool.symbol} =&nbsp;
-                {pool.accept_currency === ACCEPT_CURRENCY.ETH ? 
-                  (1/pool.ether_conversion_rate).toFixed(6) : 
-                  (1/pool.token_conversion_rate).toFixed(6)} {pool.accept_currency.toUpperCase()}</span>
+                {pool.accept_currency === ACCEPT_CURRENCY.ETH ?
+                  numberWithCommas(pool.ether_conversion_rate, 4) :
+                  numberWithCommas(pool.token_conversion_rate, 4)} {pool.accept_currency.toUpperCase()}</span>
             </li>
             <li>
               <span>Participants</span>
-              <span className="total">{ participants }</span>
+              <span className="total">{ pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? participants : 'All' }</span>
             </li>
             <li>
               <span>Access</span>
               <span className="total">{pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? BUY_TYPE.WHITELIST_LOTTERY.toUpperCase() : BUY_TYPE.FCFS.toUpperCase()}</span>
             </li>
-            <li>
+            {pool.status != POOL_STATUS.UPCOMMING && <li>
               <span>Network</span>
               <span className="total">
                 {pool.network_available === NETWORK.ETHEREUM ? <img src={EthereumIcon} /> : <img src={BSCIcon} />}
               </span>
-            </li>
+            </li>}
           </ul>
 
           {pool.status == POOL_STATUS.UPCOMMING && <div className="token-area">
@@ -120,7 +121,7 @@ const Card = (props: any): JSX.Element => {
           {pool.status != POOL_STATUS.UPCOMMING && <div className="progress-area">
             <p>Progress</p>
             <div className="progress">
-              <span className="current-progress" style={{ width: `${progress > 100 ? 100 : Math.round(progress)}%` }}></span>
+              <span className={`current-progress ${progress !== 0 ? '' : 'inactive'}`} style={{ width: `${progress > 100 ? 100 : Math.round(progress)}%` }}></span>
             </div>
             <div>
               <div>

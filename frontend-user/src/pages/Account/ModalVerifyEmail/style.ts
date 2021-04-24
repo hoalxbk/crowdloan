@@ -10,6 +10,9 @@ const useStyles = makeStyles((theme: any) => {
         background: '#11152A',
         padding: '0 10px',
         marginTop: '10px'
+      },
+      '& .disabled': {
+        backgroundColor: 'silver'
       }
     }
   };

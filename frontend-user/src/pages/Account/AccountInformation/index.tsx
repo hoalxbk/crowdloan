@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
 import useAuth from '../../../hooks/useAuth';
-import useFetch from '../../../hooks/useFetch';
 import ModalVerifyEmail from '../ModalVerifyEmail';
 import {isWidthDown, isWidthUp, withWidth} from '@material-ui/core';
 import { trimMiddlePartAddress } from '../../../utils/accountAddress';
@@ -17,18 +16,17 @@ const AccountInformation = (props: any) => {
   const { classNamePrefix = '', balance = {}, userInfo = {} } = props;
   const [openModalVerifyEmail, setOpenModalVerifyEmail] = useState(false);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
-  const { data: data = {}, loading, error } = useFetch<any>(`/user/profile?wallet_address=${connectedAccount}`);
-  const [emailVerified, setEmailVeryfied] = useState(0);
-  const [email, setEmail] = useState<string>('');
 
   const handleKYC = () => {
     console.log('hande KYC')
   }
 
-  useEffect(() => {
-    data && data.user && data.user.email && setEmail(data.user.email)
-    data && data.user && data.user.status && setEmailVeryfied(data.user.status)
-  }, [data]);
+  const {
+    tokenDetails,
+    email,
+    setEmail,
+    emailVerified
+  } = props;
 
   const formatValue = (value: string) => parseFloat(value).toFixed(2);
 
@@ -68,15 +66,19 @@ const AccountInformation = (props: any) => {
           </div>
           <div className={styles.walletInfo}>
             <p>Wallet balance</p>
-            <AnimatedNumber
-              value={balance.token}
-              formatValue={numberWithCommas}
-            />
+            <span>
+              <AnimatedNumber
+                value={balance.token}
+                formatValue={numberWithCommas}
+              />&nbsp;{tokenDetails?.symbol}
+            </span>
             <p>Locked-in </p>
-            <AnimatedNumber
-              value={userInfo.staked}
-              formatValue={numberWithCommas}
-            />
+            <span>
+              <AnimatedNumber
+                value={userInfo.staked}
+                formatValue={numberWithCommas}
+              />&nbsp;{tokenDetails?.symbol}
+            </span>
           </div>
         </div>
       </div>

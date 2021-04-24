@@ -19,7 +19,7 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .pools': {
         display: 'Grid',
-        gridTemplateColumns: '265px 265px 265px 265px',
+        gridTemplateColumns: '300px 300px 300px 300px',
         gap: '20px',
         margin: 'auto',
         placeContent: 'center',
@@ -48,7 +48,7 @@ const useStyles = makeStyles((theme: any) => {
       [theme.breakpoints.down('md')]: {
         '& .pools': {
           display: 'Grid',
-          gridTemplateColumns: '265px 265px 265px',
+          gridTemplateColumns: '300px 300px 300px',
           gap: '20px'
         },
       },
@@ -57,7 +57,7 @@ const useStyles = makeStyles((theme: any) => {
         marginTop: '60px!important',
         '& .pools': {
           display: 'Grid',
-          gridTemplateColumns: '265px 265px',
+          gridTemplateColumns: '300px 300px',
           gap: '50px'
         },
       },
@@ -66,7 +66,7 @@ const useStyles = makeStyles((theme: any) => {
         padding: '20px',
         '& .pools': {
           display: 'Grid',
-          gridTemplateColumns: '265px 265px',
+          gridTemplateColumns: '300px 300px',
           gap: '20px'
         },
       },
