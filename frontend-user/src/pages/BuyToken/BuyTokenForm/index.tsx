@@ -306,8 +306,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       {
         appChainID !== BSC_CHAIN_ID && (
           <p className={styles.buyTokenFormTitle}>
-            You have {new BigNumber(userPurchased).multipliedBy(rate).toFixed()} {purchasableCurrency} BOUGHT from {maximumBuy} available for your TIER. <br/> 
-            The remaining amount is {new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()}
+            You have {new BigNumber(userPurchased).multipliedBy(rate).toFixed()} {purchasableCurrency} BOUGHT from {maximumBuy} {purchasableCurrency} available for your TIER. <br/> 
+            The remaining amount is {new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()} {purchasableCurrency}
           </p>
         ) 
       }
@@ -360,7 +360,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       </p>
       <div className={styles.buyTokenEstimate}>
         <p className={styles.buyTokenEstimateLabel}>You will get approximately</p>
-        <strong className={styles.buyTokenEstimateAmount}>{estimateTokens} Tokens</strong>
+        <strong className={styles.buyTokenEstimateAmount}>{estimateTokens} {tokenDetails?.symbol}</strong>
       </div>
       {
         <p className={styles.minimumBuyWarning}>

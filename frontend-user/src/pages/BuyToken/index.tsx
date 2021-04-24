@@ -102,6 +102,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     ? (
       today >= joinTimeInDate && 
       today <= endJoinTimeInDate && 
+      today <= tierEndBuyInDate &&
       connectedAccount && 
       !wrongChain &&
       userTier >= poolDetails?.minTier

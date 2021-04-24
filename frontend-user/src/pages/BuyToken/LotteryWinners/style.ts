@@ -18,6 +18,10 @@ const useStyles = makeStyles((theme: any) => {
       border: '1px solid rgba(255, 255, 255, 0.1)',
       marginTop: 20,
 
+      [theme.breakpoints.down('xs')]: {
+        width: '100%'
+      },
+
       '& th, & td': {
         color: '#999999'
       },
@@ -32,7 +36,13 @@ const useStyles = makeStyles((theme: any) => {
     tableHeader: {
       color: 'white !important' as any,
       fontWeight: 700,
-      fontSize: 15
+      fontSize: 15,
+      [theme.breakpoints.down('xs')]: {
+        '& > span': {
+          width: '150px',
+          display: 'inline-block'
+        }
+      },
     },
     tableSearchWrapper: {
       maxWidth: 360,

@@ -61,7 +61,11 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
               <TableRow>
               {
                 headers.map(header => (
-                  <TableCell key={header} className={styles.tableHeader}>{header}</TableCell>
+                  <TableCell key={header} className={styles.tableHeader}>
+                    <span>
+                      {header}
+                    </span>
+                  </TableCell>
                 ))
               }
               </TableRow>
