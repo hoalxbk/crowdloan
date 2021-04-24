@@ -3,9 +3,10 @@ import BigNumber from 'bignumber.js';
 export enum PoolStatus {
   Upcoming = "Upcoming",
   Joining = "Joining",
-  Closed = "Closed",
+  Closed = "Ended",
   Filled = "Filled",
-  Progress = "In-progress"
+  Progress = "In-progress",
+  Claimable = "Claimable"
 }
 
 export type poolStatus = Extract<
@@ -14,7 +15,8 @@ export type poolStatus = Extract<
   PoolStatus.Upcoming | 
   PoolStatus.Joining | 
   PoolStatus.Filled |
-  PoolStatus.Closed
+  PoolStatus.Closed | 
+  PoolStatus.Claimable
 >
 
 export const getPoolStatus = (
@@ -22,7 +24,9 @@ export const getPoolStatus = (
   endJoinTime: Date | undefined,
   startBuyTime: Date | undefined,
   endBuyTime: Date | undefined,
-  soldProgress: string | undefined
+  releaseTime: Date | undefined,
+  soldProgress: string | undefined,
+  isClaimable: boolean | undefined
 ): poolStatus => {
   const today = new Date().getTime();
 
@@ -45,6 +49,10 @@ export const getPoolStatus = (
     && today < endBuyTime.getTime() 
   ) {
     return new BigNumber(soldProgress || 0).multipliedBy(100).gte(99) ?  PoolStatus.Filled: PoolStatus.Progress;
+  }
+
+  if (releaseTime && today > releaseTime.getTime() && isClaimable) {
+    return PoolStatus.Claimable;
   }
 
   if (endBuyTime && today > endBuyTime?.getTime()) {

@@ -72,9 +72,20 @@ const BuyToken: React.FC<any> = (props: any) => {
     poolDetails ? `/pool/${poolDetails?.id}/winners`: undefined, 
     poolDetails?.method !== "whitelist" 
   );
+  const { data: alreadyReserved } = useFetch<Array<any>>(
+    poolDetails && connectedAccount ? 
+    `/pool/${poolDetails?.id}/check-exist-reverse?wallet_address=${connectedAccount}`: 
+    undefined, 
+    poolDetails?.method !== "whitelist" 
+  );
   const { data: alreadyJoinPool } = useFetch<boolean>(
     poolDetails && connectedAccount ?
     `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
+    : undefined
+  );
+  const { data: verifiedEmail } = useFetch<boolean>(
+    poolDetails && connectedAccount ?
+    `/user/check-wallet-address?wallet_address=${connectedAccount}`
     : undefined
   );
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
@@ -107,6 +118,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       !wrongChain &&
       userTier >= poolDetails?.minTier
       && poolDetails?.isDeployed
+      && verifiedEmail
     )
     : false;
   const availablePurchase = 
@@ -115,7 +127,8 @@ const BuyToken: React.FC<any> = (props: any) => {
     today >= tierStartBuyInDate &&
     today <= tierEndBuyInDate &&
     poolDetails?.isDeployed &&
-    (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
+    verifiedEmail &&
+    (poolDetails?.method === 'whitelist' ? (alreadyReserved ? true:  alreadyJoinPool): true);
 
   // Get Pool Status
   const poolStatus = getPoolStatus(
@@ -123,7 +136,9 @@ const BuyToken: React.FC<any> = (props: any) => {
     endJoinTimeInDate, 
     startBuyTimeInDate, 
     endBuyTimeInDate,
-    new BigNumber(tokenSold).div(poolDetails?.amount || 1).toFixed()
+    releaseTimeInDate,
+    new BigNumber(tokenSold).div(poolDetails?.amount || 1).toFixed(),
+    poolDetails?.type !== 'swap',
   );
 
   const displayCountDownTime = useCallback((

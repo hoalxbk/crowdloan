@@ -87,7 +87,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     estimateErr, 
     tokenDepositLoading, 
     tokenDepositTransaction,
-    setTokenDepositLoading,
     depositError
   } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input });
 

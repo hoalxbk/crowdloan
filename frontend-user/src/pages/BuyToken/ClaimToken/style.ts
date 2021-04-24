@@ -12,6 +12,9 @@ const useStyles = makeStyles((theme: any) => {
       flexDirection: 'column',
       justifyContent: 'center',
 
+      [theme.breakpoints.down('md')]: {
+        marginTop: 40
+      },
       [theme.breakpoints.down('xs')]: {
         width: '100%',
         '& #countdown': {
