@@ -96,7 +96,6 @@ class UserAuthController {
     try {
       const param = request.only(['email', 'username', 'signature', 'password', 'wallet_address'])
       const wallet_address = Web3.utils.toChecksumAddress(request.input('wallet_address'));
-      param.wallet_address = wallet_address;
       console.log(111, wallet_address)
       const type = params.type;
       const role = type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
