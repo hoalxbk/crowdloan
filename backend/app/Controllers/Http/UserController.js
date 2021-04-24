@@ -253,6 +253,16 @@ class UserController {
     await findUser.save();
     return HelperUtils.responseSuccess();
   }
+
+  async checkUserActive({request}) {
+    const params = request.all();
+    console.log(`Check user active with params ${params}`);
+    const userService = new UserService();
+    // get user active by wallet_address
+    const user = userService.findUser({'wallet_address': params.wallet_address});
+    // check exist user or not and return result
+    return HelperUtils.responseSuccess(user == null);
+  }
 }
 
 module.exports = UserController

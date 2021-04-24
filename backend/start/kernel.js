@@ -50,6 +50,7 @@ const namedMiddleware = {
   checkIcoOwner: 'App/Middleware/CheckIcoOwner',
   checkSignature: 'App/Middleware/CheckSignature',
   checkAdminSignature: 'App/Middleware/CheckAdminSignature',
+  formatEmailAndWallet: 'App/Middleware/FormatEmailAndWallet',
   typeAdmin: 'App/Middleware/TypeAdmin',
   typeUser: 'App/Middleware/TypeUser',
 }
