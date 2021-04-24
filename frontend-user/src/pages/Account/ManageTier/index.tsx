@@ -27,9 +27,9 @@ const ManageTier = (props: any) => {
   const [transactionHashes, setTransactionHashes] = useState([]) as any;
 
 
-  const { data: depositTransaction } = useSelector((state: any) => state.deposit);
-  const { data: approveTransaction } = useSelector((state: any) => state.approve);
-  const { data: withdrawTransaction } = useSelector((state: any) => state.withdraw);
+  const { data: depositTransaction, error: depositError } = useSelector((state: any) => state.deposit);
+  const { data: approveTransaction, error: approveError } = useSelector((state: any) => state.approve);
+  const { data: withdrawTransaction, error: withdrawError } = useSelector((state: any) => state.withdraw);
   const { data: withdrawPercent = {} } = useSelector((state: any) => state.withdrawPercent)
   const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee)
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
@@ -55,21 +55,24 @@ const ManageTier = (props: any) => {
       setTransactionHashes([...transactionHashes, depositTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
-  }, [depositTransaction])
+    if(depositError.message) setOpenModalTransactionSubmitting(false);
+  }, [depositTransaction, depositError])
 
   useEffect(() => {
     if(approveTransaction.hash) {
       setTransactionHashes([...transactionHashes, approveTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
-  }, [approveTransaction])
+    if(approveError.message) setOpenModalTransactionSubmitting(false);
+  }, [approveTransaction, approveError])
 
   useEffect(() => {
     if(withdrawTransaction.hash) {
       setTransactionHashes([...transactionHashes, withdrawTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
     }
-  }, [withdrawTransaction])
+    if(withdrawError.message) setOpenModalTransactionSubmitting(false);
+  }, [withdrawTransaction, withdrawError])
 
   useEffect(() => {
     if(_.isEmpty(userInfo) || _.isEmpty(connectedAccount)) return
@@ -102,7 +105,7 @@ const ManageTier = (props: any) => {
           <button
             className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalWithdraw(true)}}
-            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+            // disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
             Unlock
           </button>
