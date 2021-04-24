@@ -407,6 +407,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         isDeployed={poolDetails?.isDeployed}
                         startBuyTimeInDate={startBuyTimeInDate}
                         endBuyTimeInDate={endBuyTimeInDate}
+                        endJoinTimeInDate={endJoinTimeInDate}
                         tokenSold={tokenSold}
                       /> 
                    )
