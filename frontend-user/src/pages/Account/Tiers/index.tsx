@@ -54,15 +54,22 @@ const Tiers = (props: any) => {
   }
   
   useEffect(() => {
-    if(_.isEmpty(tiers) || _.isEmpty(userTier) || _.isEmpty(userInfo)) return
-    !showMoreInfomation && setCurrentProcess(calculateProcess(tiers, userInfo.staked));
-    showMoreInfomation && setCurrentProcess(userTier*100/(tiersBuyLimit.length - 1));
-    setLoading(false);
-  }, [tiers, userTier, userInfo])
+    if(!showMoreInfomation) {
+      const process = calculateProcess(tiers, userInfo.staked);
+      setCurrentProcess(process - 2);
+    } else if(showMoreInfomation) {
+      setCurrentProcess(userTier*100/(tiersBuyLimit.length - 1) - 2);
+    }
+  }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol])
+
+  useEffect(() => {
+    console.log(currentProcess, 'kaka')
+    if(currentProcess) setLoading(false);
+  }, [currentProcess])
 
   return (
     <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>
-      <div className={styles.title}>
+      {showMoreInfomation && <div className={styles.title}>
         <>
           <img src={warningIcon} />
           <p>
@@ -71,7 +78,7 @@ const Tiers = (props: any) => {
           <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
           </p> 
         </>
-      </div>
+      </div>}
       <ul className={styles.tierList}>
         <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{width:`${currentProcess}%`}}></li>
         <li className={styles.tierInfo + ' active'}>

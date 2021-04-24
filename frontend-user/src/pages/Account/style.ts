@@ -2,6 +2,29 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: any) => {
   return {
+    alertVerifyEmail: {
+      position: 'absolute',
+      top: 0, 
+      left: 0,
+      width: '100%',
+      padding: '10px 0',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: 'rgba(50, 50, 200, 0.4)',
+
+      '& .btn-close': {
+        position: 'absolute',
+        top: '10px',
+        right: '20px',
+      },
+
+      '& span': {
+        font: 'normal normal 400 14px/24px Helvetica',
+        color: '#FFFFFF'
+      }
+    },
     errorBanner: {
       color: 'white',
       backgroundColor: '#FF4C00',
@@ -14,9 +37,10 @@ const useStyles = makeStyles((theme: any) => {
       display: 'grid',
       gridTemplateColumns: '5fr 4fr',
       gap: '100px',
-      padding: '80px',
-      marginTop: '40px',
+      padding: '120px 80px 80px 80px',
+      marginTop: '0',
       marginBottom: '120px',
+      position: 'relative',
       [theme.breakpoints.down('md')]: {
         gridTemplateColumns: '1fr',
       },
