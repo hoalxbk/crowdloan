@@ -91,7 +91,7 @@ Route.group(() => {
   Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
   Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 
-}).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix']);
+}).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'formatEmailAndWallet']);
 
 Route.group(() => {
   Route.get('profile', 'AdminController.profile').middleware(['auth:admin', 'checkRole']);
@@ -125,6 +125,7 @@ Route.group(() => {
   Route.get('check-token/:token', 'UserController.checkToken');
   Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.get('profile', 'UserController.profile');
+  Route.post('check-active', 'UserController.checkUserActive');
 
   Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['checkSignature']);
   Route.post('deposit', 'CampaignController.deposit').middleware(['checkSignature']);
@@ -135,7 +136,7 @@ Route.group(() => {
   Route.get('winner-search/:campaignId', 'WinnerListUserController.search');
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');
-}).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
+}).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix', 'formatEmailAndWallet']);
 
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
   .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);
