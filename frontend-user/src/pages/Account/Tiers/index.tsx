@@ -5,6 +5,7 @@ import _ from 'lodash';
 import { TIERS } from '../../../constants';
 import useStyles from './style';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
+import useAuth from '../../../hooks/useAuth';
 //@ts-ignore
 import { Fade } from 'react-reveal';
 
@@ -17,6 +18,7 @@ const Tiers = (props: any) => {
   const { data: tiers = {} } = useSelector((state: any) => state.tiers);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const [loading, setLoading] = useState(true);
+  const { isAuth, connectedAccount, wrongChain } = useAuth();
 
   const {
     showMoreInfomation = false,
@@ -52,14 +54,22 @@ const Tiers = (props: any) => {
   }
   
   useEffect(() => {
+    if(wrongChain || !isAuth){
+      setCurrentProcess(0)
+      return
+    }
     if(_.isEmpty(userInfo) || _.isEmpty(userTier)) return;
     if(!showMoreInfomation) {
-      const process = calculateProcess(tiers, userInfo.staked);
-      setCurrentProcess(process - 2);
+      let process = calculateProcess(tiers, userInfo.staked);
+      process = process > 2 ? process - 2 : 0
+      setCurrentProcess(process);
     } else if(showMoreInfomation) {
-      setCurrentProcess(userTier*100/(tiersBuyLimit.length - 1) - 2);
+      let process = userTier*100/(tiersBuyLimit.length - 1)
+      process = process > 2 ? process - 2 : 0
+      setCurrentProcess(process);
     }
-  }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol])
+    setLoading(false);
+  }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain])
 
   useEffect(() => {
     if(currentProcess) setLoading(false);
