@@ -50,7 +50,6 @@ const AccountInformation = (props: any) => {
                 Verify Email
               </button>}
           </>}
-          {email === '' && connectedAccount && <span className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>Verify email</span>}
         </div>
         <div className={styles.inputGroup}>
           <span>Your Wallet</span>
