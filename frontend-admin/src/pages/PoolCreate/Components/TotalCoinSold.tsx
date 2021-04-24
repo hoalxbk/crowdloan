@@ -3,7 +3,8 @@ import useStyles from "../style";
 import FormControl from '@material-ui/core/FormControl';
 // @ts-ignore
 import CurrencyInput from 'react-currency-input-field';
-import {renderErrorCreatePool} from "../../../utils/validate";
+import {fieldMustBeGreaterThanZero, renderErrorCreatePool} from "../../../utils/validate";
+import BigNumber from "bignumber.js";
 
 function TotalCoinSold(props: any) {
   const classes = useStyles();
@@ -45,12 +46,22 @@ function TotalCoinSold(props: any) {
           type='hidden'
           name="totalSoldCoin"
           value={totalSoldCoin || ''}
-          ref={register({ required: true })}
+          ref={register({
+            required: true,
+            validate: {
+              totalSoldCoinGreaterThanZero: fieldMustBeGreaterThanZero
+            }
+          })}
         />
 
         <p className={classes.formErrorMessage}>
           {
             renderError(errors, 'totalSoldCoin')
+          }
+        </p>
+        <p className={classes.formErrorMessage}>
+          {
+            renderError(errors, 'totalSoldCoinGreaterThanZero')
           }
         </p>
 

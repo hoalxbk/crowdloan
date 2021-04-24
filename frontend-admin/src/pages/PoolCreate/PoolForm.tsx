@@ -168,7 +168,7 @@ function PoolForm(props: any) {
       return false;
     }
     // eslint-disable-next-line no-restricted-globals
-    if (!confirm('Do you want save and deploy this Pool')) {
+    if (!confirm('You have not saved the edited information. \nWould you like to make that information public?')) {
       return false;
     }
 

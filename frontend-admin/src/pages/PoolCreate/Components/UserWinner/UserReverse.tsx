@@ -81,7 +81,7 @@ function UserReverse(props: any) {
   return (
     <>
       <div className={commonStyle.boxSearch}>
-        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
+        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search reserve users" />
         <img src="/images/icon-search.svg" alt="" style={{ marginLeft: -30 }} />
 
 

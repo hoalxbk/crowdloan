@@ -6,7 +6,7 @@ import {DatePicker} from 'antd';
 import moment from "moment";
 import CurrencyInputWithValidate from "./CurrencyInputWithValidate";
 import {DATETIME_FORMAT} from "../../../constants";
-import {renderErrorCreatePool} from "../../../utils/validate";
+import {fieldMustBeGreaterThanZero, renderErrorCreatePool} from "../../../utils/validate";
 import BigNumber from 'bignumber.js';
 
 function CreateEditTierForm(props: any) {
@@ -184,7 +184,8 @@ function CreateEditTierForm(props: any) {
                     const maxBuy = getValues('maxBuy');
                     const maxBuyBigNumber = (new BigNumber(maxBuy));
                     return maxBuyBigNumber.comparedTo(value) > 0;
-                  }
+                  },
+                  greaterThanZero: fieldMustBeGreaterThanZero,
                 },
               }}
             />
@@ -192,6 +193,11 @@ function CreateEditTierForm(props: any) {
           <p className={classes.formErrorMessage}>
             {
               renderError(errors, 'minBuyGreaterMaxBuy')
+            }
+          </p>
+          <p className={classes.formErrorMessage}>
+            {
+              renderError(errors, 'greaterThanZero')
             }
           </p>
         </div>
@@ -207,6 +213,7 @@ function CreateEditTierForm(props: any) {
               validateRule={{
                 required: true,
                 validate: {
+                  maxBuyGreaterThanZero: fieldMustBeGreaterThanZero
                 },
               }}
             />
@@ -233,6 +240,11 @@ function CreateEditTierForm(props: any) {
           {/*    renderError(errors, 'maxBuy')*/}
           {/*  }*/}
           {/*</p>*/}
+          <p className={classes.formErrorMessage}>
+            {
+              renderError(errors, 'maxBuyGreaterThanZero')
+            }
+          </p>
         </div>
 
 

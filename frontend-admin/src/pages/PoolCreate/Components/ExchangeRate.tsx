@@ -5,7 +5,6 @@ import CurrencyInput from "react-currency-input-field";
 import useStyles from "../style";
 import {useCommonStyle} from "../../../styles";
 import {ACCEPT_CURRENCY} from "../../../constants";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 function ExchangeRate(props: any) {
   const classes = useStyles();
@@ -96,7 +95,7 @@ function ExchangeRate(props: any) {
           <div className={classes.formControlRate}>
             <CurrencyInput
               value={rateValue}
-              decimalsLimit={ acceptCurrency === ACCEPT_CURRENCY.ETH ? 18 : 6}
+              decimalsLimit={6}
               maxLength={255}
               onValueChange={(value: any, name: any) => {
                 setRateValue(value);

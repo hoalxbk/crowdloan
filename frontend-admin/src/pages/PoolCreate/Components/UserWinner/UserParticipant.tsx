@@ -153,7 +153,7 @@ function UserParticipant(props: any) {
   return (
     <>
       <div className={commonStyle.boxSearch}>
-        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
+        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search users to add winner" />
         <img src="/images/icon-search.svg" alt="" style={{ marginLeft: -30 }} />
 
         <UserPickerToWinner
