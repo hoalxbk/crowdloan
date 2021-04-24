@@ -160,22 +160,25 @@ class PoolController {
         return HelperUtils.responseNotFound('Pool not found');
       }
       await CampaignModel.query().where('id', campaignId).update(data);
-      const tiers = (inputParams.tier_configuration || []).map((item, index) => {
-        const tierObj = new Tier();
-        tierObj.fill({
-          level: index,
-          name: item.name,
-          start_time: moment(item.startTime).unix(),
-          end_time: moment(item.endTime).unix(),
-          min_buy: item.minBuy,
-          max_buy: item.maxBuy,
-          currency: item.currency,
+
+      if (!campaign.is_deploy) {
+        const tiers = (inputParams.tier_configuration || []).map((item, index) => {
+          const tierObj = new Tier();
+          tierObj.fill({
+            level: index,
+            name: item.name,
+            start_time: moment(item.startTime).unix(),
+            end_time: moment(item.endTime).unix(),
+            min_buy: item.minBuy,
+            max_buy: item.maxBuy,
+            currency: item.currency,
+          });
+          return tierObj;
         });
-        return tierObj;
-      });
-      const campaignUpdated = await CampaignModel.query().where('id', campaignId).first();
-      await campaignUpdated.tiers().delete();
-      await campaignUpdated.tiers().saveMany(tiers);
+        const campaignUpdated = await CampaignModel.query().where('id', campaignId).first();
+        await campaignUpdated.tiers().delete();
+        await campaignUpdated.tiers().saveMany(tiers);
+      }
 
       // Delete cache
       RedisUtils.deleteRedisPoolDetail(campaignId);

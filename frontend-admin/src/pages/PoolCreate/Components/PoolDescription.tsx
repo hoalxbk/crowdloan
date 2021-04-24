@@ -60,7 +60,7 @@ function PoolDescription(props: any) {
           ref={register({
             // required: true
           })}
-          disabled={isDeployed}
+          // disabled={isDeployed}
         />
 
         <p className={classes.formErrorMessage}>
