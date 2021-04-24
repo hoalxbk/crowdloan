@@ -63,7 +63,6 @@ const Tiers = (props: any) => {
   }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol])
 
   useEffect(() => {
-    console.log(currentProcess, 'kaka')
     if(currentProcess) setLoading(false);
   }, [currentProcess])
 
