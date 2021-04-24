@@ -108,11 +108,14 @@ const useStyles = makeStyles((theme: any) => {
       '&--Upcoming': {
         background: "#6398FF"
       },
-      '&--Closed': {
+      '&--Ended': {
         backgroundColor: "#D01F36"
       },
       '&--Filled': {
         backgroundColor: "#12A064"
+      },
+      '&--Claimable': {
+        backgroundColor: "#e16313"
       }
     },
     poolHeaderAddress: {
@@ -285,6 +288,9 @@ const useStyles = makeStyles((theme: any) => {
     poolDetailBuyForm: {
       display: 'flex',
       justifyContent: 'space-between',
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column'     
+      },
       [theme.breakpoints.down('xs')]: {
         flexDirection: 'column'     
       }
