@@ -51,7 +51,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const [input, setInput] = useState("");
   const [openApproveModal, setApproveModal] = useState(false);
   const [openSubmitModal, setOpenSubmitModal] = useState(false);
-  const [transactionFee, setTransactionFee] = useState<number>(0);
   const [estimateTokens, setEstimateTokens] = useState<number>(0);
   const [tokenAllowance, setTokenAllowance] = useState<number>(0);
   const [tokenBalance, setTokenBalance] = useState<number>(0);
@@ -124,7 +123,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   const tokenToApprove = getApproveToken(appChainID); 
 
-  const { approveToken, tokenApproveLoading, transactionHash, setTokenApproveLoading } = useTokenApprove(
+  const { approveToken, tokenApproveLoading, transactionHash } = useTokenApprove(
     tokenToApprove,
     connectedAccount, 
     poolAddress,
@@ -195,6 +194,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && estimateTokens > 0 
      && (purchasableCurrency !== PurchaseCurrency.ETH ? input <= maximumBuy: new BigNumber(input).lte(tokenBalance))
      && !poolErrorBeforeBuy
+     && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)))
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
      && !wrongChain
      && validTier    
@@ -242,7 +242,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       //  Clear input field and additional information field below and close modal
       setInput("");
       setEstimateTokens(0);
-      setTransactionFee(0);
 
       if (!connectedAccountFirstBuy) {
         localStorage.setItem("firstBuy", JSON.stringify(Object.assign({}, {
@@ -263,11 +262,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
       const tokens = new BigNumber(val).multipliedBy(new BigNumber(1).div(rate)).toNumber()
       setEstimateTokens(tokens);
-      /* const estimatedFee = await estimateFee(val, purchasableCurrency) */ 
-      /* estimatedFee && setTransactionFee(estimatedFee); */
     } else {
       setEstimateTokens(0);
-      setTransactionFee(0);
     }
   }
 
