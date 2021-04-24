@@ -26,6 +26,7 @@ const useUserPurchased = (
            setUserPurchasedLoading(true);
 
            const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read); 
+
            if (contract) {
              const userPurchased = await contract.methods.userPurchased(userAddress).call();
              const userPurchasedReturn = new BigNumber(userPurchased).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed();
