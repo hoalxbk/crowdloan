@@ -48,7 +48,7 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         label: 'Website'
       },
       [PoolDetailKey.swapAmount]: { 
-        display: `${numberWithCommas(amount.toString())} ${tokenDetails?.name}`,
+        display: `${numberWithCommas(amount.toString())} ${tokenDetails?.symbol}`,
         val: amount,
         label: 'Swap Amount'
       },
