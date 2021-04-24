@@ -58,7 +58,7 @@ const ModalVerifyEmail = (props: any) => {
 
   useEffect(() => {
     console.log(REGEX.test(inputEmail) )
-    if(REGEX.test(inputEmail)) setDisableVerify(true);
+    if(!REGEX.test(inputEmail) || inputEmail == '') setDisableVerify(true);
     else setDisableVerify(false);
   }, [inputEmail])
 
@@ -97,9 +97,9 @@ const ModalVerifyEmail = (props: any) => {
           </div>
           <div className="modal-content__foot">
             <button
-              className={"btn-approve" + ((email == '' || disableVerify) ? ' disabled': '')}
+              className={"btn-approve" + ((disableVerify) ? ' disabled': '')}
               onClick={() => handleVerifyEmail()}
-              disabled={email == '' || disableVerify}
+              disabled={disableVerify}
             >Verify</button>
             <button
               className="btn-cancel"
