@@ -56,7 +56,6 @@ const ModalWithdraw = (props: any) => {
   }, [connectedAccount, userInfo, withdrawAmount]);
 
   useEffect(() => {
-    if(disableWithdraw) return
     dispatch(getWithdrawFee(connectedAccount, withdrawAmount === '' ? '0' : withdrawAmount))
   }, [withdrawAmount])
 
@@ -66,7 +65,7 @@ const ModalWithdraw = (props: any) => {
         <div className="modal-content">
           <div className="modal-content__head">
             <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-            <h2 className="title">You have {userInfo.staked} {token?.symbol} lock-in</h2>
+            <h2 className="title">You have {userInfo.staked} {token?.symbol} locked-in</h2>
           </div>
           <div className="modal-content__body">
             <div className="subtitle">
