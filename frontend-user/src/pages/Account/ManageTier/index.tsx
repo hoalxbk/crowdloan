@@ -65,7 +65,6 @@ const ManageTier = (props: any) => {
   }, [approveTransaction])
 
   useEffect(() => {
-    console.log(withdrawTransaction)
     if(withdrawTransaction.hash) {
       setTransactionHashes([...transactionHashes, withdrawTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
@@ -92,7 +91,7 @@ const ManageTier = (props: any) => {
           <button
             className={`btn btn-lock ${emailVerified == USER_STATUS.UNVERIFIED ? 'disabled' : ''}`}
             onClick={() => {setOpenModalDeposit(true)}}
-            // disabled={emailVerified == USER_STATUS.UNVERIFIED}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED}
           >
             Lock - in
           </button>
@@ -158,7 +157,7 @@ const ManageTier = (props: any) => {
       />}
       {openModalTransactionSubmitting && <div className={commonStyles.loadingTransaction}>
         <div className="content">
-          <img src={iconClose} onClick={e => setOpenModalTransactionSubmitting(false)}/>
+          <img src={iconClose} onClick={() => setOpenModalTransactionSubmitting(false)}/>
           <span className={commonStyles.nnb1824d}>Transaction Submitting</span>
           <LinearProgress color="primary" />
         </div>
