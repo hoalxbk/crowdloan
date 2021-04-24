@@ -23,17 +23,8 @@ import {useDispatch} from "react-redux";
 import {alertFailure, alertSuccess} from "../../../../store/actions/alert";
 import UserReserveCreatePopup from "./UserReserveCreatePopup";
 
-const useStylesTable = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-  middleColumn: {
-    width: 60,
-  },
-  smallColumn: {
-    width: 60,
-  },
-});
+import useStylesTable from './style_table';
+import Pagination from "@material-ui/lab/Pagination";
 
 function UserReverse(props: any) {
   const commonStyle = useCommonStyle();
@@ -41,8 +32,10 @@ function UserReverse(props: any) {
   const { poolDetail } = props;
   const {
     rows,
-    search,
-    searchDelay,
+    search, searchDelay,
+    failure, loading,
+    lastPage, currentPage, totalRecords,
+    handlePaginationChange,
   } = useGetList({ poolDetail, handleSearchFunction: getReserveUser });
 
   const {
@@ -150,6 +143,16 @@ function UserReverse(props: any) {
             ))}
           </TableBody>
         </Table>
+
+        {failure && <p className={classesTable.errorMessage}>{failure}</p>}
+        {!failure &&
+          ((!rows || rows.length === 0) && !loading)  ? <p className={classesTable.noDataMessage}>There is no data</p> : (
+            <>
+              {rows && lastPage > 1 && <Pagination page={currentPage} className={classesTable.pagination} count={lastPage} onChange={handlePaginationChange} />}
+            </>
+          )
+        }
+
       </TableContainer>
     </>
   );

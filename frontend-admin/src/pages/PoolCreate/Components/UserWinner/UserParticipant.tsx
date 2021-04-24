@@ -19,20 +19,10 @@ import {getContractInstance} from "../../../../services/web3";
 import tierABI from "../../../../abi/Tier.json";
 import { Checkbox } from 'antd';
 import {filter, cloneDeep, includes} from 'lodash';
+import Pagination from "@material-ui/lab/Pagination";
+import useStylesTable from './style_table';
 
 const REACT_APP_SOTATIER = process.env.REACT_APP_SOTATIER || '';
-
-const useStylesTable = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-  middleColumn: {
-    width: 60,
-  },
-  smallColumn: {
-    width: 60,
-  },
-});
 
 function UserParticipant(props: any) {
   const commonStyle = useCommonStyle();
@@ -41,13 +31,14 @@ function UserParticipant(props: any) {
   const dispatch = useDispatch();
 
   const getParticipantUserWithTier = async (poolId: any, searchParams: any) => {
-    if (getParticipantUser) {
+    try {
       let participantsUsers = await getParticipantUser(poolId, searchParams);
 
       // Call Multi get Tiers
-      let users = participantsUsers.data || [];
+      let users = participantsUsers?.data?.data || [];
       const campaignContract = getContractInstance(tierABI, REACT_APP_SOTATIER);
       const userAddressesPromises = users.map((item: any) => {
+        console.log('item.wallet_address', item.wallet_address)
         return campaignContract?.methods.getUserTier(item.wallet_address).call();
       });
 
@@ -55,15 +46,21 @@ function UserParticipant(props: any) {
       for (let i = 0; i < users.length; i++) {
         users[i].tier = response[i] || 0;
       }
-      participantsUsers.data = users;
+      participantsUsers.data.data = users;
       return participantsUsers;
+    } catch (e) {
+      dispatch(alertFailure('ERROR: Fail fill Tiers. Some address is invalid !!!'));
+      console.log('ERROR: Fail fill Tiers!!!');
+      console.log(e)
     }
   };
 
   const {
     rows,
-    search,
-    searchDelay,
+    search, searchDelay,
+    failure, loading,
+    lastPage, currentPage, totalRecords,
+    handlePaginationChange,
   } = useGetList({
     poolDetail,
     handleSearchFunction: getParticipantUserWithTier
@@ -108,9 +105,9 @@ function UserParticipant(props: any) {
         console.log('[addParticipantUserToWinner] - res', res);
         if (res.status === 200) {
           dispatch(alertSuccess('Add Participant User to Winner Success'));
-          search();
-          setAddedUsers([]);
-          onChange([]);
+          search(); // Re-search list
+          setAddedUsers([]);  // Reset list checked user
+          onChange([]); // Reset check-all checkbox
         } else {
           dispatch(alertFailure('Add Participant User to Winner Fail'));
         }
@@ -151,7 +148,7 @@ function UserParticipant(props: any) {
     }
   };
 
-  console.log('addedUsers', addedUsers);
+  console.log('failure', failure, lastPage, currentPage, totalRecords);
 
   return (
     <>
@@ -196,11 +193,9 @@ function UserParticipant(props: any) {
           <TableHead>
             <TableRow>
               <TableCell size={'small'}>
-
                 <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
                   Check all
                 </Checkbox>
-
               </TableCell>
               <TableCell size={'small'}>Email</TableCell>
               <TableCell align="center" size={'medium'}>Wallet Address</TableCell>
@@ -237,6 +232,15 @@ function UserParticipant(props: any) {
             ))}
           </TableBody>
         </Table>
+
+        {failure && <p className={classesTable.errorMessage}>{failure}</p>}
+        {!failure &&
+          ((!rows || rows.length === 0) && !loading)  ? <p className={classesTable.noDataMessage}>There is no data</p> : (
+            <>
+              {rows && lastPage > 1 && <Pagination page={currentPage} className={classesTable.pagination} count={lastPage} onChange={handlePaginationChange} />}
+            </>
+          )
+        }
       </TableContainer>
     </>
   );

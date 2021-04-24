@@ -11,12 +11,8 @@ import {useCommonStyle} from "../../../../styles";
 import {deleteParticipantUser, deleteWinnerUser, getWinnerUser} from "../../../../request/participants";
 import useGetList from "../hooks/useGetList";
 import useDeleteItem from "../hooks/useDeleteItem";
-
-const useStylesTable = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
+import Pagination from "@material-ui/lab/Pagination";
+import useStylesTable from './style_table';
 
 function UserWinner(props: any) {
   const commonStyle = useCommonStyle();
@@ -24,9 +20,11 @@ function UserWinner(props: any) {
   const { poolDetail } = props;
 
   const {
-    rows, setRows,
-    search,
-    searchDelay,
+    rows,
+    search, searchDelay,
+    failure, loading,
+    lastPage, currentPage, totalRecords,
+    handlePaginationChange,
   } = useGetList({ poolDetail, handleSearchFunction: getWinnerUser });
 
   const {
@@ -80,6 +78,16 @@ function UserWinner(props: any) {
             ))}
           </TableBody>
         </Table>
+
+
+        {failure && <p className={classesTable.errorMessage}>{failure}</p>}
+        {!failure &&
+          ((!rows || rows.length === 0) && !loading)  ? <p className={classesTable.noDataMessage}>There is no data</p> : (
+            <>
+              {rows && lastPage > 1 && <Pagination page={currentPage} className={classesTable.pagination} count={lastPage} onChange={handlePaginationChange} />}
+            </>
+          )
+        }
       </TableContainer>
     </>
   );
