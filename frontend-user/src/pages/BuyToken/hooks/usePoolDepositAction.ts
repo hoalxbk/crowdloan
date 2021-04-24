@@ -99,6 +99,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
         dispatch(alertSuccess("Token Deposit Successful!"));
         setTokenDepositLoading(false);
+
       }
     } catch (err) {
       dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));

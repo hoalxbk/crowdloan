@@ -65,14 +65,14 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
     setOpenSideBar(false)
   }
 
-  const hamburgerStyle = (isSmartPhone: boolean) => {
-    if(isSmartPhone) {
-      return openSideBar ? 'flex' : 'none';
-    }
-    else {
-      return 'flex';
-    }
-  }
+  /* const hamburgerStyle = (isSmartPhone: boolean) => { */
+  /*   if(isSmartPhone) { */
+  /*     return openSideBar ? 'flex' : 'none'; */
+  /*   } */
+  /*   else { */
+  /*     return 'flex'; */
+  /*   } */
+  /* } */
 
   useEffect(() => {
     if (walletsInfo && walletName) {

@@ -15,13 +15,14 @@ interface ConnectWalletBoxPropsType {
   connectWalletLoading?: boolean,
   walletName?: (string | undefined)[],
   forceEnable?: boolean
+  handleClose?: () => void
 }
 
 const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWalletBoxPropsType) => {
   const styles = useStyles();
   const dispatch = useDispatch();
 
-  const { appNetwork, isAppNetwork = false, handleProviderChosen, wallet, walletName, connectWalletLoading, forceEnable } = props;
+  const { appNetwork, isAppNetwork = false, handleProviderChosen, wallet, walletName, connectWalletLoading, forceEnable, handleClose } = props;
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
   const { agreedTerms } = useContext<HeaderContextType>(HeaderContext);
 
@@ -29,6 +30,7 @@ const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWal
     if (agreedTerms || forceEnable) {
       if (appNetwork) {
         dispatch(settingAppNetwork(NetworkUpdateType.App, updatedVal));
+        handleClose && handleClose();
         return;
       }
 
