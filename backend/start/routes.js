@@ -62,7 +62,7 @@ Route.group(() => {
   Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignature');
   Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
   Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');
-  Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
+  Route.get('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.get('check-token/:token', 'AdminController.checkToken');
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.post('upload-avatar', 'FileController.uploadAvatar');
@@ -120,7 +120,7 @@ Route.group(() => {
   Route.post('/register-email', 'UserAuthController.registerVerifyEmail').middleware('checkSignature');
 
   Route.get('confirm-email/:token', 'UserController.confirmEmail'); // Confirm email when register
-  Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
+  Route.get('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
   Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.get('profile', 'UserController.profile');
@@ -155,10 +155,6 @@ Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
 
 
 
-
-
-
-
 // Public API:
 Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
@@ -169,11 +165,11 @@ Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
 
 // API For Testing
 // TODO: Need delete when done
-Route.post('pool/check-exist-reverse', 'ReservedListController.checkExistReserve');
+Route.get('pool/:campaignId/check-exist-reverse', 'ReservedListController.checkExistReserve');
 Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants');
 Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
-// Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
-// Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
+Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
+Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
 
 
 

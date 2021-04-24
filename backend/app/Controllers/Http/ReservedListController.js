@@ -136,7 +136,7 @@ class ReservedListController {
   async checkExistReserve({ request, params }) {
     try {
       console.log('[addReserveUser] - Params: ', params);
-      const inputParams = request.only(['email', 'wallet_address', 'campaign_id']);
+      const inputParams = request.only(['wallet_address', 'campaign_id']);
 
       const reservedService = new ReservedListService();
       const existRecord = await reservedService.buildQueryBuilder({
@@ -144,14 +144,12 @@ class ReservedListController {
         campaign_id: inputParams.campaign_id,
       }).first();
 
-      // return HelperUtils.responseSuccess(existRecord);
-
       if (!existRecord) {
-        return HelperUtils.responseNotFound();
+        return HelperUtils.responseNotFound('User not exist in Reserve User List');
       }
 
       console.log('existRecord: ', existRecord);
-      return HelperUtils.responseSuccess(existRecord);
+      return HelperUtils.responseSuccess(existRecord, 'User exist in Reserve User List');
     } catch (e) {
       return HelperUtils.responseErrorInternal();
     }
