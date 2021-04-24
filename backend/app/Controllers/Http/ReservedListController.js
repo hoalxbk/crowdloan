@@ -115,7 +115,6 @@ class ReservedListController {
       const inputParams = request.only(['email', 'wallet_address']);
 
       // TODO: Check user exist in system
-
       const reservedUser = new ReservedListModel;
       reservedUser.campaign_id = campaignId;
       reservedUser.email = inputParams.email;
@@ -124,6 +123,31 @@ class ReservedListController {
 
       console.log('Res: ', reservedUser);
       return HelperUtils.responseSuccess(reservedUser);
+    } catch (e) {
+      return HelperUtils.responseErrorInternal();
+    }
+  }
+
+
+  async checkExistReserve({ request, params }) {
+    try {
+      console.log('[addReserveUser] - Params: ', params);
+      const inputParams = request.only(['email', 'wallet_address', 'campaign_id']);
+
+      const reservedService = new ReservedListService();
+      const existRecord = await reservedService.buildQueryBuilder({
+        wallet_address: inputParams.wallet_address,
+        campaign_id: inputParams.campaign_id,
+      }).first();
+
+      // return HelperUtils.responseSuccess(existRecord);
+
+      if (!existRecord) {
+        return HelperUtils.responseNotFound();
+      }
+
+      console.log('existRecord: ', existRecord);
+      return HelperUtils.responseSuccess(existRecord);
     } catch (e) {
       return HelperUtils.responseErrorInternal();
     }

@@ -165,6 +165,14 @@ Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId', 'PoolController.getPool');
 Route.get('pools', 'PoolController.getPoolList');
 
+Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
+
+// API For Testing
+// TODO: Need delete when done
+Route.post('pool/check-exist-reverse', 'ReservedListController.checkExistReserve');
+Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants')
+Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
+
 // API V2
 Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
 

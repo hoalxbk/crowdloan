@@ -253,6 +253,19 @@ class UserController {
     await findUser.save();
     return HelperUtils.responseSuccess();
   }
+
+  async checkEmailVerified({request}) {
+    const inputParams = request.only(['email']);
+    const findUser = await UserModel.query()
+      .where('email', inputParams.email)
+      .where('status', Const.USER_STATUS.ACTIVE)
+      .first();
+
+    if (!findUser) {
+      return HelperUtils.responseNotFound('User is unverified !')
+    }
+    return HelperUtils.responseSuccess('User is verified !');
+  }
 }
 
 module.exports = UserController
