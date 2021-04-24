@@ -23,8 +23,11 @@ function UserPickerToWinner(props: any) {
       return false;
     }
 
+    const pickerNumber = parseInt(inputPicker);
+    console.log('pickerNumber', pickerNumber);
+
     // Call API random
-    await pickerRandomWinner(poolDetail?.id, inputPicker)
+    await pickerRandomWinner(poolDetail?.id, pickerNumber)
       .then((res) => {
         console.log('[pickerRandomWinner] - res', res);
         if (res.status === 200) {
@@ -49,8 +52,9 @@ function UserPickerToWinner(props: any) {
             width: 180,
           }}
           value={inputPicker}
+          min={0}
+          step={1}
           onChange={(e) => {
-            console.log(e.target.value);
             setInputPicker(e.target.value)
           }}
         />
@@ -59,7 +63,7 @@ function UserPickerToWinner(props: any) {
           color="primary"
           onClick={handlePickerRandom}
           style={{ marginLeft: 10, marginTop: -5 }}
-        >Picker</Button>
+        >Pick</Button>
       </div>
 
     </>

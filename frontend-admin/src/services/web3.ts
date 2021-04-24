@@ -64,3 +64,8 @@ export const getETHBalance = async (loginUser: string) => {
 
   return 0;
 }
+
+export const callMultiGetTier = async () => {
+
+
+}

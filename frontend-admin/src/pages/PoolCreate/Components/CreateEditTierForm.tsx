@@ -2,12 +2,12 @@ import React from 'react';
 import ConfirmDialog from "../../../components/Base/ConfirmDialog";
 import useStyles from "../style";
 import {Controller, useForm} from "react-hook-form";
-import FormControl from "@material-ui/core/FormControl";
 import {DatePicker} from 'antd';
 import moment from "moment";
 import CurrencyInputWithValidate from "./CurrencyInputWithValidate";
 import {DATETIME_FORMAT} from "../../../constants";
-import {renderErrorCreatePool} from "../../../utils/validate";
+import {fieldMustBeGreaterThanZero, renderErrorCreatePool} from "../../../utils/validate";
+import BigNumber from 'bignumber.js';
 
 function CreateEditTierForm(props: any) {
   const classes = useStyles();
@@ -103,6 +103,9 @@ function CreateEditTierForm(props: any) {
                       defaultValue: moment("00:00:00", "HH:mm:ss"),
                       format: "HH:mm"
                     }}
+                    onSelect={(datetimeSelected: any) => {
+                      setValue(field.name, datetimeSelected, {shouldValidate: true});
+                    }}
                     minuteStep={15}
                   />
                 )
@@ -147,6 +150,9 @@ function CreateEditTierForm(props: any) {
                       defaultValue: moment("00:00:00", "HH:mm:ss"),
                       format: "HH:mm"
                     }}
+                    onSelect={(datetimeSelected: any) => {
+                      setValue(field.name, datetimeSelected, {shouldValidate: true});
+                    }}
                     minuteStep={15}
                   />
                 )
@@ -171,8 +177,29 @@ function CreateEditTierForm(props: any) {
               errors={errors}
               initValue={editData.minBuy}
               controlName={'minBuy'}
+              validateRule={{
+                required: true,
+                validate: {
+                  minBuyGreaterMaxBuy: (value: any) => {
+                    const maxBuy = getValues('maxBuy');
+                    const maxBuyBigNumber = (new BigNumber(maxBuy));
+                    return maxBuyBigNumber.comparedTo(value) > 0;
+                  },
+                  greaterThanZero: fieldMustBeGreaterThanZero,
+                },
+              }}
             />
           </div>
+          <p className={classes.formErrorMessage}>
+            {
+              renderError(errors, 'minBuyGreaterMaxBuy')
+            }
+          </p>
+          <p className={classes.formErrorMessage}>
+            {
+              renderError(errors, 'greaterThanZero')
+            }
+          </p>
         </div>
 
         <div className={classes.formControl}>
@@ -183,6 +210,12 @@ function CreateEditTierForm(props: any) {
               errors={errors}
               initValue={editData.maxBuy}
               controlName={'maxBuy'}
+              validateRule={{
+                required: true,
+                validate: {
+                  maxBuyGreaterThanZero: fieldMustBeGreaterThanZero
+                },
+              }}
             />
           </div>
 
@@ -207,6 +240,11 @@ function CreateEditTierForm(props: any) {
           {/*    renderError(errors, 'maxBuy')*/}
           {/*  }*/}
           {/*</p>*/}
+          <p className={classes.formErrorMessage}>
+            {
+              renderError(errors, 'maxBuyGreaterThanZero')
+            }
+          </p>
         </div>
 
 

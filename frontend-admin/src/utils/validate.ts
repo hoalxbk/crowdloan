@@ -1,4 +1,5 @@
-import moment from 'moment'
+import moment from 'moment';
+import BigNumber from "bignumber.js";
 
 export const renderError = (errors: any, prop: string) => {
   if (errors[prop]) {
@@ -59,6 +60,18 @@ export const renderErrorCreatePool = (errors: any, prop: string) => {
         return 'This relase time must be after the finish time';
       }
 
+      case 'greaterThanZero': {
+        return 'This field must be greater than 0';
+      }
+      case 'totalSoldCoinGreaterThanZero': {
+        return 'Total Sold Coin must be greater than 0.';
+      }
+      case 'maxBuyGreaterThanZero': {
+        return 'Max Buy must be greater than 0.';
+      }
+      case 'minBuyGreaterMaxBuy': {
+        return 'Min Buy must be less than Max Buy.';
+      }
 
 
       case 'validAddress': {
@@ -75,3 +88,7 @@ export const renderErrorCreatePool = (errors: any, prop: string) => {
 
   return;
 };
+
+export const fieldMustBeGreaterThanZero = (value: any) => new BigNumber(value).gt(0);
+
+

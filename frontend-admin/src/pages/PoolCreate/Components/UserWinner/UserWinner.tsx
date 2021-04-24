@@ -11,22 +11,20 @@ import {useCommonStyle} from "../../../../styles";
 import {deleteParticipantUser, deleteWinnerUser, getWinnerUser} from "../../../../request/participants";
 import useGetList from "../hooks/useGetList";
 import useDeleteItem from "../hooks/useDeleteItem";
-
-const useStylesTable = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
+import Pagination from "@material-ui/lab/Pagination";
+import useStylesTable from './style_table';
 
 function UserWinner(props: any) {
   const commonStyle = useCommonStyle();
   const classesTable = useStylesTable();
-
   const { poolDetail } = props;
+
   const {
-    rows, setRows,
-    search,
-    searchDelay,
+    rows,
+    search, searchDelay,
+    failure, loading,
+    lastPage, currentPage, totalRecords,
+    handlePaginationChange,
   } = useGetList({ poolDetail, handleSearchFunction: getWinnerUser });
 
   const {
@@ -37,23 +35,15 @@ function UserWinner(props: any) {
     handleSearchFunction: search
   });
 
-
-  const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
-  const [editData, setEditData] = useState({});
-  const [editRow, setEditRow] = useState(0);
-  const [isEdit, setIsEdit] = useState(true);
-
-
-
   return (
     <>
-      <div className={commonStyle.boxSearch}>
-        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
-        <img src="/images/icon-search.svg" alt="" />
-      </div>
       <div style={{color: 'red'}}>
         <div>These Winner list accounts still have to check their tier when buying tokens.</div>
         <div>If you want to skip this check, please add accounts to the Reserve list.</div>
+      </div>
+      <div className={commonStyle.boxSearch}>
+        <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search" />
+        <img src="/images/icon-search.svg" alt="" style={{ marginLeft: -30 }} />
       </div>
 
       <TableContainer component={Paper} className={commonStyle.tableScroll}>
@@ -84,11 +74,20 @@ function UserWinner(props: any) {
                   >Delete</Button>
                 </TableCell>
 
-
               </TableRow>
             ))}
           </TableBody>
         </Table>
+
+
+        {failure && <p className={classesTable.errorMessage}>{failure}</p>}
+        {!failure &&
+          ((!rows || rows.length === 0) && !loading)  ? <p className={classesTable.noDataMessage}>There is no data</p> : (
+            <>
+              {rows && lastPage > 1 && <Pagination page={currentPage} className={classesTable.pagination} count={lastPage} onChange={handlePaginationChange} />}
+            </>
+          )
+        }
       </TableContainer>
     </>
   );

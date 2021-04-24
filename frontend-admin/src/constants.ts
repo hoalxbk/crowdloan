@@ -17,4 +17,4 @@ export const POOL_TYPE = {
   SWAP: 'swap',
   CLAIMABLE: 'claimable',
 };
-
+export const DEFAULT_LIMIT = 10;

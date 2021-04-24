@@ -26,11 +26,11 @@ const createData = (name: string, startTime: string, endTime: string, minBuy: nu
 
 const createDefaultTiers = () => {
   return [
-    createData('Tier 1', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 1000, false),
-    createData('Tier 2', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 2000, false),
-    createData('Tier 3', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 3000, false),
-    createData('Tier 4', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 4000, false),
-    createData('Tier 5', moment().format(DATETIME_FORMAT), moment().format(DATETIME_FORMAT), 0, 5000, false),
+    createData('Tier 1', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 1000, false),
+    createData('Tier 2', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 2000, false),
+    createData('Tier 3', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 3000, false),
+    createData('Tier 4', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 4000, false),
+    createData('Tier 5', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 5000, false),
   ];
 };
 

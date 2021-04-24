@@ -1,6 +1,6 @@
 import { getContractInstance } from '../services/web3';
-import erc20ABI from '../abi/Swap/Erc20.json';
-import ethLinkABI from '../abi/Swap/Ethlink.json';
+import erc20ABI from '../abi/Erc20.json';
+import ethLinkABI from '../abi/Ethlink.json';
 
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
 

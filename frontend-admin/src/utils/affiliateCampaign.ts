@@ -1,4 +1,4 @@
-import ethLinkABI from '../abi/Swap/Ethlink.json';
+import ethLinkABI from '../abi/Ethlink.json';
 import { getContractInstance } from '../services/web3';
 
 export const isReferral = async (ethLink: string, tokenAddress: string, campaignId: string) => {

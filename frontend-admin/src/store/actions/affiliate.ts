@@ -4,7 +4,7 @@ import { AnyAction } from 'redux'
 import { affiliateActions } from '../constants/affiliate';
 import { getContractInstance } from '../../services/web3'
 import { alertActions } from '../constants/alert'
-import ethLinkABI from '../../abi/Swap/Ethlink.json';
+import ethLinkABI from '../../abi/Ethlink.json';
 import { BaseRequest } from '../../request/Request'
 
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
