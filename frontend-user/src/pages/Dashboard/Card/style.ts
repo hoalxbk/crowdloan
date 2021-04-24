@@ -44,6 +44,10 @@ const useStyles = makeStyles((theme: any) => {
           backgroundColor: '#12A064'
         },
 
+        '&.in-progress': {
+          backgroundColor: '#ebc321'
+        },
+
         '&.closed': {
           backgroundColor: '#D01F36'
         }
@@ -184,8 +188,12 @@ const useStyles = makeStyles((theme: any) => {
             height: '6px',
             background: '#12A064',
             borderRadius: '20px',
-            display: 'block'
-          }
+            display: 'block',
+            transition: '2s',
+            '&.inactive': {
+              width: '0!important',
+            }
+          },
         },
 
         '& div': {
@@ -212,7 +220,7 @@ const useStyles = makeStyles((theme: any) => {
           color: '#FFFFFF',
         },
       }
-    }
+    },
   };
 });
 

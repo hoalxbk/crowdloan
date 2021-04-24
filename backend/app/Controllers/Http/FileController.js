@@ -15,7 +15,10 @@ class FileController {
 
     const profilePic = request.file('avatar', validationOptions);
     const timeStamp = Date.now();
-    const fileName = timeStamp + '_' + (profilePic.clientName || '').replace(/\s/g, '_');
+    // const fileName = timeStamp + '_' + (HelperUtils.randomString(10)).replace(/\s/g, '_');
+    const fileName = timeStamp + '_' + (await HelperUtils.randomString(15)) + '.' + (profilePic.extname || 'txt');
+
+    console.log('[uploadFile] - fileName: ', fileName, profilePic.extname);
     await profilePic.move(Helpers.tmpPath('uploads'), {
       name: fileName,
       overwrite: true

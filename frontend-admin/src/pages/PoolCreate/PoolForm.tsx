@@ -74,6 +74,7 @@ function PoolForm(props: any) {
       };
     });
 
+    const tokenInfo = await getTokenInforDetail(data.token);
     const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
     const submitData = {
       registed_by: loginUser?.wallet_address,
@@ -95,6 +96,9 @@ function PoolForm(props: any) {
       token_conversion_rate: data.tokenRate,
       token_images: data.tokenImages,
       total_sold_coin: data.totalSoldCoin,
+
+      // TokenInfo
+      tokenInfo,
 
       // Time
       start_time: data.start_time && data.start_time.unix(),
@@ -132,7 +136,50 @@ function PoolForm(props: any) {
     try {
       const response: any = await createUpdatePool(data);
       if (response?.status === 200) {
-        dispatch(alertSuccess('Update Pool Successful!'));
+        dispatch(alertSuccess('Successful!'));
+        history.push(adminRoute('/campaigns'));
+      } else {
+        dispatch(alertFailure('Fail!'));
+      }
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      console.log('ERROR: ', e);
+    }
+  };
+
+  const updatePoolAfterDeloy = async (data: any) => {
+    // Only allow update informations:
+    // name
+    // website
+    // banner
+    // total coin sold
+    // token image
+    // about pool
+    // list user join (hiển nhiên)
+    const submitData = {
+      // Pool general
+      title: data.title,
+      website: data.website,
+      banner: data.banner,
+      description: data.description,
+
+      // Token
+      token_images: data.tokenImages,
+      total_sold_coin: data.totalSoldCoin,
+    };
+
+    let response = await updatePool(submitData, poolDetail.id);
+
+    return response;
+  };
+
+  const handleUpdateAfterDeloy = async (data: any) => {
+    setLoading(true);
+    try {
+      const response: any = await updatePoolAfterDeloy(data);
+      if (response?.status === 200) {
+        dispatch(alertSuccess('Successful!'));
         history.push(adminRoute('/campaigns'));
       } else {
         dispatch(alertFailure('Fail!'));
@@ -145,8 +192,22 @@ function PoolForm(props: any) {
   };
 
   const handleCampaignCreate = () => {
-    handleSubmit(handleFormSubmit)();
+    if (poolDetail?.is_deploy) {
+      handleSubmit(handleUpdateAfterDeloy)();
+    } else {
+      handleSubmit(handleFormSubmit)();
+    }
   };
+
+  const getTokenInforDetail = async (token: string) => {
+    const erc20Token = await getTokenInfo(token);
+    let tokenInfo = {};
+    if (erc20Token) {
+      const { name, symbol, decimals, address } = erc20Token;
+      tokenInfo = { name, symbol, decimals, address };
+    }
+    return tokenInfo;
+  }
 
   const handleDeloySubmit = async (data: any) => {
     if (poolDetail.is_deploy || deployed) {
@@ -154,7 +215,8 @@ function PoolForm(props: any) {
       return false;
     }
     // eslint-disable-next-line no-restricted-globals
-    if (!confirm('Do you want save and deploy this Pool')) {
+    if (!confirm('You have not saved the edited information. \n' +
+     'Would you like to make that information public?')) {
       return false;
     }
 
@@ -162,18 +224,7 @@ function PoolForm(props: any) {
     try {
       // Save data before deploy
       const response = await createUpdatePool(data);
-
-      const erc20Token = await getTokenInfo(data.token);
-      let tokenInfo = {};
-      if (erc20Token) {
-        const { name, symbol, decimals, address } = erc20Token;
-        tokenInfo = {
-          name,
-          symbol,
-          decimals,
-          address
-        }
-      }
+      const tokenInfo = await getTokenInforDetail(data.token);
 
       const history = props.history;
       let tierConfiguration = data.tierConfiguration || '[]';
@@ -437,8 +488,8 @@ function PoolForm(props: any) {
           </button>
 
           <button
-            disabled={loading || loadingDeploy || poolDetail?.is_deploy}
-            className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}
+            disabled={loading || loadingDeploy}
+            className={classes.formButtonUpdatePool}
             onClick={handleCampaignCreate}
           >
             {
@@ -446,6 +497,16 @@ function PoolForm(props: any) {
             }
           </button>
 
+          {/* Button Update with disable after deploy */}
+          {/*<button*/}
+          {/*  disabled={loading || loadingDeploy || poolDetail?.is_deploy}*/}
+          {/*  className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}*/}
+          {/*  onClick={handleCampaignCreate}*/}
+          {/*>*/}
+          {/*  {*/}
+          {/*    (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')*/}
+          {/*  }*/}
+          {/*</button>*/}
 
         </Grid>
       </Grid>

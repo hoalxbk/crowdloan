@@ -3,8 +3,8 @@ import {AnyAction} from 'redux';
 
 import {buyTokenActions} from '../constants/buy-token';
 import {convertToWei, getContractInstance} from '../../services/web3';
-import TradeABI from '../../abi/Swap/Trade.json';
-import ErcABI from '../../abi/Swap/Erc20.json';
+import TradeABI from '../../abi/Trade.json';
+import ErcABI from '../../abi/Erc20.json';
 import {alertActions} from '../constants/alert';
 import {isReferral} from '../../utils/affiliateCampaign';
 import _ from 'lodash';

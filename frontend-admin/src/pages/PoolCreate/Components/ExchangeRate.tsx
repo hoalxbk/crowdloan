@@ -5,19 +5,16 @@ import CurrencyInput from "react-currency-input-field";
 import useStyles from "../style";
 import {useCommonStyle} from "../../../styles";
 import {ACCEPT_CURRENCY} from "../../../constants";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 function ExchangeRate(props: any) {
   const classes = useStyles();
   const commonStyle = useCommonStyle();
-
   const {
     register, setValue, errors, control, watch,
     poolDetail,
     token
   } = props;
   const [rateValue, setRateValue] = useState(0);
-
 
   useEffect(() => {
     if (poolDetail) {
@@ -77,7 +74,6 @@ function ExchangeRate(props: any) {
           <label className={`${classes.formControlLabel} ${classes.formControlBlurLabel}`}>You have</label>
 
 
-
           <div className={classes.formControlRate}>
             <input
               type="number"
@@ -99,7 +95,7 @@ function ExchangeRate(props: any) {
           <div className={classes.formControlRate}>
             <CurrencyInput
               value={rateValue}
-              decimalsLimit={8}
+              decimalsLimit={6}
               maxLength={255}
               onValueChange={(value: any, name: any) => {
                 setRateValue(value);

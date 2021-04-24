@@ -20,6 +20,7 @@ const ModalVerifyEmail = (props: any) => {
   const { signature, signMessage, setSignature, error } = useWalletSignature();
   const [inputEmail, setInputEmail] = useState('');
   const [invalidEmail, setInvalidEmail] = useState(false);
+  const [disableVerify, setDisableVerify] = useState(true);
 
   const {
     setOpenModalVerifyEmail,
@@ -55,6 +56,12 @@ const ModalVerifyEmail = (props: any) => {
     }
   }, [signature])
 
+  useEffect(() => {
+    console.log(REGEX.test(inputEmail) )
+    if(!REGEX.test(inputEmail) || inputEmail == '') setDisableVerify(true);
+    else setDisableVerify(false);
+  }, [inputEmail])
+
   const handleVerifyEmail = () => {
     if(inputEmail != '' && REGEX.test(inputEmail) == false || inputEmail == '') {
       setInvalidEmail(true);
@@ -83,14 +90,16 @@ const ModalVerifyEmail = (props: any) => {
                 onChange={e => setInputEmail(e.target.value)}
                 placeholder="Please enter email"
                 disabled={email}
+                maxLength={190}
               />
             </div>
             {invalidEmail && <span style={{color: '#D01F36'}}>Invalid Email</span>}
           </div>
           <div className="modal-content__foot">
             <button
-              className={"btn-approve"}
+              className={"btn-approve" + ((disableVerify) ? ' disabled': '')}
               onClick={() => handleVerifyEmail()}
+              disabled={disableVerify}
             >Verify</button>
             <button
               className="btn-cancel"

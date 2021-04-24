@@ -29,6 +29,7 @@ const ModalWithdraw = (props: any) => {
   } = props;
 
   const onWithDraw = () => {
+    if(disableWithdraw) return
     dispatch(withdraw(connectedAccount, withdrawAmount, library));
     setOpenModalTransactionSubmitting(true);
     setOpenModalWithdraw(false);

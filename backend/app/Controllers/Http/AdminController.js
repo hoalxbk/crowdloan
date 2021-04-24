@@ -3,6 +3,7 @@
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
 const AdminService = use('App/Services/AdminService')
+const AuthService = use('App/Services/AuthService')
 const AdminModel = use('App/Models/Admin')
 const PasswordResetModel = use('App/Models/PasswordReset')
 const Helpers = use('Helpers')
@@ -268,6 +269,12 @@ class AdminController {
       admin.signature = randomString(15);  // TODO: Fill any string
       admin.status = Const.USER_STATUS.ACTIVE;
       const res = await admin.save();
+
+      const authService = new AuthService();
+      await authService.sendAdminInfoEmail({
+        user: admin,
+        password: request.input('password'),
+      });
 
       return HelperUtils.responseSuccess(res);
     } catch (e) {

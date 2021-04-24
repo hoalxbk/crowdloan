@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { tokenActions } from '../constants/token'
 import { alertActions } from '../constants/alert'
 import { BaseRequest } from '../../request/Request'
-import erc20ABI from '../../abi/Swap/Erc20.json';
+import erc20ABI from '../../abi/Erc20.json';
 import { getContractInstance, getETHBalance } from '../../services/web3'
 
 export const getTokensByUser = () => {

@@ -13,7 +13,7 @@ const warningIcon = '/images/icons/warning.svg';
 const Tiers = (props: any) => {
   const styles = useStyles();
 
-  const { data: userTier = {} } = useSelector((state: any) => state.userTier);
+  const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
   const { data: tiers = {} } = useSelector((state: any) => state.tiers);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const [loading, setLoading] = useState(true);
@@ -27,6 +27,7 @@ const Tiers = (props: any) => {
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
 
   const calculateProcess = (ListData: any, current: any) => {
+    current = 10;
     let tierA = 0;
     let tierB = 0;
     let overTier = true;
@@ -40,29 +41,33 @@ const Tiers = (props: any) => {
           tierB = ListData[i];
         }
         overTier = false;
-      } else if(i == ListData.length) {
-
       }
     }
     if(overTier) {
       return 100;
     }
-
     let process = (parseInt(userTier)) * 100 / ListData.length + (parseFloat(current) - tierA) * 100 /((tierB - tierA) * ListData.length)
     if(process > 100) process = 100
     return process;
   }
   
   useEffect(() => {
-    if(_.isEmpty(tiers) || _.isEmpty(userTier) || _.isEmpty(userInfo)) return
-    !showMoreInfomation && setCurrentProcess(calculateProcess(tiers, userInfo.staked));
-    showMoreInfomation && setCurrentProcess(userTier*100/(tiersBuyLimit.length - 1));
-    setLoading(false);
-  }, [tiers, userTier, userInfo])
+    if(_.isEmpty(userInfo) || _.isEmpty(userTier)) return;
+    if(!showMoreInfomation) {
+      const process = calculateProcess(tiers, userInfo.staked);
+      setCurrentProcess(process - 2);
+    } else if(showMoreInfomation) {
+      setCurrentProcess(userTier*100/(tiersBuyLimit.length - 1) - 2);
+    }
+  }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol])
+
+  useEffect(() => {
+    if(currentProcess) setLoading(false);
+  }, [currentProcess])
 
   return (
     <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>
-      <div className={styles.title}>
+      {showMoreInfomation && <div className={styles.title}>
         <>
           <img src={warningIcon} />
           <p>
@@ -71,7 +76,7 @@ const Tiers = (props: any) => {
           <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
           </p> 
         </>
-      </div>
+      </div>}
       <ul className={styles.tierList}>
         <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{width:`${currentProcess}%`}}></li>
         <li className={styles.tierInfo + ' active'}>

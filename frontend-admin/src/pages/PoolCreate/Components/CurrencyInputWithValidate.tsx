@@ -8,6 +8,7 @@ function CurrencyInputWithValidate(props: any) {
   const {
     register, errors,
     initValue, controlName,
+    validateRule,
   } = props;
   const renderError = renderErrorCreatePool;
   const [value, setValue] = useState(initValue);
@@ -17,7 +18,7 @@ function CurrencyInputWithValidate(props: any) {
       <CurrencyInput
         placeholder="Please enter a number"
         value={value}
-        decimalsLimit={2}
+        decimalsLimit={10}
         onValueChange={(value: any, name: any) => {
           setValue(value);
         }}
@@ -27,7 +28,7 @@ function CurrencyInputWithValidate(props: any) {
         type='hidden'
         name={controlName}
         value={value || ''}
-        ref={register({ required: true })}
+        ref={register(validateRule)}
       />
 
       <p className={classes.formErrorMessage}>
