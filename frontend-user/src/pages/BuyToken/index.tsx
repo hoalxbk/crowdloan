@@ -116,8 +116,6 @@ const BuyToken: React.FC<any> = (props: any) => {
     poolDetails?.isDeployed &&
     (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
 
-  console.log(alreadyJoinPool);
-
   // Get Pool Status
   const poolStatus = getPoolStatus(
     joinTimeInDate, 
