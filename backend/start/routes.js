@@ -82,7 +82,6 @@ Route.group(() => {
   Route.delete('pool/:campaignId/winners/:walletAddress/delete', 'WinnerListUserController.deleteWinner');
   Route.post('pool/:campaignId/winners/add-to-winner', 'WinnerListUserController.addParticipantsToWinner');
 
-
   // Reserve
   Route.get('pool/:campaignId/reserves', 'ReservedListController.getReservedList');
   Route.post('pool/:campaignId/reserves/add', 'ReservedListController.addReserveUser');
@@ -171,8 +170,12 @@ Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
 // API For Testing
 // TODO: Need delete when done
 Route.post('pool/check-exist-reverse', 'ReservedListController.checkExistReserve');
-Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants')
+Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants');
 Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
+Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
+Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
+
+
 
 // API V2
 Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
@@ -183,10 +186,5 @@ Route.get('public-campaign/:status', 'CampaignController.myCampaign').middleware
 Route.post('user/change-type', 'UserController.changeType').validator('ChangeUserType')
 Route.post('user/buy', 'UserBuyCampaignController.getUserBuy').validator('CheckUserBought')
 Route.get('coming-soon', 'ConfigController.getConfig')
-
-
-// For test
-Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
-Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
 
 

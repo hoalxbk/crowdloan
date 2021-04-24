@@ -25,6 +25,8 @@ import UserReserveCreatePopup from "./UserReserveCreatePopup";
 
 import useStylesTable from './style_table';
 import Pagination from "@material-ui/lab/Pagination";
+import moment from "moment";
+import {DATETIME_FORMAT} from "../../../../constants";
 
 function UserReverse(props: any) {
   const commonStyle = useCommonStyle();
@@ -67,7 +69,13 @@ function UserReverse(props: any) {
   };
 
   const handleCreateUpdateData = async (responseData: any) => {
-    const response = await addReservesUser(poolDetail.id, responseData);
+    const inputParams = {
+      ...(responseData || {}),
+      endTime: moment(responseData.endTime).format(DATETIME_FORMAT),
+      startTime: moment(responseData.startTime).format(DATETIME_FORMAT),
+    };
+
+    const response = await addReservesUser(poolDetail.id, inputParams);
     if (response?.status === 200) {
       dispatch(alertSuccess('Create Successful !!!'));
       search();
@@ -94,13 +102,13 @@ function UserReverse(props: any) {
           >Add</Button>
 
           {isOpenEditPopup &&
-          <UserReserveCreatePopup
-            isOpenEditPopup={isOpenEditPopup}
-            setIsOpenEditPopup={setIsOpenEditPopup}
-            editData={editData}
-            isEdit={isEdit}
-            handleCreateUpdateData={handleCreateUpdateData}
-          />
+            <UserReserveCreatePopup
+              isOpenEditPopup={isOpenEditPopup}
+              setIsOpenEditPopup={setIsOpenEditPopup}
+              editData={editData}
+              isEdit={isEdit}
+              handleCreateUpdateData={handleCreateUpdateData}
+            />
           }
         </div>
 
@@ -116,6 +124,10 @@ function UserReverse(props: any) {
             <TableRow>
               <TableCell size={'small'}>Email</TableCell>
               <TableCell align="center" size={'medium'}>Wallet Address</TableCell>
+              <TableCell size={'small'}>Min Buy</TableCell>
+              <TableCell size={'small'}>Max Buy</TableCell>
+              <TableCell size={'small'}>Start Time</TableCell>
+              <TableCell size={'small'}>End Time</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -127,6 +139,10 @@ function UserReverse(props: any) {
                   {row.email}
                 </TableCell>
                 <TableCell align="center" size={'medium'}>{row.wallet_address}</TableCell>
+                <TableCell align="center">{row.min_buy}</TableCell>
+                <TableCell align="center">{row.max_buy}</TableCell>
+                <TableCell align="center">{row.start_time}</TableCell>
+                <TableCell align="center">{row.end_time}</TableCell>
 
 
                 <TableCell align="right">
