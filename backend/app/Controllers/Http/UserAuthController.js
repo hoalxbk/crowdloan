@@ -96,9 +96,6 @@ class UserAuthController {
     try {
       const param = request.only(['email', 'username', 'signature', 'password', 'wallet_address'])
       const wallet_address = Web3.utils.toChecksumAddress(request.input('wallet_address'));
-      // format wallet and email to lower case
-      param.wallet_address = wallet_address.toLowerCase();
-      param.email = param.email.toLowerCase();
       console.log(111, wallet_address)
       const type = params.type;
       const role = type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
@@ -133,9 +130,7 @@ class UserAuthController {
     try {
       const param = request.only(['email', 'signature', 'wallet_address']);
       const role = Const.USER_ROLE.PUBLIC_USER; // Only public user verify email
-      // format email and wallet to lower case
-      const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address).toLowerCase();
-      param.email = param.email.toLowerCase();
+      const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address);
 
       console.log('[registerVerifyEmail]: Wallet Address: ', wallet_address);
       let user = await (new UserService).findUser({ wallet_address });

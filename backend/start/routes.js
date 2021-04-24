@@ -136,7 +136,7 @@ Route.group(() => {
   Route.get('winner-search/:campaignId', 'WinnerListUserController.search');
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');
-}).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix']);
+}).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix', 'formatEmailAndWallet']);
 
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
   .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);
