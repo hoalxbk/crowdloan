@@ -89,6 +89,7 @@ const AppNetworkSwitch: React.FC<ComponentProps> = (props: ComponentProps) => {
             return <ConnectWalletBox 
               key={key} 
               appNetwork={network} 
+              handleClose={handleClose}
               isAppNetwork 
               forceEnable 
             />

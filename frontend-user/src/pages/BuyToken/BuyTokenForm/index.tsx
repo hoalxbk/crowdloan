@@ -145,7 +145,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       console.log(err.message);
     }
   }
-  const connectedAccountFirstBuy = connectedAccount ? parsedFirstBuy[connectedAccount]: false;
+  const connectedAccountFirstBuy = 
+    connectedAccount 
+    ? ( 
+       parsedFirstBuy[poolAddress] ? parsedFirstBuy[poolAddress][connectedAccount]: false 
+    )
+    : false;
 
   const poolErrorBeforeBuy = useMemo(() => {
     const timeToShowMsg = new Date() > endJoinTimeInDate && new Date() < startBuyTimeInDate;
@@ -239,8 +244,18 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       setInput("");
       setEstimateTokens(0);
       setTransactionFee(0);
+
+      if (!connectedAccountFirstBuy) {
+        localStorage.setItem("firstBuy", JSON.stringify(Object.assign({}, {
+          ...parsedFirstBuy,
+          [poolAddress as string]: {
+            ...parsedFirstBuy[poolAddress],
+            [connectedAccount as string]: true
+          }
+        })));
+      }
     }
-  }, [tokenDepositTransaction]);
+  }, [tokenDepositTransaction, connectedAccountFirstBuy]);
 
   const handleInputChange = async (e: any) => {
     const val = e.target.value;
@@ -265,13 +280,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         // Call to smart contract to deposit token and refetch user balance
         await deposit();
         await fetchUserBalance();
-
-        if (!connectedAccountFirstBuy) {
-          localStorage.setItem("firstBuy", JSON.stringify(Object.assign({}, {
-            ...parsedFirstBuy,
-            [connectedAccount as string]: true
-          })));
-        }
       }
     } catch (err) {
       setOpenSubmitModal(false);
@@ -377,12 +385,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       </div>
       <TransactionSubmitModal 
         opened={openSubmitModal} 
-        handleClose={() => { setOpenSubmitModal(false); setTokenDepositLoading(false)}} 
+        handleClose={() => { setOpenSubmitModal(false); }} 
         transactionHash={tokenDepositTransaction}
       />
       <TransactionSubmitModal 
         opened={openApproveModal} 
-        handleClose={() => { setApproveModal(false); setTokenApproveLoading(false)}} 
+        handleClose={() => { setApproveModal(false); }} 
         transactionHash={transactionHash}
       />
     </div>
