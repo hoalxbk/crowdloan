@@ -172,8 +172,8 @@ Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
 Route.post('pool/check-exist-reverse', 'ReservedListController.checkExistReserve');
 Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants');
 Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
-Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
-Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
+// Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
+// Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
 
 
 
