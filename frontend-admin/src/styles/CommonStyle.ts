@@ -23,6 +23,9 @@ const useCommonStyle = makeStyles((theme) => {
       marginLeft: 'auto',
       display: 'flex',
     },
+    boldText: {
+      fontWeight: 'bold',
+    },
     btnBack: {
       background: '#FFCC00',
       boxShadow: '0px 0px 15px rgba(243, 203, 25, 0.3)',
