@@ -25,7 +25,7 @@ function TotalCoinSold(props: any) {
     setTotalSoldCoin(value);
     setValue('totalSoldCoin', value, { shouldValidate: true })
   };
-  const isDeployed = !!poolDetail?.is_deploy;
+  // const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -40,7 +40,7 @@ function TotalCoinSold(props: any) {
           decimalsLimit={2}
           onValueChange={handleChange}
           className={`${classes.formInputBox}`}
-          disabled={isDeployed}
+          // disabled={isDeployed}
         />
         <input
           type='hidden'

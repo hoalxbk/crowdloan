@@ -8,7 +8,7 @@ const useStyles = makeStyles(theme => ({
   headerRight: {
     display: 'flex',
   },
-  tableContainer: { 
+  tableContainer: {
     padding: '30px 20px',
     borderRadius: 10,
     boxShadow: 'none',
@@ -68,7 +68,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'space-between',
   },
   refreshCampaignsContainer: {
-    display: 'flex', 
+    display: 'flex',
     cursor: 'pointer',
     alignItems: 'center',
 
@@ -82,7 +82,8 @@ const useStyles = makeStyles(theme => ({
     fontWeight: 500,
     fontSize: 15,
     transition: '.2s all ease-in',
-    fontFamily: 'Roboto-Medium'
+    fontFamily: 'Roboto-Medium',
+    marginTop: 13,
   },
   refreshCampaignsIcon: {
     transition: '.2s all ease-in',
