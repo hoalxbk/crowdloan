@@ -40,6 +40,7 @@ type BuyTokenFormProps = {
   isDeployed: boolean | undefined
   endBuyTimeInDate: Date | undefined
   startBuyTimeInDate: Date | undefined
+  endJoinTimeInDate: Date | undefined
   tokenSold: string | undefined
 }  
 
@@ -72,6 +73,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     minimumBuy,
     poolAmount,
     startBuyTimeInDate,
+    endJoinTimeInDate,
     tokenSold
   } = props;
 
@@ -133,21 +135,47 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 
 
   // Check if user already buy ICO token at the first time or not ?
-  const firstBuy = localStorage.getItem('firstBuy');
+  const firstBuy = localStorage.getItem('firstBuy') || undefined;
+  let parsedFirstBuy = {} as any;
+  if (firstBuy) {
+    try {
+      parsedFirstBuy = JSON.parse(firstBuy);
+    }
+    catch (err) {
+      console.log(err.message);
+    }
+  }
+  const connectedAccountFirstBuy = connectedAccount ? parsedFirstBuy[connectedAccount]: false;
 
   const poolErrorBeforeBuy = useMemo(() => {
+    const timeToShowMsg = new Date() > endJoinTimeInDate && new Date() < startBuyTimeInDate;
+
     if (
-      poolBalance && poolAmount && startBuyTimeInDate && new BigNumber(poolBalance).gt(0) &&
-      !(new BigNumber(poolBalance).gte(poolAmount) && new Date() >= startBuyTimeInDate)
+      poolBalance 
+      && poolAmount 
+      && startBuyTimeInDate 
+      && endJoinTimeInDate && 
+      new BigNumber(poolAmount).gt(0) &&
+      new BigNumber(poolBalance).lt(new BigNumber(poolAmount)) && 
+      timeToShowMsg
     ) {
       return `This pool is not ready to buy, please contact the administrator for more information.`;
     }
-    if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !firstBuy) {
+    if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !connectedAccountFirstBuy && new Date() > startBuyTimeInDate) {
         return `The minimum amount you must trade is ${minimumBuy} ${purchasableCurrency}.`
     }
 
     return;
-  }, [minimumBuy, poolBalance, poolAmount, purchasableCurrency, input, startBuyTimeInDate]);
+  }, [
+    minimumBuy, 
+    poolBalance, 
+    poolAmount, 
+    purchasableCurrency, 
+    input, 
+    startBuyTimeInDate, 
+    endJoinTimeInDate, 
+    connectedAccountFirstBuy
+  ]);
 
   const enableApprove = 
     (tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
@@ -238,8 +266,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         await deposit();
         await fetchUserBalance();
 
-        if (!firstBuy) {
-          localStorage.setItem("firstBuy", "done");
+        if (!connectedAccountFirstBuy) {
+          localStorage.setItem("firstBuy", JSON.stringify(Object.assign({}, {
+            ...parsedFirstBuy,
+            [connectedAccount as string]: true
+          })));
         }
       }
     } catch (err) {
@@ -316,11 +347,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
           <span>{purchasableCurrency}</span>
         </div>
       </div>
-      <p className={styles.buyTokenFee}>
-        {
-          (estimateErr && input) ? 'Error when estimate gas': `Transaction Fee: ~${transactionFee} ETH`
-        }
-      </p>
       <p className={styles.buyTokenFee}>
         Your Balance: {numberWithCommas(`${walletBalance || 0}` )} {tokenDetails?.symbol}
       </p>
