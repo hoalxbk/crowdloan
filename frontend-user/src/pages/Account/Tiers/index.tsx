@@ -68,6 +68,7 @@ const Tiers = (props: any) => {
       process = process > 2 ? process - 2 : 0
       setCurrentProcess(process);
     }
+    setLoading(false);
   }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain])
 
   useEffect(() => {
