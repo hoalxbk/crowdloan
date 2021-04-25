@@ -2,6 +2,8 @@
 
 const crypto = use('crypto');
 const Const = use('App/Common/Const');
+const Web3 = require('web3');
+const web3 = new Web3();
 
 /**
  * Generate "random" alpha-numeric string.
@@ -33,13 +35,6 @@ const checkRole = (params, extraData) => {
     role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER,
   }
 };
-
-// const checkType = (params, extraData) => {
-//   return {
-//     ...extraData,
-//     role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_TYPE.WHITELISTED : Const.USER_TYPE.REGULAR,
-//   }
-// };
 
 const responseErrorInternal = (message) => {
   return {
@@ -73,10 +68,17 @@ const responseSuccess = (data = null, message) => {
   }
 };
 
+const checkSumAddress = (address) => {
+  const addressVerified = Web3.utils.toChecksumAddress(address);
+  return addressVerified;
+};
+
+
 module.exports = {
   randomString,
   responseSuccess,
   responseNotFound,
   responseErrorInternal,
   responseBadRequest,
+  checkSumAddress,
 };

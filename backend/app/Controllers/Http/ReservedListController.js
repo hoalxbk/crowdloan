@@ -112,18 +112,44 @@ class ReservedListController {
       console.log('[addReserveUser] - Params: ', params);
 
       const { campaignId } = params;
-      const inputParams = request.only(['email', 'wallet_address']);
+      const inputParams = request.only(['email', 'wallet_address', 'maxBuy', 'minBuy', 'startTime', 'endTime']);
 
       // TODO: Check user exist in system
-
       const reservedUser = new ReservedListModel;
       reservedUser.campaign_id = campaignId;
       reservedUser.email = inputParams.email;
       reservedUser.wallet_address = inputParams.wallet_address;
+      reservedUser.max_buy = inputParams.maxBuy;
+      reservedUser.min_buy = inputParams.minBuy;
+      reservedUser.start_time = inputParams.startTime;
+      reservedUser.end_time = inputParams.endTime;
       await reservedUser.save();
 
       console.log('Res: ', reservedUser);
       return HelperUtils.responseSuccess(reservedUser);
+    } catch (e) {
+      return HelperUtils.responseErrorInternal();
+    }
+  }
+
+
+  async checkExistReserve({ request, params }) {
+    try {
+      console.log('[addReserveUser] - Params: ', params);
+      const inputParams = request.only(['wallet_address', 'campaign_id']);
+
+      const reservedService = new ReservedListService();
+      const existRecord = await reservedService.buildQueryBuilder({
+        wallet_address: inputParams.wallet_address,
+        campaign_id: inputParams.campaign_id,
+      }).first();
+
+      if (!existRecord) {
+        return HelperUtils.responseNotFound('User not exist in Reserve User List');
+      }
+
+      console.log('existRecord: ', existRecord);
+      return HelperUtils.responseSuccess(existRecord, 'User exist in Reserve User List');
     } catch (e) {
       return HelperUtils.responseErrorInternal();
     }
