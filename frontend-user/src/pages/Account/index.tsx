@@ -53,7 +53,7 @@ const Account = (props: any) => {
         {emailVerified == USER_STATUS.UNVERIFIED && !loading && showAlertVerifyEmail && <div className={classes.alertVerifyEmail}>
           <img src={iconWarning}/>
           <img src={iconClose} className="btn-close" onClick={() => setShowAlertVerifyEmail(false)}/>
-          <span>&nbsp;&nbsp;Your account has not been verified. To verify your account, please click on Verify Email button</span>
+          <span>&nbsp;&nbsp;Your account has not been verified. To verify your account, please click on Verify Email button.</span>
         </div>}
         <div className={classes.leftPanel}>
           <AccountInformation

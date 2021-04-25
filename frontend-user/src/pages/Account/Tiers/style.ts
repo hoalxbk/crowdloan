@@ -74,6 +74,8 @@ const useStyles = makeStyles((theme: any) => {
       alignItems: 'center',
       position: 'relative',
       zIndex: 2,
+      width: '1px',
+      whiteSpace: 'nowrap',
 
       '& div': {
         marginBottom: '15px',
