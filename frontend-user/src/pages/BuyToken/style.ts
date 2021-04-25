@@ -136,7 +136,7 @@ const useStyles = makeStyles((theme: any) => {
     poolDetailIntro: {
       color: 'white',
       minWidth: 400,
-      width: '30%',
+      width: '50%',
       marginRight: 120,
       [theme.breakpoints.down('xs')]: {
         marginRight: 0,
@@ -147,11 +147,16 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolDetailBasic: {
       display: 'grid',
-      gridTemplateColumns: '1fr 2fr',
+      gridTemplateColumns: '1fr 4fr',
 
       '&:not(:first-child)': {
         marginTop: 30
       }
+    },
+    poolDetailBasicIcon: {
+      marginRight: 10,
+      width: 20,
+      height: 20
     },
     poolDetailBasicLabel: {
       color: '#999999',
@@ -196,7 +201,7 @@ const useStyles = makeStyles((theme: any) => {
       padding: '28px 40px',
       background: 'rgba(255, 255, 255, 0.06)',
       borderRadius: 8,
-      width: '60%',
+      width: '50%',
       [theme.breakpoints.down('xs')]: {
         flexDirection: 'column',
       }
@@ -381,7 +386,7 @@ const useStyles = makeStyles((theme: any) => {
       },
       poolHeaderInfo: {
         width: '100%'
-      }
+      },
     },
   };
 });
