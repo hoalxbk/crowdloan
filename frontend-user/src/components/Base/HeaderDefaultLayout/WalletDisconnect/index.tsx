@@ -107,7 +107,7 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: any) => {
       <DialogContent className={styles.dialogContent}>
         <div className={styles.accountDetails}>
           <div className={styles.accountDetailsIcon}>
-            <img src="images/1inch.png" style={{ width: '100%' }}/>
+            <img src="images/red-kite.png" style={{ width: '100%' }}/>
           </div>
           <div className={styles.accountDetailBlocks}>
             <div className={styles.accountDetailBlock}>

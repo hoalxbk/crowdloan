@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { HashLoader } from "react-spinners";
 import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js'; 
@@ -56,6 +56,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
+  const { pathname } = useLocation();
   const { id } = useParams() as any;
   const userTier = useTypedSelector(state => state.userTier).data;
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
@@ -157,6 +158,11 @@ const BuyToken: React.FC<any> = (props: any) => {
     return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
 
+  // Auto Scroll To Top When redirect from other pages
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
   // Hide main tab after end buy time
   useEffect(() => {
     if (endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
@@ -255,7 +261,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {isWinner && new Date() >= startBuyTimeInDate && ableToFetchFromBlockchain &&
+            {isWinner && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
               <p className={styles.poolTicketWinner}>
                 <div>
                   {
@@ -266,6 +272,20 @@ const BuyToken: React.FC<any> = (props: any) => {
                 </div>
                 <span style={{ marginLeft: 14 }}>
                   Congratulations on your purchase of the lottery ticket at this pool !
+                </span>
+              </p>
+            }
+            {new Date() > endBuyTimeInDate && ableToFetchFromBlockchain &&
+              <p className={styles.poolTicketWinner}>
+                <div>
+                  {
+                    [...Array(3)].map((num, index) => (
+                      <img src="/images/fire-cracker.svg" alt="file-cracker" key={index} />
+                    ))
+                  }
+                </div>
+                <span style={{ marginLeft: 14 }}>
+                  This pool is ended, thanks for all! 
                 </span>
               </p>
             }
@@ -291,11 +311,14 @@ const BuyToken: React.FC<any> = (props: any) => {
                           <div className={styles.poolDetailBasic} key={key}>
                             <span className={styles.poolDetailBasicLabel}>{poolDetail.label}</span>
                             <p className={styles.poolsDetailBasicText}>
+                              {
+                                poolDetail.image && <img src={poolDetail.image} className={styles.poolDetailBasicIcon}  />
+                              }
                               <Tooltip title={<p style={{ fontSize: 15 }}>{poolDetail.display}</p>}>
                                   <span>
                                   {
                                     key !== PoolDetailKey.exchangeRate ? poolDetail.display: (
-                                      showRateReserve ? poolDetail.reverse: poolDetail.display 
+                                      showRateReserve ? poolDetail.reverse: poolDetail.display
                                     )
                                   }
                                   </span>
@@ -379,8 +402,24 @@ const BuyToken: React.FC<any> = (props: any) => {
                   </div>
                 </div>
                 <div className={styles.poolDetailStartTime}>
-                  <span className={styles.poolDetailStartTimeTitle}>{display}</span>
-                  <Countdown startDate={countDownDate} />
+                  {
+                    display ? (
+                      <>
+                        <span className={styles.poolDetailStartTimeTitle}>{display}</span>
+                        <Countdown startDate={countDownDate} />
+                      </>
+                    ): (
+                      <p 
+                        style={{ 
+                          fontSize: 16, 
+                          fontWeight: 'bold', 
+                          color: '#D01F36',
+                          marginTop: 40
+                        }}>
+                        This pool is ended.
+                      </p>
+                    )
+                  }
                 </div>
               </div> 
             </div>
@@ -425,6 +464,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         endBuyTimeInDate={endBuyTimeInDate}
                         endJoinTimeInDate={endJoinTimeInDate}
                         tokenSold={tokenSold}
+                        alreadyReserved={alreadyReserved}
                       /> 
                    )
                 }
