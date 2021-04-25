@@ -200,7 +200,7 @@ function UserParticipant(props: any) {
               <TableCell size={'small'}>Email</TableCell>
               <TableCell align="center" size={'medium'}>Wallet Address</TableCell>
               <TableCell align="center">Tier</TableCell>
-              <TableCell align="right">Actions</TableCell>
+              {/*<TableCell align="right">Actions</TableCell>*/}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -219,14 +219,14 @@ function UserParticipant(props: any) {
                   {row.tier}
                 </TableCell>
 
-                <TableCell align="right">
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={(e) => deleteItem(e, row, index)}
-                    style={{marginLeft: 10, marginTop: 10}}
-                  >Delete</Button>
-                </TableCell>
+                {/*<TableCell align="right">*/}
+                {/*  <Button*/}
+                {/*    variant="contained"*/}
+                {/*    color="secondary"*/}
+                {/*    onClick={(e) => deleteItem(e, row, index)}*/}
+                {/*    style={{marginLeft: 10, marginTop: 10}}*/}
+                {/*  >Delete</Button>*/}
+                {/*</TableCell>*/}
 
               </TableRow>
             ))}

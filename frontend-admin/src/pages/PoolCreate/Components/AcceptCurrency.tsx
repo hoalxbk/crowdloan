@@ -26,7 +26,6 @@ function AcceptCurrency(props: any) {
     if (poolDetail && poolDetail.id) {
       getTiers(poolDetail.id)
         .then((res) => {
-          // setPartipants(res.data);
         });
     }
   }, [poolDetail]);

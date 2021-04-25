@@ -40,13 +40,14 @@ class UserAuthController {
   async checkWalletAddress({ request, params }) {
     try {
       const inputs = request.all();
-      const walletAddress = inputs.wallet_address || ' ';
+      const walletAddress = HelperUtils.checkSumAddress(inputs.wallet_address || ' ');
       const userService = new UserService();
 
+      console.log('Wallet: ', walletAddress);
       console.log('Check Wallet: ', inputs, params);
       const user = await userService.findUser({
         wallet_address: walletAddress,
-        role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER,
+        // role: params.type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER,
       });
 
       if (!user) {
