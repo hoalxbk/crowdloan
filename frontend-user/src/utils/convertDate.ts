@@ -1,5 +1,9 @@
 import moment from 'moment'
 
+export const convertTimeToStringFormat = (date: Date) => {
+  return moment(date).format("h:mm A, DD MMMM YYYY");
+}
+
 export const convertUnixTimeToDateTime = (time: number) => {
   // return moment.unix(time).format("DD/MM/yyyy hh:mm:ss a");
   return moment.unix(time).format("hh:mm:ss A MM/DD/yyyy");

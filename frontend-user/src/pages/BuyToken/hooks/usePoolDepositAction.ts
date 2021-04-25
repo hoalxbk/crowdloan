@@ -27,8 +27,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   const [depositError, setDepositError] = useState("");
   const [tokenDepositTransaction, setTokenDepositTransaction] = useState<string>("");
   const [tokenDepositLoading, setTokenDepositLoading] = useState<boolean>(false);
-  const [estimateErr, setEstimateErr] = useState("");
-  const [estimateFeeLoading, setEstimateFeeLoading] = useState(false);
+  const [tokenDepositSuccess, setTokenDepositSuccess] = useState<boolean>(false);
 
   const { account: connectedAccount, library } = useWeb3React();
   const { error, signMessage, signature: authSignature, setSignature } = useWalletSignature();
@@ -99,6 +98,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
         dispatch(alertSuccess("Token Deposit Successful!"));
         setTokenDepositLoading(false);
+        setTokenDepositSuccess(true);
 
       }
     } catch (err) {
@@ -116,6 +116,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         setTokenDepositTransaction("");
         setDepositError("");
         setTokenDepositLoading(true);
+        setTokenDepositSuccess(false);
 
         await signMessage();
       } catch (err) {
@@ -127,65 +128,63 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
     }
   }, [connectedAccount, library, poolAddress, amount])
 
-  const estimateFee = useCallback(async (amount: string, acceptCurrency: string) => {
-    try {
-      setEstimateFeeLoading(true);
+  // const estimateFee = useCallback(async (amount: string, acceptCurrency: string) => {
+  //   try {
+  //     setEstimateFeeLoading(true);
 
-      if (amount && new BigNumber(amount).gt(0) && poolAddress && acceptCurrency) {
-        const gasPrice = await library.getGasPrice();
-        const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
-        const gasPriceCal = new BigNumber(gasPrice._hex).div(new BigNumber(10).pow(18));
+  //     if (amount && new BigNumber(amount).gt(0) && poolAddress && acceptCurrency) {
+  //       const gasPrice = await library.getGasPrice();
+  //       const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
+  //       const gasPriceCal = new BigNumber(gasPrice._hex).div(new BigNumber(10).pow(18));
 
-        const params = acceptCurrency === 'ETH' ? [ 
-          connectedAccount,
-          connectedAccount,
-          "100000000000",
-          "100000000000",
-          "0x450859e7066471c9e38a481908e3547240285db6af24eed2615a3d825f043e5052bffc0815e98b6a4365526307e2f18b9552bb747739789d624ea666e4fb87ea1b",
-          {
-            value: new BigNumber(amount).multipliedBy(10 ** 18).toFixed()
-          }
-        ]: [
-          connectedAccount,
-          acceptCurrency ===  "USDT" ? USDT_ADDRESS: USDC_ADDRESS,
-          new BigNumber(amount).multipliedBy(10 ** 18).toFixed(),
-          connectedAccount,
-          "100000000000",
-          "299999999990",
-          "0x450859e7066471c9e38a481908e3547240285db6af24eed2615a3d825f043e5052bffc0815e98b6a4365526307e2f18b9552bb747739789d624ea666e4fb87ea1b"
-        ];
+  //       const params = acceptCurrency === 'ETH' ? [ 
+  //         connectedAccount,
+  //         connectedAccount,
+  //         "100000000000",
+  //         "100000000000",
+  //         "0x450859e7066471c9e38a481908e3547240285db6af24eed2615a3d825f043e5052bffc0815e98b6a4365526307e2f18b9552bb747739789d624ea666e4fb87ea1b",
+  //         {
+  //           value: new BigNumber(amount).multipliedBy(10 ** 18).toFixed()
+  //         }
+  //       ]: [
+  //         connectedAccount,
+  //         acceptCurrency ===  "USDT" ? USDT_ADDRESS: USDC_ADDRESS,
+  //         new BigNumber(amount).multipliedBy(10 ** 18).toFixed(),
+  //         connectedAccount,
+  //         "100000000000",
+  //         "299999999990",
+  //         "0x450859e7066471c9e38a481908e3547240285db6af24eed2615a3d825f043e5052bffc0815e98b6a4365526307e2f18b9552bb747739789d624ea666e4fb87ea1b"
+  //       ];
 
-        const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
+  //       const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
 
-        const estimateFee = await poolContract.estimateGas[method](...params);
+  //       const estimateFee = await poolContract.estimateGas[method](...params);
 
-        setEstimateErr("");
-        setEstimateFeeLoading(false);
+  //       setEstimateErr("");
+  //       setEstimateFeeLoading(false);
 
-        return new BigNumber(estimateFee._hex).multipliedBy(gasPriceCal).toNumber();
-      } else {
-        setEstimateErr("");
-        setEstimateFeeLoading(false);
-        return 0;
-      }
+  //       return new BigNumber(estimateFee._hex).multipliedBy(gasPriceCal).toNumber();
+  //     } else {
+  //       setEstimateErr("");
+  //       setEstimateFeeLoading(false);
+  //       return 0;
+  //     }
 
-    } catch(err) {
-      console.error(err.message);
-      setEstimateFeeLoading(false);
-      setEstimateErr(err.message);
-    }
-  }, [poolAddress, connectedAccount]);
+  //   } catch(err) {
+  //     console.error(err.message);
+  //     setEstimateFeeLoading(false);
+  //     setEstimateErr(err.message);
+  //   }
+  // }, [poolAddress, connectedAccount]);
 
   return {
+    tokenDepositSuccess,
     deposit,
-    estimateFee,
     tokenDepositLoading,
     tokenDepositTransaction,
     setTokenDepositTransaction,
     setTokenDepositLoading,
-    estimateFeeLoading,
-    estimateErr,
-    depositError
+    depositError,
   };
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, useMemo } from 'react';
+import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import BigNumber from 'bignumber.js';
 
@@ -57,6 +57,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [userPurchased, setUserPurchased] = useState<number>(0);
   const [poolBalance, setPoolBalance] = useState<number>(0);
+  const runFirst = useRef(true);
 
   const { 
     tokenDetails, 
@@ -73,7 +74,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     poolAmount,
     startBuyTimeInDate,
     endJoinTimeInDate,
-    tokenSold
+    tokenSold,
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -83,10 +84,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   const { 
     deposit, 
-    estimateErr, 
     tokenDepositLoading, 
     tokenDepositTransaction,
-    depositError
+    depositError,
+    tokenDepositSuccess
   } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input });
 
   const { retrieveTokenAllowance } = useTokenAllowance();
@@ -189,7 +190,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const validTier = new BigNumber(userTier).gte(minTier);
   const purchasable = 
     ((purchasableCurrency !== PurchaseCurrency.ETH ? tokenAllowance > 0: true) 
-     && !estimateErr 
      && availablePurchase 
      && estimateTokens > 0 
      && (purchasableCurrency !== PurchaseCurrency.ETH ? input <= maximumBuy: new BigNumber(input).lte(tokenBalance))
@@ -217,8 +217,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       }
   }, [connector, appChainID, walletChainID, connectedAccount]);
 
-  useEffect(() => {
-    const fetchTokenPoolAllowance = async () => {
+  const fetchPoolDetails = useCallback(async () => {
       if (tokenDetails && poolAddress && connectedAccount && tokenToApprove) {
         setTokenAllowance(await retrieveTokenAllowance(tokenToApprove, connectedAccount, poolAddress) as number);
         setUserPurchased(await retrieveUserPurchased(connectedAccount, poolAddress) as number);
@@ -226,16 +225,31 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         setWalletBalance(await retrieveTokenBalance(tokenDetails, connectedAccount) as number);
         setPoolBalance(await retrieveTokenBalance(tokenDetails, poolAddress) as number);
       }
+  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
+
+  useEffect(() => {
+    const fetchTokenPoolAllowance = async () => {
+      runFirst.current = false;
+      await fetchPoolDetails();
     }
 
-    ableToFetchFromBlockchain && fetchTokenPoolAllowance();
-  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain]);
+    ableToFetchFromBlockchain && runFirst.current && fetchTokenPoolAllowance();
+  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain, runFirst]);
 
   useEffect(() => {
     if (depositError) {
       setOpenSubmitModal(false);
     }
   }, [depositError]);
+
+  useEffect(() => {
+    const handleWhenDepositSuccess = async () => {
+      await fetchUserBalance();
+      await fetchPoolDetails();
+    }
+
+    tokenDepositSuccess && handleWhenDepositSuccess();
+  }, [tokenDepositSuccess]);
 
   useEffect(() => {
     if (tokenDepositTransaction) {
@@ -274,7 +288,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
         // Call to smart contract to deposit token and refetch user balance
         await deposit();
-        await fetchUserBalance();
       }
     } catch (err) {
       setOpenSubmitModal(false);
@@ -347,7 +360,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             maxLength={255}
             disabled={wrongChain}
           />
-          <span>{purchasableCurrency}</span>
+          <span className={styles.purchasableCurrency}>
+            <img src={`/images/${purchasableCurrency}.png`} alt={purchasableCurrency} className={styles.purchasableCurrencyIcon} />
+            {purchasableCurrency}
+          </span>
         </div>
       </div>
       <p className={styles.buyTokenFee}>

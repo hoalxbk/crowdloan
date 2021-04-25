@@ -84,6 +84,15 @@ const useStyles = makeStyles((theme: any) => {
       fontWeight: 'bold',
       color: '#fff100',
       fontSize: 15
+    },
+    purchasableCurrency: {
+      display: 'flex',
+      alignItems: 'center'
+    },
+    purchasableCurrencyIcon: {
+      width: 30,
+      height: 30,
+      marginRight: 7 
     }
   };
 });
