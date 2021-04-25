@@ -244,7 +244,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       await fetchPoolDetails();
     }
 
-    ableToFetchFromBlockchain && runFirst.current && fetchTokenPoolAllowance();
+    ableToFetchFromBlockchain && (runFirst.current || connectedAccount) && fetchTokenPoolAllowance();
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain, runFirst]);
 
   // Check if has any error when deposit => close modal
