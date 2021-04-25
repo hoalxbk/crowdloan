@@ -7,7 +7,7 @@ import Button from '../Button';
 import useStyles from './style';
 
 import { getUSDCAddress, getUSDTAddress } from '../../../utils/contractAddress/getAddresses';
-import { numberWithCommas, getDigitsAfterDecimals, INTEGER_NUMBER_KEY_CODE_LIST } from '../../../utils/formatNumber';
+import { numberWithCommas, getDigitsAfterDecimals, INTEGER_NUMBER_KEY_CODE_LIST, DECIMAL_KEY_CODE } from '../../../utils/formatNumber';
 import { isNotValidASCIINumber, isPreventASCIICharacters, trimLeadingZerosWithDecimal } from '../../../utils/formatNumber';
 import { BSC_CHAIN_ID } from '../../../constants/network';
 import { PurchaseCurrency } from '../../../constants/purchasableCurrency';
@@ -42,6 +42,7 @@ type BuyTokenFormProps = {
   startBuyTimeInDate: Date | undefined
   endJoinTimeInDate: Date | undefined
   tokenSold: string | undefined
+  alreadyReserved: any | undefined
 }  
 
 const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
@@ -75,6 +76,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     startBuyTimeInDate,
     endJoinTimeInDate,
     tokenSold,
+    alreadyReserved
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -182,12 +184,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   ]);
 
   const enableApprove = 
+    tokenAllowance &&
     (tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
     && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH) 
     && !wrongChain && ableToFetchFromBlockchain && isDeployed;
 
   // Plus one for userTier because tier in smart contract start by 0  
-  const validTier = new BigNumber(userTier).gte(minTier);
+  const validTier = !alreadyReserved ? new BigNumber(userTier).gte(minTier): true;
   const purchasable = 
     ((purchasableCurrency !== PurchaseCurrency.ETH ? tokenAllowance > 0: true) 
      && availablePurchase 
@@ -227,6 +230,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       }
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
 
+  // Handle for fething pool general information 1 time
   useEffect(() => {
     const fetchTokenPoolAllowance = async () => {
       runFirst.current = false;
@@ -236,12 +240,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     ableToFetchFromBlockchain && runFirst.current && fetchTokenPoolAllowance();
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain, runFirst]);
 
+  // Check if has any error when deposit => close modal
   useEffect(() => {
     if (depositError) {
       setOpenSubmitModal(false);
     }
   }, [depositError]);
 
+  // Re-fetch user balance when deposit successful
   useEffect(() => {
     const handleWhenDepositSuccess = async () => {
       await fetchUserBalance();
@@ -314,8 +320,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       {
         appChainID !== BSC_CHAIN_ID && (
           <p className={styles.buyTokenFormTitle}>
-            You have {new BigNumber(userPurchased).multipliedBy(rate).toFixed()} {purchasableCurrency} BOUGHT from {maximumBuy} {purchasableCurrency} available for your TIER. <br/> 
-            The remaining amount is {new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()} {purchasableCurrency}
+            You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {purchasableCurrency} BOUGHT from {numberWithCommas(maximumBuy)} {purchasableCurrency} available for your TIER. <br/> 
+            The remaining amount is {numberWithCommas(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed())} {purchasableCurrency}
           </p>
         ) 
       }
@@ -339,7 +345,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             onChange={handleInputChange} 
             value={input} 
             onKeyDown={e => { 
-              if (getDigitsAfterDecimals(input) >= 6 && INTEGER_NUMBER_KEY_CODE_LIST.indexOf(e.keyCode) < 0) {
+              if (
+                (getDigitsAfterDecimals(input) >= 6 && INTEGER_NUMBER_KEY_CODE_LIST.indexOf(e.keyCode) < 0) || 
+                (input.includes('.') && e.keyCode === DECIMAL_KEY_CODE)
+              ) {
                 e.preventDefault();
                 return;
               }
@@ -351,7 +360,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             onPaste={e => {
               const pastedText = e.clipboardData.getData('text');
 
-              if (isNaN(Number(pastedText))) {
+              if (isNaN(Number(pastedText)) || getDigitsAfterDecimals(pastedText) > 6) {
                 e.preventDefault();
               }
             }}
@@ -371,7 +380,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       </p>
       <div className={styles.buyTokenEstimate}>
         <p className={styles.buyTokenEstimateLabel}>You will get approximately</p>
-        <strong className={styles.buyTokenEstimateAmount}>{estimateTokens} {tokenDetails?.symbol}</strong>
+        <strong className={styles.buyTokenEstimateAmount}>{numberWithCommas(`${estimateTokens}`)} {tokenDetails?.symbol}</strong>
       </div>
       {
         <p className={styles.minimumBuyWarning}>

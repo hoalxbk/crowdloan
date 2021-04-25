@@ -7,7 +7,7 @@ const ARROW_LEFT_KEY_CODE = 37;
 const ARROW_RIGHT_KEY_CODE = 39;
 const BACKSPACE_KEY_CODE = 8;
 const DELETE_KEY_CODE = 46;
-const DECIMAL_KEY_CODE = 190;
+export const DECIMAL_KEY_CODE = 190;
 
 const A_KEY_CODE = 65;
 const V_KEY_CODE = 86;

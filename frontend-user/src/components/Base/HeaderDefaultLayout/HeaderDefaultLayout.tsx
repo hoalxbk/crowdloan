@@ -110,19 +110,21 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
           {isWidthDown('xs', props.width) && <img src={iconHamburger} onClick={() => setOpenSideBar(true)}/>}
           <div className={styles.rightBar + (openSideBar ? ' active' : '')}>
               {isWidthDown('xs', props.width) && 
-                <><img src={logo} className={styles.sideBarLogo}/>
-                <img src={iconClose} className={styles.closeBtn} onClick={() => setOpenSideBar(false)}/></>}
-              <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn} start`} />
-              <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => {setSwitchNetworkDialog(true); setOpenSideBar(false);}}>
-                <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
-                <span className={styles.btnConnectText}>
-                {appChainID === ETH_CHAIN_ID ? 'Ethereum': 'BSC Mainnet'}
-                </span>
-              </button>
-              <button 
-                className={`${styles.btn} ${styles.btnConnect}`} 
-                onClick={!currentAccount ? handleConnectWalletOpen: handleDisconnectDialogOpen}
-              >
+                <>
+                  <img src={logo} className={styles.sideBarLogo}/>
+                  <img src={iconClose} className={styles.closeBtn} onClick={() => setOpenSideBar(false)}/></>}
+                  <ButtonLink text="Pool" to={'/'} icon={BrightStartIcon} className={`${styles.btn} start`} />
+                  <ButtonLink text="My Account" to={'/account'} icon={BrightStartIcon} className={`${styles.btn} start`} />
+                  <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => {setSwitchNetworkDialog(true); setOpenSideBar(false);}}>
+                    <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
+                    <span className={styles.btnConnectText}>
+                      {appChainID === ETH_CHAIN_ID ? 'Ethereum': 'BSC Mainnet'}
+                    </span>
+                  </button>
+                  <button 
+                    className={`${styles.btn} ${styles.btnConnect}`} 
+                    onClick={!currentAccount ? handleConnectWalletOpen: handleDisconnectDialogOpen}
+                  >
               {
                 !connectWalletLoading ? (
                   <>
