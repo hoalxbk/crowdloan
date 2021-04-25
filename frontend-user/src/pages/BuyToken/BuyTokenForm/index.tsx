@@ -199,6 +199,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && !poolErrorBeforeBuy
      && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)))
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
+     && new BigNumber(tokenBalance).gte(new BigNumber(input))
      && !wrongChain
      && validTier    
     );
