@@ -144,7 +144,6 @@ function UserReverse(props: any) {
                 <TableCell align="center">{row.start_time}</TableCell>
                 <TableCell align="center">{row.end_time}</TableCell>
 
-
                 <TableCell align="right">
                   <Button
                     variant="contained"

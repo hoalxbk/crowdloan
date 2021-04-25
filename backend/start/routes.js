@@ -63,6 +63,7 @@ Route.group(() => {
   Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
   Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');
   Route.get('check-wallet-address', 'AuthAdminController.checkWalletAddress');
+  Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.get('check-token/:token', 'AdminController.checkToken');
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.post('upload-avatar', 'FileController.uploadAvatar');
@@ -121,6 +122,7 @@ Route.group(() => {
 
   Route.get('confirm-email/:token', 'UserController.confirmEmail'); // Confirm email when register
   Route.get('check-wallet-address', 'UserAuthController.checkWalletAddress');
+  Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
   Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.get('profile', 'UserController.profile');
@@ -160,8 +162,8 @@ Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId', 'PoolController.getPool');
 Route.get('pools', 'PoolController.getPoolList');
-
 Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
+
 
 // API For Testing
 // TODO: Need delete when done

@@ -9,6 +9,9 @@ import {DATETIME_FORMAT} from "../../../../constants";
 import {fieldMustBeGreaterThanZero, renderErrorCreatePool} from "../../../../utils/validate";
 import BigNumber from "bignumber.js";
 
+import Paper from '@material-ui/core/Paper';
+import Grid from '@material-ui/core/Grid';
+
 function UserReserveCreatePopup(props: any) {
   const classes = useStyles();
   const {
@@ -90,88 +93,91 @@ function UserReserveCreatePopup(props: any) {
 
 
 
-
-        <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>Start Time</label>
-          <div >
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-              }}
-              name="startTime"
-              render={(field) => {
-                return (
-                  <DatePicker
-                    {...field}
-                    format="YYYY-MM-DD HH:mm:ss"
-                    showTime={{
-                      defaultValue: moment("00:00:00", "HH:mm:ss"),
-                      format: "HH:mm"
-                    }}
-                    onSelect={(datetimeSelected: any) => {
-                      setValue(field.name, datetimeSelected, {shouldValidate: true});
-                    }}
-                    minuteStep={15}
-                  />
-                )
-              }}
-            />
-          </div>
-          <p className={classes.formErrorMessage}>
-            {
-              renderError(errors, 'startTime')
-            }
-          </p>
-        </div>
-
-
-
-
-        <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>End Time</label>
-          <div >
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-                validate: {
-                  greateOrEqualStartTime: value => {
-                    const startTime = getValues('startTime');
-                    const valueUnix = moment(value).unix();
-                    const startTimeUnix = moment(startTime).unix();
-                    console.log('Validate Finish Time', valueUnix, startTimeUnix);
-
-                    return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
-                  }
+        <Grid container spacing={3}>
+          <Grid item xs={6}>
+            <div className={classes.formControl}>
+              <label className={classes.formControlLabel}>Start Time</label>
+              <div >
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
+                  }}
+                  name="startTime"
+                  render={(field) => {
+                    return (
+                      <DatePicker
+                        {...field}
+                        format="YYYY-MM-DD HH:mm:ss"
+                        showTime={{
+                          defaultValue: moment("00:00:00", "HH:mm:ss"),
+                          format: "HH:mm"
+                        }}
+                        onSelect={(datetimeSelected: any) => {
+                          setValue(field.name, datetimeSelected, {shouldValidate: true});
+                        }}
+                        minuteStep={15}
+                      />
+                    )
+                  }}
+                />
+              </div>
+              <p className={classes.formErrorMessage}>
+                {
+                  renderError(errors, 'startTime')
                 }
-              }}
-              name="endTime"
-              render={(field) => {
-                return (
-                  <DatePicker
-                    {...field}
-                    format="YYYY-MM-DD HH:mm:ss"
-                    showTime={{
-                      defaultValue: moment("00:00:00", "HH:mm:ss"),
-                      format: "HH:mm"
-                    }}
-                    onSelect={(datetimeSelected: any) => {
-                      setValue(field.name, datetimeSelected, {shouldValidate: true});
-                    }}
-                    minuteStep={15}
-                  />
-                )
-              }}
-            />
-          </div>
-          <p className={classes.formErrorMessage}>
-            {
-              renderError(errors, 'endTime')
-            }
-          </p>
-        </div>
+              </p>
+            </div>
 
+          </Grid>
+
+          <Grid item xs={6}>
+            <div className={classes.formControl}>
+              <label className={classes.formControlLabel}>End Time</label>
+              <div >
+                <Controller
+                  control={control}
+                  rules={{
+                    required: true,
+                    validate: {
+                      greateOrEqualStartTime: value => {
+                        const startTime = getValues('startTime');
+                        const valueUnix = moment(value).unix();
+                        const startTimeUnix = moment(startTime).unix();
+                        console.log('Validate Finish Time', valueUnix, startTimeUnix);
+
+                        return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
+                      }
+                    }
+                  }}
+                  name="endTime"
+                  render={(field) => {
+                    return (
+                      <DatePicker
+                        {...field}
+                        format="YYYY-MM-DD HH:mm:ss"
+                        showTime={{
+                          defaultValue: moment("00:00:00", "HH:mm:ss"),
+                          format: "HH:mm"
+                        }}
+                        onSelect={(datetimeSelected: any) => {
+                          setValue(field.name, datetimeSelected, {shouldValidate: true});
+                        }}
+                        minuteStep={15}
+                      />
+                    )
+                  }}
+                />
+              </div>
+              <p className={classes.formErrorMessage}>
+                {
+                  renderError(errors, 'endTime')
+                }
+              </p>
+            </div>
+
+          </Grid>
+        </Grid>
 
 
 
