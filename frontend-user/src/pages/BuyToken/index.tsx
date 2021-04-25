@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { HashLoader } from "react-spinners";
 import { useDispatch } from 'react-redux';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js'; 
@@ -56,6 +56,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
+  const { pathname } = useLocation();
   const { id } = useParams() as any;
   const userTier = useTypedSelector(state => state.userTier).data;
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
@@ -156,6 +157,11 @@ const BuyToken: React.FC<any> = (props: any) => {
   const shortenAddress = (address: string, digits: number = 4) => {
     return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
+
+  // Auto Scroll To Top When redirect from other pages
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
 
   // Hide main tab after end buy time
   useEffect(() => {
@@ -458,6 +464,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         endBuyTimeInDate={endBuyTimeInDate}
                         endJoinTimeInDate={endJoinTimeInDate}
                         tokenSold={tokenSold}
+                        alreadyReserved={alreadyReserved}
                       /> 
                    )
                 }
