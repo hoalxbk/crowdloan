@@ -53,7 +53,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const [openApproveModal, setApproveModal] = useState(false);
   const [openSubmitModal, setOpenSubmitModal] = useState(false);
   const [estimateTokens, setEstimateTokens] = useState<number>(0);
-  const [tokenAllowance, setTokenAllowance] = useState<number>(0);
+  const [tokenAllowance, setTokenAllowance] = useState<number | undefined>(undefined);
   const [tokenBalance, setTokenBalance] = useState<number>(0);
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [userPurchased, setUserPurchased] = useState<number>(0);
@@ -183,16 +183,21 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     connectedAccountFirstBuy
   ]);
 
-  const enableApprove = 
-    tokenAllowance &&
-    (tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
+  let enableApprove = false;
+
+  if (tokenAllowance != null || tokenAllowance != undefined) {
+    if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
     && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH) 
-    && !wrongChain && ableToFetchFromBlockchain && isDeployed;
+    && !wrongChain && ableToFetchFromBlockchain && isDeployed
+    )  {
+      enableApprove = true;
+    }
+  }
 
   // Plus one for userTier because tier in smart contract start by 0  
   const validTier = !alreadyReserved ? new BigNumber(userTier).gte(minTier): true;
   const purchasable = 
-    ((purchasableCurrency !== PurchaseCurrency.ETH ? tokenAllowance > 0: true) 
+    tokenAllowance 
      && availablePurchase 
      && estimateTokens > 0 
      && (purchasableCurrency !== PurchaseCurrency.ETH ? input <= maximumBuy: new BigNumber(input).lte(tokenBalance))
@@ -202,6 +207,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && new BigNumber(tokenBalance).gte(new BigNumber(input))
      && !wrongChain
      && validTier    
+      && ((purchasableCurrency !== PurchaseCurrency.ETH ? tokenAllowance > 0: true) 
     );
 
   // Fetch User balance
