@@ -1,7 +1,5 @@
 "use strict";
 
-const Const = use('App/Common/Const');
-
 class FormatEmailAndWallet {
   async handle({request}, next) {
 
