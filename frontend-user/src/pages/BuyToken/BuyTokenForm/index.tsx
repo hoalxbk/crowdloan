@@ -196,17 +196,18 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   // Plus one for userTier because tier in smart contract start by 0  
   const validTier = !alreadyReserved ? new BigNumber(userTier).gte(minTier): true;
+
   const purchasable = 
      availablePurchase 
      && estimateTokens > 0 
-     && (purchasableCurrency !== PurchaseCurrency.ETH ? input <= maximumBuy: new BigNumber(input || 0).lte(tokenBalance))
+     && (purchasableCurrency !== PurchaseCurrency.ETH ? input <= maximumBuy: new BigNumber(input).lte(tokenBalance))
      && !poolErrorBeforeBuy
      && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)))
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
      && new BigNumber(tokenBalance).gte(new BigNumber(input))
      && !wrongChain
      && validTier    
-     && ((purchasableCurrency !== PurchaseCurrency.ETH ? (tokenAllowance || 0) > 0: true));
+     && ((purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(tokenAllowance || 0).gt(0): true));
 
   // Fetch User balance
   const fetchUserBalance = useCallback(async () => {
