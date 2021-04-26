@@ -158,6 +158,10 @@ const BuyToken: React.FC<any> = (props: any) => {
     return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
 
+  useEffect(() => {
+    availablePurchase && setActiveNav(HeaderType.Main);
+  }, [availablePurchase]);
+
   // Auto Scroll To Top When redirect from other pages
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -307,6 +311,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                     {
                       Object.keys(poolDetailsMapping).map((key: string) => {
                         const poolDetail = poolDetailsMapping[key as poolDetailKey];
+                        if (poolDetails?.method !== 'whitelist' && key === PoolDetailKey.joinTime) return;
                         return (
                           <div className={styles.poolDetailBasic} key={key}>
                             <span className={styles.poolDetailBasicLabel}>{poolDetail.label}</span>
@@ -355,6 +360,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         />
                       }
                       <Button 
+                        disabled={!poolDetails?.isDeployed}
                         text={'Etherscan'} 
                         backgroundColor={'#3232DC'} 
                         onClick={() => {
