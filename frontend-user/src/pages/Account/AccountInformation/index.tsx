@@ -65,19 +65,25 @@ const AccountInformation = (props: any) => {
           </div>
           <div className={styles.walletInfo}>
             <p>Wallet balance</p>
-            <span>
+            {!_.isEmpty(balance) && !_.isEmpty(userInfo) && <span>
               <AnimatedNumber
                 value={(wrongChain || !isAuth) ? 0 : balance.token}
                 formatValue={numberWithCommas}
               />&nbsp;{tokenDetails?.symbol}
-            </span>
+            </span>}
+            {(_.isEmpty(balance) || _.isEmpty(userInfo)) && <span>
+              0&nbsp;{tokenDetails?.symbol}
+            </span>}
             <p>Locked-in </p>
-            <span>
+            {!_.isEmpty(balance) && !_.isEmpty(userInfo) && <span>
               <AnimatedNumber
                 value={(wrongChain || !isAuth) ? 0 : userInfo.staked}
                 formatValue={numberWithCommas}
               />&nbsp;{tokenDetails?.symbol}
-            </span>
+            </span>}
+            {(_.isEmpty(balance) || _.isEmpty(userInfo)) && <span>
+              0&nbsp;{tokenDetails?.symbol}
+            </span>}
           </div>
         </div>
       </div>
