@@ -13,6 +13,7 @@ import moment from "moment";
 import {DATETIME_FORMAT} from "../../../constants";
 import {renderErrorCreatePool} from "../../../utils/validate";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
+import BigNumber from "bignumber.js";
 
 const useStylesTable = makeStyles({
   table: {
@@ -150,8 +151,8 @@ function TierTable(props: any) {
             {rows.map((row: any, index: number) => {
               let startTime = row.startTime;
               let endTime = row.endTime;
-              let minBuy = row.minBuy || '0';
-              let maxBuy = row.maxBuy || '0';
+              let minBuy = new BigNumber(row.minBuy || '0').toFixed();
+              let maxBuy = new BigNumber(row.maxBuy || '0').toFixed();
               if (index < minTier) {
                 startTime = '--';
                 endTime = '--';

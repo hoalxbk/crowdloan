@@ -88,8 +88,8 @@ class PoolController {
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
-          max_buy: item.maxBuy,
-          min_buy: item.minBuy,
+          min_buy: new BigNumber(item.minBuy).toFixed(),
+          max_buy: new BigNumber(item.maxBuy).toFixed(),
           currency: item.currency,
         });
         return tierObj;
@@ -169,8 +169,8 @@ class PoolController {
             name: item.name,
             start_time: moment(item.startTime).unix(),
             end_time: moment(item.endTime).unix(),
-            min_buy: item.minBuy,
-            max_buy: item.maxBuy,
+            min_buy: new BigNumber(item.minBuy).toFixed(),
+            max_buy: new BigNumber(item.maxBuy).toFixed(),
             currency: item.currency,
           });
           return tierObj;
