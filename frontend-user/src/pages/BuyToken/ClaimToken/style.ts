@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: any) => {
       padding: '20px 40px',
       backgroundColor: 'rgba(255, 255, 255, 0.06)',
       borderRadius: 8,
-      width: '60%',
+      width: '50%',
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',

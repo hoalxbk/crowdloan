@@ -10,7 +10,9 @@ const useStyles = makeStyles((theme: any) => {
       }
     },
     buyTokenForm: {
-      marginTop: 30
+      marginTop: 30,
+      marginRight: 120,
+      width: '50%'
     },
     buyTokenFormTitle: {
       fontSize: 15,
@@ -79,11 +81,17 @@ const useStyles = makeStyles((theme: any) => {
         }
       }
     },
-    minimumBuyWarning: {
+    poolErrorBuyWarning: {
       marginTop: 25,
       fontWeight: 'bold',
       color: '#fff100',
       fontSize: 15
+    },
+    poolErrorBuy: {
+      marginTop: 25,
+      fontWeight: 'bold',
+      fontSize: 15,
+      color: '#D01F36'
     },
     purchasableCurrency: {
       display: 'flex',
