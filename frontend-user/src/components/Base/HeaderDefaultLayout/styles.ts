@@ -174,6 +174,7 @@ const useStyles = makeStyles((theme) => {
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
         display: 'none',
+        zIndex: 5,
 
         '&.active': {
           display: 'flex'

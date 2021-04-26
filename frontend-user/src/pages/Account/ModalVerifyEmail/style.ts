@@ -14,6 +14,19 @@ const useStyles = makeStyles((theme: any) => {
       '& .disabled': {
         backgroundColor: 'silver'
       }
+    },
+
+    [theme.breakpoints.down('xs')]: {
+      modalVerifyEmail: {
+        '& .modal-content': {
+          maxWidth: '100%',
+          padding: '15px'
+        },
+        '& .modal-content__foot button': {
+          paddingRight: '50px',
+          paddingLeft: '50px'
+        }
+      }
     }
   };
 });
