@@ -7,7 +7,7 @@ class AddFieldMinBuyToTiersTableSchema extends Schema {
   up () {
     this.table('tiers', (table) => {
       // alter table
-      table.float('min_buy').nullable().defaultTo(0);
+      table.float('min_buy', 40, 16).nullable().defaultTo(0);
     })
   }
 

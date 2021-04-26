@@ -121,6 +121,8 @@ function PoolForm(props: any) {
       wallet: isEdit ? poolDetail?.wallet : {},
     };
 
+    console.log('[createUpdatePool] - Submit with data: ', submitData);
+
     let response = {};
     if (isEdit) {
       response = await updatePool(submitData, poolDetail.id);
@@ -168,6 +170,8 @@ function PoolForm(props: any) {
       token_images: data.tokenImages,
       total_sold_coin: data.totalSoldCoin,
     };
+
+    console.log('[updatePoolAfterDeloy] - Submit with data: ', submitData);
 
     let response = await updatePool(submitData, poolDetail.id);
 
@@ -281,6 +285,8 @@ function PoolForm(props: any) {
         // Wallet
         wallet: isEdit ? poolDetail?.wallet : {},
       };
+
+      console.log('[handleDeloySubmit] - Submit with data: ', submitData);
 
       await dispatch(deployPool(submitData, history));
       setLoadingDeploy(false);
