@@ -65,13 +65,19 @@ function PoolForm(props: any) {
   });
 
   const createUpdatePool = async (data: any) => {
+    const minTier = data.minTier;
     let tierConfiguration = data.tierConfiguration || '[]';
     tierConfiguration = JSON.parse(tierConfiguration);
     tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
-      return {
+      const item = {
         ...currency,
         currency: data.acceptCurrency,
       };
+      if (index < minTier) {
+        item.maxBuy = 0;
+        item.minBuy = 0;
+      }
+      return item;
     });
 
     const tokenInfo = await getTokenInforDetail(data.token);
@@ -231,13 +237,19 @@ function PoolForm(props: any) {
       const tokenInfo = await getTokenInforDetail(data.token);
 
       const history = props.history;
+      const minTier = data.minTier;
       let tierConfiguration = data.tierConfiguration || '[]';
       tierConfiguration = JSON.parse(tierConfiguration);
       tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
-        return {
+        const item = {
           ...currency,
           currency: data.acceptCurrency,
         };
+        if (index < minTier) {
+          item.maxBuy = 0;
+          item.minBuy = 0;
+        }
+        return item;
       });
 
       const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;

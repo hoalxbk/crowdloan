@@ -108,8 +108,8 @@ function TierTable(props: any) {
   };
 
   const acceptCurrency = watch('acceptCurrency');
+  const minTier = watch('minTier');
   const isDeployed = !!poolDetail?.is_deploy;
-
   return (
     <>
       {isOpenEditPopup &&
@@ -147,34 +147,47 @@ function TierTable(props: any) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row: any, index: number) => (
-              <TableRow key={index}>
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell align="right">{row.startTime}</TableCell>
-                <TableCell align="right">{row.endTime}</TableCell>
-                <TableCell align="right">{row.minBuy || '0'}</TableCell>
-                <TableCell align="right">{row.maxBuy}</TableCell>
-                <TableCell align="right">{(acceptCurrency + '').toUpperCase()}</TableCell>
-                <TableCell align="right">
+            {rows.map((row: any, index: number) => {
+              let startTime = row.startTime;
+              let endTime = row.endTime;
+              let minBuy = row.minBuy || '0';
+              let maxBuy = row.maxBuy || '0';
+              if (index < minTier) {
+                startTime = '--';
+                endTime = '--';
+                minBuy = '0';
+                maxBuy = '0';
+              }
 
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={(e) => openPopupEdit(e, row, index)}
-                    disabled={isDeployed}
-                  >Edit</Button>
+              return (
+                <TableRow key={index}>
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell align="right">{startTime}</TableCell>
+                  <TableCell align="right">{endTime}</TableCell>
+                  <TableCell align="right">{minBuy}</TableCell>
+                  <TableCell align="right">{maxBuy}</TableCell>
+                  <TableCell align="right">{(acceptCurrency + '').toUpperCase()}</TableCell>
+                  <TableCell align="right">
 
-                  {/*<Button*/}
-                  {/*  variant="contained"*/}
-                  {/*  color="secondary"*/}
-                  {/*  onClick={(e) => deleteTier(e, row, index)}*/}
-                  {/*  style={{marginLeft: 10, marginTop: 10}}*/}
-                  {/*>Delete</Button>*/}
-                </TableCell>
-              </TableRow>
-            ))}
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={(e) => openPopupEdit(e, row, index)}
+                      disabled={isDeployed || (index < minTier)}
+                    >Edit</Button>
+
+                    {/*<Button*/}
+                    {/*  variant="contained"*/}
+                    {/*  color="secondary"*/}
+                    {/*  onClick={(e) => deleteTier(e, row, index)}*/}
+                    {/*  style={{marginLeft: 10, marginTop: 10}}*/}
+                    {/*>Delete</Button>*/}
+                  </TableCell>
+                </TableRow>
+              )
+            })}
           </TableBody>
         </Table>
       </TableContainer>
