@@ -61,11 +61,9 @@ const Tiers = (props: any) => {
     if(_.isEmpty(userInfo) || _.isEmpty(userTier)) return;
     if(!showMoreInfomation) {
       let process = calculateProcess(tiers, userInfo.staked);
-      process = process > 2 ? process - 2 : 0
-      setCurrentProcess(process);
+      setCurrentProcess(50);
     } else if(showMoreInfomation) {
       let process = userTier*100/(tiersBuyLimit.length - 1)
-      process = process > 2 ? process - 2 : 0
       setCurrentProcess(process);
     }
     setLoading(false);
