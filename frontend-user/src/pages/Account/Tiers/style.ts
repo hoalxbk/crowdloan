@@ -26,7 +26,6 @@ const useStyles = makeStyles((theme: any) => {
         fontSize: '14px',
         lineHeight: '24px',
         color: '#999999',
-        marginLeft: '10px',
       }
     },
     tierLinkToAccount: {

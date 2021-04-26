@@ -185,10 +185,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
     if (
       input && 
-      new BigNumber(estimateTokens).gt(new BigNumber(poolBalance)) 
+      new BigNumber(estimateTokens).gt(new BigNumber(poolAmount)) 
     ) {
       return {
-        message: `You can only buy  up to ${numberWithCommas(`${poolBalance}`)} RED HOA .`,
+        message: `You can only buy  up to ${numberWithCommas(`${poolAmount}`)} RED HOA .`,
         type: MessageType.error
       }
     }

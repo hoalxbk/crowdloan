@@ -12,7 +12,11 @@ const useStyles = makeStyles((theme: any) => {
     buyTokenForm: {
       marginTop: 30,
       marginRight: 120,
-      width: '50%'
+      width: '50%',
+
+      [theme.breakpoints.down('xs')]: {
+        width: '100%'
+      },
     },
     buyTokenFormTitle: {
       fontSize: 15,
