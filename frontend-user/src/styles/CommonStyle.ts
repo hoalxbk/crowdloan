@@ -392,12 +392,6 @@ const useCommonStyle = makeStyles((theme) => {
           }
         }
       },
-      [theme.breakpoints.down('xs')]: {
-        width: '100vw',
-        '& .modal-content': {
-          width: 'calc(100% - 40px)'
-        }
-      }
     },
     nnb2832d: {
       font: 'normal normal 700 28px/32px DM Sans',
@@ -423,6 +417,36 @@ const useCommonStyle = makeStyles((theme) => {
     nnn1218h: {
       font: 'normal normal 400 12px/18px Helvetica',
     },
+
+    [theme.breakpoints.down('xs')]: {
+      modal: {
+        width: '100vw',
+        '& .modal-content': {
+          width: 'calc(100% - 40px)',
+          padding: '15px',
+        },
+        '& .modal-content__foot': {
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+  
+          '& button': {
+            padding: '12px 30px',
+            width: '100%',
+            marginBottom: '15px',
+          }
+        }
+      },
+      loadingTransaction: {
+        width: '100vw',
+        height: '100vh',
+  
+        '& .content': {
+          width: 'calc(100% - 40px)',
+          padding: '15px',
+        },
+      },
+    }
   };
 });
 

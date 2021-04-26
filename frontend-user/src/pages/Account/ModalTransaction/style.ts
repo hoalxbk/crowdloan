@@ -33,6 +33,16 @@ const useStyles = makeStyles((theme: any) => {
         width: '100%',
         color: '#FFFFFF'
       }
+    },
+    [theme.breakpoints.down('xs')]: {
+      modalTransaction: {
+        '& .modal-content': {
+          width: 'calc(100% - 40px)',
+        },
+        '& .modal-content__body': {
+          padding: '0'
+        }
+      }
     }
   };
 });

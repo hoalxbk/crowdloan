@@ -3,9 +3,7 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme: any) => {
   return {
     alertVerifyEmail: {
-      position: 'absolute',
-      top: 0, 
-      left: 0,
+      position: 'relative',
       width: '100%',
       padding: '10px 0',
       display: 'flex',
@@ -16,8 +14,9 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .btn-close': {
         position: 'absolute',
-        top: '10px',
+        top: '50%',
         right: '20px',
+        transform: 'translateY(-50%)'
       },
 
       '& span': {
