@@ -457,6 +457,7 @@ class CampaignController {
           console.log(`Do not found currency support ${camp.accept_currency} of campaignId ${campaign_id} `);
           return HelperUtils.responseErrorInternal("Internal Server Error !");
       }
+      // TODO get from DB
       const receipt = await Promise.all([
         poolContract.methods.getOfferedCurrencyRate(scCurrency).call(),
         poolContract.methods.getOfferedCurrencyDecimals(scCurrency).call()
@@ -469,7 +470,7 @@ class CampaignController {
       const minTokenAmount = new BigNumber (minBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
       console.log(minTokenAmount, maxTokenAmount, userWalletAddress);
       // get message hash
-      const messageHash = await poolContract.methods.getMessageHash(userWalletAddress, maxTokenAmount, minTokenAmount).call();
+      const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenAmount, minTokenAmount);
       console.log(`message hash ${messageHash}`);
       const privateKey = wallet.private_key;
       console.log(`private key ${privateKey}`)
