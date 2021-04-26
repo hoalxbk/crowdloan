@@ -43,13 +43,13 @@ const AccountInformation = (props: any) => {
                 Verify Email
               </button>}
           </>}
-          {isWidthDown('xs', props.width) && <>
+          {isWidthDown('xs', props.width) && <div className="email-xs">
             {email && <span>{email}</span>}
             {(emailVerified == USER_STATUS.UNVERIFIED || !email) &&
               <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
                 Verify Email
               </button>}
-          </>}
+          </div>}
         </div>
         <div className={styles.inputGroup}>
           <span>Your Wallet</span>

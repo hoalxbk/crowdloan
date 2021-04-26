@@ -74,7 +74,7 @@ const Tiers = (props: any) => {
   }, [currentProcess])
 
   return (
-    <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>
+    <div className={styles.tierComponent + (true ? ' active' : ' inactive')}>
       {showMoreInfomation && <div className={styles.title}>
         <>
           <p>

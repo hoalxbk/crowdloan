@@ -27,6 +27,7 @@ const Account = (props: any) => {
   const { data: balance = {} } = useSelector((state: any) => state.balance);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
   const { tokenDetails } = useTokenDetails(TOKEN_ADDRESS, 'eth');
   const { data: data = {}, loading, error } = useFetch<any>(`/user/profile?wallet_address=${connectedAccount}`);
   const [emailVerified, setEmailVeryfied] = useState(0);
@@ -42,6 +43,12 @@ const Account = (props: any) => {
     }
   }, [isAuth, wrongChain, connectedAccount]);
 
+  // useEffect(()=>{
+  //   if(!connectedAccount) {
+  //     props.history.push('/dashboard');
+  //   }
+  // }, [connectedAccount])
+
   useEffect(() => {
     console.log('data', data)
     if(data && data.user && data.user) {
@@ -55,12 +62,13 @@ const Account = (props: any) => {
 
   return (
     <DefaultLayout>
+      {emailVerified == USER_STATUS.UNVERIFIED && !loading && showAlertVerifyEmail && <div className={classes.alertVerifyEmail}>
+        &nbsp;&nbsp;<img src={iconWarning}/>
+        <img src={iconClose} className="btn-close" onClick={() => setShowAlertVerifyEmail(false)}/>
+        &nbsp;&nbsp;
+        <span>Your account has not been verified. To verify your account, please click on Verify Email button.</span>
+      </div>}
       <div className={classes.accountContainer}>
-        {emailVerified == USER_STATUS.UNVERIFIED && !loading && showAlertVerifyEmail && <div className={classes.alertVerifyEmail}>
-          <img src={iconWarning}/>
-          <img src={iconClose} className="btn-close" onClick={() => setShowAlertVerifyEmail(false)}/>
-          <span>&nbsp;&nbsp;Your account has not been verified. To verify your account, please click on Verify Email button.</span>
-        </div>}
         <div className={classes.leftPanel}>
           <AccountInformation
             classNamePrefix="account-infomation"
