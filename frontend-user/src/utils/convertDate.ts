@@ -42,3 +42,7 @@ export const unixTimeNow = () => {
 export const unixTime = (time: any) => {
   return moment(time).unix();
 }
+
+export const timeAgo = (time: any) => {
+  return moment(time).fromNow()
+}

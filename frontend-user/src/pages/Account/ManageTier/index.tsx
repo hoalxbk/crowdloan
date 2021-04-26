@@ -12,6 +12,7 @@ import useAuth from '../../../hooks/useAuth';
 //@ts-ignore
 import AnimatedNumber from "animated-number-react";
 import { numberWithCommas } from '../../../utils/formatNumber';
+import { timeAgo } from '../../../utils/convertDate';
 import { USER_STATUS } from '../../../constants';
 
 const iconClose = '/images/icons/close.svg'
@@ -148,7 +149,7 @@ const ManageTier = (props: any) => {
           </div>
           <div className="last-deposit">
             <span className={styles.textDefault}>Last Deposit</span>
-            <span>0 day(s) ago</span>
+            <span>{userInfo.stakedTime != '0' ? timeAgo(parseInt(userInfo.stakedTime)*1000) : '0 days ago'}</span>
           </div>
         </div>
       </div>
