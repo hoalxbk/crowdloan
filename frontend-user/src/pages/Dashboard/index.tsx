@@ -75,7 +75,7 @@ const Dashboard = (props: any) => {
 
   return (
     <DefaultLayout>
-      <BackgroundComponent/>
+      {/* <BackgroundComponent/> */}
       <div className={styles.listPools}>
         <h2>Upcoming Pools</h2>
         <div className="pools">
