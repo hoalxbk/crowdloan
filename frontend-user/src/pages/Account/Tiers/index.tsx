@@ -29,7 +29,6 @@ const Tiers = (props: any) => {
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
 
   const calculateProcess = (ListData: any, current: any) => {
-    current = 10;
     let tierA = 0;
     let tierB = 0;
     let overTier = true;
@@ -60,7 +59,7 @@ const Tiers = (props: any) => {
     }
     if(_.isEmpty(userInfo) || _.isEmpty(userTier)) return;
     if(!showMoreInfomation) {
-      let process = calculateProcess(tiers, userInfo.staked);
+      let process = calculateProcess(tiers, '7500');
       setCurrentProcess(process);
     } else if(showMoreInfomation) {
       let process = userTier*100/(tiersBuyLimit.length - 1)
@@ -74,7 +73,7 @@ const Tiers = (props: any) => {
   }, [currentProcess])
 
   return (
-    <div className={styles.tierComponent + (true ? ' active' : ' inactive')}>
+    <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>
       {showMoreInfomation && <div className={styles.title}>
         <>
           <p>
