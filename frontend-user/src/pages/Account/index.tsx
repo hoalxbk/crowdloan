@@ -43,8 +43,14 @@ const Account = (props: any) => {
   }, [isAuth, wrongChain, connectedAccount]);
 
   useEffect(() => {
-    data && data.user && data.user.email && setEmail(data.user.email)
-    data && data.user && data.user.status && setEmailVeryfied(data.user.status)
+    console.log('data', data)
+    if(data && data.user && data.user) {
+      setEmail(data.user.email)
+      setEmailVeryfied(data.user.status)
+    } else {
+      setEmail('')
+      setEmailVeryfied(USER_STATUS.UNVERIFIED)
+    }
   }, [data]);
 
   return (
@@ -53,7 +59,7 @@ const Account = (props: any) => {
         {emailVerified == USER_STATUS.UNVERIFIED && !loading && showAlertVerifyEmail && <div className={classes.alertVerifyEmail}>
           <img src={iconWarning}/>
           <img src={iconClose} className="btn-close" onClick={() => setShowAlertVerifyEmail(false)}/>
-          <span>&nbsp;&nbsp;Your account has not been verified. To verify your account, please click on Verify Email button</span>
+          <span>&nbsp;&nbsp;Your account has not been verified. To verify your account, please click on Verify Email button.</span>
         </div>}
         <div className={classes.leftPanel}>
           <AccountInformation

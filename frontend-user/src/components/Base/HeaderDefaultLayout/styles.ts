@@ -165,7 +165,7 @@ const useStyles = makeStyles((theme) => {
         position: 'fixed',
         backgroundColor: '#030926',
         width: '100%',
-        height: '100%',
+        height: '100vh',
         top: 0,
         left: 0,
         margin: 0,
@@ -174,6 +174,7 @@ const useStyles = makeStyles((theme) => {
         alignItems: 'flex-start',
         justifyContent: 'flex-start',
         display: 'none',
+        zIndex: 5,
 
         '&.active': {
           display: 'flex'

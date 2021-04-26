@@ -47,12 +47,12 @@ const useStyles = makeStyles((theme: any) => {
       [theme.breakpoints.down('sm')]: {
         gridTemplateColumns: '1fr',
         padding: '40px',
-        marginTop: '120px',
+        paddingTop: '150px',
       },
       [theme.breakpoints.only('xs')]: {
         gridTemplateColumns: '1fr',
         padding: '20px',
-        marginTop: '40px',
+        paddingTop: '100px',
       },
     },
     leftPanel: {
