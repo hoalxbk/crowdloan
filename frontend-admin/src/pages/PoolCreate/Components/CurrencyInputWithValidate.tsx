@@ -18,7 +18,7 @@ function CurrencyInputWithValidate(props: any) {
       <CurrencyInput
         placeholder="Please enter a number"
         value={value}
-        decimalsLimit={10}
+        decimalsLimit={6}
         onValueChange={(value: any, name: any) => {
           setValue(value);
         }}

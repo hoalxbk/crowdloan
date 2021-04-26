@@ -56,8 +56,8 @@ function TierTable(props: any) {
           item.name,
           moment.unix(item.start_time).format(DATETIME_FORMAT),
           moment.unix(item.end_time).format(DATETIME_FORMAT),
-          item.min_buy,
-          item.max_buy,
+          (new BigNumber(item.min_buy)).toNumber(),
+          (new BigNumber(item.max_buy)).toNumber(),
           false
         );
       });
