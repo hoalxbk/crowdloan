@@ -21,6 +21,7 @@ import { Checkbox } from 'antd';
 import {filter, cloneDeep, includes} from 'lodash';
 import Pagination from "@material-ui/lab/Pagination";
 import useStylesTable from './style_table';
+import {BUY_TYPE} from "../../../../constants";
 
 const REACT_APP_SOTATIER = process.env.REACT_APP_SOTATIER || '';
 
@@ -33,6 +34,10 @@ function UserParticipant(props: any) {
   const getParticipantUserWithTier = async (poolId: any, searchParams: any) => {
     try {
       let participantsUsers = await getParticipantUser(poolId, searchParams);
+
+      if (poolDetail.buy_type === BUY_TYPE.FCFS) {
+        return participantsUsers;
+      }
 
       // Call Multi get Tiers
       let users = participantsUsers?.data?.data || [];
