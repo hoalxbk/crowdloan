@@ -77,7 +77,6 @@ const Tiers = (props: any) => {
     <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>
       {showMoreInfomation && <div className={styles.title}>
         <>
-          <img src={warningIcon} />
           <p>
             You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}.&nbsp; 
           To upgrade your tier, please click&nbsp;
