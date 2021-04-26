@@ -151,7 +151,11 @@ const useStyles = makeStyles((theme: any) => {
 
       '&:not(:first-child)': {
         marginTop: 30
-      }
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        gridTemplateColumns: '1fr 2fr',
+      },
     },
     poolDetailBasicIcon: {
       marginRight: 10,

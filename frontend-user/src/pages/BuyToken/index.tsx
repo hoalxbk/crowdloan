@@ -235,22 +235,26 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {poolDetails?.title}
                 </h2>
                 <p className={styles.poolHeaderAddress}>
-                  {isWidthUp('sm', props.width) && poolDetails?.poolAddress}
-                  {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.poolAddress || '', 8)}
+                  {isWidthUp('sm', props.width) && poolDetails?.isDeployed && poolDetails?.poolAddress}
+                  {isWidthDown('xs', props.width) && poolDetails?.isDeployed && shortenAddress(poolDetails?.poolAddress || '', 8)}
 
-                  <CopyToClipboard text={poolDetails?.poolAddress}
-                    onCopy={() => { 
-                      setCopiedAddress(true);
-                      setTimeout(() => {
-                        setCopiedAddress(false);
-                      }, 2000);
-                    }}
-                  >
-                    {
-                      !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
-                      : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
-                    }
-                  </CopyToClipboard>
+                  {
+                    poolDetails?.isDeployed && (
+                      <CopyToClipboard text={poolDetails?.poolAddress}
+                      onCopy={() => { 
+                        setCopiedAddress(true);
+                        setTimeout(() => {
+                          setCopiedAddress(false);
+                        }, 2000);
+                        }}
+                      >
+                      {
+                        !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
+                        : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
+                        }
+                        </CopyToClipboard>
+                    )
+                  }
                 </p>
               </div>
             </div>
