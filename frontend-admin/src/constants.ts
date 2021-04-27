@@ -17,4 +17,8 @@ export const POOL_TYPE = {
   SWAP: 'swap',
   CLAIMABLE: 'claimable',
 };
+export const NETWORK_AVAILABLE = {
+  ETH: 'eth',
+  BSC: 'bsc',
+};
 export const DEFAULT_LIMIT = 10;
