@@ -184,7 +184,7 @@ const BuyToken: React.FC<any> = (props: any) => {
           setIsWinner(true);
         }
       });
-    }
+    } else setIsWinner(false);
   }, [poolDetails, winners, connectedAccount]);
 
   useEffect(() => {
