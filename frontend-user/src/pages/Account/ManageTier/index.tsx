@@ -106,7 +106,7 @@ const ManageTier = (props: any) => {
           <button
             className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalWithdraw(true)}}
-            // disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
             Unlock
           </button>
