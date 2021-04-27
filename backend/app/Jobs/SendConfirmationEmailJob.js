@@ -33,7 +33,7 @@ class SendConfirmationEmailJob {
       message
         .to(mailData.email)
         .from(from)
-        .subject('[SotatekStarter] Verify your email.')
+        .subject('[RedKite] Verify your email.')
     }).catch(e => {
       console.log('ERROR Send Mail: ', e);
       throw e;
@@ -43,7 +43,7 @@ class SendConfirmationEmailJob {
     //   message
     //     .to(mailData.email)
     //     .from(Env.get('MAIL_FROM'))
-    //     .subject('[SotatekStarter] Verify your account.')
+    //     .subject('[RedKite] Verify your account.')
     // });
   }
 

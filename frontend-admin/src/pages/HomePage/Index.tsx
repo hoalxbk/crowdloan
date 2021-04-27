@@ -130,7 +130,7 @@ const HomePage = (props: any) => {
       <div className={styles.header}>
         <div className={styles.logo}>
           <img src="/images/dashboard/logo.svg" alt="Logo"/>
-          <span style={{ marginLeft: 8 }}>SotatekStarter</span>
+          <span style={{ marginLeft: 8 }}>RedKite</span>
         </div>
         <div>
           <button className={styles.logoutBtn} onClick={() => dispatch(logout())}>Log out</button>

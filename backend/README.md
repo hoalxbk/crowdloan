@@ -57,7 +57,7 @@ SMTP_PORT=2525
 MAIL_USERNAME=your_mailtrap_username
 MAIL_PASSWORD=your_mailtrap_password
 MAIL_ENCRYPTION=tls
-MAIL_FROM_NAME=SotatekStarter
+MAIL_FROM_NAME=RedKite
 ```
 
 
