@@ -174,11 +174,11 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     // Check if user is winning ticket or not
-    if (poolDetails?.method === "whitelist" && winners && winners.length > 0) {
+    if (poolDetails?.method === "whitelist" && winners) {
       let isFound = false;
       setIsWinner(false);
 
-      winners.forEach(winner => {
+      winners.length > 0 && winners.forEach(winner => {
         if (winner.wallet_address === connectedAccount && !isFound) {
           console.log(`Account ${connectedAccount} won ticket`);
           setIsWinner(true);

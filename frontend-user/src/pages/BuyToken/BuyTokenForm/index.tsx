@@ -188,7 +188,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       new BigNumber(estimateTokens).gt(new BigNumber(poolAmount)) 
     ) {
       return {
-        message: `You can only buy  up to ${numberWithCommas(`${poolAmount}`)} RED HOA .`,
+        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} RED HOA .`,
         type: MessageType.error
       }
     }
@@ -199,6 +199,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     estimateTokens,
     poolBalance, 
     poolAmount, 
+    userPurchased,
     purchasableCurrency, 
     input, 
     startBuyTimeInDate, 
