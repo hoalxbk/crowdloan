@@ -135,7 +135,7 @@ class ReservedListController {
 
   async checkExistReserve({ request, params }) {
     try {
-      console.log('[addReserveUser] - Params: ', params);
+      console.log('[checkExistReserve] - Params: ', params);
       const inputParams = request.only(['wallet_address', 'campaign_id']);
 
       const reservedService = new ReservedListService();

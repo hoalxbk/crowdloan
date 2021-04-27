@@ -65,13 +65,19 @@ function PoolForm(props: any) {
   });
 
   const createUpdatePool = async (data: any) => {
+    const minTier = data.minTier;
     let tierConfiguration = data.tierConfiguration || '[]';
     tierConfiguration = JSON.parse(tierConfiguration);
     tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
-      return {
+      const item = {
         ...currency,
         currency: data.acceptCurrency,
       };
+      if (index < minTier) {
+        item.maxBuy = 0;
+        item.minBuy = 0;
+      }
+      return item;
     });
 
     const tokenInfo = await getTokenInforDetail(data.token);
@@ -121,6 +127,8 @@ function PoolForm(props: any) {
       wallet: isEdit ? poolDetail?.wallet : {},
     };
 
+    console.log('[createUpdatePool] - Submit with data: ', submitData);
+
     let response = {};
     if (isEdit) {
       response = await updatePool(submitData, poolDetail.id);
@@ -169,6 +177,8 @@ function PoolForm(props: any) {
       total_sold_coin: data.totalSoldCoin,
     };
 
+    console.log('[updatePoolAfterDeloy] - Submit with data: ', submitData);
+
     let response = await updatePool(submitData, poolDetail.id);
 
     return response;
@@ -215,8 +225,8 @@ function PoolForm(props: any) {
       return false;
     }
     // eslint-disable-next-line no-restricted-globals
-    if (!confirm('You have not saved the edited information. \n' +
-     'Would you like to make that information public?')) {
+    if (!confirm('The system will store the latest pool information.\n' +
+     'Are you sure you want to deploy?')) {
       return false;
     }
 
@@ -227,13 +237,19 @@ function PoolForm(props: any) {
       const tokenInfo = await getTokenInforDetail(data.token);
 
       const history = props.history;
+      const minTier = data.minTier;
       let tierConfiguration = data.tierConfiguration || '[]';
       tierConfiguration = JSON.parse(tierConfiguration);
       tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
-        return {
+        const item = {
           ...currency,
           currency: data.acceptCurrency,
         };
+        if (index < minTier) {
+          item.maxBuy = 0;
+          item.minBuy = 0;
+        }
+        return item;
       });
 
       const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
@@ -281,6 +297,8 @@ function PoolForm(props: any) {
         // Wallet
         wallet: isEdit ? poolDetail?.wallet : {},
       };
+
+      console.log('[handleDeloySubmit] - Submit with data: ', submitData);
 
       await dispatch(deployPool(submitData, history));
       setLoadingDeploy(false);

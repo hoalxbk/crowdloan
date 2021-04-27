@@ -37,7 +37,7 @@ const LeftDefaultLayout = (props: any) => {
 
       {
         !smallLeft &&
-        <div className={styles.Copyright}>Copyright @SotatekStarter 2021. All rights reserved.</div>
+        <div className={styles.Copyright}>Copyright @RedKite 2021. All rights reserved.</div>
       }
     </div>
   );

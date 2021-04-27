@@ -39,8 +39,9 @@ function DisplaySwitch(props: any) {
 
   return (
     <>
+      <div><label className={classes.formControlLabel}>Display</label></div>
+      <div style={{color: 'red'}}>Users will not see Campaigns while the campaign is in the hidden state</div>
       <FormControl component="fieldset">
-        <label className={classes.formControlLabel}>Display</label>
         <Controller
           control={control}
           name="is_display"

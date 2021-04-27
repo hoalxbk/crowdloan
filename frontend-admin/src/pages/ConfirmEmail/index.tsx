@@ -79,7 +79,7 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
       <div className={classes.forgotPassword}>
         <span className="forgot-ps__logo">
           <img src={loginLogo} alt="login-logo" />
-          <h2 className="forgot-ps__brand">SotatekStarter</h2>
+          <h2 className="forgot-ps__brand">RedKite</h2>
         </span>
         <div className="forgot-ps__wrap">
           {
