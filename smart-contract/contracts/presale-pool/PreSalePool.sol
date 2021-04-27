@@ -492,6 +492,8 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         uint256 _minAmount,
         bytes memory _signature
     ) private view returns (bool) {
+        require(msg.sender == _candidate, "POOL::WRONG_CANDIDATE");
+        
         if (useWhitelist) {
             return (verify(signer, _candidate, _maxAmount, _minAmount, _signature));
         }
@@ -509,6 +511,8 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         uint256 _amount,
         bytes memory _signature
     ) private view returns (bool) {
+        require(msg.sender == _candidate, "POOL::WRONG_CANDIDATE");
+        
         return (verifyClaimToken(signer, _candidate, _amount, _signature));
     }
 }
