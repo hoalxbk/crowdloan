@@ -134,7 +134,7 @@ class UserAuthController {
       const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address);
 
       console.log('[registerVerifyEmail]: Wallet Address: ', wallet_address);
-      let user = await (new UserService).findUser({ wallet_address });
+      let user = await UserModel.query().where('wallet_address', wallet_address).first();
       console.log('[registerVerifyEmail]: User:  ', user);
 
       if (!user) {
