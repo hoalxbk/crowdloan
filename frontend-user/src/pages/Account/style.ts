@@ -15,13 +15,14 @@ const useStyles = makeStyles((theme: any) => {
       '& .btn-close': {
         position: 'absolute',
         top: '50%',
-        right: '20px',
+        right: '15px',
         transform: 'translateY(-50%)'
       },
 
       '& span': {
         font: 'normal normal 400 14px/24px Helvetica',
-        color: '#FFFFFF'
+        color: '#FFFFFF',
+        paddingRight: '40px'
       }
     },
     errorBanner: {

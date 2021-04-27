@@ -60,7 +60,7 @@ const useStyles = makeStyles((theme: any) => {
         zIndex: 1,
         transition: '1s',
         transitionDelay: '0.5s',
-        transitionTimingFunction: 'easy-in',
+        transitionTimingFunction: 'linear',
 
         '&.inactive': {
           width: '0!important'
@@ -76,10 +76,11 @@ const useStyles = makeStyles((theme: any) => {
       width: '1px',
       whiteSpace: 'nowrap',
 
-      '& div': {
+      '& .icon': {
         marginBottom: '15px',
         width: '28px',
         height: '28px',
+        minWidth: '28px',
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
@@ -87,7 +88,13 @@ const useStyles = makeStyles((theme: any) => {
         borderRadius: '50%',
       },
 
-      '&.active > div': {
+      '& .info': {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
+      },
+
+      '&.active > .icon': {
         backgroundColor: '#232394',
       },
 
@@ -95,7 +102,15 @@ const useStyles = makeStyles((theme: any) => {
         alignItems: 'flex-end'
       },
 
+      '&:last-child .info': {
+        alignItems: 'flex-end'
+      },
+
       '&:nth-child(2)': {
+        alignItems: 'flex-start'
+      },
+
+      '&:nth-child(2) .info': {
         alignItems: 'flex-start'
       },
 
@@ -115,9 +130,22 @@ const useStyles = makeStyles((theme: any) => {
     },
     [theme.breakpoints.down('xs')]: {
       tierInfo: {
+        display: 'flex',
+        flexDirection: 'row',
+        width: 'auto',
+        height: '1px',
+
+        '& .info': {
+          alignItems: 'flex-start',
+          marginLeft: '20px'
+        },
+
+        '& .icon': {
+          marginBottom: '0'
+        },
+
         '& span:last-child': {
-          height: '36px',
-          textAlign: 'center'
+          height: '18px',
         },
         '&:nth-child(2) span:last-child': {
           width: '100%',
@@ -125,6 +153,41 @@ const useStyles = makeStyles((theme: any) => {
         },
         '&:last-child span:last-child': {
           textAlign: 'right'
+        },
+
+        '&:last-child .info': {
+          alignItems: 'flex-start'
+        },
+      },
+      tierList: {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        position: 'relative',
+        height: '310px',
+
+        '&::before': {
+          content: '""',
+          display: 'block',
+          width: '5px',
+          height: '100%',
+          position: 'absolute',
+          top: '0',
+          left: '11.5px',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        },
+        '& li.process': {
+          height: '0',
+          width: '5px',
+          position: 'absolute',
+          top: '0',
+          left: '11.5px',
+  
+          '&.inactive': {
+            width: '5!important',
+            height: '0!important'
+          }
         }
       }
     }

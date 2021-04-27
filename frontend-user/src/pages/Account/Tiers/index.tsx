@@ -6,8 +6,7 @@ import { TIERS } from '../../../constants';
 import useStyles from './style';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
-//@ts-ignore
-import { Fade } from 'react-reveal';
+import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
 
 const warningIcon = '/images/icons/warning.svg';
 
@@ -86,14 +85,17 @@ const Tiers = (props: any) => {
         </>
       </div>}
       <ul className={styles.tierList}>
-        <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{width:`${currentProcess}%`}}></li>
+        {isWidthUp('sm', props.width) && <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{width:`${currentProcess}%`}}></li>}
+        {isWidthDown('xs', props.width) && <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{height:`${currentProcess}%`}}></li>}
         <li className={styles.tierInfo + ' active'}>
           <div className="icon">
             <img src={TIERS[0].icon} />
           </div>
-          <span className="tier-name">{TIERS[0].name}</span>
-          {!showMoreInfomation && <span>0</span>}
-          {showMoreInfomation && <span>{tiersBuyLimit[0]} {tokenSymbol}</span>}
+          <div className="info">
+            <span className="tier-name">{TIERS[0].name}</span>
+            {!showMoreInfomation && <span>0</span>}
+            {showMoreInfomation && <span>{tiersBuyLimit[0]} {tokenSymbol}</span>}
+          </div>
         </li>
         {tiers.length > 0 && tiers.map((tier: any, idx: any) => {
           if(tier != 0) {
@@ -101,9 +103,11 @@ const Tiers = (props: any) => {
               <div className="icon">
                 <img src={TIERS[idx + 1].icon} />
               </div>
-              <span className="tier-name">{TIERS[idx + 1].name}</span>
-              { !showMoreInfomation && <span>{tier} {tokenSymbol}</span> }
-              { showMoreInfomation && <span>{tiersBuyLimit[idx + 1]} {tokenSymbol}</span> }
+              <div className="info">
+                <span className="tier-name">{TIERS[idx + 1].name}</span>
+                { !showMoreInfomation && <span>{tier} {tokenSymbol}</span> }
+                { showMoreInfomation && <span>{tiersBuyLimit[idx + 1]} {tokenSymbol}</span> }
+              </div>
             </li>
           }
         })}
@@ -112,4 +116,4 @@ const Tiers = (props: any) => {
   );
 };
 
-export default Tiers;
+export default withWidth()(Tiers);
