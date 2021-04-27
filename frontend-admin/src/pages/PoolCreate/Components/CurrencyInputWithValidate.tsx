@@ -27,7 +27,7 @@ function CurrencyInputWithValidate(props: any) {
       <input
         type='hidden'
         name={controlName}
-        value={value || ''}
+        value={value}
         ref={register(validateRule)}
       />
 

@@ -29,11 +29,14 @@ class SendConfirmationEmailJob {
     console.log('SendConfirmationEmailJob-job started', data);
     const mailData = data;
     const from = Env.get('MAIL_FROM_ADDRESS');
+
+    const subject = '[RedKite] Verify your email.';
+    console.log('Sending Email with Subject: ', subject);
     await Mail.send('confirmEmail', mailData, (message) => {
       message
         .to(mailData.email)
         .from(from)
-        .subject('[RedKite] Verify your email.')
+        .subject(subject)
     }).catch(e => {
       console.log('ERROR Send Mail: ', e);
       throw e;
