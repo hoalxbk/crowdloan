@@ -3,7 +3,13 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme: any) => {
   return {
     PoolAbout: {
-      marginTop: 30
+      marginTop: 30,
+      width: '50%',
+      marginRight: 120,
+
+      [theme.breakpoints.down('xs')]: {
+        width: '100%'
+      },
     },
     PoolAboutBlock: {
       display: 'grid',
