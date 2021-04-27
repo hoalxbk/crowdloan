@@ -438,7 +438,6 @@ class CampaignController {
       // call to SC to get sign hash
       const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
       // get convert rate token erc20 -> our token
-      // TODO need improve this code
       let scCurrency, unit;
       switch (camp.accept_currency) {
         case Const.ACCEPT_CURRENCY.USDT:
@@ -457,17 +456,10 @@ class CampaignController {
           console.log(`Do not found currency support ${camp.accept_currency} of campaignId ${campaign_id} `);
           return HelperUtils.responseErrorInternal("Internal Server Error !");
       }
-      // TODO get from DB
-      const receipt = await Promise.all([
-        poolContract.methods.getOfferedCurrencyRate(scCurrency).call(),
-        poolContract.methods.getOfferedCurrencyDecimals(scCurrency).call()
-      ]);
-      const rate = receipt[0];
-      const decimal = receipt[1];
-      console.log(rate,decimal);
+      console.log(`Conversion rate is ${camp.token_conversion_rate}`);
       // calc min, max token user can buy
-      const maxTokenAmount = new BigNumber (maxBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
-      const minTokenAmount = new BigNumber (minBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
+      const maxTokenAmount = new BigNumber (maxBuy).dividedBy(camp.token_conversion_rate).multipliedBy(Math.pow(10, unit)).toString();
+      const minTokenAmount = new BigNumber (minBuy).dividedBy(camp.token_conversion_rate).multipliedBy(Math.pow(10, unit)).toString();
       console.log(minTokenAmount, maxTokenAmount, userWalletAddress);
       // get message hash
       const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenAmount, minTokenAmount);
