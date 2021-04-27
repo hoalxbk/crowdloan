@@ -73,6 +73,18 @@ const checkSumAddress = (address) => {
   return addressVerified;
 };
 
+const paginationArray = (array, page_number, page_size) => {
+  const newData = JSON.parse(JSON.stringify(array));
+  const pageData = newData.slice((page_number - 1) * page_size, page_number * page_size);
+  const dataLength = newData.length;
+  return {
+    data: pageData,
+    total: dataLength,
+    perPage: page_size,
+    lastPage: Math.ceil(dataLength / page_size),
+    page: page_number,
+  };
+};
 
 module.exports = {
   randomString,
@@ -81,4 +93,5 @@ module.exports = {
   responseErrorInternal,
   responseBadRequest,
   checkSumAddress,
+  paginationArray,
 };

@@ -156,21 +156,21 @@ Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
 
 
 // Public API:
-Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
+Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerAndReserveList');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId', 'PoolController.getPool');
 Route.get('pools', 'PoolController.getPoolList');
 Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
 
+Route.get('pool/:campaignId/check-exist-winner', 'WinnerListUserController.checkExistWinner').validator('CheckUserWinnerExist');
 
 // API For Testing
 // TODO: Need delete when done
-Route.get('pool/:campaignId/check-exist-reverse', 'ReservedListController.checkExistReserve');
-Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants');
-Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
-Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
-Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
-
+// Route.get('pool/:campaignId/check-exist-reverse', 'WinnerListUserController.checkExistReserve');
+// Route.get('pool/:campaignId/participants', 'WhiteListUserController.getPublicParticipants');
+// Route.get('pool/:campaignId/reserves', 'WinnerListUserController.getWinnerList');
+// Route.post('add-user-whitelist', 'WhiteListUserController.addWhitelistUser');
+// Route.post('add-user-winner', 'WinnerListUserController.addWinnerUser');
 
 
 // API V2

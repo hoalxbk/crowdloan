@@ -153,8 +153,6 @@ function UserParticipant(props: any) {
     }
   };
 
-  console.log('failure', failure, lastPage, currentPage, totalRecords);
-
   return (
     <>
       <div className={commonStyle.boxSearch}>
