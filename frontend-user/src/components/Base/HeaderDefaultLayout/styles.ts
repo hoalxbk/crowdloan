@@ -87,7 +87,10 @@ const useStyles = makeStyles((theme) => {
       }
     },
     btnConnectText: {
-      marginLeft: 10 
+      marginLeft: 10,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
     },
     btnLogout: {
       background: '#3232DC',

@@ -73,9 +73,7 @@ export const getContractInstance =
 };
 
 export const convertFromWei = (value: any, unit = 'ether') => {
-  const webInstance = getWeb3Instance();
-  // @ts-ignore
-  return webInstance.utils.fromWei(value, unit);
+  return Web3.utils.fromWei(value);
 };
 
 export const convertToWei = (value: any, unit = 'ether') => {
