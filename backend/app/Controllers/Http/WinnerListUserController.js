@@ -189,8 +189,8 @@ class WinnerListUserController {
 
       const reservedService = new ReservedListService();
       existRecord = await reservedService.buildQueryBuilder({
-        wallet_address: inputParams.wallet_address,
-        campaign_id: inputParams.campaign_id,
+        wallet_address,
+        campaign_id,
       }).first();
 
       if (existRecord) {
