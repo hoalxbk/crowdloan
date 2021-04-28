@@ -22,6 +22,8 @@ import {filter, cloneDeep, includes} from 'lodash';
 import Pagination from "@material-ui/lab/Pagination";
 import useStylesTable from './style_table';
 import {BUY_TYPE} from "../../../../constants";
+import {etherscanRoute} from "../../../../utils";
+import Link from '@material-ui/core/Link';
 
 const REACT_APP_SOTATIER = process.env.REACT_APP_SOTATIER || '';
 
@@ -217,7 +219,11 @@ function UserParticipant(props: any) {
                 </TableCell>
 
                 <TableCell component="th" scope="row" size={'small'}>{row.email}</TableCell>
-                <TableCell align="center" size={'medium'}>{row.wallet_address}</TableCell>
+                <TableCell align="center" size={'medium'}>
+                  <Link href={etherscanRoute(row.wallet_address)} target={'_blank'}>
+                    {row.wallet_address}
+                  </Link>
+                </TableCell>
                 <TableCell component="th" scope="row" size={'small'} align="center">
                   {row.tier}
                 </TableCell>

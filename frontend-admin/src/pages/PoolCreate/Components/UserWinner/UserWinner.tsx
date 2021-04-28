@@ -13,6 +13,8 @@ import useGetList from "../hooks/useGetList";
 import useDeleteItem from "../hooks/useDeleteItem";
 import Pagination from "@material-ui/lab/Pagination";
 import useStylesTable from './style_table';
+import {etherscanRoute} from "../../../../utils";
+import Link from "@material-ui/core/Link";
 
 function UserWinner(props: any) {
   const commonStyle = useCommonStyle();
@@ -61,9 +63,11 @@ function UserWinner(props: any) {
                 <TableCell component="th" scope="row">
                   {row.email}
                 </TableCell>
-                <TableCell align="center">{row.wallet_address}</TableCell>
-
-
+                <TableCell align="center">
+                  <Link href={etherscanRoute(row.wallet_address)} target={'_blank'}>
+                    {row.wallet_address}
+                  </Link>
+                </TableCell>
                 <TableCell align="right">
                   <Button
                     variant="contained"

@@ -27,6 +27,10 @@ import useStylesTable from './style_table';
 import Pagination from "@material-ui/lab/Pagination";
 import moment from "moment";
 import {DATETIME_FORMAT} from "../../../../constants";
+import {etherscanRoute} from "../../../../utils";
+import Link from "@material-ui/core/Link";
+import BigNumber from "bignumber.js";
+
 
 function UserReverse(props: any) {
   const commonStyle = useCommonStyle();
@@ -138,9 +142,13 @@ function UserReverse(props: any) {
                 <TableCell component="th" scope="row" size={'small'}>
                   {row.email}
                 </TableCell>
-                <TableCell align="center" size={'medium'}>{row.wallet_address}</TableCell>
-                <TableCell align="center">{row.min_buy}</TableCell>
-                <TableCell align="center">{row.max_buy}</TableCell>
+                <TableCell align="center" size={'medium'}>
+                  <Link href={etherscanRoute(row.wallet_address)} target={'_blank'}>
+                    {row.wallet_address}
+                  </Link>
+                </TableCell>
+                <TableCell align="center">{new BigNumber(row.min_buy).toFixed()}</TableCell>
+                <TableCell align="center">{new BigNumber(row.max_buy).toFixed()}</TableCell>
                 <TableCell align="center">{row.start_time}</TableCell>
                 <TableCell align="center">{row.end_time}</TableCell>
 

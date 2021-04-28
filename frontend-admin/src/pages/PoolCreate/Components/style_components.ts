@@ -6,6 +6,7 @@ const useStyles = makeStyles(theme => ({
   },
   imageItem: {
     padding: 15,
+    paddingLeft: 0,
   },
   imageItemBtnWrapper: {
     width: 200,
