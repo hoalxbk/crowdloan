@@ -44,7 +44,7 @@ class SendAdminInfoEmailJob {
     //   message
     //     .to(mailData.email)
     //     .from(Env.get('MAIL_FROM'))
-    //     .subject('[SotatekStarter] Verify your account.')
+    //     .subject('[RedKite] Verify your account.')
     // });
   }
 

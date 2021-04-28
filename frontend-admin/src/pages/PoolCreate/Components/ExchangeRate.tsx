@@ -96,7 +96,7 @@ function ExchangeRate(props: any) {
             <CurrencyInput
               value={rateValue}
               decimalsLimit={6}
-              maxLength={255}
+              maxLength={25}
               onValueChange={(value: any, name: any) => {
                 setRateValue(value);
               }}

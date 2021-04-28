@@ -102,14 +102,12 @@ class AuthService extends BaseService {
     return true;
   }
 
-
   async sendAdminInfoEmail(params) {
     const { user, password } = params;
     const mailData = {};
     mailData.username = user.username;
     mailData.email = user.email;
     mailData.password = user.password;
-
 
     // const baseUrl = Env.get('FRONTEND_USER_APP_URL');
     // mailData.url = baseUrl + '/#/confirm-email/' + user.confirmation_token;

@@ -77,7 +77,6 @@ Route.group(() => {
   Route.delete('pool/:campaignId/participants/:walletAddress/delete', 'WhiteListUserController.deleteWhiteList');
   Route.post('pool/winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners');
 
-
   // Winners
   Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
   Route.delete('pool/:campaignId/winners/:walletAddress/delete', 'WinnerListUserController.deleteWinner');
@@ -87,7 +86,6 @@ Route.group(() => {
   Route.get('pool/:campaignId/reserves', 'ReservedListController.getReservedList');
   Route.post('pool/:campaignId/reserves/add', 'ReservedListController.addReserveUser');
   Route.delete('pool/:campaignId/reserves/:walletAddress/delete', 'ReservedListController.deleteReserve');
-
   Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
   Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 
@@ -137,7 +135,7 @@ Route.group(() => {
   Route.get('winner-search/:campaignId', 'WinnerListUserController.search');
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');
-}).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix', 'formatEmailAndWallet', 'maskEmailAndWallet']);
+}).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix', 'formatEmailAndWallet']);// , 'maskEmailAndWallet'
 
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
   .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);

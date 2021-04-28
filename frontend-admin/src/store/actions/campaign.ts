@@ -158,7 +158,6 @@ export const getLatestCampaign = () => {
              ...resObject.data,
              tokenLeft,
              tokenClaimed,
-             // totalTokens: new BigNumber(tokenLeft).plus(tokenSold).toFixed(),
              totalTokens: new BigNumber(tokenLeft).plus(tokenSold).toFixed(),
              tokenSold
            }
@@ -579,7 +578,7 @@ export const deployPool = (campaign: any, history: any) => {
       const {
         title, affiliate, start_time, finish_time, release_time,
         token, address_receiver, token_by_eth, token_conversion_rate, tokenInfo,
-        tier_configuration, accept_currency
+        tier_configuration, accept_currency, network_available
       } = campaign;
       const releaseTimeUnix = release_time;
       const startTimeUnix = start_time;
@@ -616,7 +615,6 @@ export const deployPool = (campaign: any, history: any) => {
 
 
       let tokenByEthDecimals = 0;
-
       let tokenByETHActualRate: any;
       let reversedRate = removeTrailingZeros(new BigNumber(1).dividedBy(token_by_eth).toFixed());
       let digitsAfterDecimals = getDigitsAfterDecimals(reversedRate);
@@ -654,7 +652,6 @@ export const deployPool = (campaign: any, history: any) => {
             durationTime,
             startTimeUnix,
 
-            // TODO: Fix switch USDT/USDC/ETH Address
             paidTokenAddress,
             tokenByEthDecimals,
             tokenByETHActualRate,
@@ -669,7 +666,6 @@ export const deployPool = (campaign: any, history: any) => {
             durationTime,
             startTimeUnix,
 
-            // TODO: Fix switch USDT/USDC/ETH Address
             paidTokenAddress,
             tokenByEthDecimals,
             tokenByETHActualRate,

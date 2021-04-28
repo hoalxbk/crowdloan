@@ -180,26 +180,26 @@ function CreateEditTierForm(props: any) {
               validateRule={{
                 required: true,
                 validate: {
-                  minBuyGreaterMaxBuy: (value: any) => {
-                    const maxBuy = getValues('maxBuy');
-                    const maxBuyBigNumber = (new BigNumber(maxBuy));
-                    return maxBuyBigNumber.comparedTo(value) > 0;
-                  },
-                  greaterThanZero: fieldMustBeGreaterThanZero,
+                  // minBuyGreaterMaxBuy: (value: any) => {
+                  //   const maxBuy = getValues('maxBuy');
+                  //   const maxBuyBigNumber = (new BigNumber(maxBuy));
+                  //   return maxBuyBigNumber.comparedTo(value) > 0;
+                  // },
+                  // greaterThanZero: fieldMustBeGreaterThanZero,
                 },
               }}
             />
           </div>
-          <p className={classes.formErrorMessage}>
-            {
-              renderError(errors, 'minBuyGreaterMaxBuy')
-            }
-          </p>
-          <p className={classes.formErrorMessage}>
-            {
-              renderError(errors, 'greaterThanZero')
-            }
-          </p>
+          {/*<p className={classes.formErrorMessage}>*/}
+          {/*  {*/}
+          {/*    renderError(errors, 'minBuyGreaterMaxBuy')*/}
+          {/*  }*/}
+          {/*</p>*/}
+          {/*<p className={classes.formErrorMessage}>*/}
+          {/*  {*/}
+          {/*    renderError(errors, 'greaterThanZero')*/}
+          {/*  }*/}
+          {/*</p>*/}
         </div>
 
         <div className={classes.formControl}>

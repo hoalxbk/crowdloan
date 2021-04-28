@@ -13,7 +13,8 @@ class TiersSchema extends Schema {
       table.string('start_time').nullable();
       table.string('end_time').nullable();
       table.string('currency').nullable();
-      table.float('max_buy').nullable().defaultTo(0);
+      table.decimal('max_buy', 40, 18).nullable().defaultTo(0);
+      table.decimal('min_buy', 40, 18).nullable().defaultTo(0);
       table.integer('campaign_id').unsigned().nullable();
 
       table.timestamps()

@@ -5,6 +5,9 @@ const useStyles = makeStyles((theme: any) => {
     modalVerifyEmail: {
       '& .modal-content__body': {
         padding: 0,
+        '& .input-group input': {
+          paddingRight: '0'
+        }
       },
       '& .modal-content__body .input-group': {
         background: '#11152A',

@@ -26,6 +26,7 @@ const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
 const moment = require('moment');
+const BigNumber = use('bignumber.js')
 
 class PoolController {
 
@@ -88,8 +89,8 @@ class PoolController {
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
-          max_buy: item.maxBuy,
-          min_buy: item.minBuy,
+          min_buy: new BigNumber(item.minBuy).toFixed(),
+          max_buy: new BigNumber(item.maxBuy).toFixed(),
           currency: item.currency,
         });
         return tierObj;
@@ -169,8 +170,8 @@ class PoolController {
             name: item.name,
             start_time: moment(item.startTime).unix(),
             end_time: moment(item.endTime).unix(),
-            min_buy: item.minBuy,
-            max_buy: item.maxBuy,
+            min_buy: new BigNumber(item.minBuy).toFixed(),
+            max_buy: new BigNumber(item.maxBuy).toFixed(),
             currency: item.currency,
           });
           return tierObj;
@@ -268,10 +269,24 @@ class PoolController {
         return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
       }
 
-      const pool = await CampaignModel.query()
+      let pool = await CampaignModel.query()
         .with('tiers')
         .where('id', poolId)
         .first();
+
+      pool = JSON.parse(JSON.stringify(pool));
+
+      console.log('[getPool] - pool.tiers: ', pool.tiers);
+
+      if (pool.tiers && pool.tiers.length > 0) {
+        pool.tiers = pool.tiers.map((item, index) => {
+          return {
+            ...item,
+            min_buy: (new BigNumber(item.min_buy)).toNumber(),
+            max_buy: (new BigNumber(item.max_buy)).toNumber(),
+          }
+        });
+      }
 
       const walletAccount = await WalletAccountModel.query().where('campaign_id', poolId).first();
       if (walletAccount) {
