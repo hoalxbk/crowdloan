@@ -77,6 +77,9 @@ export const convertFromWei = (value: any, unit = 'ether') => {
 };
 
 export const convertToWei = (value: any, unit = 'ether') => {
+  // const webInstance = getWeb3Instance();
+  // // @ts-ignore
+  // return webInstance.utils.toWei(value, unit);
   return Web3.utils.toWei(value);
 };
 

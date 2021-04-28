@@ -40,8 +40,8 @@ const ModalDeposit = (props: any) => {
     if(!isNaN(parseFloat(balance.token))
       && !isNaN(parseFloat(depositAmount)))
     {
-      const tokenBalance = convertToBN(convertToWei(balance.token))
-      const amount = convertToBN(convertToWei(depositAmount))
+      const tokenBalance = convertToWei(convertToBN(balance.token))
+      const amount = convertToWei(convertToBN(depositAmount))
       const zero = convertToBN('0')
       setDisableDeposit(tokenBalance.lt(amount) || amount.lte(zero))
     }
