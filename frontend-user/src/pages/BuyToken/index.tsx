@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { HashLoader } from "react-spinners";
 import { useDispatch } from 'react-redux';
 import { useParams, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js'; 
@@ -51,8 +52,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
+  const [buyTokenSuccess, setBuyTokenSuccess] = useState<boolean>(false);
   const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
-  const [isWinner, setIsWinner] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
@@ -69,14 +70,8 @@ const BuyToken: React.FC<any> = (props: any) => {
       poolDetails?.networkAvailable 
   );
   const { joinPool, poolJoinLoading, joinPoolSuccess } = usePoolJoinAction({ poolId: poolDetails?.id });
-  const { data: winners } = useFetch<Array<any>>(
-    poolDetails ? `/pool/${poolDetails?.id}/winners`: undefined, 
-    poolDetails?.method !== "whitelist" 
-  );
-  const { data: alreadyReserved } = useFetch<Array<any>>(
-    poolDetails && connectedAccount ? 
-    `/pool/${poolDetails?.id}/check-exist-reverse?wallet_address=${connectedAccount}`: 
-    undefined, 
+  const { data: existedWinner } = useFetch<Array<any>>(
+    poolDetails ? `/pool/${poolDetails?.id}/check-exist-winner?wallet_address=${connectedAccount}`: undefined, 
     poolDetails?.method !== "whitelist" 
   );
   const { data: alreadyJoinPool } = useFetch<boolean>(
@@ -129,7 +124,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     today <= tierEndBuyInDate &&
     poolDetails?.isDeployed &&
     verifiedEmail &&
-    (poolDetails?.method === 'whitelist' ? (alreadyReserved ? true:  alreadyJoinPool): true);
+    (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
 
   // Get Pool Status
   const poolStatus = getPoolStatus(
@@ -171,21 +166,6 @@ const BuyToken: React.FC<any> = (props: any) => {
   useEffect(() => {
     if (endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
   }, [endBuyTimeInDate]);
-
-  useEffect(() => {
-    // Check if user is winning ticket or not
-    if (poolDetails?.method === "whitelist" && winners) {
-      let isFound = false;
-      setIsWinner(false);
-
-      winners.length > 0 && winners.forEach(winner => {
-        if (winner.wallet_address === connectedAccount && !isFound) {
-          console.log(`Account ${connectedAccount} won ticket`);
-          setIsWinner(true);
-        }
-      });
-    } else setIsWinner(false);
-  }, [poolDetails, winners, connectedAccount]);
 
   useEffect(() => {
     const poolNetwork = poolDetails?.networkAvailable;
@@ -269,7 +249,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {isWinner && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
+            {existedWinner && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
               <p className={styles.poolTicketWinner}>
                 <div>
                   {
@@ -296,6 +276,24 @@ const BuyToken: React.FC<any> = (props: any) => {
                   This pool is ended, thanks for all! 
                 </span>
               </p>
+            }
+            {
+              !verifiedEmail && (
+                <p className={styles.poolTicketWinner}>
+                  <div>
+                    <img src="/images/red-warning.svg" alt="warning" />
+                  </div>
+                  <span style={{ marginLeft: 14 }}>
+                    Your account has not been verified. To verify your account, please click&nbsp;
+                    <Link 
+                      to="/account" 
+                      style={{ color: 'white', textDecoration: 'underline' }}
+                    >
+                      here
+                    </Link>.
+                  </span>
+                </p>
+              )
             }
           </header>
           <main className={styles.poolDetailInfo}>
@@ -474,7 +472,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         endBuyTimeInDate={endBuyTimeInDate}
                         endJoinTimeInDate={endJoinTimeInDate}
                         tokenSold={tokenSold}
-                        alreadyReserved={alreadyReserved}
+                        setBuyTokenSuccess={setBuyTokenSuccess}
                       /> 
                    )
                 }
@@ -491,6 +489,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       ableToFetchFromBlockchain={ableToFetchFromBlockchain}
                       poolAddress={poolDetails?.poolAddress}
                       tokenDetails={poolDetails?.tokenDetails} 
+                      buyTokenSuccess={buyTokenSuccess}
                     /> 
                  )
                 }

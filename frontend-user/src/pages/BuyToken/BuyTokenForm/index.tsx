@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import BigNumber from 'bignumber.js';
 
@@ -7,8 +7,7 @@ import Button from '../Button';
 import useStyles from './style';
 
 import { getUSDCAddress, getUSDTAddress } from '../../../utils/contractAddress/getAddresses';
-import { numberWithCommas, getDigitsAfterDecimals, INTEGER_NUMBER_KEY_CODE_LIST, DECIMAL_KEY_CODE } from '../../../utils/formatNumber';
-import { isNotValidASCIINumber, isPreventASCIICharacters, trimLeadingZerosWithDecimal } from '../../../utils/formatNumber';
+import { numberWithCommas } from '../../../utils/formatNumber';
 import { BSC_CHAIN_ID } from '../../../constants/network';
 import { PurchaseCurrency } from '../../../constants/purchasableCurrency';
 import { TokenType } from '../../../hooks/useTokenDetails';
@@ -22,6 +21,8 @@ import usePoolDepositAction from '../hooks/usePoolDepositAction';
 import useTokenApprove from '../../../hooks/useTokenApprove';
 import useAuth from '../../../hooks/useAuth';
 import { withWidth, isWidthDown, isWidthUp } from '@material-ui/core';
+
+const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
 
 type BuyTokenFormProps = {
   tokenDetails: TokenType | undefined,
@@ -42,7 +43,7 @@ type BuyTokenFormProps = {
   startBuyTimeInDate: Date | undefined
   endJoinTimeInDate: Date | undefined
   tokenSold: string | undefined
-  alreadyReserved: any | undefined
+  setBuyTokenSuccess: Dispatch<SetStateAction<boolean>> 
 }  
 
 enum MessageType {
@@ -81,7 +82,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     startBuyTimeInDate,
     endJoinTimeInDate,
     tokenSold,
-    alreadyReserved
+    setBuyTokenSuccess
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -218,8 +219,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     }
   }
 
-  // Plus one for userTier because tier in smart contract start by 0  
-  const validTier = !alreadyReserved ? new BigNumber(userTier).gte(minTier): true;
+  // Check whether current user's tier is valid or not
+  const validTier = new BigNumber(userTier).gte(minTier);
 
   const purchasable = 
      availablePurchase 
@@ -280,6 +281,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   // Re-fetch user balance when deposit successful
   useEffect(() => {
     const handleWhenDepositSuccess = async () => {
+      setBuyTokenSuccess(true);
       await fetchUserBalance();
       await fetchPoolDetails();
     }
@@ -306,14 +308,16 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   }, [tokenDepositTransaction, connectedAccountFirstBuy]);
 
   const handleInputChange = async (e: any) => {
-    const val = e.target.value;
-    setInput(val);
+    if (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) {
+      const val = e.target.value;
+      setInput(val);
 
-    if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
-      const tokens = new BigNumber(val).multipliedBy(new BigNumber(1).div(rate)).toNumber()
-      setEstimateTokens(tokens);
-    } else {
-      setEstimateTokens(0);
+      if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
+        const tokens = new BigNumber(val).multipliedBy(new BigNumber(1).div(rate)).toNumber()
+        setEstimateTokens(tokens);
+      } else {
+        setEstimateTokens(0);
+      }
     }
   }
 
@@ -321,6 +325,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     try {
       if (purchasableCurrency && ableToFetchFromBlockchain) {
         setOpenSubmitModal(true);
+        setBuyTokenSuccess(false);
 
         // Call to smart contract to deposit token and refetch user balance
         await deposit();
@@ -374,26 +379,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             placeholder={'0'} 
             onChange={handleInputChange} 
             value={input} 
-            onKeyDown={e => { 
-              if (
-                (getDigitsAfterDecimals(input) >= 6 && INTEGER_NUMBER_KEY_CODE_LIST.indexOf(e.keyCode) < 0) || 
-                (input.includes('.') && e.keyCode === DECIMAL_KEY_CODE)
-              ) {
-                e.preventDefault();
-                return;
-              }
-
-              isNotValidASCIINumber(e.keyCode, true) && e.preventDefault() 
-            }}
-            onKeyPress={e => isPreventASCIICharacters(e.key) && e.preventDefault()}
-            onBlur={e => setInput(trimLeadingZerosWithDecimal(e.target.value))}
-            onPaste={e => {
-              const pastedText = e.clipboardData.getData('text');
-
-              if (isNaN(Number(pastedText)) || getDigitsAfterDecimals(pastedText) > 6) {
-                e.preventDefault();
-              }
-            }}
             max={tokenBalance}
             min={0}
             maxLength={255}
