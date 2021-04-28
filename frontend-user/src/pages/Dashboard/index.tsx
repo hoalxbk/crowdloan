@@ -42,6 +42,7 @@ const Dashboard = (props: any) => {
   useEffect(() => {
     setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING && pool?.is_display == 1))
     setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING && pool?.is_display == 1))
+    console.log(pools)
     pools.forEach(async (pool: any) => {
       const currentTime = moment.utc().unix();
       const startJoinPoolTime = parseInt(pool.start_join_pool_time);

@@ -48,8 +48,8 @@ const ModalWithdraw = (props: any) => {
     if(!isNaN(parseFloat(userInfo.staked))
       && !isNaN(parseFloat(withdrawAmount)))
     {
-      const staked = convertToBN(convertToWei(userInfo.staked))
-      const amount = convertToBN(convertToWei(withdrawAmount))
+      const staked = convertToWei(convertToBN(userInfo.staked))
+      const amount = convertToWei(convertToBN(withdrawAmount))
       const zero = convertToBN('0')
       setDisableWithdraw(staked.lt(amount) || amount.lte(zero));
     }
@@ -90,10 +90,10 @@ const ModalWithdraw = (props: any) => {
             </div>
           </div>
           <div className="modal-content__foot">
-            {userInfo.staked > 0 && <button
+            <button
               className={"btn-staking " + (disableWithdraw ? 'disabled' : '')}
               onClick={onWithDraw}
-            >Unlock</button>}
+            >Unlock</button>
             <button
               className="btn-cancel"
               onClick={() => setOpenModalWithdraw(false)}
