@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme: any) => {
         padding: '0 25px',
         width: '130px',
         height: '42px',
-        font: 'normal normal bold 14px/18px DM Sans'
+        font: 'normal normal bold 14px/18px DM Sans',
       }
     },
     buyTokenForm: {

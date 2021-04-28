@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme) => {
     },
     dialogButton: {
       marginTop: 25,
-      display: 'inline-block',
+      display: 'flex',
       width: '100%',
       background: '#3232DC',
       borderRadius: 60,
@@ -86,7 +86,9 @@ const useStyles = makeStyles((theme) => {
       font: 'normal normal bold 14px/18px DM Sans',
       cursor: 'pointer',
       transition: '.2s all ease-out',
-      height: '42ppx',
+      height: '42px',
+      alignItems: 'center',
+      justifyContent: 'center',
 
       '&:focus': {
         outline: 'none'
