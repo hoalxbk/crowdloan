@@ -419,10 +419,9 @@ const BuyToken: React.FC<any> = (props: any) => {
                     ): (
                       <p 
                         style={{ 
-                          fontSize: 16, 
-                          fontWeight: 'bold', 
                           color: '#D01F36',
-                          marginTop: 40
+                          marginTop: 40,
+                          font: 'normal normal bold 14px/18px DM Sans'
                         }}>
                         This pool is ended.
                       </p>

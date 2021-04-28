@@ -20,11 +20,13 @@ const useStyles = makeStyles((theme: any) => {
       }
     },
     PoolAboutLabel: {
-      color: '#999999'
+      color: '#999999',
+      font: 'normal normal normal 14px/24px Helvetica'
     },
     PoolAboutText: {
       display: 'flex',
       alignItems: 'center',
+      font: 'normal normal bold 14px/18px DM Sans',
       [theme.breakpoints.down('xs')]: {
         lineHeight: '20px',
         wordBreak: 'break-all'
@@ -38,6 +40,7 @@ const useStyles = makeStyles((theme: any) => {
       marginTop: 25,
       lineHeight: '1.6rem' ,
       color: '#999999', 
+      font: 'normal normal normal 14px/24px Helvetica',
 
       [theme.breakpoints.down('xs')]: {
         width: '100%'
