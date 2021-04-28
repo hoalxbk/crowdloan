@@ -15,6 +15,7 @@ type ClaimTokenProps = {
   tokenDetails: TokenType | undefined
   poolAddress: string | undefined
   ableToFetchFromBlockchain: boolean | undefined
+  buyTokenSuccess: boolean | undefined
 } 
 
 const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
@@ -27,7 +28,8 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
   const {
     tokenDetails,
     poolAddress,
-    ableToFetchFromBlockchain
+    ableToFetchFromBlockchain,
+    buyTokenSuccess
   } = props;
 
   const { claimToken, setClaimTokenLoading, transactionHash, claimTokenSuccess, loading, error } = useTokenClaim(poolAddress);
@@ -41,8 +43,8 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
       );
     }
     
-    ableToFetchFromBlockchain && fetchUserPurchased();
-  }, [connectedAccount, poolAddress, ableToFetchFromBlockchain, claimTokenSuccess]);
+    (ableToFetchFromBlockchain || buyTokenSuccess) && fetchUserPurchased();
+  }, [connectedAccount, poolAddress, ableToFetchFromBlockchain, claimTokenSuccess, buyTokenSuccess]);
 
   useEffect(() => {
     if (error) {
