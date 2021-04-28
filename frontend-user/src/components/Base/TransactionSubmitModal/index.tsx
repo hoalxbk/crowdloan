@@ -54,8 +54,6 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
 
   const customStyles = {
     color: 'white',
-    fontSize: 28,
-    fontWeight: 700
   }
 
   return (
@@ -91,7 +89,7 @@ const TransactionSubmitModal: React.FC<any> = (props: any) => {
             {
               transactionHash ? (
                 <>
-                <span>TXn Hash</span>
+                <span className={styles.dialogLabel}>TXn Hash</span>
                 <input value={transactionHash} className={styles.dialogInput} disabled={true} />
                 <a 
                   href={`${ETHERSCAN_URL}/tx/${transactionHash}`} 

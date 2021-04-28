@@ -11,6 +11,12 @@ const useStyles = makeStyles((theme: any) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
+      
+      '& button': {
+        padding: '0 60px',
+        height: '42px',
+        font: 'normal normal bold 14px/18px DM Sans'
+      },
 
       [theme.breakpoints.down('md')]: {
         marginTop: 40
@@ -24,7 +30,10 @@ const useStyles = makeStyles((theme: any) => {
           textAlign: 'center'
         },
         '& button': {
-          width: '100%'
+          width: '100%',
+          padding: '0 60px',
+          height: '42px',
+          font: 'normal normal bold 14px/18px DM Sans'
         }
       }
     },
@@ -32,6 +41,7 @@ const useStyles = makeStyles((theme: any) => {
       '& span': {
         marginRight: 20,
         color: '#999999',
+        font: 'normal normal normal 14px/24px Helvetica',
       }
     },
     poolDetailClaimInfo: {
@@ -41,16 +51,19 @@ const useStyles = makeStyles((theme: any) => {
     poolDetailClaimInfoBlock: {
       display: 'grid',
       gridTemplateColumns: '1fr 2fr',
+      font: 'normal normal normal 14px/24px Helvetica',
+      color: '#FFF',
+
       [theme.breakpoints.down('xs')]: {
         gridTemplateColumns: '1fr 1fr'
       },
+      '& span:first-child': {
+        color: '#999999'
+      },
 
       '&:not(:first-child)': {
-        marginTop: 25
+        marginTop: 25,
       },
-      '& span': {
-        color: '#999999'
-      }
     },
   };
 });

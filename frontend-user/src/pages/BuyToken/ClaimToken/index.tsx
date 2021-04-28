@@ -74,7 +74,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
       <div className={styles.poolDetailClaimInfo}>
         <div className={styles.poolDetailClaimInfoBlock}>
           <span>You can claim</span>
-          <strong>{userPurchased} {tokenDetails?.name}</strong>
+          <span>{userPurchased} {tokenDetails?.name}</span>
         </div>
       </div>
       <Button 

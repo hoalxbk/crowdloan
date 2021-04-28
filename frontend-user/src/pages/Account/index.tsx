@@ -34,10 +34,10 @@ const Account = (props: any) => {
   const [email, setEmail] = useState<string>('');
   const [showAlertVerifyEmail, setShowAlertVerifyEmail] = useState(true);
   useEffect(() => {
+    dispatch(getTiers());
     if (isAuth && connectedAccount && !wrongChain) { 
       dispatch(getBalance(connectedAccount));
       dispatch(getUserInfo(connectedAccount));
-      dispatch(getTiers());
       dispatch(getUserTier(connectedAccount));
       dispatch(getAllowance(connectedAccount));
     }
@@ -62,7 +62,7 @@ const Account = (props: any) => {
 
   return (
     <DefaultLayout>
-      {emailVerified == USER_STATUS.UNVERIFIED && !loading && showAlertVerifyEmail && <div className={classes.alertVerifyEmail}>
+      {emailVerified == USER_STATUS.UNVERIFIED && !loading && showAlertVerifyEmail && connectedAccount && <div className={classes.alertVerifyEmail}>
         &nbsp;&nbsp;<img src={iconWarning}/>
         <img src={iconClose} className="btn-close" onClick={() => setShowAlertVerifyEmail(false)}/>
         &nbsp;&nbsp;

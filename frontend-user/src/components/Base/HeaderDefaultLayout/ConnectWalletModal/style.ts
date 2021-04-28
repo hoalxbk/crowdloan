@@ -11,10 +11,8 @@ const useStyles = makeStyles((theme) => {
     },
     dialogContentTypo: {
       color: 'white',
-      fontSize: 16,
       marginTop: 40,
-      fontWeight: 700,
-
+      font: 'normal normal bold 16px/24px DM Sans',
       '&:first-child': {
         marginTop: 0
       }
@@ -24,8 +22,7 @@ const useStyles = makeStyles((theme) => {
     },
     dialogTitle: {
       '& .MuiTypography-h6': {
-        fontSize: 28,
-        fontWeight: 700,
+        font: 'normal normal bold 28px/32px DM Sans',
         paddingBottom: 16,
         borderBottom: '1px solid rgba(255, 255, 255 ,0.1)',
       },
@@ -39,10 +36,11 @@ const useStyles = makeStyles((theme) => {
       alignItems: 'center'
     },
     dialogPrivacyText: {
-     fontSize: 16 
+      font: 'normal normal normal 14px/24px Helvetica'
     },
     dialogPrivacyHighlight: {
-      color: '#3C5EA2'
+      color: '#3C5EA2',
+      fontWeight: 'normal'
     },
     dialogCheckbox: {
       padding: 0,
