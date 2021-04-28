@@ -105,6 +105,29 @@ const useStyles = makeStyles((theme: any) => {
       width: 30,
       height: 30,
       marginRight: 7 
+    },
+    purchasableCurrencyMax: {
+      padding: '5px 10px',
+      marginRight: 20,
+      backgroundColor: 'rgb(50, 50, 220)',
+      border: 'none',
+      color: 'white',
+      borderRadius: 5,
+      fontWeight: 'bold',
+      cursor: 'pointer',
+      transition: '.2s all ease-in',
+
+      '&:hover': {
+        opacity: '.9'
+      },
+
+      '&:focus': {
+        outline: 'none'
+      },
+
+      '&:active': {
+        transform: 'translateY(-3px)'
+      }
     }
   };
 });

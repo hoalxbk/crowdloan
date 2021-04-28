@@ -215,26 +215,21 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {poolDetails?.title}
                 </h2>
                 <p className={styles.poolHeaderAddress}>
-                  {isWidthUp('sm', props.width) && poolDetails?.isDeployed && poolDetails?.poolAddress}
-                  {isWidthDown('xs', props.width) && poolDetails?.isDeployed && shortenAddress(poolDetails?.poolAddress || '', 8)}
-
-                  {
-                    poolDetails?.isDeployed && (
-                      <CopyToClipboard text={poolDetails?.poolAddress}
-                      onCopy={() => { 
-                        setCopiedAddress(true);
-                        setTimeout(() => {
-                          setCopiedAddress(false);
-                        }, 2000);
-                        }}
-                      >
-                      {
-                        !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
-                        : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
-                        }
-                        </CopyToClipboard>
-                    )
-                  }
+                  {isWidthUp('sm', props.width) && poolDetails?.tokenDetails?.address}
+                  {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.tokenDetails?.address || '', 8)}
+                  <CopyToClipboard text={poolDetails?.tokenDetails?.address}
+                    onCopy={() => { 
+                      setCopiedAddress(true);
+                      setTimeout(() => {
+                        setCopiedAddress(false);
+                      }, 2000);
+                    }}
+                  >
+                    {
+                      !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
+                      : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
+                    }
+                  </CopyToClipboard>
                 </p>
               </div>
             </div>
@@ -366,7 +361,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         text={'Etherscan'} 
                         backgroundColor={'#3232DC'} 
                         onClick={() => {
-                          poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails.poolAddress}` as string, '_blank')
+                          poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
                         }} 
                       />
                     </div>

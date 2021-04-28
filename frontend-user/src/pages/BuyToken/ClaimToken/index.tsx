@@ -9,6 +9,7 @@ import useStyles from './style';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import useUserPurchased from '../hooks/useUserPurchased';
 import useTokenClaim from '../hooks/useTokenClaim';
+import { convertTimeToStringFormat } from '../../../utils/convertDate';
 
 type ClaimTokenProps = {
   releaseTime: Date | undefined
@@ -67,7 +68,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     <div className={styles.poolDetailClaim}>
       <p className={styles.poolDetailClaimTitle}>
         <span>{'Token can claim from'}</span>
-        <strong>{moment(releaseTime).format("h:mm A, DD MMMM YYYY") }</strong>
+        <strong>{convertTimeToStringFormat(releaseTime || new Date())}</strong>
       </p>
       <Countdown startDate={releaseTime} />
       <div className={styles.poolDetailClaimInfo}>
