@@ -136,8 +136,17 @@ export const getDigitsAfterDecimals = (input: string): number => {
   return totalDigits;     
 }
 
-export function numberWithCommas(x: string, decimals: number = 6) {
-  return removeTrailingZeros(commaNumber(new BigNumber(x).toFixed(decimals)));
+function format(num: string){
+  const splittedStrs = num.split('.');
+  return splittedStrs[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + splittedStrs[1];
+}
+
+export function numberWithCommas(x: string = "", decimals: number = 6) {
+  x = typeof x === 'string' ? x: (x as number).toFixed();
+  return removeTrailingZeros(commaNumber(new BigNumber(x).toFixed(decimals), ",", "."));
+  // }
+
+  // return format(x);
 }
 export const nFormatter = (number: string, digits: any = 0) => {
   const SI = [

@@ -1,6 +1,7 @@
 import React, { Dispatch, SetStateAction, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import BigNumber from 'bignumber.js';
+import NumberFormat from 'react-number-format';
 
 import TransactionSubmitModal from '../../../components/Base/TransactionSubmitModal';
 import Button from '../Button';
@@ -64,7 +65,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [userPurchased, setUserPurchased] = useState<number>(0);
   const [poolBalance, setPoolBalance] = useState<number>(0);
-  const runFirst = useRef(true);
+  const [loadingPoolInfo, setLoadingPoolInfo] = useState<boolean>(false);
 
   const { 
     tokenDetails, 
@@ -162,12 +163,19 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const availableMaximumBuy = useMemo(() => {
     const maxBuy = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
 
+    /* if (availableTokensToCurrency.lt(maxBuy)) { */
+    /*   return availableTokensToCurrency.multipliedBy(new BigNumber(1).div(rate)).toFixed(); */
+    /* } */
+    
+    /* if (availableTokensToCurrency.gt(maxBuy)) { */
+    /* } */
+
     if (maxBuy.gt(new BigNumber(tokenBalance))) {
       return new BigNumber(tokenBalance).toFixed();
     }
 
     return maxBuy.toFixed();
-  }, [tokenBalance, maximumBuy, userPurchased, poolBalance, rate]);
+  }, [tokenBalance, maximumBuy, userPurchased, poolAmount, tokenSold, rate]);
 
   const poolErrorBeforeBuy = useMemo(() => {
     const timeToShowMsg = new Date() > endJoinTimeInDate && new Date() < startBuyTimeInDate;
@@ -269,17 +277,30 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         setWalletBalance(await retrieveTokenBalance(tokenDetails, connectedAccount) as number);
         setPoolBalance(await retrieveTokenBalance(tokenDetails, poolAddress) as number);
       }
+
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
+
+  useEffect(() => {
+    const fetchPoolDetailsBlockchain = async () => {
+      await fetchPoolDetails();
+      setLoadingPoolInfo(false);
+    }
+
+    loadingPoolInfo && fetchPoolDetailsBlockchain();
+  }, [loadingPoolInfo]);
 
   // Handle for fetching pool general information 1 time
   useEffect(() => {
     const fetchTokenPoolAllowance = async () => {
-      runFirst.current = false;
-      await fetchPoolDetails();
+      try {
+        setLoadingPoolInfo(true);
+      } catch (err) { 
+        setLoadingPoolInfo(false);
+      }    
     }
 
-    ableToFetchFromBlockchain && (runFirst.current || connectedAccount) && fetchTokenPoolAllowance();
-  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain, runFirst]);
+    ableToFetchFromBlockchain && connectedAccount && fetchTokenPoolAllowance();
+  }, [connectedAccount, ableToFetchFromBlockchain]);
 
   // Check if has any error when deposit => close modal
   useEffect(() => {
@@ -317,17 +338,19 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     }
   }, [tokenDepositTransaction, connectedAccountFirstBuy]);
 
+  useEffect(() => {
+    if (input && rate && purchasableCurrency && availablePurchase) {
+      const tokens = new BigNumber(input).multipliedBy(new BigNumber(1).div(rate)).toNumber()
+      setEstimateTokens(tokens);
+    } else {
+      setEstimateTokens(0);
+    }
+  }, [input, availablePurchase]);
+
   const handleInputChange = async (e: any) => {
     const value = e.target.value.replaceAll(",", "");
     if (value === '' || REGEX_NUMBER.test(value)) {
       setInput(value);
-
-      if (!isNaN(value) && value && rate && purchasableCurrency && availablePurchase) {
-        const tokens = new BigNumber(value).multipliedBy(new BigNumber(1).div(rate)).toNumber()
-        setEstimateTokens(tokens);
-      } else {
-        setEstimateTokens(0);
-      }
     }
   }
 
@@ -383,11 +406,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
           </span>}
         </p>
         <div className={styles.buyTokenInputWrapper}>
-          <input 
-            type="text" 
+
+          <NumberFormat 
             className={styles.buyTokenInput} 
             placeholder={'0'} 
+            thousandSeparator={true}  
             onChange={handleInputChange} 
+            decimalScale={6}
             value={input} 
             max={tokenBalance}
             min={0}
