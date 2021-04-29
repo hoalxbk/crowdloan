@@ -8,6 +8,7 @@ export const POOL_STATUS = {
   IN_PROGRESS: 3,
   FILLED: 4,
   CLOSED: 5,
+  CLAIMABLE: 6
 }
 
 export const NETWORK = {
