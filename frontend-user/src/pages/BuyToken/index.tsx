@@ -79,7 +79,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
     : undefined
   );
-  const { data: verifiedEmail } = useFetch<boolean>(
+  const { data: verifiedEmail = true } = useFetch<boolean>(
     poolDetails && connectedAccount ?
     `/user/check-wallet-address?wallet_address=${connectedAccount}`
     : undefined
