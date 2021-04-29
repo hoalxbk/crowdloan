@@ -54,7 +54,6 @@ const Tiers = (props: any) => {
   useEffect(() => {
     if(userInfo) {
       setLoading(false);
-      return
     }
     if(wrongChain || !isAuth || !connectedAccount){
       setCurrentProcess(0)
