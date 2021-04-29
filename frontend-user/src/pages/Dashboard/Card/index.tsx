@@ -29,13 +29,18 @@ const Card = (props: any): JSX.Element => {
   }, [pool.tokenSold])
 
   useEffect(() => {
-    console.log(pool)
     const currentTime = moment().unix()
-    var diffTime = parseInt(pool.start_time) - currentTime;
+    let diffTime = 0;
+    if(pool.start_join_pool_time > currentTime) {
+      diffTime = parseInt(pool.start_join_pool_time) - currentTime;
+    } else if(pool.start_time > currentTime) {
+      diffTime = parseInt(pool.start_time) - currentTime;
+    }
+    
     let intervalCount: any;
     if (diffTime > 0) {
       let timeLeftToStart = diffTime * 1000
-      const interval = 1000;
+    const interval = 1000;
 
       intervalCount = setInterval(() => {
         timeLeftToStart -= interval;
@@ -67,8 +72,11 @@ const Card = (props: any): JSX.Element => {
           {pool.status == POOL_STATUS.IN_PROGRESS && <div className="time in-progress">
             <span>In Progress</span>
           </div>}
-          {pool.status == POOL_STATUS.JOINING && <div className="time filled">
+          {pool.status == POOL_STATUS.JOINING && <div className="time joining">
             <span>Joining</span>
+          </div>}
+          {pool.status == POOL_STATUS.CLAIMABLE && <div className="time claimable">
+            <span>Claimable</span>
           </div>}
           {pool.status == POOL_STATUS.UPCOMMING && <div className="time upcomming">
             <img src={dotIcon} />
@@ -80,7 +88,7 @@ const Card = (props: any): JSX.Element => {
             <img src={pool.token_images} />
             <div>
               <h2>{pool.title}</h2>
-              <p>{pool.name}{`(${pool.symbol})`}</p>
+              <p>{pool.name}{` (${pool.symbol})`}</p>
             </div>
           </div>
           <ul className="card-content__content">

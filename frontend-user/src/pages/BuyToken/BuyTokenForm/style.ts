@@ -22,7 +22,8 @@ const useStyles = makeStyles((theme: any) => {
       width: '50%',
 
       [theme.breakpoints.down('xs')]: {
-        width: '100%'
+        width: '100%',
+        marginRight: 0,
       },
     },
     buyTokenFormTitle: {
@@ -32,7 +33,7 @@ const useStyles = makeStyles((theme: any) => {
     },
     buyTokenInputForm: {
       background: '#11152A',
-      maxWidth: 380,
+      maxWidth: '100%',
       padding: '10px 12px',
       borderRadius: 4
     },
@@ -84,7 +85,7 @@ const useStyles = makeStyles((theme: any) => {
         display: 'flex',
         justifyContent: 'center',
         '& button': {
-          padding: '15px 25px',
+          padding: '0 25px',
           width: '130px',
         }
       }

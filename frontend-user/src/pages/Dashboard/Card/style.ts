@@ -50,6 +50,12 @@ const useStyles = makeStyles((theme: any) => {
 
         '&.closed': {
           backgroundColor: '#D01F36'
+        },
+        '&.joining': {
+          backgroundColor: '#6398FF'
+        },
+        '&.claimable': {
+          backgroundColor: '#e16313'
         }
       }
     },

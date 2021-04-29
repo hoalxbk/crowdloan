@@ -34,7 +34,6 @@ const Account = (props: any) => {
   const [email, setEmail] = useState<string>('');
   const [showAlertVerifyEmail, setShowAlertVerifyEmail] = useState(true);
   useEffect(() => {
-    dispatch(getTiers());
     if (isAuth && connectedAccount && !wrongChain) { 
       dispatch(getBalance(connectedAccount));
       dispatch(getUserInfo(connectedAccount));
