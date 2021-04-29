@@ -4,7 +4,7 @@ import { NONAME } from 'dns';
 const useCommonStyle = makeStyles((theme) => {
   return {
     DefaultLayout: {
-      height: '100vh',
+      minHeight: '100vh',
   
       /* grid container settings */
       display: 'grid',
