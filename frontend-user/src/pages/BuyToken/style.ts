@@ -62,6 +62,7 @@ const useStyles = makeStyles((theme: any) => {
       fontSize: 28,
       display: 'flex',
       alignItems: 'center',
+      font: 'normal normal bold 28px/32px DM Sans',
       [theme.breakpoints.down('xs')]: {
         flexDirection: 'column',
         alignItems: 'flex-start',
@@ -77,13 +78,14 @@ const useStyles = makeStyles((theme: any) => {
     poolHeaderType: {
       display: 'inline-block',
       fontSize: 17,
-      padding: '6px 20px 6px 6px',
+      padding: '0 20px 0 6px',
       backgroundColor: 'rgba(255, 255, 255, 0.1)',
       borderRadius: 20
     },
     poolHeaderTypeInner: {
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      font: 'normal normal normal 12px/28px Helvetica',
     },
     poolType: {
       display: 'flex',
@@ -98,6 +100,7 @@ const useStyles = makeStyles((theme: any) => {
       borderRadius: 40,
       color: 'white',
       fontWeight: 700,
+      font: 'normal normal bold 12px/14px DM Sans',
 
       '&--In-progress': {
         backgroundColor: '#ebc321'
@@ -123,7 +126,8 @@ const useStyles = makeStyles((theme: any) => {
       display: 'flex',
       alignItems: 'center',
       marginTop: 8,
-      lineHeight: "20px"
+      lineHeight: "20px",
+      font: 'normal normal normal 14px/24px Helvetica',
     },
     poolHeaderCopy: {
       marginLeft: 10,
@@ -164,18 +168,16 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolDetailBasicLabel: {
       color: '#999999',
-      fontSize: 15,
-      fontWeight: 400
+      font: 'normal normal normal 14p/24px Helvetica'
     },
     poolsDetailBasicText: {
-      fontWeight: 600,
       color: 'white',
-      fontSize: 16,
       display: 'flex',
       alignItems: 'center',
       marginLeft: 50,
       textOverflow: 'ellipsis',
       overflow: 'hidden',
+      font: 'normal normal bold 14px/18px DM Sans',
 
       '& span': {
         textOverflow: 'ellipsis',
@@ -212,25 +214,25 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolDetailMaxBuy: {
       marginTop: 15,
-      color: '#999999'
+      color: '#999999',
+      font: 'normal normal normal 12px/18px Helvetica'
     },
     poolDetailProgress: {
       color: 'white',
       marginTop: 32
     },
     poolDetailProgressTitle: {
-      fontWeight: 700,
-      fontSize: 15
+      font: 'normal normal bold 14px/18px DM Sans'
     },
     poolDetailProgressStat: {
       display: 'flex',
       justifyContent: 'space-between',
       margin: '12px 0px 5px 0px',
-      color: '#999999'
+      color: '#999999',
+      font: 'normal normal normal 12px/18px Helvetica'
     },
     poolDetailProgressPercent: {
-      fontWeight: 600,
-      fontSize: 17,
+      font: 'normal normal bold 16px/24px DM Sans',
       color: 'white'
     },
     progress: {
@@ -261,6 +263,11 @@ const useStyles = makeStyles((theme: any) => {
 
       '& button:first-child': {
         marginRight: 10
+      },
+      '& button': {
+        font: 'normal normal bold 14px/18px DM Sans',
+        height: '42px',
+        padding: '0 50px'
       }
     },
     poolDetailBuy: {
@@ -271,14 +278,14 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolDetailLink: {
       marginRight: 120,
-      fontWeight: 'bold',
-      fontSize: 15,
       color: '#999999',
       cursor: 'pointer',
       paddingBottom: 12,
-      position: 'relative'
+      position: 'relative',
+      font: 'normal normal bold 14px/18px DM Sans'
     },
     poolDetailLinkActive: {
+      color: '#6398FF',
       '&::before': {
         content: '""',
         position: 'absolute',
@@ -314,7 +321,7 @@ const useStyles = makeStyles((theme: any) => {
       fontWeight: 700,
       marginTop: 20,
       color: "#999999",
-      fontSize: 16
+      font: 'normal normal bold 14px/18px DM Sans'
     },
     [theme.breakpoints.down('xs')]: {
       poolDetailTier: {

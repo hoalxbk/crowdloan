@@ -61,26 +61,31 @@ const useStyles = makeStyles((theme) => {
     },
     btnNetwork: {
       background: '#292C3F',
-      padding: '8px 10px',
+      padding: '0 10px',
+      height: '36px',
       borderRadius: 20,
       display: 'flex',
       alignItems: 'center',
       color: '#999999',
       marginLeft: 40,
-      fontWeight: 600,
+      '& img': {
+        width: '20px',
+        height: '20px',
+      },     
       [theme.breakpoints.only('xs')]: {
         marginLeft: 0
       }
     },
     btnConnect: {
       background: '#3232DC',
-      height: 42,
+      height: '36px',
       display: 'flex',
       alignItems: 'center',
-      padding: '12px 14px',
+      padding: '0 14px',
       borderRadius: 20,
       marginLeft: 12,
       transition: '.2s all ease-out',
+      font: 'normal normal bold 14px/18px DM Sans',
 
       '&:hover': {
         background: '#1515ae'
@@ -90,7 +95,8 @@ const useStyles = makeStyles((theme) => {
       marginLeft: 10,
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      font: 'normal normal normal 12px/18px Helvetica'
     },
     btnLogout: {
       background: '#3232DC',

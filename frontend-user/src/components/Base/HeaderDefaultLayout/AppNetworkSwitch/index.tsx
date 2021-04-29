@@ -54,8 +54,6 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
 
   const customStyles = {
     color: 'white',
-    fontSize: 28,
-    fontWeight: 700
   }
 
   return (

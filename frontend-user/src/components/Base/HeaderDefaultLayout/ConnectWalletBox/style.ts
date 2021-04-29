@@ -25,8 +25,8 @@ const useStyles = makeStyles((theme) => {
     },
     walletBoxText: {
       color: '#999999',
-      fontWeight: 600,
-      marginTop: 10
+      marginTop: 10,
+      font: 'normal normal normal 12px/18px Helvetica!important'
     },
     walletBoxIconWrap: {
       position: 'relative',

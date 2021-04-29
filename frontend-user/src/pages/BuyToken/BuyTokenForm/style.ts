@@ -7,6 +7,13 @@ const useStyles = makeStyles((theme: any) => {
 
       '& button:first-child': {
         marginRight: 10
+      },
+      
+      '& button': {
+        padding: '0 25px',
+        width: '130px',
+        height: '42px',
+        font: 'normal normal bold 14px/18px DM Sans',
       }
     },
     buyTokenForm: {
@@ -19,10 +26,9 @@ const useStyles = makeStyles((theme: any) => {
       },
     },
     buyTokenFormTitle: {
-      fontSize: 15,
-      fontWeight: 700,
       marginBottom: 20,
-      lineHeight: '24px'
+      lineHeight: '24px',
+      font: 'normal normal bold 14px/18px DM Sans',
     },
     buyTokenInputForm: {
       background: '#11152A',
@@ -44,8 +50,7 @@ const useStyles = makeStyles((theme: any) => {
       backgroundColor: 'transparent',
       border: 'none',
       color: 'white',
-      fontWeight: 700,
-
+      font: 'normal normal normal 14px/24px Helvetica',
       '&:focus': {
         outline: 'none'
       }
@@ -55,25 +60,24 @@ const useStyles = makeStyles((theme: any) => {
       justifyContent: 'space-between',
       alignItems: 'center',
       color: '#999999',
-      fontSize: 14,
-      fontWeight: 400
+      font: 'normal normal normal 12px/18px Helvetica'
     },
     buyTokenFee: {
       color: '#999999',
-      marginTop: 10
+      marginTop: 10,
+      font: 'normal normal normal 12px/18px Helvetica'
     },
     buyTokenEstimate: {
       marginTop: 32
     },
     buyTokenEstimateLabel: {
-      fontWeight: 700,
-      fontSize: 15
+      font: 'normal normal bold 14px/18px DM Sans'
     },
     buyTokenEstimateAmount: {
       color: '#6398FF',
-      fontSize: 28,
       marginTop: 12,
-      display: 'inline-block'
+      display: 'inline-block',
+      font: 'normal normal bold 28px/32px DM Sans'
     },
     [theme.breakpoints.down('xs')]: {
       btnGroup: {
@@ -81,7 +85,7 @@ const useStyles = makeStyles((theme: any) => {
         justifyContent: 'center',
         '& button': {
           padding: '15px 25px',
-          width: '130px'
+          width: '130px',
         }
       }
     },
@@ -99,12 +103,36 @@ const useStyles = makeStyles((theme: any) => {
     },
     purchasableCurrency: {
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      font: 'normal normal bold 14px/18px DM Sans'
     },
     purchasableCurrencyIcon: {
       width: 30,
       height: 30,
       marginRight: 7 
+    },
+    purchasableCurrencyMax: {
+      padding: '5px 10px',
+      marginRight: 20,
+      backgroundColor: 'rgb(50, 50, 220)',
+      border: 'none',
+      color: 'white',
+      borderRadius: 5,
+      fontWeight: 'bold',
+      cursor: 'pointer',
+      transition: '.2s all ease-in',
+
+      '&:hover': {
+        opacity: '.9'
+      },
+
+      '&:focus': {
+        outline: 'none'
+      },
+
+      '&:active': {
+        transform: 'translateY(-3px)'
+      }
     }
   };
 });

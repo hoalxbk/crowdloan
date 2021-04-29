@@ -26,6 +26,7 @@ import InvestorLogin from "./pages/Login/InvestorLogin";
 
 import Account from "./pages/Account";
 import Landing from "./pages/Landing";
+import Pools from "./pages/Pools";
 
 //@ts-ignore
 import { NotificationContainer, NotificationManager } from 'react-notifications'
@@ -124,6 +125,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
           <Route path={'/network-change'} component={NetworkChange} />
           <Route path={'/change-password/:role?'} component={ChangePassword} />
           <Route path={'/account'} component={Account} />
+          <Route path={'/pools'} component={Pools} />
           <Route path={'/'} component={Landing} />
 
           <Route path={'/coming-soon'} component={ComingSoon} />

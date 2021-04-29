@@ -110,7 +110,7 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
       },
       [PoolDetailKey.deposited]: {
         display: purchasableCurrency.toUpperCase(),
-        label: 'Deposited',
+        label: 'Supported',
         image: `/images/${purchasableCurrency.toUpperCase()}.png`
       },
       [PoolDetailKey.joinTime]: {

@@ -11,6 +11,10 @@ const useStyles = makeStyles((theme) => {
         textAlign: 'center'
       }
     },
+    dialogLabel: {
+      font: 'normal normal normal 12px/18px Helvetica',
+      textAlign: 'left'
+    },
     dialogContentTypo: {
       color: 'white',
       fontSize: 16,
@@ -26,9 +30,8 @@ const useStyles = makeStyles((theme) => {
     },
     dialogTitle: {
       '& .MuiTypography-h6': {
-        fontSize: 28,
-        fontWeight: 700,
         paddingBottom: 16,
+        font: 'normal normal bold 18px/24px DM Sans'
       },
 
       '& .MuiSvgIcon-root': {
@@ -64,8 +67,7 @@ const useStyles = makeStyles((theme) => {
       borderRadius: 4,
       border: 'none',
       color: 'white',
-      fontSize: 15,
-      fontWeight: 400,
+      font: 'normal normal normal 14px/24px Helvetica',
 
       '&:focus': {
         outline: 'none',
@@ -74,17 +76,19 @@ const useStyles = makeStyles((theme) => {
     },
     dialogButton: {
       marginTop: 25,
-      display: 'inline-block',
+      display: 'flex',
       width: '100%',
       background: '#3232DC',
       borderRadius: 60,
-      padding: '15px 0px',
+      padding: '0',
       color: 'white',
       border: 'none',
-      fontWeight: 700,
-      fontSize: 15,
+      font: 'normal normal bold 14px/18px DM Sans',
       cursor: 'pointer',
       transition: '.2s all ease-out',
+      height: '42px',
+      alignItems: 'center',
+      justifyContent: 'center',
 
       '&:focus': {
         outline: 'none'

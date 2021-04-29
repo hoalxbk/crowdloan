@@ -38,7 +38,7 @@ const AccountInformation = (props: any) => {
           <span>Email</span>
           {isWidthUp('sm', props.width) && <>
             {email && <span>{email}</span>}
-            {(emailVerified == USER_STATUS.UNVERIFIED || !email) &&
+            {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
               <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
                 Verify Email
               </button>}

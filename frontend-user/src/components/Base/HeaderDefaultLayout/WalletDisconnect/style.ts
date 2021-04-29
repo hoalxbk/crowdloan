@@ -26,8 +26,7 @@ const useStyles = makeStyles((theme) => {
     },
     dialogTitle: {
       '& .MuiTypography-h6': {
-        fontSize: 28,
-        fontWeight: 700,
+        font: 'normal normal bold 28px/32px DM Sans',
         paddingBottom: 16,
       },
 
@@ -89,11 +88,10 @@ const useStyles = makeStyles((theme) => {
       justifyContent: 'center',
     },
     accountDetailBlockLabel: {
-      fontSize: 11
+      font: 'normal normal normal 12px/18px Helvetica'
     },
     accountDetailBlockText: {
-      fontWeight: 500,
-      fontSize: 15
+      font: 'normal normal bold 14px/18px DM Sans'
     },
     accountDetailsIcon: {
       width: 50
@@ -111,7 +109,7 @@ const useStyles = makeStyles((theme) => {
     accountDetailAddressText: {
       marginLeft: 10,
       color: 'white',
-      fontSize: 15
+      font: 'normal normal normal 14px/24px Helvetica'
     },
     walletNameIcon: {
       width: 30,
@@ -130,8 +128,8 @@ const useStyles = makeStyles((theme) => {
       alignItems: 'center',
       justifyContent: 'center',
       color: '#59f',
-      fontWeight: 600,
-      cursor: 'pointer'
+      cursor: 'pointer',
+      font: 'normal normal bold 14px/18px DM Sans'
     },
     [theme.breakpoints.down('xs')]: {
       dialog: {

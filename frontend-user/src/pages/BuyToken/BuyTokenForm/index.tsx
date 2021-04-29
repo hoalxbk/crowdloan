@@ -159,6 +159,16 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     )
     : false;
 
+  const availableMaximumBuy = useMemo(() => {
+    const maxBuy = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
+
+    if (maxBuy.gt(new BigNumber(tokenBalance))) {
+      return new BigNumber(tokenBalance).toFixed();
+    }
+
+    return maxBuy.toFixed();
+  }, [tokenBalance, maximumBuy, userPurchased, poolBalance, rate]);
+
   const poolErrorBeforeBuy = useMemo(() => {
     const timeToShowMsg = new Date() > endJoinTimeInDate && new Date() < startBuyTimeInDate;
 
@@ -308,12 +318,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   }, [tokenDepositTransaction, connectedAccountFirstBuy]);
 
   const handleInputChange = async (e: any) => {
-    if (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) {
-      const val = e.target.value;
-      setInput(val);
+    const value = e.target.value.replaceAll(",", "");
+    if (value === '' || REGEX_NUMBER.test(value)) {
+      setInput(value);
 
-      if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
-        const tokens = new BigNumber(val).multipliedBy(new BigNumber(1).div(rate)).toNumber()
+      if (!isNaN(value) && value && rate && purchasableCurrency && availablePurchase) {
+        const tokens = new BigNumber(value).multipliedBy(new BigNumber(1).div(rate)).toNumber()
         setEstimateTokens(tokens);
       } else {
         setEstimateTokens(0);
@@ -385,6 +395,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             disabled={wrongChain}
           />
           <span className={styles.purchasableCurrency}>
+            <button 
+              className={styles.purchasableCurrencyMax} 
+              onClick={() => setInput(availableMaximumBuy)}
+            >
+              Max
+            </button>
             <img src={`/images/${purchasableCurrency}.png`} alt={purchasableCurrency} className={styles.purchasableCurrencyIcon} />
             {purchasableCurrency}
           </span>

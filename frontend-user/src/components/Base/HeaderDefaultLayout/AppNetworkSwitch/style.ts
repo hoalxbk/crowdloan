@@ -27,9 +27,9 @@ const useStyles = makeStyles((theme) => {
     },
     dialogTitle: {
       '& .MuiTypography-h6': {
-        fontSize: 28,
         fontWeight: 700,
         paddingBottom: 16,
+        font: 'normal normal bold 18px/24px DM Sans',
       },
 
       '& .MuiSvgIcon-root': {
