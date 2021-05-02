@@ -10,7 +10,6 @@ import {isFactorySuspended} from "../../utils/campaignFactory";
 import {createPool, updatePool} from "../../request/pool";
 import {alertFailure, alertSuccess} from "../../store/actions/alert";
 import {withRouter} from "react-router-dom";
-import {renderErrorCreatePool} from "../../utils/validate";
 import {deployPool} from "../../store/actions/campaign";
 import {adminRoute} from "../../utils";
 
