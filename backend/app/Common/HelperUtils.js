@@ -2,8 +2,15 @@
 
 const crypto = use('crypto');
 const Const = use('App/Common/Const');
+
+const CONFIGS_FOLDER = '../../blockchain_configs/';
+const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
 const Web3 = require('web3');
-const web3 = new Web3();
+const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
+
+// Tier Smart contract
+const { abi: CONTRACT_TIER_ABI } = require('../../blockchain_configs/contracts/Normal/Tier.json');
+const tierSmartContract = process.env.TIER_SMART_CONTRACT;
 
 /**
  * Generate "random" alpha-numeric string.
@@ -86,6 +93,17 @@ const paginationArray = (array, page_number, page_size) => {
   };
 };
 
+const getTierSmartContractInstance = () => {
+  const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
+  return tierSc;
+};
+
+const getUserTierSmartContract = async (wallet_address) => {
+  const tierSc = getTierSmartContractInstance();
+  const userTier = await tierSc.methods.getUserTier(wallet_address).call();
+  return userTier;
+};
+
 module.exports = {
   randomString,
   responseSuccess,
@@ -94,4 +112,6 @@ module.exports = {
   responseBadRequest,
   checkSumAddress,
   paginationArray,
+  getTierSmartContractInstance,
+  getUserTierSmartContract,
 };

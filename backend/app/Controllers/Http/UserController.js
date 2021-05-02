@@ -1,20 +1,22 @@
 'use strict'
 
-const Config = use('Config')
-const ErrorFactory = use('App/Common/ErrorFactory');
-const UserService = use('App/Services/UserService')
-const UserModel = use('App/Models/User')
-const PasswordResetModel = use('App/Models/PasswordReset')
-const Helpers = use('Helpers')
-const HelperUtils = use('App/Common/HelperUtils');
+const Config = use('Config');
+const Helpers = use('Helpers');
 const Const = use('App/Common/Const');
-const Mail = use('Mail')
-const Env = use('Env')
-const randomString = use('random-string');
+const Env = use('Env');
 const Hash = use('Hash');
 const Event = use('Event')
 
-const SendForgotPasswordJob = use('App/Jobs/SendForgotPasswordJob')
+const ErrorFactory = use('App/Common/ErrorFactory');
+const ReservedListService = use('App/Services/ReservedListService');
+const UserService = use('App/Services/UserService')
+const UserModel = use('App/Models/User');
+const TierModel = use('App/Models/Tier');
+const PasswordResetModel = use('App/Models/PasswordReset');
+const HelperUtils = use('App/Common/HelperUtils');
+const randomString = use('random-string');
+
+const SendForgotPasswordJob = use('App/Jobs/SendForgotPasswordJob');
 
 class UserController {
   async profile({ request }) {
@@ -275,6 +277,32 @@ class UserController {
     const user = userService.findUser({'wallet_address': params.wallet_address});
     // check exist user or not and return result
     return HelperUtils.responseSuccess(user == null);
+  }
+
+  async getCurrentTier({ request, params }) {
+    const { walletAddress, campaignId } = params;
+    const filterParams = {
+      wallet_address: walletAddress,
+      campaign_id: campaignId,
+    };
+    console.log('[getCurrentTier] - filterParams: ', filterParams);
+
+    // Check user is in reserved list
+    const isReserve = await (new ReservedListService).buildQueryBuilder(filterParams).first();
+    console.log('[getCurrentTier] - isReserve:', !!isReserve);
+    if (isReserve) {
+      // Tier is max tier of pool
+      const tier = await TierModel.query().where('campaign_id', campaignId).orderBy('level', 'desc').first();
+      console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
+      return HelperUtils.responseSuccess(tier);
+    } else {
+      // Get Tier in smart contract
+      const userTier = await HelperUtils.getUserTierSmartContract(walletAddress);
+      console.log('[getCurrentTier] - userTier:', userTier);
+      const tier = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
+      console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
+      return HelperUtils.responseSuccess(tier);
+    }
   }
 }
 

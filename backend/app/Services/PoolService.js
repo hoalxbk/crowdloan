@@ -56,7 +56,7 @@ class PoolService {
     //   builder = builder.where('is_display', '=', params.is_display)
     // }
 
-    builder = builder.where('is_display', '=', true);
+    builder = builder.where('is_display', '=', Const.POOL_DISPLAY.DISPLAY);
 
     return builder;
   }
@@ -66,6 +66,11 @@ class PoolService {
       ...params,
       is_search: true,
     })
+  }
+
+  getPoolWithTiers(filterParams) {
+    const pool = this.buildQueryBuilder(filterParams).with('tiers').first();
+    return pool;
   }
 
   // buildSearchQueryWithTitle(query, searchQueryText) {

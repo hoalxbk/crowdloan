@@ -135,6 +135,8 @@ Route.group(() => {
   Route.get('winner-search/:campaignId', 'WinnerListUserController.search');
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');
+
+
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix', 'formatEmailAndWallet']);// , 'maskEmailAndWallet'
 
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
@@ -161,6 +163,7 @@ Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId', 'PoolController.getPool');
 Route.get('pools', 'PoolController.getPoolList');
 Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
+Route.get('pool/:campaignId/user/:walletAddress/current-tier', 'UserController.getCurrentTier').middleware(['formatEmailAndWallet']);
 
 Route.get('pool/:campaignId/check-exist-winner', 'WinnerListUserController.checkExistWinner').validator('CheckUserWinnerExist');
 
