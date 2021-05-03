@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { TIERS } from '../../../constants';
@@ -7,11 +7,13 @@ import useStyles from './style';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
+import { getTiers } from '../../../store/actions/sota-tiers';
 
 const warningIcon = '/images/icons/warning.svg';
 
 const Tiers = (props: any) => {
   const styles = useStyles();
+  const dispatch = useDispatch();
 
   const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
   const { data: tiers = {} } = useSelector((state: any) => state.tiers);
@@ -52,7 +54,10 @@ const Tiers = (props: any) => {
   }
   
   useEffect(() => {
-    if(wrongChain || !isAuth){
+    if(!_.isEmpty(tiers)) {
+      setLoading(false);
+    }
+    if(wrongChain || !isAuth || !connectedAccount){
       setCurrentProcess(0)
       return
     }
@@ -70,8 +75,8 @@ const Tiers = (props: any) => {
   }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain])
 
   useEffect(() => {
-    if(currentProcess) setLoading(false);
-  }, [currentProcess])
+    dispatch(getTiers());
+  }, [])
 
   return (
     <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>

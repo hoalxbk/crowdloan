@@ -24,6 +24,7 @@ const Dashboard = (props: any) => {
   const [camePools, setCamePools] = useState([]);
   const { data: appChain } = useSelector((state: any) => state.appNetwork);
   const { data: connector } = useSelector((state: any) => state.connector);
+  const [poolFetched, setPoolFetched] = useState(false);
 
   const getTokenSold = async (pool: any) => {
     let result = '0';
@@ -39,39 +40,63 @@ const Dashboard = (props: any) => {
     return result;
   }
 
-  useEffect(() => {
-    setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING && pool?.is_display == 1))
-    setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING && pool?.is_display == 1))
+  const setStatusPools = () => {
     pools.forEach(async (pool: any) => {
       const currentTime = moment.utc().unix();
       const startJoinPoolTime = parseInt(pool.start_join_pool_time);
       const endJoinPoolTime = parseInt(pool.end_join_pool_time);
       const startTime = parseInt(pool.start_time);
       const finishTime = parseInt(pool.finish_time);
+      const isClaimable = pool.type !== 'swap';
+      const releaseTime = parseInt(pool.release_time);
+      let changed = false;
       if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
+        if(pool.status != POOL_STATUS.UPCOMMING) changed = true;
         pool.status = POOL_STATUS.UPCOMMING
       } else if(startJoinPoolTime <= currentTime
         && currentTime <= endJoinPoolTime
         ) 
       {
+        if(pool.status != POOL_STATUS.JOINING) changed = true;
         pool.status = POOL_STATUS.JOINING
       } else if(currentTime >= startTime && currentTime <= finishTime) {
         if(Math.round(pool.tokenSold * 100 / pool.total_sold_coin) == 100) {
           pool.status = POOL_STATUS.FILLED
         } else {
+          if(pool.status != POOL_STATUS.IN_PROGRESS) changed = true;
           pool.status = POOL_STATUS.IN_PROGRESS
         }
-      } else {
+      } else if(releaseTime && currentTime >= releaseTime && isClaimable) {
+        pool.status = POOL_STATUS.CLAIMABLE
+      } 
+      else {
         pool.status = POOL_STATUS.CLOSED
       }
+      if(changed) {
+        setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING && pool?.is_display == 1))
+        setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING && pool?.is_display == 1))
+      }
     })
+  }
+
+  useEffect(() => {
+    if(pools.length == 0 || poolFetched) return;
+    const interval = setInterval(setStatusPools, 1000)
+    setPoolFetched(true);
+
+    return () => {
+      clearInterval(interval)
+    }
+  }, [pools]);
+
+  useEffect(() => {
     if(!appChain || !connector) return
     pools.forEach(async (pool: any) => {
       if(pool.is_deploy === 0) return
       const tokenSold = await getTokenSold(pool)
       pool.tokenSold = tokenSold
     })
-  }, [pools, appChain, connector]);
+  },[appChain, connector])
 
   return (
     <DefaultLayout>
@@ -95,10 +120,18 @@ const Dashboard = (props: any) => {
             return index < 8 && <Card pool={pool} key={pool.id}/>
           })}
         </div>
-        <button className="btn">
+        {/* <button className="btn">
           View all Pools&nbsp;
           <img src={arrowRightIcon}/>
-        </button>
+        </button> */}
+        <Link to="pools" className="btn" style={{width: '170px'}}>
+          View all Pools&nbsp;
+          <img src={arrowRightIcon}/>
+        </Link>
+        {/* <a href="/pools" className="btn" style={{width: '170px'}}>
+          View all Pools&nbsp;
+          <img src={arrowRightIcon}/>
+        </a> */}
       </div>
       <div className={styles.getAlert}>
         <img src={background}/>

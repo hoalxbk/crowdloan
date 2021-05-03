@@ -7,6 +7,7 @@ import { approve } from '../../../store/actions/sota-token';
 import { deposit } from '../../../store/actions/sota-tiers';
 import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
 import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
@@ -40,9 +41,9 @@ const ModalDeposit = (props: any) => {
     if(!isNaN(parseFloat(balance.token))
       && !isNaN(parseFloat(depositAmount)))
     {
-      const tokenBalance = convertToBN(convertToWei(balance.token))
-      const amount = convertToBN(convertToWei(depositAmount))
-      const zero = convertToBN('0')
+      const tokenBalance = new BigNumber(balance.token).multipliedBy(new BigNumber(10).pow(18))
+      const amount = new BigNumber(depositAmount).multipliedBy(new BigNumber(10).pow(18))
+      const zero = new BigNumber('0')
       setDisableDeposit(tokenBalance.lt(amount) || amount.lte(zero))
     }
   }, [connectedAccount, balance, depositAmount]);

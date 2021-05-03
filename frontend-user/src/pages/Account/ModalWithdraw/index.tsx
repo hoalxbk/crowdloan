@@ -6,6 +6,7 @@ import useCommonStyle from '../../../styles/CommonStyle';
 import { withdraw, getWithdrawFee } from '../../../store/actions/sota-tiers';
 import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
 import { useWeb3React } from '@web3-react/core';
+import BigNumber from 'bignumber.js';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
@@ -48,9 +49,9 @@ const ModalWithdraw = (props: any) => {
     if(!isNaN(parseFloat(userInfo.staked))
       && !isNaN(parseFloat(withdrawAmount)))
     {
-      const staked = convertToBN(convertToWei(userInfo.staked))
-      const amount = convertToBN(convertToWei(withdrawAmount))
-      const zero = convertToBN('0')
+      const staked = new BigNumber(userInfo.staked).multipliedBy(new BigNumber(10).pow(18))
+      const amount = new BigNumber(withdrawAmount).multipliedBy(new BigNumber(10).pow(18))
+      const zero = new BigNumber('0')
       setDisableWithdraw(staked.lt(amount) || amount.lte(zero));
     }
   }, [connectedAccount, userInfo, withdrawAmount]);
@@ -90,10 +91,10 @@ const ModalWithdraw = (props: any) => {
             </div>
           </div>
           <div className="modal-content__foot">
-            {userInfo.staked > 0 && <button
+            <button
               className={"btn-staking " + (disableWithdraw ? 'disabled' : '')}
               onClick={onWithDraw}
-            >Unlock</button>}
+            >Unlock</button>
             <button
               className="btn-cancel"
               onClick={() => setOpenModalWithdraw(false)}

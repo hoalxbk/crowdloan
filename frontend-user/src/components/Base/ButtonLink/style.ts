@@ -31,7 +31,8 @@ const useStyles = makeStyles<Theme, Props>(props => ({
     fontWeight: 500
   },
   buttonText: {
-    marginLeft: props => props.spacing 
+    marginLeft: props => props.spacing,
+    font: 'normal normal bold 14px/18px DM Sans'
   }
 }));
 

@@ -4,22 +4,22 @@ const useStyles = makeStyles((theme) => {
   return {
     countdownPart: {
       display: 'inline-block',
-      fontSize: '1.5em',
       listStyleType: 'none',
       padding: '.9em',
       color: 'white',
+      font: 'normal normal bold 18px/24px DM Sans',
 
       '& span': {
         display: 'block',
         fontSize: '28px',
         fontWeight: 700,
+        font: 'normal normal bold 28px/32px DM Sans',
         textAlign: 'center'
       }
     },
     countdownInfo: {
       color: '#999999',
-      fontSize: '14px !important',
-      fontWeight: '400 !important' as any
+      font: 'normal normal normal 12px/18px Helvetica!important'
     },
     [theme.breakpoints.down('xs')]: {
       countdownPart: {

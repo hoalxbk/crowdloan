@@ -9,12 +9,14 @@ import useStyles from './style';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import useUserPurchased from '../hooks/useUserPurchased';
 import useTokenClaim from '../hooks/useTokenClaim';
+import { convertTimeToStringFormat } from '../../../utils/convertDate';
 
 type ClaimTokenProps = {
   releaseTime: Date | undefined
   tokenDetails: TokenType | undefined
   poolAddress: string | undefined
   ableToFetchFromBlockchain: boolean | undefined
+  buyTokenSuccess: boolean | undefined
 } 
 
 const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
@@ -27,7 +29,8 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
   const {
     tokenDetails,
     poolAddress,
-    ableToFetchFromBlockchain
+    ableToFetchFromBlockchain,
+    buyTokenSuccess
   } = props;
 
   const { claimToken, setClaimTokenLoading, transactionHash, claimTokenSuccess, loading, error } = useTokenClaim(poolAddress);
@@ -41,8 +44,8 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
       );
     }
     
-    ableToFetchFromBlockchain && fetchUserPurchased();
-  }, [connectedAccount, poolAddress, ableToFetchFromBlockchain, claimTokenSuccess]);
+    (ableToFetchFromBlockchain || buyTokenSuccess) && fetchUserPurchased();
+  }, [connectedAccount, poolAddress, ableToFetchFromBlockchain, claimTokenSuccess, buyTokenSuccess]);
 
   useEffect(() => {
     if (error) {
@@ -65,13 +68,13 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     <div className={styles.poolDetailClaim}>
       <p className={styles.poolDetailClaimTitle}>
         <span>{'Token can claim from'}</span>
-        <strong>{moment(releaseTime).format("h:mm A, DD MMMM YYYY") }</strong>
+        <strong>{convertTimeToStringFormat(releaseTime || new Date())}</strong>
       </p>
       <Countdown startDate={releaseTime} />
       <div className={styles.poolDetailClaimInfo}>
         <div className={styles.poolDetailClaimInfoBlock}>
           <span>You can claim</span>
-          <strong>{userPurchased} {tokenDetails?.name}</strong>
+          <span>{userPurchased} {tokenDetails?.name}</span>
         </div>
       </div>
       <Button 

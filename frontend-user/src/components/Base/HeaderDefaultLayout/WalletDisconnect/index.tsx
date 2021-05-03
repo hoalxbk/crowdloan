@@ -59,9 +59,7 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
 
   const customStyles = {
     color: 'white',
-    fontWeight: 700,
     padding: 0,
-    fontSize: 13
   }
 
   return (
@@ -99,7 +97,7 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: any) => {
   return (
     <Dialog open={opened} onClose={handleClose} className={styles.dialog}>
       <DialogTitle id="customized-dialog-title" onClose={handleClose} customClass={styles.dialogTitle}>
-        <span style={{ fontSize: 24 }}>
+        <span>
           Account&nbsp;&nbsp;
           <Link to="/account"><img src={linkIcon}/></Link>
         </span>
@@ -107,7 +105,7 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: any) => {
       <DialogContent className={styles.dialogContent}>
         <div className={styles.accountDetails}>
           <div className={styles.accountDetailsIcon}>
-            <img src="images/red-kite.png" style={{ width: '100%' }}/>
+            <img src="images/logo-red-kite.svg" style={{ width: '100%' }}/>
           </div>
           <div className={styles.accountDetailBlocks}>
             <div className={styles.accountDetailBlock}>

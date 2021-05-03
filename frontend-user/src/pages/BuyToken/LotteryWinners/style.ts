@@ -6,9 +6,13 @@ const useStyles = makeStyles((theme: any) => {
     },
     LotteryWinnersDesc: {
       marginTop: 30,
-      marginBottom: 16
+      marginBottom: 16,
+      font: 'normal normal normal 14px/24px Helvetica'
     },
     table: {
+      '& .MuiTableBody-root td': {
+        font: 'normal normal normal 14px/24px Helvetica'
+      }
     },
     tableContainer: {
       maxWidth: 700,
@@ -31,7 +35,10 @@ const useStyles = makeStyles((theme: any) => {
       }
     },
     tableHeaderWrapper: {
-      backgroundColor: '#040D34'
+      backgroundColor: '#040D34',
+      '& th': {
+        font: 'normal normal bold 14px/18px DM Sans'
+      }
     },
     tableHeader: {
       color: 'white !important' as any,
@@ -49,7 +56,18 @@ const useStyles = makeStyles((theme: any) => {
       position: 'relative',
       background: '#11152A',
       border: '1px solid #2D2F36',
-      borderRadius: 4
+      borderRadius: 4,
+      '& input': {
+        font: 'normal normal normal 14px/24px Helvetica',
+        height: '36px',
+        padding: '0 40px 0 12px',
+        width: '100%'
+      },
+      '& input #placeholder': {
+        color: 'rgba(153, 153, 153, 0.5)',
+        font: 'normal normal normal 14px/24px Helvetica!important'
+      },
+
     },
     tableSearchIcon: {
       position: 'absolute',

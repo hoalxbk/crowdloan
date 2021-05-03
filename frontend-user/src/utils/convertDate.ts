@@ -1,12 +1,13 @@
 import moment from 'moment'
+import momentTimezone from 'moment-timezone';
 
 export const convertTimeToStringFormat = (date: Date) => {
-  return moment(date).format("h:mm A, DD MMMM YYYY");
+  const timezone = momentTimezone.tz(date, moment.tz.guess());
+  return timezone.format("h:mm A, DD MMMM YYYY [GMT]Z");
 }
 
 export const convertUnixTimeToDateTime = (time: number) => {
-  // return moment.unix(time).format("DD/MM/yyyy hh:mm:ss a");
-  return moment.unix(time).format("hh:mm:ss A MM/DD/yyyy");
+  return moment.unix(time).format("hh:mm:ss A MM/DD/yyyy [GMT]ZZ");
 }
 
 export const convertDateTimeToUnix = (time: any): string => {

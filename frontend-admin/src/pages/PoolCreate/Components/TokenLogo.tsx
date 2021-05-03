@@ -53,7 +53,7 @@ function TokenLogo(props: any) {
     <>
       <div className={classes.formControl}>
         <FormControl component="fieldset">
-          <label className={classes.formControlLabel}>Tokens Image</label>
+          <label className={classes.formControlLabel}>Tokens Icon</label>
 
           <ImageUploading
             // multiple

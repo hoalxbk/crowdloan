@@ -1,14 +1,14 @@
-import React, { useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import BigNumber from 'bignumber.js';
+import NumberFormat from 'react-number-format';
 
 import TransactionSubmitModal from '../../../components/Base/TransactionSubmitModal';
 import Button from '../Button';
 import useStyles from './style';
 
 import { getUSDCAddress, getUSDTAddress } from '../../../utils/contractAddress/getAddresses';
-import { numberWithCommas, getDigitsAfterDecimals, INTEGER_NUMBER_KEY_CODE_LIST, DECIMAL_KEY_CODE } from '../../../utils/formatNumber';
-import { isNotValidASCIINumber, isPreventASCIICharacters, trimLeadingZerosWithDecimal } from '../../../utils/formatNumber';
+import { numberWithCommas } from '../../../utils/formatNumber';
 import { BSC_CHAIN_ID } from '../../../constants/network';
 import { PurchaseCurrency } from '../../../constants/purchasableCurrency';
 import { TokenType } from '../../../hooks/useTokenDetails';
@@ -22,6 +22,8 @@ import usePoolDepositAction from '../hooks/usePoolDepositAction';
 import useTokenApprove from '../../../hooks/useTokenApprove';
 import useAuth from '../../../hooks/useAuth';
 import { withWidth, isWidthDown, isWidthUp } from '@material-ui/core';
+
+const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
 
 type BuyTokenFormProps = {
   tokenDetails: TokenType | undefined,
@@ -42,7 +44,7 @@ type BuyTokenFormProps = {
   startBuyTimeInDate: Date | undefined
   endJoinTimeInDate: Date | undefined
   tokenSold: string | undefined
-  alreadyReserved: any | undefined
+  setBuyTokenSuccess: Dispatch<SetStateAction<boolean>> 
 }  
 
 enum MessageType {
@@ -63,7 +65,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const [walletBalance, setWalletBalance] = useState<number>(0);
   const [userPurchased, setUserPurchased] = useState<number>(0);
   const [poolBalance, setPoolBalance] = useState<number>(0);
-  const runFirst = useRef(true);
+  const [loadingPoolInfo, setLoadingPoolInfo] = useState<boolean>(false);
 
   const { 
     tokenDetails, 
@@ -81,7 +83,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     startBuyTimeInDate,
     endJoinTimeInDate,
     tokenSold,
-    alreadyReserved
+    setBuyTokenSuccess
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -158,6 +160,23 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     )
     : false;
 
+  const availableMaximumBuy = useMemo(() => {
+    const maxBuy = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
+
+    /* if (availableTokensToCurrency.lt(maxBuy)) { */
+    /*   return availableTokensToCurrency.multipliedBy(new BigNumber(1).div(rate)).toFixed(); */
+    /* } */
+    
+    /* if (availableTokensToCurrency.gt(maxBuy)) { */
+    /* } */
+
+    if (maxBuy.gt(new BigNumber(tokenBalance))) {
+      return new BigNumber(tokenBalance).toFixed();
+    }
+
+    return maxBuy.toFixed();
+  }, [tokenBalance, maximumBuy, userPurchased, poolAmount, tokenSold, rate]);
+
   const poolErrorBeforeBuy = useMemo(() => {
     const timeToShowMsg = new Date() > endJoinTimeInDate && new Date() < startBuyTimeInDate;
 
@@ -218,8 +237,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     }
   }
 
-  // Plus one for userTier because tier in smart contract start by 0  
-  const validTier = !alreadyReserved ? new BigNumber(userTier).gte(minTier): true;
+  // Check whether current user's tier is valid or not
+  const validTier = new BigNumber(userTier).gte(minTier);
 
   const purchasable = 
      availablePurchase 
@@ -258,17 +277,30 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         setWalletBalance(await retrieveTokenBalance(tokenDetails, connectedAccount) as number);
         setPoolBalance(await retrieveTokenBalance(tokenDetails, poolAddress) as number);
       }
+
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
+
+  useEffect(() => {
+    const fetchPoolDetailsBlockchain = async () => {
+      await fetchPoolDetails();
+      setLoadingPoolInfo(false);
+    }
+
+    loadingPoolInfo && fetchPoolDetailsBlockchain();
+  }, [loadingPoolInfo]);
 
   // Handle for fetching pool general information 1 time
   useEffect(() => {
     const fetchTokenPoolAllowance = async () => {
-      runFirst.current = false;
-      await fetchPoolDetails();
+      try {
+        setLoadingPoolInfo(true);
+      } catch (err) { 
+        setLoadingPoolInfo(false);
+      }    
     }
 
-    ableToFetchFromBlockchain && (runFirst.current || connectedAccount) && fetchTokenPoolAllowance();
-  }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress, ableToFetchFromBlockchain, runFirst]);
+    ableToFetchFromBlockchain && connectedAccount && fetchTokenPoolAllowance();
+  }, [connectedAccount, ableToFetchFromBlockchain]);
 
   // Check if has any error when deposit => close modal
   useEffect(() => {
@@ -280,6 +312,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   // Re-fetch user balance when deposit successful
   useEffect(() => {
     const handleWhenDepositSuccess = async () => {
+      setBuyTokenSuccess(true);
       await fetchUserBalance();
       await fetchPoolDetails();
     }
@@ -305,15 +338,19 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     }
   }, [tokenDepositTransaction, connectedAccountFirstBuy]);
 
-  const handleInputChange = async (e: any) => {
-    const val = e.target.value;
-    setInput(val);
-
-    if (!isNaN(val) && val && rate && purchasableCurrency && availablePurchase) {
-      const tokens = new BigNumber(val).multipliedBy(new BigNumber(1).div(rate)).toNumber()
+  useEffect(() => {
+    if (input && rate && purchasableCurrency) {
+      const tokens = new BigNumber(input).multipliedBy(new BigNumber(1).div(rate)).toNumber()
       setEstimateTokens(tokens);
     } else {
       setEstimateTokens(0);
+    }
+  }, [input, purchasableCurrency, rate]);
+
+  const handleInputChange = async (e: any) => {
+    const value = e.target.value.replaceAll(",", "");
+    if (value === '' || REGEX_NUMBER.test(value)) {
+      setInput(value);
     }
   }
 
@@ -321,6 +358,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     try {
       if (purchasableCurrency && ableToFetchFromBlockchain) {
         setOpenSubmitModal(true);
+        setBuyTokenSuccess(false);
 
         // Call to smart contract to deposit token and refetch user balance
         await deposit();
@@ -368,38 +406,26 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
           </span>}
         </p>
         <div className={styles.buyTokenInputWrapper}>
-          <input 
-            type="text" 
+
+          <NumberFormat 
             className={styles.buyTokenInput} 
             placeholder={'0'} 
+            thousandSeparator={true}  
             onChange={handleInputChange} 
+            decimalScale={6}
             value={input} 
-            onKeyDown={e => { 
-              if (
-                (getDigitsAfterDecimals(input) >= 6 && INTEGER_NUMBER_KEY_CODE_LIST.indexOf(e.keyCode) < 0) || 
-                (input.includes('.') && e.keyCode === DECIMAL_KEY_CODE)
-              ) {
-                e.preventDefault();
-                return;
-              }
-
-              isNotValidASCIINumber(e.keyCode, true) && e.preventDefault() 
-            }}
-            onKeyPress={e => isPreventASCIICharacters(e.key) && e.preventDefault()}
-            onBlur={e => setInput(trimLeadingZerosWithDecimal(e.target.value))}
-            onPaste={e => {
-              const pastedText = e.clipboardData.getData('text');
-
-              if (isNaN(Number(pastedText)) || getDigitsAfterDecimals(pastedText) > 6) {
-                e.preventDefault();
-              }
-            }}
             max={tokenBalance}
             min={0}
             maxLength={255}
             disabled={wrongChain}
           />
           <span className={styles.purchasableCurrency}>
+            <button 
+              className={styles.purchasableCurrencyMax} 
+              onClick={() => setInput(availableMaximumBuy)}
+            >
+              Max
+            </button>
             <img src={`/images/${purchasableCurrency}.png`} alt={purchasableCurrency} className={styles.purchasableCurrencyIcon} />
             {purchasableCurrency}
           </span>

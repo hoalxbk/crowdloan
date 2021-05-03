@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { HashLoader } from "react-spinners";
-import { useDispatch } from 'react-redux';
 import { useParams, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js'; 
 import Tooltip from '@material-ui/core/Tooltip';
+import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
@@ -29,8 +31,8 @@ import { NETWORK_ETH_NAME, NETWORK_BSC_NAME } from '../../constants/network';
 import { getPoolCountDown } from '../../utils/getPoolCountDown';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
-import { getTiers, getUserInfo, getUserTier, resetTiers } from '../../store/actions/sota-tiers';
-import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
+
+import { sotaTiersActions } from '../../store/constants/sota-tiers';
 
 import useStyles from './style';
 
@@ -51,8 +53,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
   const styles = useStyles();
 
+  const [buyTokenSuccess, setBuyTokenSuccess] = useState<boolean>(false);
   const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
-  const [isWinner, setIsWinner] = useState(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
@@ -69,14 +71,8 @@ const BuyToken: React.FC<any> = (props: any) => {
       poolDetails?.networkAvailable 
   );
   const { joinPool, poolJoinLoading, joinPoolSuccess } = usePoolJoinAction({ poolId: poolDetails?.id });
-  const { data: winners } = useFetch<Array<any>>(
-    poolDetails ? `/pool/${poolDetails?.id}/winners`: undefined, 
-    poolDetails?.method !== "whitelist" 
-  );
-  const { data: alreadyReserved } = useFetch<Array<any>>(
-    poolDetails && connectedAccount ? 
-    `/pool/${poolDetails?.id}/check-exist-reverse?wallet_address=${connectedAccount}`: 
-    undefined, 
+  const { data: existedWinner } = useFetch<Array<any>>(
+    poolDetails ? `/pool/${poolDetails?.id}/check-exist-winner?wallet_address=${connectedAccount}`: undefined, 
     poolDetails?.method !== "whitelist" 
   );
   const { data: alreadyJoinPool } = useFetch<boolean>(
@@ -84,11 +80,16 @@ const BuyToken: React.FC<any> = (props: any) => {
     `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
     : undefined
   );
-  const { data: verifiedEmail } = useFetch<boolean>(
-    poolDetails && connectedAccount ?
+  const { data: verifiedEmail = true } = useFetch<boolean>(
+    poolDetails && connectedAccount && isAuth ?
     `/user/check-wallet-address?wallet_address=${connectedAccount}`
     : undefined
   );
+  const { data: currentUserTier } = useFetch<any>(
+    id && connectedAccount ? 
+    `pool/${id}/user/${connectedAccount}/current-tier`
+    : undefined,
+  )
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
   // Use for check whether pool exist in selected network or not
@@ -96,8 +97,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
   const ableToFetchFromBlockchain = appNetwork === poolDetails?.networkAvailable && !wrongChain;
 
-  const userBuyLimit = poolDetails?.connectedAccountBuyLimit || 0;
-  const userBuyMinimum = poolDetails?.connectedAccountBuyMinimum || 0;
+  const userBuyLimit = currentUserTier?.max_buy || 0;
+  const userBuyMinimum = currentUserTier?.min_buy || 0;
   
   // With Whitelist situation, Enable when join time < current < end join time
   // With FCFS, always disable join button
@@ -105,8 +106,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const endJoinTimeInDate = new Date(Number(poolDetails?.endJoinTime) * 1000);
   const startBuyTimeInDate = new Date(Number(poolDetails?.startBuyTime) * 1000);
   const endBuyTimeInDate = new Date(Number(poolDetails?.endBuyTime) * 1000);
-  const tierStartBuyInDate = new Date(Number(poolDetails?.tierStartTime) * 1000);
-  const tierEndBuyInDate = new Date(Number(poolDetails?.tierEndTime) * 1000);
+  const tierStartBuyInDate = new Date(Number(currentUserTier?.start_time) * 1000);
+  const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000);
   const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
 
   const today = new Date();
@@ -129,7 +130,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     today <= tierEndBuyInDate &&
     poolDetails?.isDeployed &&
     verifiedEmail &&
-    (poolDetails?.method === 'whitelist' ? (alreadyReserved ? true:  alreadyJoinPool): true);
+    (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
 
   // Get Pool Status
   const poolStatus = getPoolStatus(
@@ -173,32 +174,11 @@ const BuyToken: React.FC<any> = (props: any) => {
   }, [endBuyTimeInDate]);
 
   useEffect(() => {
-    // Check if user is winning ticket or not
-    if (poolDetails?.method === "whitelist" && winners) {
-      let isFound = false;
-      setIsWinner(false);
-
-      winners.length > 0 && winners.forEach(winner => {
-        if (winner.wallet_address === connectedAccount && !isFound) {
-          console.log(`Account ${connectedAccount} won ticket`);
-          setIsWinner(true);
-        }
-      });
-    } else setIsWinner(false);
-  }, [poolDetails, winners, connectedAccount]);
-
-  useEffect(() => {
-    const poolNetwork = poolDetails?.networkAvailable;
-    if (isAuth && connectedAccount && poolDetails && ableToFetchFromBlockchain) { 
-      dispatch(getTiers(poolNetwork)) 
-      dispatch(getUserInfo(connectedAccount, poolNetwork));
-      dispatch(getUserTier(connectedAccount, poolNetwork));
-    }   
-
-    if ((!isAuth || !ableToFetchFromBlockchain) && typeof userTier === 'string') {
-      dispatch(resetTiers());
-    }
-  }, [isAuth, connectedAccount, userTier, ableToFetchFromBlockchain, poolDetails]);
+    currentUserTier && dispatch({
+      type: sotaTiersActions.USER_TIER_SUCCESS,
+      payload: currentUserTier.level
+    })
+  }, [currentUserTier]);
 
   const render = () => {
     if (loadingPoolDetail)  {
@@ -235,26 +215,21 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {poolDetails?.title}
                 </h2>
                 <p className={styles.poolHeaderAddress}>
-                  {isWidthUp('sm', props.width) && poolDetails?.isDeployed && poolDetails?.poolAddress}
-                  {isWidthDown('xs', props.width) && poolDetails?.isDeployed && shortenAddress(poolDetails?.poolAddress || '', 8)}
-
-                  {
-                    poolDetails?.isDeployed && (
-                      <CopyToClipboard text={poolDetails?.poolAddress}
-                      onCopy={() => { 
-                        setCopiedAddress(true);
-                        setTimeout(() => {
-                          setCopiedAddress(false);
-                        }, 2000);
-                        }}
-                      >
-                      {
-                        !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
-                        : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
-                        }
-                        </CopyToClipboard>
-                    )
-                  }
+                  {isWidthUp('sm', props.width) && poolDetails?.tokenDetails?.address}
+                  {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.tokenDetails?.address || '', 8)}
+                  <CopyToClipboard text={poolDetails?.tokenDetails?.address}
+                    onCopy={() => { 
+                      setCopiedAddress(true);
+                      setTimeout(() => {
+                        setCopiedAddress(false);
+                      }, 2000);
+                    }}
+                  >
+                    {
+                      !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
+                      : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
+                    }
+                  </CopyToClipboard>
                 </p>
               </div>
             </div>
@@ -269,7 +244,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {isWinner && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
+            {existedWinner && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
               <p className={styles.poolTicketWinner}>
                 <div>
                   {
@@ -296,6 +271,24 @@ const BuyToken: React.FC<any> = (props: any) => {
                   This pool is ended, thanks for all! 
                 </span>
               </p>
+            }
+            {
+              !verifiedEmail && (
+                <p className={styles.poolTicketWinner}>
+                  <div>
+                    <img src="/images/red-warning.svg" alt="warning" />
+                  </div>
+                  <span style={{ marginLeft: 14 }}>
+                    Your account has not been verified. To verify your account, please click&nbsp;
+                    <Link 
+                      to="/account" 
+                      style={{ color: 'white', textDecoration: 'underline' }}
+                    >
+                      here
+                    </Link>.
+                  </span>
+                </p>
+              )
             }
           </header>
           <main className={styles.poolDetailInfo}>
@@ -368,7 +361,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         text={'Etherscan'} 
                         backgroundColor={'#3232DC'} 
                         onClick={() => {
-                          poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails.poolAddress}` as string, '_blank')
+                          poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
                         }} 
                       />
                     </div>
@@ -421,10 +414,9 @@ const BuyToken: React.FC<any> = (props: any) => {
                     ): (
                       <p 
                         style={{ 
-                          fontSize: 16, 
-                          fontWeight: 'bold', 
                           color: '#D01F36',
-                          marginTop: 40
+                          marginTop: 40,
+                          font: 'normal normal bold 14px/18px DM Sans'
                         }}>
                         This pool is ended.
                       </p>
@@ -474,7 +466,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         endBuyTimeInDate={endBuyTimeInDate}
                         endJoinTimeInDate={endJoinTimeInDate}
                         tokenSold={tokenSold}
-                        alreadyReserved={alreadyReserved}
+                        setBuyTokenSuccess={setBuyTokenSuccess}
                       /> 
                    )
                 }
@@ -491,6 +483,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       ableToFetchFromBlockchain={ableToFetchFromBlockchain}
                       poolAddress={poolDetails?.poolAddress}
                       tokenDetails={poolDetails?.tokenDetails} 
+                      buyTokenSuccess={buyTokenSuccess}
                     /> 
                  )
                 }
