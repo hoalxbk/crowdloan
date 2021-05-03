@@ -156,6 +156,7 @@ function PoolForm(props: any) {
     }
   };
 
+  // Update After Deploy
   const updatePoolAfterDeloy = async (data: any) => {
     // Only allow update informations:
     // name
@@ -201,6 +202,7 @@ function PoolForm(props: any) {
     }
   };
 
+  // Create / Update Pool (Before Deploy)
   const handleCampaignCreate = () => {
     setNeedValidate(false);
     setTimeout(() => {
@@ -222,6 +224,7 @@ function PoolForm(props: any) {
     return tokenInfo;
   }
 
+  // Deploy Pool And Update
   const handleDeloySubmit = async (data: any) => {
     if (poolDetail.is_deploy || deployed) {
       alert('Pool is deployed !!!');
