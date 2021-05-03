@@ -101,7 +101,7 @@ const useStyles = makeStyles((theme: any) => {
       }
     },
     poolsBody: {
-      minHeight: '460px',
+      // minHeight: '460px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -143,6 +143,11 @@ const useStyles = makeStyles((theme: any) => {
       },
       tabs: {
         justifyContent: 'space-between'
+      }
+    },
+    pagination: {
+      '& *': {
+        color: 'white'
       }
     }
   };
