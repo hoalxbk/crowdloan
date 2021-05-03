@@ -327,16 +327,59 @@ class PoolController {
       listData = listData.orderBy('id', 'DESC');
       listData = await listData.paginate(page,limit);
 
-      // Cache data
-      RedisUtils.createRedisPoolList(param, listData);
+      // // Cache data
+      // RedisUtils.createRedisPoolList(param, listData);
 
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e)
       return HelperUtils.responseErrorInternal(e.message);
     }
+  }
 
+  async getTopPools({request}) {
+    const inputParams = request.all();
+    const limit = inputParams.limit ? inputParams.limit : Config.get('const.limit_default');
+    const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
+    inputParams.limit = limit;
+    inputParams.page = page;
+    inputParams.is_display = false;
+    inputParams.is_search = true;
+    console.log('[getTopPools] - inputParams: ', inputParams);
 
+    try {
+      let listData = (new PoolService).buildSearchQuery(inputParams);
+      listData = listData.orderBy('created_at', 'DESC');
+      listData = await listData.paginate(page,limit);
+
+      return HelperUtils.responseSuccess(listData);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
+  async getJoinedPools({ request, params }) {
+    const inputParams = request.all();
+    const limit = inputParams.limit ? inputParams.limit : Config.get('const.limit_default');
+    const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
+    inputParams.limit = limit;
+    inputParams.page = page;
+    inputParams.is_display = false;
+    inputParams.is_search = true;
+    console.log('[getJoinedPools] - inputParams: ', inputParams);
+
+    const walletAddress = params.walletAddress;
+    try {
+      let listData = (new PoolService).getJoinedPools(walletAddress, inputParams);
+      listData = listData.orderBy('created_at', 'DESC');
+      listData = await listData.paginate(page,limit);
+
+      return HelperUtils.responseSuccess(listData);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
   }
 
 }
