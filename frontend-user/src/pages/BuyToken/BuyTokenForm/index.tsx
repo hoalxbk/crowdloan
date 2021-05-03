@@ -339,13 +339,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   }, [tokenDepositTransaction, connectedAccountFirstBuy]);
 
   useEffect(() => {
-    if (input && rate && purchasableCurrency && availablePurchase) {
+    if (input && rate && purchasableCurrency) {
       const tokens = new BigNumber(input).multipliedBy(new BigNumber(1).div(rate)).toNumber()
       setEstimateTokens(tokens);
     } else {
       setEstimateTokens(0);
     }
-  }, [input, availablePurchase]);
+  }, [input, purchasableCurrency, rate]);
 
   const handleInputChange = async (e: any) => {
     const value = e.target.value.replaceAll(",", "");
