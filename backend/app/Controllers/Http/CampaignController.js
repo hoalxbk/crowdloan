@@ -7,6 +7,7 @@ const TierService = use('App/Services/TierService');
 const WinnerListService = use('App/Services/WinnerListUserService');
 const WhitelistService = use('App/Services/WhitelistUserService');
 const ReservedListService = use('App/Services/ReservedListService');
+const CampaignClaimConfigService = use('App/Services/CampaignClaimConfigService');
 const UserService = use('App/Services/UserService');
 const Const = use('App/Common/Const');
 const HelperUtils = use('App/Common/HelperUtils');
@@ -20,7 +21,9 @@ const CONTRACT_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGN];
 const CONTRACT_FACTORY_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGNFACTORY];
 
 const { abi: CONTRACT_ABI } = CONTRACT_CONFIGS.CONTRACT_DATA;
-const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
+const { abi: CONTRACT_FACTORY_NORMAL_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
+const { abi: CONTRACT_CLAIM_ABI } = CONTRACT_CONFIGS.CONTRACT_CLAIMABLE;
+const { abi: CONTRACT_FACTORY_CLAIM_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_CLAIMABLE;
 const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
 const { abi: CONTRACT_TIER_ABI } = require('../../../blockchain_configs/contracts/Normal/Tier.json');
 
@@ -435,10 +438,7 @@ class CampaignController {
         console.log(`Do not found wallet for campaign ${campaign_id}`);
         return HelperUtils.responseBadRequest("Do not found wallet for campaign");
       }
-      // call to SC to get sign hash
-      const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
       // get convert rate token erc20 -> our token
-      // TODO need improve this code
       let scCurrency, unit;
       switch (camp.accept_currency) {
         case Const.ACCEPT_CURRENCY.USDT:
@@ -457,17 +457,10 @@ class CampaignController {
           console.log(`Do not found currency support ${camp.accept_currency} of campaignId ${campaign_id} `);
           return HelperUtils.responseErrorInternal("Internal Server Error !");
       }
-      // TODO get from DB
-      const receipt = await Promise.all([
-        poolContract.methods.getOfferedCurrencyRate(scCurrency).call(),
-        poolContract.methods.getOfferedCurrencyDecimals(scCurrency).call()
-      ]);
-      const rate = receipt[0];
-      const decimal = receipt[1];
-      console.log(rate,decimal);
+      console.log(`Conversion rate is ${camp.token_conversion_rate}`);
       // calc min, max token user can buy
-      const maxTokenAmount = new BigNumber (maxBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
-      const minTokenAmount = new BigNumber (minBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
+      const maxTokenAmount = new BigNumber (maxBuy).dividedBy(camp.token_conversion_rate).multipliedBy(Math.pow(10, unit)).toString();
+      const minTokenAmount = new BigNumber (minBuy).dividedBy(camp.token_conversion_rate).multipliedBy(Math.pow(10, unit)).toString();
       console.log(minTokenAmount, maxTokenAmount, userWalletAddress);
       // get message hash
       const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenAmount, minTokenAmount);
@@ -489,7 +482,7 @@ class CampaignController {
       return HelperUtils.responseSuccess(response);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal("Internal Server Error !");
+      return HelperUtils.responseErrorInternal("Deposit has internal server error !");
     }
   }
 
@@ -514,7 +507,7 @@ class CampaignController {
       return HelperUtils.responseSuccess(noOfParticipants);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal("Internal Server Error !");
+      return HelperUtils.responseErrorInternal("Counting join campaign has internal server error !");
     }
   }
 
@@ -532,7 +525,82 @@ class CampaignController {
       return HelperUtils.responseSuccess(existed);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal("Check join campaign has internal server error !");
+    }
+  }
+
+  async claim({request}) {
+    // get all request params
+    const params = request.all();
+    const campaign_id = params.campaign_id;
+    const userWalletAddress = request.header('wallet_address');
+    if (campaign_id == null) {
+      return HelperUtils.responseBadRequest('Bad request with campaign_id');
+    }
+    console.log('Claim token with params: ',params, campaign_id, userWalletAddress);
+
+    try {
+      // check campaign info
+      const filterParams = {
+        'campaign_id': campaign_id
+      };
+      // call to db get campaign info
+      const campaignService = new CampaignService();
+      const camp = await campaignService.findByCampaignId(campaign_id)
+      if (camp == null) {
+        console.log(`Do not found campaign with id ${campaign_id}`);
+        return HelperUtils.responseBadRequest("Do not found campaign");
+      }
+      if (camp.pool_type != Const.POOL_TYPE.CLAIMABLE) {
+        console.log(`Campaign is not claimable with id ${campaign_id}`);
+        return HelperUtils.responseBadRequest("Campaign is not claimable !");
+      }
+      // get campaign claim config from db
+      const claimParams = {
+        'campaign_id': campaign_id,
+        'current_time': Math.floor(Date.now() / 1000)
+      };
+      const claimConfigService = new CampaignClaimConfigService();
+      const claimConfig = await claimConfigService.findOneByFilters(claimParams);
+      if (claimConfig == null) {
+        console.log(`Do not found claim config for campaign ${campaign_id}`);
+        return HelperUtils.responseBadRequest("You can not claim token at current time !");
+      }
+      // call to SC to get amount token purchased of user
+      const campaignClaimSC = new web3.eth.Contract(CONTRACT_CLAIM_ABI, camp.campaign_hash);
+      const tokenPurchased = await campaignClaimSC.methods.userPurchased(userWalletAddress).call();
+      // calc max token that user can claimable
+      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).multipliedBy(tokenPurchased);
+      console.log(`user token purchased ${tokenPurchased} and max token claim ${maxTokenClaim}`);
+      // get message hash
+      const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenClaim, 0);
+      console.log(`message hash to claim ${messageHash}`);
+
+      // get private key for campaign from db
+      const walletService = new WalletService();
+      const wallet = await walletService.findByCampaignId(filterParams);
+      if (wallet == null) {
+        console.log(`Do not found wallet for campaign ${campaign_id}`);
+        return HelperUtils.responseBadRequest("Do not found wallet for campaign");
+      }
+      const privateKey = wallet.private_key;
+      console.log(`private key ${privateKey}`)
+      // create signature
+      const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+      const accAddress = account.address;
+      web3.eth.accounts.wallet.add(account);
+      web3.eth.defaultAccount = accAddress;
+      const signature = await web3.eth.sign(messageHash, accAddress);
+      console.log(`signature ${signature}`);
+      const response = {
+        'max_claim': maxTokenClaim,
+        'min_claim': 0,
+        'signature': signature
+      }
+      return HelperUtils.responseSuccess(response);
+    }catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal("Claim token has internal server error !");
     }
   }
 

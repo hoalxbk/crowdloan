@@ -8,6 +8,7 @@ module.exports = {
   contracts: {
     CampaignFactory: {
       CONTRACT_DATA: require('./contracts/Normal/CapaignFactory.json'),
+      CONTRACT_CLAIMABLE: require('./contracts/Claim/CapaignFactory.json'),
       CONTRACT_ADDRESS: '0x578b8067C088cdfE26762193Dc2b7a96a8403923',
       FIRST_CRAWL_BLOCK: 4550016, // First Block: 4554016
       BLOCK_NUM_IN_ONE_GO: 5000,
@@ -16,6 +17,7 @@ module.exports = {
     },
     Campaign: {
       CONTRACT_DATA: require('./contracts/Normal/Campaign.json'),
+      CONTRACT_CLAIMABLE: require('./contracts/Claim/Campaign.json'),
       CONTRACT_ADDRESS: '0x6f4d398eb1db901a38e213aed6d2e42e38e1c19a',
       FIRST_CRAWL_BLOCK: 4550016,
       BLOCK_NUM_IN_ONE_GO: 500,
