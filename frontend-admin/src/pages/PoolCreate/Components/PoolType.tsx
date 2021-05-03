@@ -32,7 +32,7 @@ function PoolType(props: any) {
           <Controller
             rules={{ required: true }}
             control={control}
-            defaultValue="swap"
+            defaultValue={POOL_TYPE.CLAIMABLE}
             name="poolType"
             as={
               <RadioGroup row>

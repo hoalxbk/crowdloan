@@ -6,14 +6,13 @@ import {DatePicker} from "antd";
 import moment from "moment";
 import {BUY_TYPE, DATETIME_FORMAT, POOL_TYPE} from "../../../constants";
 import {renderErrorCreatePool} from "../../../utils/validate";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
 
 function DurationTime(props: any) {
   const classes = useStyles();
   const commonStyle = useCommonStyle();
   const {
     register, setValue, getValues, errors, control, watch,
-    poolDetail,
+    poolDetail, needValidate,
   } = props;
   const renderError = renderErrorCreatePool;
 
@@ -53,7 +52,7 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                required: !isBuyTypeFCFS,
+                required: (needValidate && !isBuyTypeFCFS),
                 validate: {
                   // greaterOrEqualToday: (value) => {
                   //   if (isDeployed || isBuyTypeFCFS) return true;
@@ -97,9 +96,10 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                required: !isBuyTypeFCFS,
+                required: (needValidate && !isBuyTypeFCFS),
                 validate: {
                   greateOrEqualStartJoinPoolTime: value => {
+                    if (!needValidate) return true;
                     if (isDeployed || isBuyTypeFCFS) return true;
                     const startTime = getValues('start_join_pool_time');
                     const valueUnix = moment(value).unix();
@@ -170,7 +170,7 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true
+                required: needValidate
               }}
               name="start_time"
               render={(field) => {
@@ -206,9 +206,10 @@ function DurationTime(props: any) {
             <Controller
               control={control}
               rules={{
-                required: !isBuyTypeFCFS,
+                required: (needValidate && !isBuyTypeFCFS),
                 validate: {
                   greateOrEqualStartTime: value => {
+                    if (!needValidate) return true;
                     const startTime = getValues('start_time');
                     const valueUnix = moment(value).unix();
                     const startTimeUnix = moment(startTime).unix();
@@ -254,9 +255,10 @@ function DurationTime(props: any) {
           <Controller
             control={control}
             rules={{
-              required: !isPoolTypeSwap,
+              required: (needValidate && !isPoolTypeSwap),
               validate: {
                 greaterOrEqualFinishTime: value => {
+                  if (!needValidate) return true;
                   if (isPoolTypeSwap) return true;
                   const startTime = getValues('finish_time');
                   const valueUnix = moment(value).unix();

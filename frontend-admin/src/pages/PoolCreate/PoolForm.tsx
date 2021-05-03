@@ -48,6 +48,7 @@ function PoolForm(props: any) {
   const [loadingDeploy, setLoadingDeploy] = useState(false);
   const [deployed, setDeployed] = useState(false);
   const [token, setToken] = useState<TokenType | null>(null);
+  const [needValidate, setNeedValidate] = useState(false);
 
   useEffect(() => {
     const checkCampaignFactorySuspended = async () => {
@@ -201,11 +202,14 @@ function PoolForm(props: any) {
   };
 
   const handleCampaignCreate = () => {
-    if (poolDetail?.is_deploy) {
-      handleSubmit(handleUpdateAfterDeloy)();
-    } else {
-      handleSubmit(handleFormSubmit)();
-    }
+    setNeedValidate(false);
+    setTimeout(() => {
+      if (poolDetail?.is_deploy) {
+        handleSubmit(handleUpdateAfterDeloy)();
+      } else {
+        handleSubmit(handleFormSubmit)();
+      }
+    }, 100);
   };
 
   const getTokenInforDetail = async (token: string) => {
@@ -310,7 +314,10 @@ function PoolForm(props: any) {
   };
 
   const handlerDeploy = () => {
-    handleSubmit(handleDeloySubmit)();
+    setNeedValidate(true);
+    setTimeout(() => {
+      handleSubmit(handleDeloySubmit)();
+    }, 100);
   };
 
   const watchBuyType = watch('buyType');
@@ -457,6 +464,7 @@ function PoolForm(props: any) {
               control={control}
               getValues={getValues}
               watch={watch}
+              needValidate={needValidate}
             />
           </div>
 

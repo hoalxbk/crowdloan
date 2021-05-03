@@ -36,8 +36,8 @@ module.exports = {
       CONTRACT_DATA: require('./contracts/Tier.json'), // Tier
       CONTRACT_ADDRESS: '0xDf2b8f344c54A600636f2C13001d59341Ed246e8',
       FIRST_CRAWL_BLOCK: 4680953,
-      BLOCK_NUM_IN_ONE_GO: 100,
-      BREAK_TIME_AFTER_ONE_GO: 1000,
+      BLOCK_NUM_IN_ONE_GO: 10000,
+      BREAK_TIME_AFTER_ONE_GO: 30000,
       NEED_NOTIFY_BY_WEBHOOK: true
     },
   },
