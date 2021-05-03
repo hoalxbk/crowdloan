@@ -1,5 +1,5 @@
-import { useEffect, useState, useRef } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _, { divide } from 'lodash';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
@@ -14,6 +14,7 @@ import { debounce } from 'lodash';
 import { CircularProgress } from '@material-ui/core';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
 import useFetch from '../../hooks/useFetch';
+import useAuth from '../../hooks/useAuth';
 
 import Pagination from '@material-ui/lab/Pagination';
 
@@ -24,16 +25,31 @@ const Pools = (props: any) => {
   const commonStyle = useCommonStyle()
   const [input, setInput] = useState("");
   const [tabActive, setTabActive] = useState(1);
-  const [upcomingPools, setUpcomingPools] = useState([]);
-  const [camePools, setCamePools] = useState([]);
   const { data: appChain } = useSelector((state: any) => state.appNetwork);
   const { data: connector } = useSelector((state: any) => state.connector);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [pools, setPools] = useState([]);
 
+  const { connectedAccount } = useAuth();
+
+  const getPoolsPrefixUri = () => {
+    let uri = '/pools'
+    if (tabActive === 1) {
+      return uri;
+    }
+
+    if (tabActive === 2) {
+      return `${uri}/top-pools`;
+    }
+
+    if (tabActive === 3) {
+      return `/user/${connectedAccount}/joined-pools`;
+    }
+  }
+
   const { data: poolsList } = useFetch<any>(
-    `/pools?page=${currentPage}&limit=10&title=${input}`
+    `${getPoolsPrefixUri()}?page=${currentPage}&limit=10&title=${input}`
   );
 
   const handleInputChange = debounce((e: any) => {
@@ -60,8 +76,6 @@ const Pools = (props: any) => {
       setCurrentPage(poolsList.page);
       setPools(poolsList.data);
 
-      setUpcomingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING && pool?.is_display == 1))
-      setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING && pool?.is_display == 1))
       const tempPools = [...poolsList.data] as never[];
       tempPools.forEach(async (pool: any) => {
         const currentTime = moment.utc().unix();
