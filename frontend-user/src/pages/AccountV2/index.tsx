@@ -20,7 +20,7 @@ const TOKEN_ADDRESS = process.env.REACT_APP_SOTA || '';
 const iconWarning = "/images/icons/warning.svg";
 const iconClose = "/images/icons/close.svg";
 
-const Account = (props: any) => {
+const AccountV2 = (props: any) => {
   const classes = useStyles();
   const dispatch = useDispatch();
 
@@ -91,4 +91,4 @@ const Account = (props: any) => {
   );
 };
 
-export default withRouter(Account);
+export default withRouter(AccountV2);
