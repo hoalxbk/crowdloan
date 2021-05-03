@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { HashLoader } from "react-spinners";
-import { useDispatch } from 'react-redux';
 import { useParams, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js'; 
 import Tooltip from '@material-ui/core/Tooltip';
+import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
 
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
@@ -30,8 +31,8 @@ import { NETWORK_ETH_NAME, NETWORK_BSC_NAME } from '../../constants/network';
 import { getPoolCountDown } from '../../utils/getPoolCountDown';
 import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
-import { getTiers, getUserInfo, getUserTier, resetTiers } from '../../store/actions/sota-tiers';
-import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
+
+import { sotaTiersActions } from '../../store/constants/sota-tiers';
 
 import useStyles from './style';
 
@@ -80,10 +81,15 @@ const BuyToken: React.FC<any> = (props: any) => {
     : undefined
   );
   const { data: verifiedEmail = true } = useFetch<boolean>(
-    poolDetails && connectedAccount ?
+    poolDetails && connectedAccount && isAuth ?
     `/user/check-wallet-address?wallet_address=${connectedAccount}`
     : undefined
   );
+  const { data: currentUserTier } = useFetch<any>(
+    id && connectedAccount ? 
+    `pool/${id}/user/${connectedAccount}/current-tier`
+    : undefined,
+  )
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
   // Use for check whether pool exist in selected network or not
@@ -91,8 +97,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
   const ableToFetchFromBlockchain = appNetwork === poolDetails?.networkAvailable && !wrongChain;
 
-  const userBuyLimit = poolDetails?.connectedAccountBuyLimit || 0;
-  const userBuyMinimum = poolDetails?.connectedAccountBuyMinimum || 0;
+  const userBuyLimit = currentUserTier?.max_buy || 0;
+  const userBuyMinimum = currentUserTier?.min_buy || 0;
   
   // With Whitelist situation, Enable when join time < current < end join time
   // With FCFS, always disable join button
@@ -100,8 +106,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const endJoinTimeInDate = new Date(Number(poolDetails?.endJoinTime) * 1000);
   const startBuyTimeInDate = new Date(Number(poolDetails?.startBuyTime) * 1000);
   const endBuyTimeInDate = new Date(Number(poolDetails?.endBuyTime) * 1000);
-  const tierStartBuyInDate = new Date(Number(poolDetails?.tierStartTime) * 1000);
-  const tierEndBuyInDate = new Date(Number(poolDetails?.tierEndTime) * 1000);
+  const tierStartBuyInDate = new Date(Number(currentUserTier?.start_time) * 1000);
+  const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000);
   const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
 
   const today = new Date();
@@ -168,17 +174,11 @@ const BuyToken: React.FC<any> = (props: any) => {
   }, [endBuyTimeInDate]);
 
   useEffect(() => {
-    const poolNetwork = poolDetails?.networkAvailable;
-    if (isAuth && connectedAccount && poolDetails && ableToFetchFromBlockchain) { 
-      dispatch(getTiers(poolNetwork)) 
-      dispatch(getUserInfo(connectedAccount, poolNetwork));
-      dispatch(getUserTier(connectedAccount, poolNetwork));
-    }   
-
-    if ((!isAuth || !ableToFetchFromBlockchain) && typeof userTier === 'string') {
-      dispatch(resetTiers());
-    }
-  }, [isAuth, connectedAccount, userTier, ableToFetchFromBlockchain, poolDetails]);
+    currentUserTier && dispatch({
+      type: sotaTiersActions.USER_TIER_SUCCESS,
+      payload: currentUserTier.level
+    })
+  }, [currentUserTier]);
 
   const render = () => {
     if (loadingPoolDetail)  {

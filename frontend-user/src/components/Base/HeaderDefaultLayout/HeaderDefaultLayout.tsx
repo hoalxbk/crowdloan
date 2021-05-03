@@ -123,28 +123,33 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
                   </button>
                   <button 
                     className={`${styles.btn} ${styles.btnConnect}`} 
-                    onClick={!currentAccount ? handleConnectWalletOpen: handleDisconnectDialogOpen}
+                    onClick={() => { 
+                      if (!connectWalletLoading) {
+                        !currentAccount ? handleConnectWalletOpen(): handleDisconnectDialogOpen() 
+                      }
+                    }}
+                    disabled={connectWalletLoading}
                   >
-              {
-                !connectWalletLoading ? (
-                  <>
-                  <span>
-                  {
-                    currentAccount && (!loginError ? `${balance} ${appChainID === ETH_CHAIN_ID ? "ETH": "BNB"}`: '0' ) 
-                  }
-                  </span>
-                  {
-                    !currentAccount && <img src={ `/images/${WalletIcon}`} />
-                  }
-                  <span className={`${styles.btnConnectText} ${currentAccount ? styles.btnAccount: ''}`}>
-                  {
-                    currentAccount && `${trimMiddlePartAddress(currentAccount)}` || "Connect Wallet"
-                  }
-                  </span>
-                  </> 
-                ): <BeatLoader color={'white'} css={css`margin-top: 3px`} size={10} />
-              }
-              </button>
+                {
+                  !connectWalletLoading ? (
+                    <>
+                      <span>
+                      {
+                        currentAccount && (!loginError ? `${balance} ${appChainID === ETH_CHAIN_ID ? "ETH": "BNB"}`: '0' ) 
+                      }
+                      </span>
+                      {
+                        !currentAccount && <img src={ `/images/${WalletIcon}`} />
+                      }
+                      <span className={`${styles.btnConnectText} ${currentAccount ? styles.btnAccount: ''}`}>
+                      {
+                        currentAccount && `${trimMiddlePartAddress(currentAccount)}` || "Connect Wallet"
+                      }
+                      </span>
+                      </> 
+                  ): <BeatLoader color={'white'} css={css`margin-top: 3px`} size={10} />
+                }
+                </button>
             </div>
           </div>
         <HeaderContext.Provider value={{ agreedTerms, setAgreedTerms }}>

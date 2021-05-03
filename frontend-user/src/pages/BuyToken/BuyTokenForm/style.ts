@@ -20,11 +20,13 @@ const useStyles = makeStyles((theme: any) => {
       marginTop: 30,
       marginRight: 120,
       width: '50%',
-
-      [theme.breakpoints.down('xs')]: {
-        width: '100%',
-        marginRight: 0,
+      [theme.breakpoints.down('md')]: {
+        width: '70%'
       },
+      [theme.breakpoints.down('xs')]: {
+        width: '100%'
+      },
+
     },
     buyTokenFormTitle: {
       marginBottom: 20,
@@ -33,9 +35,18 @@ const useStyles = makeStyles((theme: any) => {
     },
     buyTokenInputForm: {
       background: '#11152A',
-      maxWidth: '100%',
+      maxWidth: '70%',
       padding: '10px 12px',
-      borderRadius: 4
+      borderRadius: 4,
+
+      [theme.breakpoints.down('md')]: {
+        maxWidth: '70%',
+        marginRight: 0,
+      },
+      [theme.breakpoints.down('xs')]: {
+        maxWidth: '100%',
+        marginRight: 0,
+      },
     },
     buyTokenInputWrapper: {
       marginTop: 15,
