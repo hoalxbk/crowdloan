@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import useFetch from '../../../hooks/useFetch';
 import { numberWithCommas } from '../../../utils/formatNumber';
-//@ts-ignore
-import debounce from 'lodash.debounce';
+import { debounce } from 'lodash';
 
 import Pagination from '@material-ui/lab/Pagination';
 import Table from '@material-ui/core/Table';
@@ -29,18 +28,25 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   const [totalPage, setTotalPage] = useState(1);
   const { data: totalParticipants } = useFetch<number>(poolId ? `/user/counting/${poolId}`: undefined);
   const { data: winnersList } = useFetch<any>(
-    `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&wallet_address=${input}`
+    `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&wallet_address=${input}`,
+    false,
+    {},
   );
 
-  const searchDebounce = debounce(() => {
+  const searchDebounce = () => {
     if (winnersList) {
       setTotalPage(winnersList.lastPage);
       setCurrentPage(winnersList.page);
       setSearchedWinners(winnersList.data);
     }
-  }, 500);
+  };
 
   useEffect(searchDebounce, [winnersList])
+
+  const handleInputChange = debounce((e: any) => {
+    setInput(e.target.value);
+    setCurrentPage(1);
+  }, 500);
 
   return (
     <div className={styles.LotteryWinners}>
@@ -51,7 +57,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
           name="lottery-search" 
           className={styles.tableSearch} 
           placeholder="Search for Email Address/Wallet Address"
-          onChange={(e: any) => { setInput(e.target.value); setCurrentPage(1) }}
+          onChange={handleInputChange}
         />
         <img src="/images/search.svg" className={styles.tableSearchIcon} alt="search-icon" />
       </div>

@@ -35,6 +35,7 @@ const useStyles = makeStyles((theme: any) => {
     ratio: {
       minWidth: '120px',
       width: '12%',
+      color: '#999999'
     },
     status: {
       '& div': {
@@ -42,9 +43,9 @@ const useStyles = makeStyles((theme: any) => {
         alignItems: 'center',
         justifyContent: 'center',
         height: '26px',
-        minWidth: '140px',
+        minWidth: '90px',
         width: '12%',
-        padding: '6px 24px',
+        padding: '6px 15px',
         borderRadius: '20px',
         '& span': {
           font: 'normal normal bold 12px/14px DM Sans'
@@ -74,7 +75,8 @@ const useStyles = makeStyles((theme: any) => {
     poolType: {
       textTransform: 'capitalize',
       minWidth: '120px',
-      width: '12%'
+      width: '12%',
+      color: '#999999'
     },
     progress: {
       minWidth: '400px',
@@ -83,6 +85,8 @@ const useStyles = makeStyles((theme: any) => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
+      transition: '.2s all ease-in',
+
       '& > span': {
         marginRight: '10px',
         minWidth: '60px'
@@ -93,6 +97,7 @@ const useStyles = makeStyles((theme: any) => {
         borderRadius: '10px',
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         position: 'relative',
+        transition: '.2s all ease-in',
       },
       '& .current-progress': {
         width: '280px',
@@ -102,6 +107,7 @@ const useStyles = makeStyles((theme: any) => {
         position: 'absolute',
         left: 0,
         top: 0,
+        transition: '.2s all ease-in',
       }
     },
     [theme.breakpoints.down('xs')]: {

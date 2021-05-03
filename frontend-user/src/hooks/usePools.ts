@@ -72,7 +72,7 @@ const usePools = (): PoolsReturnType => {
     }
 
     return;
-  }, [data, loading, error, poolsDone,, connectedAccountTier]);
+  }, [data, loading, error, poolsDone, connectedAccountTier]);
 
   useEffect(() => {
     data && setPoolsDone(true)
