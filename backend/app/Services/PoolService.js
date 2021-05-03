@@ -25,7 +25,9 @@ class PoolService {
       if (params.is_search) {
         builder = builder.where(query => {
           query.where('title', 'like', '%'+ params.title +'%')
-            .orWhere('symbol', 'like', '%'+ params.title +'%');
+            .orWhere('symbol', 'like', '%'+ params.title +'%')
+            .orWhere('token', 'like', '%'+ params.title +'%')
+            .orWhere('campaign_hash', 'like', '%'+ params.title +'%');
 
           if((params.title).toLowerCase() == Config.get('const.suspend')) {
             query.orWhere('is_pause', '=', 1)
