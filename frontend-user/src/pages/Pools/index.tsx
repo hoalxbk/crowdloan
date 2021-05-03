@@ -44,7 +44,7 @@ const Pools = (props: any) => {
     }
 
     if (tabActive === 3) {
-      return `/user/${connectedAccount}/joined-pools`;
+      return `${uri}/user/${connectedAccount}/joined-pools`;
     }
   }
 
