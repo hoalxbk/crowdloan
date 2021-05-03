@@ -24,7 +24,7 @@ import InvestorForgotPassword from "./pages/ForgotPassword/InvestorForgotPasswor
 import InvestorResetPassword from "./pages/ResetPassword/InvestorResetPassword";
 import InvestorLogin from "./pages/Login/InvestorLogin";
 
-import Account from "./pages/Account";
+import AccountV2 from "./pages/AccountV2";
 import Landing from "./pages/Landing";
 import Pools from "./pages/Pools";
 
@@ -124,7 +124,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
           <Route path={'/confirm-email/:token'} component={ConfirmEmail} />
           <Route path={'/network-change'} component={NetworkChange} />
           <Route path={'/change-password/:role?'} component={ChangePassword} />
-          <Route path={'/account'} component={Account} />
+          <Route path={'/account'} component={AccountV2} />
           <Route path={'/pools'} component={Pools} />
           <Route path={'/'} component={Landing} />
 

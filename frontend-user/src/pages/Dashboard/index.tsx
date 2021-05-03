@@ -41,15 +41,21 @@ const Dashboard = (props: any) => {
   }
 
   const setStatusPools = () => {
+    let changed = false;
     pools.forEach(async (pool: any) => {
       const currentTime = moment.utc().unix();
+      if(!pool.start_join_pool_time || !pool.start_time) {
+        pool.status = POOL_STATUS.TBA
+        changed = true
+        return;
+      }
       const startJoinPoolTime = parseInt(pool.start_join_pool_time);
       const endJoinPoolTime = parseInt(pool.end_join_pool_time);
       const startTime = parseInt(pool.start_time);
       const finishTime = parseInt(pool.finish_time);
       const isClaimable = pool.type !== 'swap';
       const releaseTime = parseInt(pool.release_time);
-      let changed = false;
+      if(startJoinPoolTime )
       if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
         if(pool.status != POOL_STATUS.UPCOMMING) changed = true;
         pool.status = POOL_STATUS.UPCOMMING
@@ -72,11 +78,12 @@ const Dashboard = (props: any) => {
       else {
         pool.status = POOL_STATUS.CLOSED
       }
-      if(changed) {
-        setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING && pool?.is_display == 1))
-        setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING && pool?.is_display == 1))
-      }
     })
+
+    if(changed) {
+      setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING && pool?.is_display == 1))
+      setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING && pool?.is_display == 1))
+    }
   }
 
   useEffect(() => {
