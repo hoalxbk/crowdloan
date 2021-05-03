@@ -357,7 +357,6 @@ const BuyToken: React.FC<any> = (props: any) => {
                         />
                       }
                       <Button 
-                        disabled={!poolDetails?.isDeployed}
                         text={'Etherscan'} 
                         backgroundColor={'#3232DC'} 
                         onClick={() => {

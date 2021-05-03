@@ -8,6 +8,8 @@ import { POOL_STATUS, NETWORK, POOL_TYPE, ACCEPT_CURRENCY, BUY_TYPE } from '../.
 import { numberWithCommas } from '../../../utils/formatNumber';
 import useCommonStyle from '../../../styles/CommonStyle';
 
+const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
 const Pool = (props: any): JSX.Element => {
   const styles = useStyles();
   const commonStyle = useCommonStyle();
@@ -66,13 +68,13 @@ const Pool = (props: any): JSX.Element => {
       <Link to={`/buy-token/${pool.id}`} className={styles.link}>
         <div className={styles.row}>
           <div className={styles.name}>
-            <img src={pool.token_images} />
+            <img src={`${BASE_URL}/image/${pool.token_images}`} />
             <span className={commonStyle.nnb1418d}>{pool.title}</span>
           </div>
           <div className={styles.ratio + ' ' + commonStyle.nnn1424h}>
             {pool.accept_currency === ACCEPT_CURRENCY.ETH ?
               numberWithCommas(pool.ether_conversion_rate, 4) :
-              numberWithCommas(pool.token_conversion_rate, 4)} {pool.accept_currency.toUpperCase()}
+              numberWithCommas(pool.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}
           </div>
           <div className={styles.poolType + ' ' + commonStyle.nnn1424h}>
             {pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? 'Whitelist Lottery' : 'FCFS'}

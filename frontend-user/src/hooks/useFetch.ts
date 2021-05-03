@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import axios from '../services/axios';
 
 type useFetchReturnType<T> ={
@@ -12,22 +12,22 @@ const useFetch = <T>(uri: string | undefined, suspendRender: any = false, config
   const [data, setData] = useState<T | undefined>(undefined);
   const [error, setError] = useState<string>('');
 
-  useEffect(() => {
-    const fetchDataFromUri = async () => {
-      setLoading(true);
+  const fetchDataFromUri = useCallback(async () => {
+    setLoading(true);
 
-      try {
-        const response = await axios.get(uri as string, config) as any;
-        response.data && setData(response?.data?.data);
+    try {
+      const response = await axios.get(uri as string, config) as any;
+      response.data && setData(response?.data?.data);
 
-        setLoading(false);
-      } catch (error: any) {
-        setLoading(false);
-        setError(error.message);
-      }
+      setLoading(false);
+    } catch (error: any) {
+      setLoading(false);
+      setError(error.message);
     }
+  }, [uri]);
 
-    uri && (!suspendRender) && fetchDataFromUri();
+  useEffect(() => {
+    uri && !suspendRender && fetchDataFromUri();
   }, [uri, suspendRender]);
 
   return {
