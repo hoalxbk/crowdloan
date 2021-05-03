@@ -37,13 +37,13 @@ function PoolType(props: any) {
             as={
               <RadioGroup row>
                 <FormControlLabel
-                  value={POOL_TYPE.SWAP} control={<Radio />}
-                  label="Swap"
+                  value={POOL_TYPE.CLAIMABLE} control={<Radio />}
+                  label="Claimable"
                   disabled={isDeployed}
                 />
                 <FormControlLabel
-                  value={POOL_TYPE.CLAIMABLE} control={<Radio />}
-                  label="Claimable"
+                  value={POOL_TYPE.SWAP} control={<Radio />}
+                  label="Swap"
                   disabled={isDeployed}
                 />
               </RadioGroup>

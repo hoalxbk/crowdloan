@@ -104,5 +104,9 @@ module.exports = Object.freeze({
     ETH: 'eth',
     USDT: 'usdt',
     USDC: 'usdc',
-  }
+  },
+  POOL_DISPLAY: {
+    DISPLAY: 1,
+    HIDDEN: 0,
+  },
 });

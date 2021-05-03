@@ -98,10 +98,8 @@ class ReservedListController {
       if (existRecord) {
         await existRecord.delete();
       }
-      console.log('existRecord', existRecord);
-
+      console.log('[deleteReserve] - existRecord', JSON.stringify(existRecord));
       return HelperUtils.responseSuccess(existRecord);
-
     } catch (e) {
       return HelperUtils.responseErrorInternal();
     }
@@ -132,23 +130,20 @@ class ReservedListController {
     }
   }
 
-
   async checkExistReserve({ request, params }) {
     try {
       console.log('[checkExistReserve] - Params: ', params);
       const inputParams = request.only(['wallet_address', 'campaign_id']);
 
-      const reservedService = new ReservedListService();
-      const existRecord = await reservedService.buildQueryBuilder({
+      const existRecord = await (new ReservedListService()).buildQueryBuilder({
         wallet_address: inputParams.wallet_address,
         campaign_id: inputParams.campaign_id,
       }).first();
-
       if (!existRecord) {
         return HelperUtils.responseNotFound('User not exist in Reserve User List');
       }
-
       console.log('existRecord: ', existRecord);
+
       return HelperUtils.responseSuccess(existRecord, 'User exist in Reserve User List');
     } catch (e) {
       return HelperUtils.responseErrorInternal();

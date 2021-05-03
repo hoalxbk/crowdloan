@@ -180,11 +180,11 @@ function CreateEditTierForm(props: any) {
               validateRule={{
                 required: true,
                 validate: {
-                  // minBuyGreaterMaxBuy: (value: any) => {
-                  //   const maxBuy = getValues('maxBuy');
-                  //   const maxBuyBigNumber = (new BigNumber(maxBuy));
-                  //   return maxBuyBigNumber.comparedTo(value) > 0;
-                  // },
+                  minBuyGreaterMaxBuy: (value: any) => {
+                    const maxBuy = getValues('maxBuy');
+                    const maxBuyBigNumber = (new BigNumber(maxBuy));
+                    return maxBuyBigNumber.comparedTo(value) > 0;
+                  },
                   // greaterThanZero: fieldMustBeGreaterThanZero,
                 },
               }}
