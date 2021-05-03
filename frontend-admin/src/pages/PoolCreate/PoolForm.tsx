@@ -12,6 +12,7 @@ import {alertFailure, alertSuccess} from "../../store/actions/alert";
 import {withRouter} from "react-router-dom";
 import {deployPool} from "../../store/actions/campaign";
 import {adminRoute} from "../../utils";
+import {ACCEPT_CURRENCY} from "../../constants";
 
 import PoolBanner from "./Components/PoolBanner";
 import TokenAddress from "./Components/TokenAddress";
@@ -31,7 +32,6 @@ import DisplaySwitch from "./Components/DisplaySwitch";
 import PoolHash from "./Components/PoolHash";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
-import {ACCEPT_CURRENCY} from "../../constants";
 import PoolWebsite from "./Components/PoolWebsite";
 
 function PoolForm(props: any) {
@@ -342,6 +342,17 @@ function PoolForm(props: any) {
                 errors={errors}
               />
 
+              <PoolHash poolDetail={poolDetail} />
+              {/*{!!poolDetail?.is_deploy &&*/}
+              {/*  <PoolHash poolDetail={poolDetail} />*/}
+              {/*}*/}
+              <PoolBanner
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+              />
+
               <PoolWebsite
                 poolDetail={poolDetail}
                 register={register}
@@ -349,15 +360,6 @@ function PoolForm(props: any) {
                 errors={errors}
               />
 
-              {!!poolDetail?.is_deploy &&
-                <PoolHash poolDetail={poolDetail} />
-              }
-              <PoolBanner
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-              />
             </div>
 
             <div className={classes.exchangeRate}>

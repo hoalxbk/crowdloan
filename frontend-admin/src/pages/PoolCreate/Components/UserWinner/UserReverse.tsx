@@ -143,7 +143,7 @@ function UserReverse(props: any) {
                   {row.email}
                 </TableCell>
                 <TableCell align="center" size={'medium'}>
-                  <Link href={etherscanRoute(row.wallet_address)} target={'_blank'}>
+                  <Link href={etherscanRoute(row.wallet_address, poolDetail)} target={'_blank'}>
                     {row.wallet_address}
                   </Link>
                 </TableCell>

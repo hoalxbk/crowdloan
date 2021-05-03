@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
-import {ADMIN_URL_PREFIX, API_URL_PREFIX, IMAGE_URL_PREFIX} from "../constants";
+import {ADMIN_URL_PREFIX, API_URL_PREFIX, IMAGE_URL_PREFIX, NETWORK_AVAILABLE} from "../constants";
 import axios from "axios";
 
 const ETHERSCAN_BASE_URL: any = {
@@ -57,9 +57,19 @@ export const imageRoute = (url = '') => {
   return resUrl;
 };
 
-export const etherscanRoute = (url = '') => {
-  const baseUrl = ETHERSCAN_BASE_URL[process.env.REACT_APP_NETWORK_ID || '1'];
-  const truncateUrl = _.trim(url, '/');
+export const etherscanRoute = (address = '', poolDetail: any = null) => {
+  let network = '';
+  if (poolDetail) {
+    if (poolDetail.network_available === NETWORK_AVAILABLE.BSC) {
+      network = process.env.REACT_APP_BSC_NETWORK_ID + '';
+    } else {
+      network = process.env.REACT_APP_NETWORK_ID + '';
+    }
+  }
+
+  const networkId = network || localStorage.getItem('NETWORK_ID') || process.env.REACT_APP_NETWORK_ID || '1';
+  const baseUrl = ETHERSCAN_BASE_URL[networkId];
+  const truncateUrl = _.trim(address, '/');
   const resUrl = `${baseUrl}/${truncateUrl}`;
   return resUrl;
 };

@@ -56,9 +56,9 @@ function UserParticipant(props: any) {
       participantsUsers.data.data = users;
       return participantsUsers;
     } catch (e) {
-      dispatch(alertFailure('ERROR: Fail fill Tiers. Some address is invalid !!!'));
+      dispatch(alertFailure('ERROR: Fail fill Tiers in Participants List. \nSome address is invalid !!!'));
       console.log('ERROR: Fail fill Tiers!!!');
-      console.log(e)
+      console.log(e);
     }
   };
 
@@ -80,25 +80,6 @@ function UserParticipant(props: any) {
     handleDeleteFunction: deleteParticipantUser,
     handleSearchFunction: search
   });
-
-  // const [isOpenEditPopup, setIsOpenEditPopup] = useState(false);
-  // const [editData, setEditData] = useState([]);
-  // const [editRow, setEditRow] = useState(0);
-  // const [isEdit, setIsEdit] = useState(true);
-  // const openPopupEdit = (e: any, row: any, index: number) => {
-  //   console.log('ROW: ', row, index);
-  //   setEditData(row);
-  //   setEditRow(index);
-  //   setIsEdit(true);
-  //   setIsOpenEditPopup(true);
-  // };
-
-  // const openPopupCreate = (e: any) => {
-  //   setEditData(rows);
-  //   setEditRow(-1);
-  //   setIsEdit(false);
-  //   setIsOpenEditPopup(true);
-  // };
 
   const [addedUsers, setAddedUsers] = useState([]);
   const handleCreateUpdateData = async () => {
@@ -220,7 +201,7 @@ function UserParticipant(props: any) {
 
                 <TableCell component="th" scope="row" size={'small'}>{row.email}</TableCell>
                 <TableCell align="center" size={'medium'}>
-                  <Link href={etherscanRoute(row.wallet_address)} target={'_blank'}>
+                  <Link href={etherscanRoute(row.wallet_address, poolDetail)} target={'_blank'}>
                     {row.wallet_address}
                   </Link>
                 </TableCell>

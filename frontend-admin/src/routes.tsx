@@ -66,10 +66,10 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         />
         <PrivateRoute exact path={adminRoute()} component={HomePage} />
 
-        <PrivateRoute exact path={adminRoute('/campaign-detail/pending/:id')} component={TransactionPending} />
-        <PrivateRoute exact path={adminRoute('campaign-detail/:id')} component={PoolEdit} />
         <PrivateRoute path={adminRoute('/campaigns')} exact component={Pools} />
         <PrivateRoute path={adminRoute('/campaigns/add')} exact component={PoolCreate} />
+        <PrivateRoute exact path={adminRoute('campaign-detail/:id')} component={PoolEdit} />
+        <PrivateRoute exact path={adminRoute('/campaign-detail/pending/:id')} component={TransactionPending} />
 
         <PrivateRoute path={adminRoute('/setting')} component={Setting} />
         <PrivateRoute path={adminRoute('/profile')} component={Profile} />
@@ -78,15 +78,14 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         <Route path={adminRoute('/login')} component={Login} />
         <Route path={('/forgot-password')} exact component={ForgotPassword} />
         <Route path={('/reset-password/user/:token')} component={ResetPassword} />
-
         <Route path={('/confirm-email/:role?/:token')} component={ConfirmEmail} />
         <Route path={'/change-password/:role?'} component={ChangePassword} />
-        <Route path={adminRoute('/network-change')} component={NetworkChange} />
 
         <Route path={adminRoute('/admins')} component={AdminList} />
         <Route path={adminRoute('/admin-detail/:id')} component={AdminEdit} />
         <Route path={adminRoute('/admin-create')} component={AdminCreate} />
 
+        <Route path={adminRoute('/network-change')} component={NetworkChange} />
         <Route path={('/coming-soon')} component={ComingSoon} />
         <PrivateRoute exact path={adminRoute('/error')} component={ErrorPage} />
         <Route component={NotFoundPage} />
