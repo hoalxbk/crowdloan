@@ -104,5 +104,9 @@ module.exports = Object.freeze({
     ETH: 'eth',
     USDT: 'usdt',
     USDC: 'usdc',
+  },
+  POOL_TYPE: {
+    SWAP: 'swap',
+    CLAIMABLE: 'claimable',
   }
 });

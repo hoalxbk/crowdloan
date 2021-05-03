@@ -128,6 +128,7 @@ Route.group(() => {
 
   Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['checkSignature']);
   Route.post('deposit', 'CampaignController.deposit').middleware(['checkSignature']);
+  Route.post('claim', 'CampaignController.claim').middleware(['checkSignature']);
   Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList');
   Route.get('whitelist-search/:campaignId', 'WhiteListUserController.search');
   Route.get('winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners');
