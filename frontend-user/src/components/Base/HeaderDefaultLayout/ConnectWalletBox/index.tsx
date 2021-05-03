@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import { settingAppNetwork, NetworkUpdateType } from '../../../../store/actions/appNetwork';
 import { WalletInfo } from '../../../../constants/connectors';
-import { NetworkInfo } from '../../../../constants/network';
+import { NetworkInfo, APP_NETWORKS_NAME } from '../../../../constants/network';
 import { HeaderContext, HeaderContextType } from '../context/HeaderContext';
 import useStyles from './style';
 
@@ -45,18 +45,19 @@ const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWal
   const render = () => {
     if (appNetwork) {
       const { name, icon, id, disableIcon } = appNetwork;
+      const temporaryDisable = name === APP_NETWORKS_NAME.BSC;
 
       return (
         <div 
           className={`${styles.walletBox}`} 
           onClick={() => 
-            handleNetworkChange(isAppNetwork, id as string, agreedTerms)
+            !temporaryDisable && handleNetworkChange(isAppNetwork, id as string, agreedTerms)
           }
           style={pointerStyle}
         >
           <div className={styles.walletBoxIconWrap}>
             {
-              <img src={`${(agreedTerms || forceEnable) ? icon: disableIcon}`} style={{ width: agreedTerms ? 40: 50 }} alt={name} className={styles.walletBoxIcon} />
+              <img src={`${((agreedTerms || forceEnable) && !temporaryDisable) ? icon: disableIcon}`} style={{ width: agreedTerms ? 40: 50 }} alt={name} className={styles.walletBoxIcon} />
             }
             {
               appChainID === id && 
