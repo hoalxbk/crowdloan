@@ -11,6 +11,7 @@ import {adminRoute, checkIsAdminRoute, checkIsInvestorRoute, publicRoute} from "
 import {alertFailure} from "./store/actions/alert";
 BigNumber.config({ EXPONENTIAL_AT: 50 });
 
+const NETWORK_ID_BSC = process.env.REACT_APP_REACT_APP_BSC_NETWORK_ID as string;
 const NETWORK_ID = process.env.REACT_APP_NETWORK_ID as string;
 const BACK_URL_NETWORK_CHANGE = 'BACK_URL_NETWORK_CHANGE';
 const BACK_URL_NETWORK_CHANGE_OWNER = 'BACK_URL_NETWORK_CHANGE_OWNER';
@@ -30,6 +31,7 @@ const AppContainer = (props: any) => {
       ethereum.request({
         method: 'net_version'
       }).then((currentNetworkId: string) => {
+        localStorage.setItem('NETWORK_ID', currentNetworkId);
         // if (currentNetworkId && currentNetworkId !== NETWORK_ID) {
         //   if (history) {
         //     const pathName = history.location.pathname;
@@ -82,7 +84,7 @@ const AppContainer = (props: any) => {
   };
 
   useEffect(()  => {
-    // onLoginWithoutLoginPage();
+    onLoginWithoutLoginPage();
   }, [props.location.pathname]);
 
   useEffect(() => {
@@ -123,10 +125,13 @@ const AppContainer = (props: any) => {
 
       ethereum.on('chainChanged', (newNetworkId: string) => {
         console.log('chainChanged');
-
-        if (Number(NETWORK_ID) !== Number(newNetworkId)) {
+        localStorage.setItem('NETWORK_ID', String(Number(newNetworkId)));
+        if (
+          Number(NETWORK_ID) !== Number(newNetworkId) &&
+          Number(NETWORK_ID_BSC) !== Number(newNetworkId)
+        ) {
           console.log('Network change: NETWORK_ID:', newNetworkId);
-          dispatch(alertFailure('Please change to correct Network: Goerli'));
+          dispatch(alertFailure('Please change to correct Network !'));
         }
 
         // const { history } = props;

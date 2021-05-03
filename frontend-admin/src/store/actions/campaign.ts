@@ -21,7 +21,7 @@ import { getDigitsAfterDecimals } from '../../utils/formatNumber';
 import { TokenType } from '../../utils/token';
 import {adminRoute} from "../../utils";
 import {updateDeploySuccess} from "../../request/pool";
-import {ACCEPT_CURRENCY, POOL_TYPE} from "../../constants";
+import {ACCEPT_CURRENCY, POOL_TYPE, NETWORK_AVAILABLE} from "../../constants";
 const queryString = require('query-string');
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
 const USDT_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS || "";
@@ -637,6 +637,19 @@ export const deployPool = (campaign: any, history: any) => {
       let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');
       if (poolType === POOL_TYPE.CLAIMABLE) {
         factorySmartContract = getContractInstance(campaignFactoryClaimABI, process.env.REACT_APP_SMART_CONTRACT_PRESALE_FACTORY_ADDRESS || '');
+      }
+
+      const isBSC = network_available === NETWORK_AVAILABLE.BSC;
+      if (isBSC) {
+        let address = process.env.REACT_APP_SMART_CONTRACT_BSC_FACTORY_ADDRESS || '';
+        if (poolType === POOL_TYPE.CLAIMABLE) {
+          address = process.env.REACT_APP_SMART_CONTRACT_BSC_PRESALE_FACTORY_ADDRESS || '';
+        }
+        factorySmartContract = getContractInstance(
+          campaignFactoryABI,
+          address,
+          !isBSC,
+        );
       }
 
       if (factorySmartContract) {

@@ -1,11 +1,12 @@
 import React from 'react';
 import useStyles from "../style";
 import {useCommonStyle} from "../../../styles";
+import {etherscanRoute} from "../../../utils";
+import Link from "@material-ui/core/Link";
 
 function PoolHash(props: any) {
   const classes = useStyles();
   const commonStyle = useCommonStyle();
-
   const {
     poolDetail,
   } = props;
@@ -13,8 +14,15 @@ function PoolHash(props: any) {
   return (
     <>
       <div className={classes.formControl}>
-        <label className={classes.formControlLabel}>Pool Hash (Please deposit token to campaign smart contract address for ICO.)</label>
-        <div className={commonStyle.boldText}>{poolDetail?.campaign_hash}</div>
+        <label className={classes.formControlLabel}>Pool Contract Address (Please deposit token to campaign smart contract address for ICO.)</label>
+        <div className={commonStyle.boldText}>
+          {!!poolDetail?.is_deploy &&
+            <Link href={etherscanRoute(poolDetail?.campaign_hash, poolDetail)} target={'_blank'}>
+              {poolDetail?.campaign_hash}
+            </Link>
+          }
+          {!poolDetail?.is_deploy && '--'}
+        </div>
         {/*<input*/}
         {/*  type="text"*/}
         {/*  name="title"*/}

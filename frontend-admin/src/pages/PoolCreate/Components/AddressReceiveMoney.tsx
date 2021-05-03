@@ -3,6 +3,8 @@ import useStyles from "../style";
 import {isValidAddress} from "../../../services/web3";
 import {renderErrorCreatePool} from "../../../utils/validate";
 import {useCommonStyle} from "../../../styles";
+import {etherscanRoute} from "../../../utils";
+import Link from "@material-ui/core/Link";
 
 function AddressReceiveMoney(props: any) {
   const classes = useStyles();
@@ -26,7 +28,11 @@ function AddressReceiveMoney(props: any) {
       <div className={classes.formControl}>
         <label className={classes.formControlLabel}>Address (Receive money)</label>
         {isDeployed &&
-          <div className={commonStyle.boldText}>{poolDetail?.address_receiver}</div>
+          <div className={commonStyle.boldText}>
+            <Link href={etherscanRoute(poolDetail?.address_receiver, poolDetail)} target={'_blank'}>
+              {poolDetail?.address_receiver}
+            </Link>
+          </div>
         }
 
         {!isDeployed &&

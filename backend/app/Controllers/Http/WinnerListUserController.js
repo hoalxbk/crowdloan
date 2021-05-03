@@ -2,6 +2,7 @@
 
 const WinnerListService = use('App/Services/WinnerListUserService')
 const WhitelistService = use('App/Services/WhitelistUserService')
+const ReservedListService = use('App/Services/ReservedListService')
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
 const WhitelistModel = use('App/Models/WhitelistUser');
@@ -40,6 +41,31 @@ class WinnerListUserController {
       // save to redis
       await Redis.set(redisKey, JSON.stringify(winners))
       return HelperUtils.responseSuccess(winners);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('Get Winner List Failed !');
+    }
+  }
+
+  async getWinnerAndReserveList({request}) {
+    // get request params
+    const campaign_id = request.params.campaignId;
+    const page = request.input('page') || 1;
+    const limit = request.input('limit') || 10;
+
+    try {
+      const winners = await WinnerListModel.query()
+        .select('wallet_address', 'email', 'campaign_id')
+        .where('campaign_id', campaign_id)
+        .unionAll((query) => {
+          query.select('wallet_address', 'email', 'campaign_id').from('reserved_list')
+            .where('campaign_id', campaign_id)
+        })
+        .fetch();
+      console.log('Mix Winners + Reserves User: ', JSON.stringify(winners));
+      const paginationData = HelperUtils.paginationArray(winners, page, limit);
+
+      return HelperUtils.responseSuccess(paginationData);
     } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal('Get Winner List Failed !');
@@ -141,6 +167,42 @@ class WinnerListUserController {
     return HelperUtils.responseSuccess(data);
   }
 
+
+  async checkExistWinner({ request, params }) {
+    try {
+      console.log('[checkExistWinner] - Params: ', params);
+
+      const inputParams = request.only(['wallet_address']);
+      const campaign_id = params.campaignId;
+      const wallet_address = inputParams.wallet_address;
+
+      const winnerService = new WinnerListService();
+      let existRecord = await winnerService.buildQueryBuilder({
+        wallet_address,
+        campaign_id,
+      }).first();
+
+      if (existRecord) {
+        console.log('[checkExistWinner] - Record exist in Winner: ', existRecord);
+        return HelperUtils.responseSuccess(existRecord, 'User exist in Winner User List');
+      }
+
+      const reservedService = new ReservedListService();
+      existRecord = await reservedService.buildQueryBuilder({
+        wallet_address,
+        campaign_id,
+      }).first();
+
+      if (existRecord) {
+        console.log('[checkExistWinner] - Record exist in Reserved: ', existRecord);
+        return HelperUtils.responseSuccess(existRecord, 'User exist in Winner User List');
+      }
+
+      return HelperUtils.responseNotFound('User not exist in Winner User List');
+    } catch (e) {
+      return HelperUtils.responseErrorInternal();
+    }
+  }
 
 }
 
