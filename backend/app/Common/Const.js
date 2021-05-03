@@ -105,8 +105,12 @@ module.exports = Object.freeze({
     USDT: 'usdt',
     USDC: 'usdc',
   },
+  POOL_TYPE: {
+    SWAP: 'swap',
+    CLAIMABLE: 'claimable',
+  },
   POOL_DISPLAY: {
     DISPLAY: 1,
     HIDDEN: 0,
-  },
+  }
 });
