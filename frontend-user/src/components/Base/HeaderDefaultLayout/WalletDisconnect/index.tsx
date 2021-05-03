@@ -7,6 +7,7 @@ import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import Typography from '@material-ui/core/Typography';
 import { ETH_CHAIN_ID } from '../../../../constants/network';
+import { ConnectorNames } from '../../../../constants/connectors';
 import { AppContext } from '../../../../AppContext';
 import {withWidth, isWidthDown, isWidthUp} from '@material-ui/core';
 import useStyles from './style';
@@ -89,7 +90,11 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: any) => {
   const currency = appChainID === ETH_CHAIN_ID ? 'ETH': 'BNB'
   const walletIconPath = currentWallet ? `/images/${currentWallet.typeId}.svg`: '';
 
-  const handleAccountLogout = () => {
+  const handleAccountLogout = async () => {
+    if (walletName === ConnectorNames.WalletConnect && localStorage.getItem("walletconnect")) {
+      localStorage.removeItem("walletconnect");
+    }
+
     handleClose();
     disconnectWallet && disconnectWallet();
   }
