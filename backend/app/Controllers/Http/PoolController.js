@@ -275,9 +275,7 @@ class PoolController {
         .first();
 
       pool = JSON.parse(JSON.stringify(pool));
-
       console.log('[getPool] - pool.tiers: ', pool.tiers);
-
       if (pool.tiers && pool.tiers.length > 0) {
         pool.tiers = pool.tiers.map((item, index) => {
           return {

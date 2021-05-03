@@ -54,9 +54,6 @@ class PoolService {
     if(params.registed_by){
       builder = builder.where('registed_by', '=', params.registed_by)
     }
-    // if(params.is_display !== undefined){
-    //   builder = builder.where('is_display', '=', params.is_display)
-    // }
 
     if (params.is_display === undefined) {
       builder = builder.where('is_display', '=', Const.POOL_DISPLAY.DISPLAY);
@@ -84,7 +81,6 @@ class PoolService {
     query.whereHas('whitelistUsers',(builder) => {
       builder.where('wallet_address', walletAddress);
     }, '>', 0);
-
     return query;
   }
 
