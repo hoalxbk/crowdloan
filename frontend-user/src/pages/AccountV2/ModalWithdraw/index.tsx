@@ -26,8 +26,14 @@ const ModalWithdraw = (props: any) => {
   const {
     setOpenModalWithdraw,
     setOpenModalTransactionSubmitting,
-    token
+    listTokenDetails
   } = props;
+  const [currentToken, setCurrentToken] = useState(listTokenDetails[0]) as any;
+  const [currentStaked, setCurrentStaked] = useState('0');
+
+  useEffect(() => {
+    setCurrentStaked(userInfo.pkfStaked)
+  }, [userInfo])
 
   const onWithDraw = () => {
     if(disableWithdraw) return
@@ -46,19 +52,33 @@ const ModalWithdraw = (props: any) => {
       return
     }
     if(!connectedAccount) return
-    if(!isNaN(parseFloat(userInfo.staked))
+    if(!isNaN(parseFloat(currentStaked))
       && !isNaN(parseFloat(withdrawAmount)))
     {
-      const staked = new BigNumber(userInfo.staked).multipliedBy(new BigNumber(10).pow(18))
+      const staked = new BigNumber(currentStaked).multipliedBy(new BigNumber(10).pow(18))
       const amount = new BigNumber(withdrawAmount).multipliedBy(new BigNumber(10).pow(18))
       const zero = new BigNumber('0')
       setDisableWithdraw(staked.lt(amount) || amount.lte(zero));
     }
-  }, [connectedAccount, userInfo, withdrawAmount]);
+  }, [connectedAccount, userInfo, withdrawAmount, currentToken]);
 
   useEffect(() => {
     dispatch(getWithdrawFee(connectedAccount, withdrawAmount === '' ? '0' : withdrawAmount))
   }, [withdrawAmount])
+
+  const handleSelectToken = (e: any) => {
+    const tokens = listTokenDetails.filter((tokenDetails: any) => {
+      return tokenDetails.symbol == e.target.value
+    })
+    setCurrentToken(tokens[0])
+    if(e.target.value == 'PKF') {
+      setCurrentStaked(userInfo.pkfStaked)
+    } else if(e.target.value == 'UPKF') {
+      setCurrentStaked(userInfo.uniStaked)
+    } else if(e.target.value == 'MPKF') {
+      setCurrentStaked(userInfo.mantraStaked)
+    }
+  }
 
   return (
     <>
@@ -66,18 +86,18 @@ const ModalWithdraw = (props: any) => {
         <div className="modal-content">
           <div className="modal-content__head">
             <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-            <h2 className="title">You have {userInfo.staked} {token?.symbol} locked-in</h2>
+            <h2 className="title">You have {currentStaked} {currentToken?.symbol} locked-in</h2>
           </div>
           <div className="modal-content__body">
+            <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
+              {listTokenDetails && listTokenDetails.map((tokenDetails: any) => {
+                return <option value={tokenDetails?.symbol}>{tokenDetails?.symbol}</option>
+              })}
+            </select>
             <div className="subtitle">
               <span>Input</span>
-              <span>Your wallet staked: { _.isEmpty(userInfo) ? 0 : parseFloat(userInfo.staked).toFixed() } {token?.symbol}</span>
+              <span>Your wallet staked: { _.isEmpty(userInfo) ? 0 : parseFloat(currentStaked).toFixed() } {currentToken?.symbol}</span>
             </div>
-            <div className="subtitle">
-                <span>Penalty</span>
-                {withdrawAmount !== '' &&  <span>{ withdrawFee.fee?.toString() || 0 } {token?.symbol}</span>}
-                {withdrawAmount === '' && <span>0 {token?.symbol}</span>}
-              </div>
             <div className="input-group">
               <input
                 type="text"
@@ -86,7 +106,7 @@ const ModalWithdraw = (props: any) => {
                 placeholder="0.00"
               />
               <div>
-                <button className="btn-max" onClick={() => setWithdrawAmount(userInfo.staked)}>MAX</button>
+                <button className="btn-max" onClick={() => setWithdrawAmount(currentStaked)}>MAX</button>
               </div>
             </div>
           </div>

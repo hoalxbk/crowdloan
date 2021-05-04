@@ -15,7 +15,7 @@ import useTokenDetails from '../../hooks/useTokenDetails';
 import useFetch from '../../hooks/useFetch';
 import { USER_STATUS } from '../../constants';
 
-const TOKEN_ADDRESS = process.env.REACT_APP_SOTA || '';
+const TOKEN_ADDRESS = process.env.REACT_APP_PKF || '';
 
 const iconWarning = "/images/icons/warning.svg";
 const iconClose = "/images/icons/close.svg";
