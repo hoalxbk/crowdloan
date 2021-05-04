@@ -10,6 +10,7 @@ const {
 
 describe('Tier', function () {
   let owner, penaltyWallet, wallet, PKF, uniLP, sPKF, tier;
+  let oneMillion = "1000000000000000000000000";
   beforeEach(async () => {
     // Get accounts
     accounts = await hardhat.ethers.provider.listAccounts();
@@ -20,15 +21,15 @@ describe('Tier', function () {
 
 
     const ERC20TokenFactory = await hardhat.ethers.getContractFactory('ERC20Token');
-    PKF = await ERC20TokenFactory.deploy("PolkaFoundry", "PKF", owner, `5${'0'.repeat(27)}`);
-    uniLP = await ERC20TokenFactory.deploy("Uniswap V2", "UNI-V2", owner, `5${'0'.repeat(27)}`);
-    sPKF = await ERC20TokenFactory.deploy("Staked PKF", "sPKF", owner, `5${'0'.repeat(27)}`);
+    PKF = await ERC20TokenFactory.deploy("PolkaFoundry", "PKF", owner, oneMillion);
+    uniLP = await ERC20TokenFactory.deploy("Uniswap V2", "UNI-V2", owner, oneMillion);
+    sPKF = await ERC20TokenFactory.deploy("Staked PKF", "sPKF", owner, oneMillion);
 
     // Deploy Tier Contract
-    const RedKiteTier = await hardhat.ethers.getContractFactory(
-      'RedKiteTier',
+    const RedKiteTiers = await hardhat.ethers.getContractFactory(
+      'RedKiteTiers',
     );
-    tier = await RedKiteTier.deploy(PKF.address, sPKF, uniLP, penaltyWallet);
+    tier = await RedKiteTiers.deploy(PKF.address, sPKF.address, uniLP.address, penaltyWallet);
     await tier.deployed();
   });
 
@@ -52,5 +53,34 @@ describe('Tier', function () {
     expect(tier.setPenaltyWallet(penaltyWallet)).to.be.reverted;
   });
 
-  //
+  // Deposit
+  it('Deposit PKF', async function () {
+    const depositAmount = (100 * 10 ** 18).toString();
+    await PKF.approve(tier.address, depositAmount);
+    await tier.depositERC20(PKF.address, depositAmount);
+    const userInfo = await tier.userInfo(owner, PKF.address);
+    expect(userInfo.staked).to.equal(depositAmount);
+    expect(await tier.userExternalStaked(owner)).to.equal(0);
+    expect(await tier.userTotalStaked(owner)).to.equal(depositAmount);
+  });
+
+  it('Deposit sPKF with rate 1 sPKF = 1 PKF', async function () {
+    const depositAmount = (100 * 10 ** 18).toString();
+    await sPKF.approve(tier.address, depositAmount);
+    await tier.depositERC20(sPKF.address, depositAmount);
+    const userInfo = await tier.userInfo(owner, sPKF.address);
+    expect(userInfo.staked).to.equal(depositAmount);
+    expect(await tier.userExternalStaked(owner)).to.equal(depositAmount);
+    expect(await tier.userTotalStaked(owner)).to.equal(depositAmount);
+  });
+
+  it('Deposit uniLP with rate 1 uniLP = 150 PKF', async function () {
+    const depositAmount = (100 * 10 ** 18).toString();
+    await uniLP.approve(tier.address, depositAmount);
+    await tier.depositERC20(uniLP.address, depositAmount);
+    const userInfo = await tier.userInfo(owner, uniLP.address);
+    expect(userInfo.staked).to.equal(depositAmount);
+    expect(await tier.userExternalStaked(owner)).to.equal("15000000000000000000000");
+    expect(await tier.userTotalStaked(owner)).to.equal("15000000000000000000000");
+  });
 });
