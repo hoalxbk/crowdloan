@@ -92,6 +92,7 @@ class PoolController {
           end_time: moment(item.endTime).unix(),
           min_buy: new BigNumber(item.minBuy).toFixed(),
           max_buy: new BigNumber(item.maxBuy).toFixed(),
+          ticket_allow_percent: new BigNumber(item.ticket_allow_percent).toFixed(),
           currency: item.currency,
         });
         return tierObj;
@@ -173,6 +174,7 @@ class PoolController {
             end_time: moment(item.endTime).unix(),
             min_buy: new BigNumber(item.minBuy).toFixed(),
             max_buy: new BigNumber(item.maxBuy).toFixed(),
+            ticket_allow_percent: new BigNumber(item.ticket_allow_percent).toFixed(),
             currency: item.currency,
           });
           return tierObj;
