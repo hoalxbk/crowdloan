@@ -42,14 +42,14 @@ export const USER_STATUS = {
 
 export const CONVERSION_RATE = [
   {
-    name: 'Uniswap LP',
+    name: 'PKF-ETH LP',
     rate: 150,
-    symbol: 'UPKF'
+    symbol: 'LP-PKF'
   },
   {
-    name: 'sPKF',
+    name: 'Staked sPKF',
     rate: 1,
-    symbol: 'MPKF'
+    symbol: 'sPKF'
   },
   // {
   //   name: 'NFT',
