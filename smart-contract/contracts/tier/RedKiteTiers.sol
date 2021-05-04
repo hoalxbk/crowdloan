@@ -126,11 +126,11 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         tierPrice[3] = 20000e18;
         tierPrice[4] = 60000e18;
 
-        daysLockLevel.push(10 days);
-        daysLockLevel.push(20 days);
-        daysLockLevel.push(30 days);
-        daysLockLevel.push(60 days);
-        daysLockLevel.push(90 days);
+        daysLockLevel[0] = 10 days;
+        daysLockLevel[1] = 20 days;
+        daysLockLevel[2] = 30 days;
+        daysLockLevel[3] = 60 days;
+        daysLockLevel[4] = 90 days;
     }
 
     function depositERC20(address _token, uint256 _amount)
@@ -333,7 +333,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
 
         ExternalToken storage token = externalToken[_token];
         userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-            _amount.mul(token.rate).div(10**token.decimals)
+            _amount.mul(10**token.decimals).div(token.rate)
         );
 
         if (_amount == 1) {
