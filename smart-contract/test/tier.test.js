@@ -9,7 +9,7 @@ const {
 } = hardhat.ethers;
 
 describe('Tier', function () {
-  let owner, penaltyWallet, wallet, PKF, MantraPKF, nftPKF, uniPkfLP, sPKF, tier;
+  let owner, penaltyWallet, wallet, PKF, uniLP, sPKF, tier;
   beforeEach(async () => {
     // Get accounts
     accounts = await hardhat.ethers.provider.listAccounts();
@@ -21,16 +21,14 @@ describe('Tier', function () {
 
     const ERC20TokenFactory = await hardhat.ethers.getContractFactory('ERC20Token');
     PKF = await ERC20TokenFactory.deploy("PolkaFoundry", "PKF", owner, `5${'0'.repeat(27)}`);
-    MantraPKF = await ERC20TokenFactory.deploy("MantraDao PKF", "mPKF", owner, `5${'0'.repeat(27)}`);
-    nftPKF = await ERC20TokenFactory.deploy("NFT PKF", "nPKF", owner, `5${'0'.repeat(27)}`);
-    uniPkfLP = await ERC20TokenFactory.deploy("Uniswap PKF", "uPKF", owner, `5${'0'.repeat(27)}`);
-    sPKF = await ERC20TokenFactory.deploy("sPKF", "sPKF", owner, `5${'0'.repeat(27)}`);
+    uniLP = await ERC20TokenFactory.deploy("Uniswap V2", "UNI-V2", owner, `5${'0'.repeat(27)}`);
+    sPKF = await ERC20TokenFactory.deploy("Staked PKF", "sPKF", owner, `5${'0'.repeat(27)}`);
 
     // Deploy Tier Contract
     const RedKiteTier = await hardhat.ethers.getContractFactory(
       'RedKiteTier',
     );
-    tier = await RedKiteTier.deploy(PKF.address, penaltyWallet);
+    tier = await RedKiteTier.deploy(PKF.address, sPKF, uniLP, penaltyWallet);
     await tier.deployed();
   });
 
@@ -53,4 +51,6 @@ describe('Tier', function () {
   it('Should REVERT tier when no change with penaltyWallet', async function () {
     expect(tier.setPenaltyWallet(penaltyWallet)).to.be.reverted;
   });
+
+  //
 });

@@ -46,9 +46,9 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     // Minimum PKF need to stake each tier
     uint256[MAX_NUM_TIERS] tierPrice;
     // Percentage of penalties
-    uint256[] public withdrawFeePercent;
+    uint256[6] public withdrawFeePercent;
     // The maximum number of days of penalties
-    uint256[] public daysLockLevel;
+    uint256[5] public daysLockLevel;
     // Info of each token can stake
     mapping(address => ExternalToken) public externalToken;
 
@@ -111,13 +111,14 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     );
     event ChangePenaltyWallet(address indexed penaltyWallet);
 
-    constructor(address _pkf, address _uniLp, address _penaltyWallet) {
+    constructor(address _pkf, address _sPkf, address _uniLp, address _penaltyWallet) {
         owner = msg.sender;
         penaltyWallet = _penaltyWallet;
 
         PKF = _pkf;
 
         addExternalToken(_pkf, 0, 1 , false, true);
+        addExternalToken(_sPkf, 0, 1, false, true);
         addExternalToken(_uniLp, 0, 150, false, true);
 
         tierPrice[1] = 500e18;
@@ -216,7 +217,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         if (_token != PKF) {
             ExternalToken storage token = externalToken[_token];
             userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-                _amount.mul(10**token.decimals).div(token.rate)
+                _amount.mul(token.rate).div(10**token.decimals)
             );
         }
 
@@ -308,7 +309,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
 
         ExternalToken storage token = externalToken[_token];
         userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-            _amount.mul(10**token.decimals).div(token.rate)
+            _amount.mul(token.rate).div(10**token.decimals)
         );
 
         IERC20(_token).transfer(msg.sender, _amount);
@@ -332,7 +333,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
 
         ExternalToken storage token = externalToken[_token];
         userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-            _amount.mul(10**token.decimals).div(token.rate)
+            _amount.mul(token.rate).div(10**token.decimals)
         );
 
         if (_amount == 1) {
