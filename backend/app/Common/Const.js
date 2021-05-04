@@ -1,4 +1,5 @@
 module.exports = Object.freeze({
+  DEFAULT_LIMIT: 10,
   TOKEN_DECIMAL: 18,
   CONTRACTS: {
     // map to contract_name in contract_logs table
@@ -45,6 +46,7 @@ module.exports = Object.freeze({
     CHECK_STATUS: 'CheckTxStatus-job',
     SEND_FORGOT_PASSWORD: 'SendForgotPasswordJob-job',
     SEND_CONFIRMATION_EMAIL: 'SendConfirmationEmailJob-job',
+    SEND_ADMIN_INFO_EMAIL: 'SendAdminInfoEmailJob-job',
   },
   ACTIVE: 0,
   SUSPEND: 1,
@@ -58,11 +60,15 @@ module.exports = Object.freeze({
     REGULAR: 2,
   },
   USER_TYPE_PREFIX: {
-    ICO_OWNER: 'user',
-    PUBLIC_USER: 'public',
+    ICO_OWNER: 'admin',
+    PUBLIC_USER: 'user',
   },
-  USER_INACTIVE: 0,
-  USER_ACTIVE: 1,
+  USER_STATUS: {
+    UNVERIFIED: 0,
+    ACTIVE: 1,
+    BLOCKED: 2,
+    DELETED: 3
+  },
   FILE_SITE: '2mb',
   FILE_EXT: ['png', 'gif', 'jpg', 'jpeg', 'JPEG'],
   TIME_EXPIRED: 300000,
@@ -74,5 +80,37 @@ module.exports = Object.freeze({
       ADDRESS_NOT_EXIST: 'AUTH_ERROR.ADDRESS_NOT_EXIST',
       PASSWORD_NOT_MATCH: 'AUTH_ERROR.PASSWORD_NOT_MATCH',
     },
+  },
+  CRAWLER_EVENT: {
+    POOL_CREATED: 'PoolCreated',
+    ICO_CAMPAIGN_CREATED: 'IcoCampaignCreated',
+    ICO_CAMPAIGN_CREATED_WITH_ETH_LINK: 'IcoCampaignCreatedWithEthLink',
+    TOKEN_PURCHASE_BY_ETHER_WITH_ETH_LINK: 'TokenPurchaseByEtherWithEthLink',
+    TOKEN_PURCHASE_BY_ETHER: 'TokenPurchaseByEther',
+    TOKEN_PURCHASE_BY_TOKEN: 'TokenPurchaseByToken',
+    PAUSE: 'Pause',
+    UNPAUSE: 'Unpause',
+    BUY_WITH_ETHER: 'buyWithEther',
+    BUY_WITH_TOKEN: 'buyWithToken',
+    BUY_WITH_ETHER_WITH_ETH_LINK: 'buyWithEtherWithETHLink',
+    REFUND: 'Refund',
+    TOKEN_CLAIMED: 'TokenClaimed',
+  },
+  BUY_TYPE: {
+    WHITELIST_LOTTERY: 'whitelist',
+    FCFS: 'fcfs',
+  },
+  ACCEPT_CURRENCY: {
+    ETH: 'eth',
+    USDT: 'usdt',
+    USDC: 'usdc',
+  },
+  POOL_TYPE: {
+    SWAP: 'swap',
+    CLAIMABLE: 'claimable',
+  },
+  POOL_DISPLAY: {
+    DISPLAY: 1,
+    HIDDEN: 0,
   }
 });

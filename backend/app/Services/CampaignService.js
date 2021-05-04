@@ -1,11 +1,13 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const WhitelistModel = use('App/Models/WhitelistUser');
 const Config = use('Config');
 const Const = use('App/Common/Const');
 const ErrorFactory = use('App/Common/ErrorFactory');
 const BigNumber = use('bignumber.js');
 const CheckTxStatus = use('App/Jobs/CheckTxStatus');
+const Redis = use('Redis');
 
 const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -19,11 +21,10 @@ const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
 
 class CampaignService {
     async createCampaign(param, receipt, receiptData) {
-      try {
         const campaign = new CampaignModel();
-        campaign.campaign_id = param.params.campaignId;
+        campaign.campaign_id = param.params.poolId;
         campaign.registed_by = param.params.registedBy;
-        campaign.campaign_hash    = param.params.campaign;
+        campaign.campaign_hash    = param.params.pool;
         campaign.token       = param.params.token;
         campaign.title        = receipt[2]
         campaign.start_time  = receipt[0];
@@ -37,23 +38,20 @@ class CampaignService {
         campaign.funding_wallet_address = receipt[6];
         campaign.is_pause = receipt[7];
         campaign.transaction_hash = param.txHash;
+        campaign.is_deploy = true;
         await campaign.save();
         return campaign;
-      }
-      catch (e){
-        console.log('ERROR', e);
-        return ErrorFactory.internal('error')
-      }
     }
 
     async updateCampaign(param, receipt, receiptData) {
-      try {
+      console.log('Update Campaign with: ', param, receipt, receiptData);
+
         const campaign = CampaignModel.query().where(function () {
-          this.where('campaign_hash', '=', param.params.campaign)
+          this.where('campaign_hash', '=', param.params.pool)
             .orWhere('transaction_hash', '=', param.txHash)
         }).update({
             campaign_hash: param.params.campaign,
-            campaign_id: param.params.campaignId,
+            campaign_id: param.params.poolId,
             registed_by: param.params.registedBy,
             transaction_hash: param.txHash,
             token: param.params.token,
@@ -68,13 +66,10 @@ class CampaignService {
             decimals : receiptData[1],
             symbol : receiptData[2],
             affiliate: false,
+            is_deploy: true,
         });
         return campaign;
-      }
-      catch (e){
-        console.log('ERROR', e);
-        return ErrorFactory.internal('error')
-      }
+
     }
 
     async editCampaign(receipt, campaign){
@@ -234,7 +229,7 @@ class CampaignService {
       }
       if(status && status === 1){
         listData = listData.whereRaw('finish_time >=' + dateNow)
-          .whereRaw('start_time <=' + dateNow)
+          .whereRaw('start_time <=' + daowteNow)
       }
       if(status && status === 2){
         listData = listData.where('start_time', '>=', dateNow)
@@ -245,6 +240,39 @@ class CampaignService {
       listData = await listData.paginate(page,limit);
       return listData
     }
+
+    // investor join campaign
+    async joinCampaign(campaign_id, wallet_address, email) {
+      // check exist whitelist with wallet and campaign
+      const existWl = await WhitelistModel.query()
+        .where('wallet_address',wallet_address)
+        .where('campaign_id',campaign_id).first();
+      if (existWl != null) {
+        console.log(`Existed record on whitelist with the same wallet_address ${wallet_address} and campaign_id ${campaign_id}`);
+        ErrorFactory.badRequest('Bad request duplicate with wallet_address ' + wallet_address);
+      }
+      // insert to whitelist table
+      const whitelist = new WhitelistModel();
+      whitelist.wallet_address = wallet_address;
+      whitelist.campaign_id = campaign_id;
+      whitelist.email = email;
+      await whitelist.save();
+      // remove all old key of white list on redis
+      // key regex
+      const redisKeyRegex = 'whitelist_' + campaign_id + '*';
+      // find all key matched with key regex
+      const keys = await Redis.keys(redisKeyRegex);
+      for (const key of keys) {
+        console.log(key);
+        await Redis.del(key);
+      }
+    }
+
+  async findByCampaignId(campaign_id) {
+    let builder = CampaignModel.query()
+      .where('id', campaign_id);
+    return await builder.first();
+  }
 }
 
 module.exports = CampaignService;

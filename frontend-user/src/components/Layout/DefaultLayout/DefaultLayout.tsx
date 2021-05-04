@@ -1,6 +1,7 @@
 import React from 'react';
-import RightDefaultLayout from '../../Base/RightDefaultLayout';
-import LeftDefaultLayout from '../../Base/LeftDefaultLayout';
+import MainDefaultLayout from '../../Base/MainDefaultLayout';
+import HeaderDefaultLayout from '../../Base/HeaderDefaultLayout';
+import FooterDefaultLayout from '../../Base/FooterDefaultLayout';
 import { useCommonStyle } from '../../../styles';
 
 const DefaultLayout = (props: any) => {
@@ -8,8 +9,9 @@ const DefaultLayout = (props: any) => {
 
   return (
     <div className={commonStyle.DefaultLayout}>
-      <LeftDefaultLayout />
-      <RightDefaultLayout>{props.children}</RightDefaultLayout>
+      <HeaderDefaultLayout/>
+      <MainDefaultLayout>{props.children}</MainDefaultLayout>
+      <FooterDefaultLayout/>
     </div>
   );
 };

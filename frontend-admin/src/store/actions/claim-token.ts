@@ -4,12 +4,13 @@ import {claimTokenActions} from '../constants/claim-token';
 import {convertToWei, getContractInstance} from '../../services/web3';
 import TradeABI from '../../abi/Trade.json';
 import ErcABI from '../../abi/Erc20.json';
-import campaignABI from '../../abi/Campaign.json';
+import campaignABI from '../../abi/Swap/Campaign.json';
 import {alertActions} from '../constants/alert';
 import _ from 'lodash';
 import {getCampaignDetail} from './campaign';
 import {getBalance} from './balance';
 import {TRANSACTION_ERROR} from '../../constants';
+import {apiRoute} from "../../utils";
 
 
 export const claimToken = (campaignId: string) => {
@@ -105,12 +106,12 @@ export const claimStakedTokens = () => {
 //       dispatch({
 //         type: buyTokenActions.BUY_TOKEN_AVAILABLE_LOADING
 //       })
-
+//
 //       const baseRequest = new BaseRequest();
-
-//       const response = await baseRequest.post('/user/jwt/verify', {}, true) as any;
+//
+//       const response = await baseRequest.post(apiRoute('jwt/verify'), {}, true) as any;
 //       const resObj = await response.json();
-
+//
 //       if (resObj?.status === 200) {
 //         dispatch({
 //           type: buyTokenActions.BUY_TOKEN_AVAILABLE_SUCCESS,

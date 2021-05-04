@@ -1,13 +1,17 @@
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import BigNumber from 'bignumber.js';
+//@ts-ignore
+import removeTrailingZeros from 'remove-trailing-zeros';
 
 import { convertDateTimeToUnix, convertUnixTimeToDateTime } from '../../utils/convertDate';
 import { campaignActions } from '../constants/campaign';
 import { alertActions } from '../constants/alert';
 import { BaseRequest } from '../../request/Request';
-import campaignFactoryABI from '../../abi/CampaignFactory.json';
-import campaignABI from '../../abi/Campaign.json';
+import campaignFactoryABI from '../../abi/Swap/CampaignFactory.json';
+import campaignFactoryClaimABI from '../../abi/Claim/CampaignFactory.json';
+
+import campaignABI from '../../abi/Swap/Campaign.json';
 import erc20ABI from '../../abi/Erc20.json';
 import ethLinkABI from '../../abi/Ethlink.json';
 import { getContractInstance, getWeb3Instance } from '../../services/web3';
@@ -16,6 +20,8 @@ import { isReferral, isOwnerOfReferral } from '../../utils/affiliateCampaign';
 import { getDigitsAfterDecimals } from '../../utils/formatNumber';
 import { TokenType } from '../../utils/token';
 import {adminRoute} from "../../utils";
+import {updateDeploySuccess} from "../../request/pool";
+import {ACCEPT_CURRENCY, POOL_TYPE, NETWORK_AVAILABLE} from "../../constants";
 const queryString = require('query-string');
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
 const USDT_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS || "";
@@ -80,6 +86,7 @@ export const getCampaigns = (currentPage: number = 1, query: string = '', startT
         payload: err.message
       })
     }
+
   }
 }
 
@@ -151,7 +158,6 @@ export const getLatestCampaign = () => {
              ...resObject.data,
              tokenLeft,
              tokenClaimed,
-             // totalTokens: new BigNumber(tokenLeft).plus(tokenSold).toFixed(),
              totalTokens: new BigNumber(tokenLeft).plus(tokenSold).toFixed(),
              tokenSold
            }
@@ -235,11 +241,11 @@ export const getCampaignDetail = (id: string, isInvestor: boolean = false) => {
         const campaignOwner = await campaignContract.methods.owner().call();
         let isCampaignOwner = false;
 
-        if (!isInvestor) {
+        // if (!isInvestor) {
           isCampaignOwner = campaignOwner.toLowerCase() === loginUser.toLowerCase();
-        } else {
-          isCampaignOwner = campaignOwner.toLowerCase() === loginInvestor.toLowerCase();
-        }
+        // } else {
+        //   isCampaignOwner = campaignOwner.toLowerCase() === loginInvestor.toLowerCase();
+        // }
 
         const title = campaignContract.methods.name().call();
 
@@ -550,6 +556,144 @@ export const createCampaign = (campaign: campaignCreateProps, history: any) => {
         }
       }
     } catch (err) {
+      dispatch({
+        type: campaignActions.MY_CAMPAIGN_CREATE_FAIL,
+        payload: err.message
+      });
+
+      dispatch({
+        type: alertActions.ERROR_MESSAGE,
+        payload: err.message
+      });
+    }
+  }
+}
+
+export const deployPool = (campaign: any, history: any) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
+    try {
+      dispatch({ type: campaignActions.MY_CAMPAIGN_CREATE_REQUEST });
+
+      const baseRequest = new BaseRequest();
+      const {
+        title, affiliate, start_time, finish_time, release_time,
+        token, address_receiver, token_by_eth, token_conversion_rate, tokenInfo,
+        tier_configuration, accept_currency, network_available
+      } = campaign;
+      const releaseTimeUnix = release_time;
+      const startTimeUnix = start_time;
+      const finishTimeUnix = finish_time;
+
+      const durationTime = finishTimeUnix - startTimeUnix;
+
+      // Old Code
+      // let tokenByEthDecimals: any;
+      // let tokenByETHActualRate: any;
+      // tokenByEthDecimals = getDigitsAfterDecimals(token_by_eth);
+      // if (token !== ACCEPT_CURRENCY.ETH) {
+      //   if (tokenByEthDecimals > 0) {
+      //     tokenByETHActualRate = new BigNumber(1).dividedBy(token_by_eth).multipliedBy(Math.pow(10, tokenInfo?.decimals - 6)).toFixed();
+      //   } else {
+      //     tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+      //   }
+      // } else {
+      //   tokenByETHActualRate = new BigNumber(token_by_eth).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).multipliedBy(Math.pow(10, 18 - 18)).toFixed();
+      // }
+
+      // console.log('tokenByEthDecimals: ', tokenByEthDecimals);
+      // console.log('tokenByETHActualRate: ', tokenByETHActualRate);
+
+      let paidTokenAddress = '0x0000000000000000000000000000000000000000';
+
+      if (accept_currency === ACCEPT_CURRENCY.USDC) {
+        paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS as string;
+      }
+
+      if (accept_currency === ACCEPT_CURRENCY.USDT) {
+        paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS as string;
+      }
+
+
+      let tokenByEthDecimals = 0;
+      let tokenByETHActualRate: any;
+      let reversedRate = removeTrailingZeros(new BigNumber(1).dividedBy(token_by_eth).toFixed());
+      let digitsAfterDecimals = getDigitsAfterDecimals(reversedRate);
+
+      if (digitsAfterDecimals > 6) {
+        // get 6 decimals after comma if decimals part is too long
+        const splittedComma = reversedRate.split('.');
+        reversedRate = splittedComma[0].concat(".", splittedComma[1].substr(0, 6));
+        digitsAfterDecimals = 6;
+      }
+
+      if (accept_currency !== ACCEPT_CURRENCY.ETH) {
+        tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+
+      } else {
+        tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
+      }
+
+      const poolType = campaign.pool_type;
+      let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');
+      if (poolType === POOL_TYPE.CLAIMABLE) {
+        factorySmartContract = getContractInstance(campaignFactoryClaimABI, process.env.REACT_APP_SMART_CONTRACT_PRESALE_FACTORY_ADDRESS || '');
+      }
+
+      const isBSC = network_available === NETWORK_AVAILABLE.BSC;
+      if (isBSC) {
+        let address = process.env.REACT_APP_SMART_CONTRACT_BSC_FACTORY_ADDRESS || '';
+        if (poolType === POOL_TYPE.CLAIMABLE) {
+          address = process.env.REACT_APP_SMART_CONTRACT_BSC_PRESALE_FACTORY_ADDRESS || '';
+        }
+        factorySmartContract = getContractInstance(
+          campaignFactoryABI,
+          address,
+          !isBSC,
+        );
+      }
+
+      if (factorySmartContract) {
+        let createdCampaign;
+        const userWalletAddress = getState().user.data.wallet_address;
+        const signerWallet = campaign.wallet.wallet_address;
+        console.log('userWallet', signerWallet);
+
+        createdCampaign = await factorySmartContract.methods.registerPool(
+          token,
+          durationTime,
+          startTimeUnix,
+
+          paidTokenAddress,
+          tokenByEthDecimals,
+          tokenByETHActualRate,
+          address_receiver,
+          signerWallet,
+        ).send({
+          from: userWalletAddress,
+        });
+
+        console.log('Deploy Response: ', createdCampaign);
+        if (createdCampaign) {
+          dispatch({ type: alertActions.SUCCESS_MESSAGE, payload: 'Deploy Pool Successful!'});
+
+          let campaignHash = '';
+          if (createdCampaign?.events && createdCampaign?.events && createdCampaign?.events[0]) {
+            campaignHash = createdCampaign?.events[0].address;
+          }
+          const updateData = {
+            campaign_hash: campaignHash,
+            token_symbol: tokenInfo.symbol,
+            token_name: tokenInfo.name,
+            token_decimals: tokenInfo.decimals,
+            token_address: tokenInfo.address,
+          };
+
+          await updateDeploySuccess(updateData, campaign.id);
+        }
+      }
+    } catch (err) {
+      console.log('ERROR: ', err);
+
       dispatch({
         type: campaignActions.MY_CAMPAIGN_CREATE_FAIL,
         payload: err.message

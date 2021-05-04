@@ -1,0 +1,554 @@
+import React, {useEffect, useState} from 'react';
+import useStyles from "./style";
+import {useCommonStyle} from "../../styles";
+import {useForm} from "react-hook-form";
+import {useDispatch, useSelector} from "react-redux";
+
+import {CircularProgress, Grid} from "@material-ui/core";
+import {getTokenInfo, TokenType} from "../../utils/token";
+import {isFactorySuspended} from "../../utils/campaignFactory";
+import {createPool, updatePool} from "../../request/pool";
+import {alertFailure, alertSuccess} from "../../store/actions/alert";
+import {withRouter} from "react-router-dom";
+import {deployPool} from "../../store/actions/campaign";
+import {adminRoute} from "../../utils";
+import {ACCEPT_CURRENCY} from "../../constants";
+
+import PoolBanner from "./Components/PoolBanner";
+import TokenAddress from "./Components/TokenAddress";
+import TotalCoinSold from "./Components/TotalCoinSold";
+import TokenLogo from "./Components/TokenLogo";
+import DurationTime from "./Components/DurationTimes";
+import MinTier from "./Components/MinTier";
+import TierTable from "./Components/TierTable";
+import BuyType from "./Components/BuyType";
+import PoolType from "./Components/PoolType";
+import NetworkAvailable from "./Components/NetworkAvailable";
+import AcceptCurrency from "./Components/AcceptCurrency";
+import PoolDescription from "./Components/PoolDescription";
+import AddressReceiveMoney from "./Components/AddressReceiveMoney";
+import ExchangeRate from "./Components/ExchangeRate";
+import DisplaySwitch from "./Components/DisplaySwitch";
+import PoolHash from "./Components/PoolHash";
+import PoolName from "./Components/PoolName";
+import UserJoinPool from "./Components/UserJoinPool";
+import PoolWebsite from "./Components/PoolWebsite";
+
+function PoolForm(props: any) {
+  const classes = useStyles();
+  const commonStyle = useCommonStyle();
+  const dispatch = useDispatch();
+  const history = props.history;
+
+  const { data: loginUser } = useSelector(( state: any ) => state.user);
+
+  const { isEdit, poolDetail } = props;
+  const [isSuspend, setIsSuspend] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [loadingDeploy, setLoadingDeploy] = useState(false);
+  const [deployed, setDeployed] = useState(false);
+  const [token, setToken] = useState<TokenType | null>(null);
+  const [needValidate, setNeedValidate] = useState(false);
+
+  useEffect(() => {
+    const checkCampaignFactorySuspended = async () => {
+      const isSuspended = await isFactorySuspended();
+      setIsSuspend(isSuspended);
+    }
+    checkCampaignFactorySuspended();
+  }, []);
+
+  const { register, setValue, getValues, clearErrors, errors, handleSubmit, control, watch } = useForm({
+    mode: "onChange",
+    defaultValues: poolDetail,
+    reValidateMode: 'onChange',
+  });
+
+  const createUpdatePool = async (data: any) => {
+    const minTier = data.minTier;
+    let tierConfiguration = data.tierConfiguration || '[]';
+    tierConfiguration = JSON.parse(tierConfiguration);
+    tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
+      const item = {
+        ...currency,
+        currency: data.acceptCurrency,
+      };
+      if (index < minTier) {
+        item.maxBuy = 0;
+        item.minBuy = 0;
+      }
+      return item;
+    });
+
+    const tokenInfo = await getTokenInforDetail(data.token);
+    const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
+    const submitData = {
+      registed_by: loginUser?.wallet_address,
+      is_display: data.is_display,
+
+      // Pool general
+      title: data.title,
+      website: data.website,
+      banner: data.banner,
+      description: data.description,
+      address_receiver: data.addressReceiver,
+
+      // Token
+      token: data.token,
+      // TODO: Check to switch
+      // token_by_eth: isAcceptEth ? data.tokenRate : 0,
+      // token_conversion_rate: !isAcceptEth ? data.tokenRate : 0,
+      token_by_eth: data.tokenRate,
+      token_conversion_rate: data.tokenRate,
+      token_images: data.tokenImages,
+      total_sold_coin: data.totalSoldCoin,
+
+      // TokenInfo
+      tokenInfo,
+
+      // Time
+      start_time: data.start_time && data.start_time.unix(),
+      finish_time: data.finish_time && data.finish_time.unix(),
+      release_time: data.release_time && data.release_time.unix(),
+      start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
+      end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
+
+      // Types
+      accept_currency: data.acceptCurrency,
+      network_available: data.networkAvailable,
+      buy_type: data.buyType,
+      pool_type: data.poolType,
+
+      // Tier
+      min_tier: data.minTier,
+      tier_configuration: tierConfiguration,
+
+      // Wallet
+      wallet: isEdit ? poolDetail?.wallet : {},
+    };
+
+    console.log('[createUpdatePool] - Submit with data: ', submitData);
+
+    let response = {};
+    if (isEdit) {
+      response = await updatePool(submitData, poolDetail.id);
+    } else {
+      response = await createPool(submitData);
+    }
+
+    return response;
+  };
+
+  const handleFormSubmit = async (data: any) => {
+    setLoading(true);
+    try {
+      const response: any = await createUpdatePool(data);
+      if (response?.status === 200) {
+        dispatch(alertSuccess('Successful!'));
+        history.push(adminRoute('/campaigns'));
+      } else {
+        dispatch(alertFailure('Fail!'));
+      }
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      console.log('ERROR: ', e);
+    }
+  };
+
+  // Update After Deploy
+  const updatePoolAfterDeloy = async (data: any) => {
+    // Only allow update informations:
+    // name
+    // website
+    // banner
+    // total coin sold
+    // token image
+    // about pool
+    // list user join (hiển nhiên)
+    const submitData = {
+      // Pool general
+      title: data.title,
+      website: data.website,
+      banner: data.banner,
+      description: data.description,
+
+      // Token
+      token_images: data.tokenImages,
+      total_sold_coin: data.totalSoldCoin,
+    };
+
+    console.log('[updatePoolAfterDeloy] - Submit with data: ', submitData);
+
+    let response = await updatePool(submitData, poolDetail.id);
+
+    return response;
+  };
+
+  const handleUpdateAfterDeloy = async (data: any) => {
+    setLoading(true);
+    try {
+      const response: any = await updatePoolAfterDeloy(data);
+      if (response?.status === 200) {
+        dispatch(alertSuccess('Successful!'));
+        history.push(adminRoute('/campaigns'));
+      } else {
+        dispatch(alertFailure('Fail!'));
+      }
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
+      console.log('ERROR: ', e);
+    }
+  };
+
+  // Create / Update Pool (Before Deploy)
+  const handleCampaignCreate = () => {
+    setNeedValidate(false);
+    setTimeout(() => {
+      if (poolDetail?.is_deploy) {
+        handleSubmit(handleUpdateAfterDeloy)();
+      } else {
+        handleSubmit(handleFormSubmit)();
+      }
+    }, 100);
+  };
+
+  const getTokenInforDetail = async (token: string) => {
+    const erc20Token = await getTokenInfo(token);
+    let tokenInfo = {};
+    if (erc20Token) {
+      const { name, symbol, decimals, address } = erc20Token;
+      tokenInfo = { name, symbol, decimals, address };
+    }
+    return tokenInfo;
+  }
+
+  // Deploy Pool And Update
+  const handleDeloySubmit = async (data: any) => {
+    if (poolDetail.is_deploy || deployed) {
+      alert('Pool is deployed !!!');
+      return false;
+    }
+    // eslint-disable-next-line no-restricted-globals
+    if (!confirm('The system will store the latest pool information.\n' +
+     'Are you sure you want to deploy?')) {
+      setNeedValidate(false);
+      return false;
+    }
+
+    setLoadingDeploy(true);
+    try {
+      // Save data before deploy
+      const response = await createUpdatePool(data);
+      const tokenInfo = await getTokenInforDetail(data.token);
+
+      const history = props.history;
+      const minTier = data.minTier;
+      let tierConfiguration = data.tierConfiguration || '[]';
+      tierConfiguration = JSON.parse(tierConfiguration);
+      tierConfiguration = tierConfiguration.map((currency: any, index: number) => {
+        const item = {
+          ...currency,
+          currency: data.acceptCurrency,
+        };
+        if (index < minTier) {
+          item.maxBuy = 0;
+          item.minBuy = 0;
+        }
+        return item;
+      });
+
+      const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
+      const submitData = {
+        id: poolDetail.id,
+        registed_by: loginUser?.wallet_address,
+
+        // Pool general
+        title: data.title,
+        website: data.website,
+        banner: data.banner,
+        description: data.description,
+        address_receiver: data.addressReceiver,
+
+        // Token
+        token: data.token,
+        // TODO: Check to switch
+        // token_by_eth: isAcceptEth ? data.tokenRate : 0,
+        // token_conversion_rate: !isAcceptEth ? data.tokenRate : 0,
+        token_by_eth: data.tokenRate,
+        token_conversion_rate: data.tokenRate,
+        token_images: data.tokenImages,
+        total_sold_coin: data.totalSoldCoin,
+
+        // TokenInfo
+        tokenInfo,
+
+        // Time
+        start_time: data.start_time && data.start_time.unix(),
+        finish_time: data.finish_time && data.finish_time.unix(),
+        release_time: data.release_time && data.release_time.unix(),
+        start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
+        end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
+
+        // Types
+        accept_currency: data.acceptCurrency,
+        network_available: data.networkAvailable,
+        buy_type: data.buyType,
+        pool_type: data.poolType,
+
+        // Tier
+        min_tier: data.minTier,
+        tier_configuration: tierConfiguration,
+
+        // Wallet
+        wallet: isEdit ? poolDetail?.wallet : {},
+      };
+
+      console.log('[handleDeloySubmit] - Submit with data: ', submitData);
+
+      await dispatch(deployPool(submitData, history));
+      setLoadingDeploy(false);
+      setDeployed(true);
+      window.location.reload();
+    } catch (e) {
+      setLoadingDeploy(false);
+      console.log('ERROR: ', e);
+    }
+  };
+
+  const handlerDeploy = () => {
+    setNeedValidate(true);
+    setTimeout(() => {
+      handleSubmit(handleDeloySubmit)();
+    }, 100);
+  };
+
+  const watchBuyType = watch('buyType');
+  console.log('errors==========>', errors);
+
+  return (
+  <>
+    <div className="contentPage">
+      <Grid container spacing={2}>
+        <Grid item xs={6}>
+
+
+          <div className="">
+            <div className={classes.exchangeRate}>
+              {!!poolDetail?.id &&
+                <DisplaySwitch
+                  poolDetail={poolDetail}
+                  register={register}
+                  setValue={setValue}
+                  errors={errors}
+                  control={control}
+                />
+              }
+
+              <PoolName
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+              />
+
+              <PoolHash poolDetail={poolDetail} />
+              {/*{!!poolDetail?.is_deploy &&*/}
+              {/*  <PoolHash poolDetail={poolDetail} />*/}
+              {/*}*/}
+              <PoolBanner
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+              />
+
+              <PoolWebsite
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+              />
+
+            </div>
+
+            <div className={classes.exchangeRate}>
+              <BuyType
+                poolDetail={poolDetail}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+              />
+
+              <PoolType
+                poolDetail={poolDetail}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+              />
+
+              <NetworkAvailable
+                poolDetail={poolDetail}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+              />
+
+              <AcceptCurrency
+                poolDetail={poolDetail}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+              />
+
+            </div>
+
+            <div className={classes.exchangeRate}>
+              <MinTier
+                poolDetail={poolDetail}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+              />
+
+              <TierTable
+                poolDetail={poolDetail}
+                register={register}
+                watch={watch}
+              />
+            </div>
+
+
+
+          </div>
+        </Grid>
+
+        <Grid item xs={6}>
+          <div className={classes.exchangeRate}>
+            <TokenAddress
+              poolDetail={poolDetail}
+              register={register}
+              token={token}
+              setToken={setToken}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <AddressReceiveMoney
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <TotalCoinSold
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+
+            <TokenLogo
+              poolDetail={poolDetail}
+              register={register}
+              errors={errors}
+            />
+
+          </div>
+
+          <div className={classes.exchangeRate}>
+            <DurationTime
+              poolDetail={poolDetail}
+              register={register}
+              token={token}
+              setToken={setToken}
+              setValue={setValue}
+              errors={errors}
+              control={control}
+              getValues={getValues}
+              watch={watch}
+              needValidate={needValidate}
+            />
+          </div>
+
+          <div className={classes.exchangeRate}>
+            <PoolDescription
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+          </div>
+
+
+          <ExchangeRate
+            poolDetail={poolDetail}
+            register={register}
+            token={token}
+            setValue={setValue}
+            errors={errors}
+            control={control}
+            watch={watch}
+          />
+
+        </Grid>
+
+      </Grid>
+
+
+
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+
+          {isEdit && poolDetail?.id && watchBuyType === 'whitelist' &&
+          <div className={classes.exchangeRate}>
+            <UserJoinPool
+              poolDetail={poolDetail}
+            />
+          </div>
+          }
+
+          <button
+            disabled={!isEdit || !poolDetail?.id || poolDetail?.is_deploy || loading || loadingDeploy || deployed }
+            className={(!isEdit || poolDetail?.is_deploy || deployed) ? classes.formButtonDeployed : classes.formButtonDeploy}
+            onClick={handlerDeploy}
+          >
+            {loadingDeploy && <CircularProgress size={25} />}
+            {!loadingDeploy && 'Deploy'}
+          </button>
+
+          <button
+            disabled={loading || loadingDeploy}
+            className={classes.formButtonUpdatePool}
+            onClick={handleCampaignCreate}
+          >
+            {
+              (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
+            }
+          </button>
+
+          {/* Button Update with disable after deploy */}
+          {/*<button*/}
+          {/*  disabled={loading || loadingDeploy || poolDetail?.is_deploy}*/}
+          {/*  className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}*/}
+          {/*  onClick={handleCampaignCreate}*/}
+          {/*>*/}
+          {/*  {*/}
+          {/*    (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')*/}
+          {/*  }*/}
+          {/*</button>*/}
+
+        </Grid>
+      </Grid>
+
+
+
+
+    </div>
+
+  </>
+  );
+}
+
+export default withRouter(PoolForm);

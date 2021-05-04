@@ -45,9 +45,15 @@ const namedMiddleware = {
   checkStatus: 'App/Middleware/CheckStatus',
   checkPublicStatus: 'App/Middleware/CheckPublicStatus',
   checkJwtSecret: 'App/Middleware/CheckJwtSecret',
+  checkAdminJwtSecret: 'App/Middleware/CheckAdminJwtSecret',
   checkJwtWebhook: 'App/Middleware/CheckJwtWebhook',
   checkIcoOwner: 'App/Middleware/CheckIcoOwner',
-  checkSignatrue: 'App/Middleware/CheckSignatrue',
+  checkSignature: 'App/Middleware/CheckSignature',
+  checkAdminSignature: 'App/Middleware/CheckAdminSignature',
+  formatEmailAndWallet: 'App/Middleware/FormatEmailAndWallet',
+  maskEmailAndWallet: 'App/Middleware/MaskEmailAndWallet',
+  typeAdmin: 'App/Middleware/TypeAdmin',
+  typeUser: 'App/Middleware/TypeUser',
 }
 
 /*

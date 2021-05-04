@@ -5,6 +5,7 @@ import { BaseRequest } from '../../request/Request';
 import { getWeb3Instance } from '../../services/web3';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import {apiRoute} from "../../utils";
 
 type UserRegisterProps = {
   username: string;
@@ -24,12 +25,12 @@ const MESSAGE_SIGNATURE = process.env.REACT_APP_MESSAGE_SIGNATURE || "";
 
 const getMessageParams = (isInvestor: boolean = false) => {
   const msgSignature = MESSAGE_SIGNATURE;
-
-  return [{
-    type: 'string',      // Any valid solidity type
-    name: 'Message',     // Any string label you want
-    value: msgSignature  // The value to sign
-  }]
+  return msgSignature;
+  // return [{
+  //   type: 'string',      // Any valid solidity type
+  //   name: 'Message',     // Any string label you want
+  //   value: msgSignature  // The value to sign
+  // }]
 }
 
 const dispatchErrorWithMsg = (dispatch: Dispatch, action: string, msg: string) => {
@@ -83,41 +84,44 @@ export const login = (password: string, isInvestor: boolean = false) => {
       if (ethAddress) {
         const windowObj = window as any;
         const { ethereum } = windowObj;
-       await ethereum.sendAsync({
-            method: 'eth_signTypedData',
-            params: [getMessageParams(isInvestor), ethAddress],
-            from: ethAddress,
-        }, async function(err: Error, result: any) {
-          if (err || result.error) {
-             const errMsg = err.message || result.error.message
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_LOGIN_FAILURE: userActions.INVESTOR_LOGIN_FAILURE, errMsg);
-          } else {
-            const response = await baseRequest.post(`/${isInvestor ? 'public': 'user'}/login`, {
-              password,
-              signature: result.result,
-              wallet_address: ethAddress,
-            }, isInvestor) as any;
 
-            const resObj = await response.json();
+      const res = await ethereum.sendAsync({
+        method: 'personal_sign',
+        params: [getMessageParams(false), ethAddress],
+        from: ethAddress,
+      }, async (err: Error, result: any) => {
+        if (err || result.error) {
+          const errMsg = err.message || result.error.message
+          dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, errMsg);
+        } else {
+          const response = await baseRequest.post(apiRoute('login'), {
+            password,
+            signature: result.result,
+            wallet_address: ethAddress,
+          }, isInvestor) as any;
 
-            if (resObj.status && resObj.status === 200 && resObj.data) {
-              const { token, user } = resObj.data;
+          const resObj = await response.json();
 
-              localStorage.setItem(!isInvestor ? 'access_token': 'investor_access_token', token.token);
+          if (resObj.status && resObj.status === 200 && resObj.data) {
+            const { token, user } = resObj.data;
 
-              dispatch({
-                type: !isInvestor ? userActions.USER_LOGIN_SUCCESS: userActions.INVESTOR_LOGIN_SUCCESS,
-                payload: user
-              });
-            }
+            localStorage.setItem(!isInvestor ? 'access_token': 'investor_access_token', token.token);
 
-            if (resObj.status && resObj.status !== 200) {
-              console.log('RESPONSE Login: ', resObj);
-              dispatch(alertFailure(resObj.message));
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_LOGIN_FAILURE: userActions.INVESTOR_LOGIN_FAILURE, '');
-            }
+            dispatch({
+              type: !isInvestor ? userActions.USER_LOGIN_SUCCESS: userActions.INVESTOR_LOGIN_SUCCESS,
+              payload: user
+            });
           }
-        });
+
+          if (resObj.status && resObj.status !== 200) {
+            console.log('RESPONSE Login: ', resObj);
+            dispatch(alertFailure(resObj.message));
+            dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, '');
+          }
+        }
+      });
+
+      console.log('Res: ', res)
       }
     } catch (error) {
       console.log('ERROR Login: ', error);
@@ -139,10 +143,10 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
       const ethAddress = await getCurrentAccount();
 
       if (ethAddress) {
-       await ethereum.sendAsync({
-            method: 'eth_signTypedData',
-            params: [getMessageParams(isInvestor), ethAddress],
-            from: ethAddress,
+        const res = await ethereum.sendAsync({
+          method: 'personal_sign',
+          params: [getMessageParams(false), ethAddress],
+          from: ethAddress,
         }, async function(err: Error, result: any) {
           if (err || result.error) {
              const errMsg = err.message || result.error.message
@@ -151,7 +155,7 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
             return;
           }
 
-          const response = await baseRequest.post(`/${isInvestor ? 'public': 'user'}/register/`, {
+          const response = await baseRequest.post(apiRoute('register'), {
             username,
             email,
             password,
@@ -244,7 +248,7 @@ export const getUserDetail = () => {
     try {
       const baseRequest = new BaseRequest();
 
-      const response = await baseRequest.get('/user/profile') as any;
+      const response = await baseRequest.get(apiRoute('profile')) as any;
       const resObj = await response.json();
 
       if (resObj.status && resObj.status === 200) {
@@ -290,7 +294,7 @@ export const updateUserProfile = (updatedUser: UserProfileProps) => {
              const errMsg = err.message || result.error.message
               dispatchErrorWithMsg(dispatch, userActions.USER_PROFILE_UPDATE_FAILURE, errMsg);
           } else {
-            const response = await baseRequest.post(`/user/update-profile`, {
+            const response = await baseRequest.post(apiRoute('update-profile'), {
               firstname: firstName,
               lastname: lastName,
               avatar,

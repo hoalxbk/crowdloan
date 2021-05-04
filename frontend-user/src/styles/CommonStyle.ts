@@ -4,7 +4,15 @@ import { NONAME } from 'dns';
 const useCommonStyle = makeStyles((theme) => {
   return {
     DefaultLayout: {
-      display: 'flex',
+      minHeight: '100vh',
+  
+      /* grid container settings */
+      display: 'grid',
+      gridTemplateRows: 'auto 1fr auto',
+      gridTemplateAreas: 
+        `'header'
+        'main'
+        'footer'`,
     },
     headPage: {
       display: 'flex',
@@ -178,6 +186,265 @@ const useCommonStyle = makeStyles((theme) => {
       position: 'absolute',
       right: 16,
       top: 12,
+    },
+    loadingTransaction: {
+      position: 'fixed',
+      width: '100%',
+      height: '100%',
+      top: '0',
+      left: '0',
+      zIndex: 10,
+      backgroundColor: 'rgba(3, 9, 46, 0.6)',
+
+      '& .content': {
+        position: 'relative',
+        transform: 'translate(-50%, -50%)',
+        top: '45%',
+        left: '50%',
+        width: '40%',
+        padding: '60px',
+        background: '#020616',
+        borderRadius: '4px',
+      },
+
+      '& .content img': {
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        cursor: 'pointer',
+      },
+
+      '& .content > span': {
+        textAlign: 'center',
+        marginBottom: '40px',
+        display: 'block',
+        width: '100%',
+        color: '#ffffff'
+      }
+    },
+    modalTransactionInfomation: {
+      '& .modal-content__body span': {
+        fontFamily: 'Helvetica',
+        fontStyle: 'normal',
+        fontWeight: 'normal',
+        fontSize: '14px',
+        lineHeight: '24px',
+        color: '#FDFDFD',
+      },
+
+      '& .modal-content__body': {
+        backgroundColor: 'unset!important'
+      },
+
+      '& .modal-content__foot button': {
+        padding: '12px!important',
+        background: 'none'
+      }
+    },
+    modal: {
+      position: 'fixed',
+      width: '100%',
+      height: '100%',
+      top: '0',
+      left: '0',
+      zIndex: 5,
+      backgroundColor: 'rgba(3, 9, 46, 0.6)',
+
+      '& .modal-content': {
+        width: '480px',
+        maxWidth: '100%',
+        maxHeight: '80%',
+        overflow: 'auto',
+        padding: '60px',
+        position: 'absolute',
+        transform: 'translate(-50%, -50%)',
+        top: '40%',
+        left: '50%',
+        background: '#020616',
+        borderRadius: '4px',
+      },
+
+      '& .modal-content__head': {
+        '& .title': {
+          color: '#FFFFFF',
+          fontFamily: 'DM Sans',
+          fontStyle: 'normal',
+          fontWeight: 'bold',
+          fontSize: '18px',
+          lineHeight: '24px',
+          textAlign: 'center'
+        },
+
+        '& .btn-close': {
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          cursor: 'pointer',
+        },
+      },
+
+      '& .modal-content__body': {
+        borderRadius: '4px',
+        padding: '10px 12px',
+        margin: '20px 0 32px 0',
+
+        '& .subtitle': {
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          color: '#999999',
+          fontFamily: 'Helvetica',
+          fontStyle: 'normal',
+          fontWeight: 'normal',
+          fontSize: '12px',
+          lineHeight: '18px',
+        },
+
+        '& .input-group': {
+          position: 'relative'
+        },
+
+        '& .input-group input': {
+          width: '100%',
+          height: '40px',
+          background: 'none',
+          fontFamily: 'Helvetica',
+          fontStyle: 'normal',
+          fontWeight: 'normal',
+          fontSize: '14px',
+          lineHeight: '24px',
+          color: '#FDFDFD',
+          border: 'none',
+          outline: 'none',
+          paddingRight: '60px',
+        },
+
+        '& .input-group .btn-max': {
+          width: '50px',
+          height: '20px',
+          color: '#000',
+          fontFamily: 'DM Sans',
+          fontStyle: 'normal',
+          fontWeight: 'bold',
+          fontSize: '12px',
+          lineHeight: '14px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          border: 'none',
+          outline: 'none',
+          background: '#FFFFFF',
+          padding: '0 12px',
+          borderRadius: '1rem',
+
+          '&:hover': {
+            cursor: 'pointer'
+          },
+        },
+
+        '& .input-group span': {
+          color: '#000'
+        },
+
+        '& .input-group div': {
+          position: 'absolute',
+          right: '0',
+          top: '10px'
+        }
+      },
+
+      '& .modal-content__foot': {
+        display: 'flex', 
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+
+        '& button': {
+          borderRadius: '60px',
+          color: '#FFFFFF',
+          fontFamily: 'DM Sans',
+          fontStyle: 'normal',
+          fontWeight: 'bold',
+          fontSize: '14px',
+          lineHeight: '18px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          border: 'none',
+          outline: 'none',
+          padding: '12px 60px',
+
+          '&:hover': {
+            cursor: 'pointer'
+          },
+
+          '&.disabled': {
+            backgroundColor: '#727272!important'
+          },
+
+          '&:first-child': {
+            backgroundColor: '#29C08A'
+          },
+
+          '&.btn-cancel': {
+            backgroundColor: '#727272'
+          }
+        }
+      },
+    },
+    nnb2832d: {
+      font: 'normal normal 700 28px/32px DM Sans',
+    },
+    nnb1824d: {
+      font: 'normal normal 700 18px/24px DM Sans',
+    },
+    nnb1624d: {
+      font: 'normal normal 700 16px/24px DM Sans',
+    },
+    nnb1418d: {
+      font: 'normal normal 700 14px/18px DM Sans',
+    },
+    nnb1214d: {
+      font: 'normal normal 700 12px/14px DM Sans',
+    },
+    nnb2432d: {
+      font: 'normal normal 700 24px/32px DM Sans',
+    },
+    nnn1424h: {
+      font: 'normal normal 400 14px/24px Helvetica',
+    },
+    nnn1218h: {
+      font: 'normal normal 400 12px/18px Helvetica',
+    },
+
+    [theme.breakpoints.down('xs')]: {
+      modal: {
+        width: '100vw',
+        '& .modal-content': {
+          width: 'calc(100% - 40px)',
+          padding: '15px',
+        },
+        '& .modal-content__foot': {
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+  
+          '& button': {
+            padding: '12px 30px',
+            width: '100%',
+            marginBottom: '15px',
+          }
+        }
+      },
+      loadingTransaction: {
+        width: '100vw',
+        height: '100vh',
+  
+        '& .content': {
+          width: 'calc(100% - 40px)',
+          padding: '15px',
+        },
+      },
     }
   };
 });

@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { CircularProgress } from '@material-ui/core';
 import Container from '@material-ui/core/Container';
 import { withRouter, useParams } from 'react-router-dom';
 
+import { AppContext } from '../../AppContext';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
-import {adminRoute, publicRoute} from "../../utils";
+import {adminRoute, apiRoute, publicRoute} from "../../utils";
+import DefaultLayout from '../../components/Layout/DefaultLayout';
+import useAuth from '../../hooks/useAuth';
 
 const loginLogo = '/images/login-logo.png';
 
@@ -17,17 +20,7 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
 
   const [confirmEmailLoading, setConfirmEmailLoading] = useState(false);
 
-  const { data: loginInvestor } = useSelector((state: any) => state.investor);
-  const { data: loginUser } = useSelector((state: any) => state.user);
-
-  const { role, token } = useParams() as any;
-
-  if (role === 'investor' && loginInvestor) {
-    props.history.push(publicRoute('/'));
-  }
-  if (role !== 'investor' && loginUser) {
-    props.history.push(adminRoute('/'));
-  }
+  const { token } = useParams() as any;
 
   useEffect(() => {
     const confirmEmail = async () => {
@@ -36,7 +29,7 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
       if (token) {
         const baseRequest = new BaseRequest();
 
-        const response = await baseRequest.get(`${role === 'investor' ? `/public/confirm-email/${token}`: `/user/confirm-email/${token}`}`) as any;
+        const response = await baseRequest.get(apiRoute(`/confirm-email/${token}`)) as any;
         const resObj = await response.json();
 
         if (resObj.status && resObj.status === 200) {
@@ -47,47 +40,28 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
       }
 
       setConfirmEmailLoading(false);
-
-      if (role === 'investor') {
-        props.history.push(publicRoute('/'));
-      }
-      if (role !== 'investor') {
-        props.history.push(adminRoute('/'));
-      }
     }
 
     confirmEmail();
   }, []);
 
-  const render = () => {
-    return (
-      <>
-        {
-          confirmEmailLoading && (
+  return (
+    <DefaultLayout>
+      <Container fixed>
+      <div className={classes.forgotPassword}>
+        <div className="forgot-ps__wrap">
+          {confirmEmailLoading && (
             <div style={{ textAlign: 'center' }}>
               <CircularProgress size={80} />
-              <p style={{ marginTop: 10, fontSize: 17, fontWeight: 600 }}>Email Confirmation Processing ...</p>
+              <p style={{ marginTop: 10, fontSize: 17, fontWeight: 600 }}>
+                Email Confirmation Processing ...
+              </p>
             </div>
-          )
-        }
-      </>
-    )
-  }
-
-  return (
-    <Container fixed>
-      <div className={classes.forgotPassword}>
-        <span className="forgot-ps__logo">
-          <img src={loginLogo} alt="login-logo" />
-          <h2 className="forgot-ps__brand">SotatekStarter</h2>
-        </span>
-        <div className="forgot-ps__wrap">
-          {
-            render()
-          }
+          )}
         </div>
       </div>
     </Container>
+    </DefaultLayout>
   )
 };
 

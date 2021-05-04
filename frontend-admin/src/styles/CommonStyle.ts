@@ -6,6 +6,12 @@ const useCommonStyle = makeStyles((theme) => {
     DefaultLayout: {
       display: 'flex',
     },
+    error: {
+      color: 'red',
+    },
+    required: {
+      color: 'red',
+    },
     headPage: {
       display: 'flex',
       marginBottom: 25,
@@ -16,6 +22,9 @@ const useCommonStyle = makeStyles((theme) => {
     headPageRight: {
       marginLeft: 'auto',
       display: 'flex',
+    },
+    boldText: {
+      fontWeight: 'bold',
     },
     btnBack: {
       background: '#FFCC00',
@@ -178,7 +187,14 @@ const useCommonStyle = makeStyles((theme) => {
       position: 'absolute',
       right: 16,
       top: 12,
-    }
+    },
+
+    tableScroll: {
+      overflow: 'auto',
+      maxHeight: 600,
+    },
+
+
   };
 });
 

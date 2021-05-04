@@ -1,0 +1,103 @@
+import { makeStyles } from '@material-ui/core';
+
+const useStyles = makeStyles((theme: any) => {
+  return {
+    LotteryWinners: {
+    },
+    LotteryWinnersDesc: {
+      marginTop: 30,
+      marginBottom: 16,
+      font: 'normal normal normal 14px/24px Helvetica'
+    },
+    table: {
+      '& .MuiTableBody-root td': {
+        font: 'normal normal normal 14px/24px Helvetica'
+      }
+    },
+    tableContainer: {
+      maxWidth: 700,
+      width: 700,
+      background: 'transparent',
+      color: '#999999',
+      border: '1px solid rgba(255, 255, 255, 0.1)',
+      marginTop: 20,
+
+      [theme.breakpoints.down('xs')]: {
+        width: '100%'
+      },
+
+      '& th, & td': {
+        color: '#999999'
+      },
+
+      '& .MuiTableCell-root': {
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
+      }
+    },
+    tableHeaderWrapper: {
+      backgroundColor: '#040D34',
+      '& th': {
+        font: 'normal normal bold 14px/18px DM Sans'
+      }
+    },
+    tableHeader: {
+      color: 'white !important' as any,
+      fontWeight: 700,
+      fontSize: 15,
+      [theme.breakpoints.down('xs')]: {
+        '& > span': {
+          width: '150px',
+          display: 'inline-block'
+        }
+      },
+    },
+    tableSearchWrapper: {
+      maxWidth: 360,
+      position: 'relative',
+      background: '#11152A',
+      border: '1px solid #2D2F36',
+      borderRadius: 4,
+      '& input': {
+        font: 'normal normal normal 14px/24px Helvetica',
+        height: '36px',
+        padding: '0 40px 0 12px',
+        width: '100%'
+      },
+      '& input #placeholder': {
+        color: 'rgba(153, 153, 153, 0.5)',
+        font: 'normal normal normal 14px/24px Helvetica!important'
+      },
+
+    },
+    tableSearchIcon: {
+      position: 'absolute',
+      right: 10,
+      top: '50%',
+      transform: 'translateY(-50%)'
+    },
+    tableSearch: {
+      background: 'transparent',
+      padding: '14px 0px 14px 12px',
+      border: 'none',
+      color: 'white',
+      width: '80%',
+
+      '&:focus': {
+        outline: 'none'
+      },
+
+      '&::placeholder': {
+        color: '#999999',
+        fontWeight:  400,
+        fontSize: 15
+      }
+    },
+    pagination: {
+      '& *': {
+        color: 'white'
+      }
+    }
+  };
+});
+
+export default useStyles;

@@ -2,342 +2,403 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: any) => {
   return {
-    errorBanner: {
-      color: 'white',
-      backgroundColor: '#FF4C00',
-      textAlign: 'center',
-      padding: 12,
-      marginBottom: 0,
-      flex: 1,
+    poolDetailContainer: {
+      padding: '40px 120px 80px 120px',
+      [theme.breakpoints.down('xs')]: {
+        padding: '40px 20px 80px 20px',
+      }
     },
-    withBanner: {
-      marginTop: 13,
-      marginBottom: '18px !important',
+    poolDetailHeader: {
+      paddingBottom: 20,
+      borderBottom: '1px solid rgba(255, 255, 255, 0.1)'
     },
-    loginWithBanner: {
-      top: '60px !important',
-    },
-
-    buyToken: {
-      backgroundColor: theme.custom.colors.mainBackground,
-      minHeight: '100vh',
+    poolHeaderWrapper: {
       display: 'flex',
-      justifyContent: 'center',
       alignItems: 'center',
-      textAlign: 'left',
-      '&__form-claimable': {
-        '& > p': {
-          fontSize: 14
-        },
-        '& > p:not(:first-child)': {
-          marginTop: 20,
-        }
-      },
-      '&__not-purchasable': {
-        fontSize: 16,
-        fontWeight: 500,
-        color: '#f07f7f',
-        marginBottom: 20
-      },
-      '&__logout': {
-        position: 'absolute',
-        right: 30,
-        top: 20,
-        padding: '10px 30px',
-        color: 'white',
-        backgroundColor: '#FFCC00',
-        cursor: 'pointer',
-        fontWeight: 700,
-        borderRadius: 5,
+    },
+    poolHeaderNetworkAvailable: {
+      fontWeight: 400, 
+      marginLeft: 10, 
+      color: '#999999',
+      fontSize: 14,
+    },
+    poolTicketWinner: {
+      color: 'white',
+      borderRadius: 4,
+      padding: '13px 8px',
+      backgroundColor: 'rgba(50, 50, 220, 0.2)',
+      fontWeight: 600,
+      fontSize: 15,
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: 20,
 
-        '&:focus': {
-          outline: 'none'
+      '& span': {
+        [theme.breakpoints.down('xs')]: {
+          textAlign: 'center',
+          marginLeft: '0 !important' as any
         }
       },
-      '&__logo': {
-        textAlign: 'center',
-        marginBottom: '42px',
+
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column'
+      }
+    },
+    poolHeaderImage: {
+
+    },
+    poolImage: {
+      width: 60,
+      height: 60,
+      borderRadius: '50%',
+      objectFit: 'cover'
+    },
+    poolHeaderInfo: {
+      color: 'white',
+      marginLeft: 12,
+    },
+    poolHeaderTitle: {
+      fontWeight: 700,
+      fontSize: 28,
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal bold 28px/32px DM Sans',
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        fontSize: 25,
+
+        '& > div': {
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'center',
+        },
+      }
+    },
+    poolHeaderType: {
+      display: 'inline-block',
+      fontSize: 17,
+      padding: '0 20px 0 6px',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      borderRadius: 20
+    },
+    poolHeaderTypeInner: {
+      display: 'flex',
+      alignItems: 'center',
+      font: 'normal normal normal 12px/28px Helvetica',
+    },
+    poolType: {
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: 30
+    },
+    poolStatus: {
+      fontSize: 14,
+      marginLeft: 10,
+      padding: '6px 20px',
+      backgroundColor: 'blue',
+      borderRadius: 40,
+      color: 'white',
+      fontWeight: 700,
+      font: 'normal normal bold 12px/14px DM Sans',
+
+      '&--In-progress': {
+        backgroundColor: '#ebc321'
       },
-      '&__wrapper': {
-        width: '545px',
-        maxWidth: '100%',
+      '&--Joining': {
+        background: "#6398FF"
       },
-      '&__campaign': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
+      '&--Upcoming': {
+        background: "#6398FF"
       },
-      '&__campaign-duration': {
-        fontSize: '16px',
-        fontWeight: '500',
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '5px',
-        '& span': {
-          marginLeft: '9px',
-          position: 'relative',
-          top: '-2px',
-        }
+      '&--Ended': {
+        backgroundColor: "#D01F36"
       },
-      '&__campaign-title': {
-        fontSize: '20px',
-        fontWeight: 'bold',
-        letterSpacing: '0.15px',
-        lineHeight: '30px',
-        marginBottom: '10px',
+      '&--Filled': {
+        backgroundColor: "#12A064"
       },
-      '&__campaign-title--wordBreak': {
+      '&--Claimable': {
+        backgroundColor: "#e16313"
+      }
+    },
+    poolHeaderAddress: {
+      fontSize: 14,
+      display: 'flex',
+      alignItems: 'center',
+      marginTop: 8,
+      lineHeight: "20px",
+      font: 'normal normal normal 14px/24px Helvetica',
+    },
+    poolHeaderCopy: {
+      marginLeft: 10,
+      display: 'inline-block',
+      cursor: 'pointer'
+    },
+    poolDetailInfo: {
+      background: 'transparent',
+    },
+    poolDetailIntro: {
+      color: 'white',
+      minWidth: 400,
+      width: '50%',
+      marginRight: 120,
+      [theme.breakpoints.down('xs')]: {
+        marginRight: 0,
+        minWidth: 'unset',
         width: '100%',
-        whiteSpace: 'nowrap',
+        marginBottom: '30px'
+      }
+    },
+    poolDetailBasic: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 4fr',
+
+      '&:not(:first-child)': {
+        marginTop: 30
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        gridTemplateColumns: '1fr 2fr',
+      },
+    },
+    poolDetailBasicIcon: {
+      marginRight: 10,
+      width: 20,
+      height: 20
+    },
+    poolDetailBasicLabel: {
+      color: '#999999',
+      font: 'normal normal normal 14p/24px Helvetica'
+    },
+    poolsDetailBasicText: {
+      color: 'white',
+      display: 'flex',
+      alignItems: 'center',
+      marginLeft: 50,
+      textOverflow: 'ellipsis',
+      overflow: 'hidden',
+      font: 'normal normal bold 14px/18px DM Sans',
+
+      '& span': {
         textOverflow: 'ellipsis',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        display: 'inline-block'
       },
-      '&__campaign-total': {
-        letterSpacing: '0.15px',
-        display: 'flex',
-        alignItems: 'center',
-        marginBottom: '15px',
-        '& .total': {
-          fontFamily: 'Poppins, sans-serif',
-          fontWeight: 'bold',
-          fontSize: '30px',
-        },
-        '& .unit': {
-          fontSize: '16px',
-          marginLeft: '10px',
-        }
-      },
+      [theme.breakpoints.down('xs')]: {
+        fontSize: 15
+      }
+    },
+    poolDetailUtil: {
+      marginLeft: 10,
+      display: 'inline-block',
+      cursor: 'pointer',
+      width: 18 
+    },
+    poolDetailTierWrapper: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      marginTop: 30,
+      alignItems: 'center',
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+      }
+    },
+    poolDetailTier: {
+      padding: '28px 40px',
+      background: 'rgba(255, 255, 255, 0.06)',
+      borderRadius: 8,
+      width: '50%',
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+      }
+    },
+    poolDetailMaxBuy: {
+      marginTop: 15,
+      color: '#999999',
+      font: 'normal normal normal 12px/18px Helvetica'
+    },
+    poolDetailProgress: {
+      color: 'white',
+      marginTop: 32
+    },
+    poolDetailProgressTitle: {
+      font: 'normal normal bold 14px/18px DM Sans'
+    },
+    poolDetailProgressStat: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      margin: '12px 0px 5px 0px',
+      color: '#999999',
+      font: 'normal normal normal 12px/18px Helvetica'
+    },
+    poolDetailProgressPercent: {
+      font: 'normal normal bold 16px/24px DM Sans',
+      color: 'white'
+    },
+    progress: {
+      width: '100%',
+      height: 5,
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      position: 'relative'
+    },
+    achieved: {
+      width: '30%',
+      position: 'absolute',
+      left: 0,
+      top: 0,
+      height: '100%',
+      backgroundColor: '#232394',
+      borderRadius: '0px 20px 20px 0px'
+    },
+    poolDetailStartTime: {
+      marginTop: 28
+    },
+    poolDetailStartTimeTitle: {
+      color: '#999999',
+      fontWeight: 700,
+      fontSize: 14
+    },
+    btnGroup: {
+      marginTop: 40,
 
-      '&__campaign-progress': {
-        marginBottom: '20px',
+      '& button:first-child': {
+        marginRight: 10
       },
-      '&__campaign-explication': {
-        display: 'flex',
-        justifyContent: 'space-between',
-      },
-
-      '&__form-wrapper': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
-      },
-      '&__input-wrapper': {
-        height: '70px',
-        border: '1px solid #DFDFDF',
-        padding: '12px 15px',
-        borderRadius: '5px',
-      },
-
-      '&__input-label': {
-        display: 'block',
-        fontSize: '12px',
-        letterSpacing: '0.4px',
-        color: '#9A9A9A',
-      },
-
-      '&__input': {
+      '& button': {
+        font: 'normal normal bold 14px/18px DM Sans',
+        height: '42px',
+        padding: '0 50px'
+      }
+    },
+    poolDetailBuy: {
+      color: 'white'
+    },
+    poolDetailBuyNav: {
+      marginTop: 100
+    },
+    poolDetailLink: {
+      marginRight: 120,
+      color: '#999999',
+      cursor: 'pointer',
+      paddingBottom: 12,
+      position: 'relative',
+      font: 'normal normal bold 14px/18px DM Sans'
+    },
+    poolDetailLinkActive: {
+      color: '#6398FF',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        height: 3,
+        left: 0,
+        backgroundColor: '#6398FF',
+        bottom: 0,
         width: '100%',
-        height: '30px',
-        maxWidth: '100%',
-        letterSpacing: '0.4px',
-        color: theme.custom.colors.secondaryText,
-        border: 0,
-        outline: 'none',
-        fontWeight: 'bold',
-        fontSize: '20px',
+        borderRadius: 20
+      }
+    },
+    poolDetailLinks: {
+      display: 'flex',
+      borderBottom: '1px solid rgba(255, 255, 255, .1)'
+    },
+    poolDetailBuyForm: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column'     
       },
-      '&__input-error': {
-        marginTop: '5px',
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column'     
+      }
+    },
+    loader: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    loaderText: {
+      fontWeight: 700,
+      marginTop: 20,
+      color: "#999999",
+      font: 'normal normal bold 14px/18px DM Sans'
+    },
+    [theme.breakpoints.down('xs')]: {
+      poolDetailTier: {
+        padding: '20px',
+        width: '100%',
       },
-
-      '&__form-amount-unit': {
-        display: 'flex',
-      },
-      '&__form-token-convert-unit-wrap': {
-        display: 'flex',
-      },
-      '&__form-token-convert': {
-        flexGrow: 1,
-      },
-
-      '&__form-amount': {
-        flexGrow: 1,
-        marginBottom: '12px',
-      },
-      '&__form-exchange': {
-        marginBottom: '12px',
+      poolHeaderAddress: {
+        fontSize: 14,
         display: 'flex',
         alignItems: 'center',
-        fontWeight: 'bold',
-        fontSize: '12px',
-        color: theme.custom.colors.secondary,
-        '& span': {
-          marginLeft: '5px',
-        }
+        marginTop: 8
       },
-      '&__loading': {
-        textAlign: 'center',
-        '& svg': {
-          color: theme.custom.colors.primary,
-        }
+      poolDetailProgressPercent: {
+
+      }
+    },
+    [theme.breakpoints.down('md')]: {
+      poolDetailTierWrapper: {
+        flexDirection: 'column',
       },
-      '&__loading--blue': {
-        textAlign: 'center',
-        '& svg': {
-          color: 'blue !important' as any
-        }
+      poolDetailIntro: {
+        width: '100%',
+        marginRight: '0'
       },
-      '&__campaign-not-found': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '45px 60px',
-        marginBottom: '20px',
+      poolDetailTier: {
+        width: '100%',
+        marginRight: '0',
+        marginTop: '30px'
+      }
+    },
+    [theme.breakpoints.down('sm')]: {
+      poolDetailContainer: {
+        padding: '40px'
       },
-      '&__form-reason-not-show-button': {
-        backgroundColor: '#fff',
-        border: '1px solid #F0F0F0',
-        boxShadow: '0 0 15px rgba(255, 255, 255, 0.3)',
-        borderRadius: '10px',
-        padding: '15px 60px',
-        marginBottom: '20px',
-        color: 'red',
-        textAlign: 'center',
+      PoolAboutDesc: {
+        width: '100%'
+      }
+    },
+    [theme.breakpoints.down('xs')]: {
+      poolDetailContainer: {
+        padding: '20px!important'
       },
-      '&__form-reason-sold-out': {
-        fontSize: 16,
-        fontWeight: 500,
-        color: '#f07f7f',
-        marginTop: 11,
-        marginBottom: 20,
-        textAlign: 'center',
+      poolDetailLink: {
+        marginRight: '20px',
       },
-      '&__balance': {
-        marginBottom: '30px',
+      poolDetailTier: {
+        width: '100%',
+        padding: '10px'
       },
-      '&__balance-title': {
-        fontSize: '20px',
-        fontWeight: 'bold',
-        marginBottom: '5px',
-      },
-      '&__balance-content': {
+      btnGroup: {
         display: 'flex',
-      },
-      '&__balance-item': {
-        fontSize: '16px',
-        fontWeight: 500,
-        '& span': {
-          color: theme.custom.colors.secondary,
-        },
-        '&.usdt': {
-          marginLeft: '30px',
+        justifyContent: 'center',
+        '& button': {
+          padding: '15px 25px',
+          width: '140px'
         }
       },
-
-      '& .login__form': {
-        marginTop: 20,
+      poolHeaderType: {
+        marginLeft: '0'
       },
-
-      '& .login__form-field': {
-        marginTop: 20,
+      poolHeaderWrapper: {
+        alignItems: 'flex-start'
+      },
+      poolStatus: {
+        paddingRight: '10px',
+        paddingLeft: '10px',
+        marginLeft: '8px'
+      },
+      poolsDetailBasicText: {
+        justifyContent: 'flex-start',
+        marginLeft: 0,
+        textAlign: 'left'
+      },
+      poolHeaderInfo: {
         width: '100%'
       },
-
-      '& .MuiInputBase-input': {
-        color: 'white'
-      },
-
-      '& .MuiFormLabel-root': {
-        color: 'white'
-      },
-
-      '& .MuiInput-underline:before': {
-        borderColor: 'white'
-      },
-
-      '&__title': {
-        color: 'white',
-        fontSize: 30,
-        fontWeight: 600,
-        textAlign: 'left',
-        marginTop: 20
-      },
-
-      '& .login__form-privacy': {
-        textAlign: 'left'
-      },
-
-      '& .login__form-privacy a': {
-        color: '#337ab7'
-      },
-
-      '& .login__form-cta': {
-        padding: '15px 30px',
-        backgroundColor: '#FFCC00',
-        border: 'none',
-        marginTop: 30,
-        color: 'white',
-        fontWeight: 700,
-        width: '100%',
-        fontSize: 16,
-        borderRadius: 5,
-        cursor: 'pointer',
-
-        '&:focus': {
-          outline: 'none'
-        }
-      },
-
-      '& .login__form-desc': {
-        color: '#968f8f',
-        marginTop: 20,
-        fontSize: 16
-      },
-
-      '& .login__form-desc-link': {
-        color: '#FFCC00',
-        cursor: 'pointer'
-      },
-
-      '& .login__user-loading-text': {
-        color: 'white',
-        marginTop: 30,
-        fontSize: 20,
-        fontWeight: 700
-      },
-
-      '& .login__form-error-message': {
-        marginTop: 7,
-        color: 'red',
-        textAlign: 'left'
-      },
-
-      '& .login__form-forgot-password': {
-        cursor: 'pointer',
-        fontWeight: '700',
-        fontSize: 15,
-        textAlign: 'left',
-        color: '#FFCC00',
-        display: 'block'
-      },
-
-      '& .login__form-redirect': {
-        cursor: 'pointer',
-        fontWeight: '700',
-        fontSize: 15.5,
-        color: '#FFCC00',
-        display: 'block',
-        textAlign: 'center',
-        marginTop: 20
-      },
-    }
+    },
   };
 });
 

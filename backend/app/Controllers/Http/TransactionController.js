@@ -12,8 +12,8 @@ const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
 const CONTRACT_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGNFACTORY];
 const { abi: CONTRACT_ABI } = CONTRACT_CONFIGS.CONTRACT_DATA;
 
-const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Erc20.json');
-const { abi: CONTRACT_CAMPAIGN_ABI } = require('../../../blockchain_configs/contracts/Campaign.json');
+const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
+const { abi: CONTRACT_CAMPAIGN_ABI } = require('../../../blockchain_configs/contracts/Normal/Campaign.json');
 
 const Web3 = require('web3');
 const Event = use('Event')
@@ -236,6 +236,11 @@ class TransactionController {
       const tx = await web3.eth.getTransaction(param.txHash);
       if (tx == null)
         return ErrorFactory.badRequest('Transaction not found')
+      const transactionService = new TransactionService();
+      const checkTransaction = await transactionService.checkTransactionIsset(param.txHash)
+      if(!checkTransaction){
+        return ErrorFactory.badRequest('Transaction already exist.')
+      }
       const campaign = await CampaignModel.query().where('campaign_hash', '=', tx.to).first();
       if(!campaign){
         return ErrorFactory.badRequest('Campaign not found!')

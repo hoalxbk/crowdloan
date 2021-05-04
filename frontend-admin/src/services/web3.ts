@@ -18,24 +18,33 @@ export const isMetaMaskInstalled = () => {
   return ethereum && ethereum.isMetaMask;
 };
 
-export const getContractInstance = (ABIContract: any, contractAddress: string) => {
+export const getContractInstance = (ABIContract: any, contractAddress: string, isEth: boolean = true) => {
+  if (isEth) {
+    return getContractInstanceWithEthereum(ABIContract, contractAddress);
+  } else {
+    return getContractInstanceWithBSC(ABIContract, contractAddress);
+  }
+};
+
+export const getContractInstanceWithEthereum = (ABIContract: any, contractAddress: string) => {
   const windowObj = window as any;
   const { ethereum } = windowObj;
   if (ethereum && ethereum.isMetaMask) {
     const web3Instance = new Web3(ethereum);
-    return new web3Instance.eth.Contract(
-      ABIContract,
-      contractAddress,
-    );
+    return new web3Instance.eth.Contract(ABIContract, contractAddress);
   } else if (windowObj.web3) {
     const web3Instance = new Web3(windowObj.web3.currentProvider);
-    return new web3Instance.eth.Contract(
-      ABIContract,
-      contractAddress,
-    );
+    return new web3Instance.eth.Contract(ABIContract, contractAddress);
   } else {
     return null;
   }
+};
+
+export const getContractInstanceWithBSC = (ABIContract: any, contractAddress: string) => {
+  const windowObj = window as any;
+  const { ethereum } = windowObj;
+  const web3Instance = new Web3(ethereum);
+  return new web3Instance.eth.Contract(ABIContract, contractAddress);
 };
 
 export const convertFromWei = (value: any, unit = 'ether') => {
@@ -63,4 +72,9 @@ export const getETHBalance = async (loginUser: string) => {
   };
 
   return 0;
+}
+
+export const callMultiGetTier = async () => {
+
+
 }

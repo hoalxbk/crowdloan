@@ -31,10 +31,10 @@ class UserService {
       if (params.confirmation_token) {
         builder = builder.where('confirmation_token', params.confirmation_token);
       }
-      if (params.is_active !== undefined) {
-        builder = builder.where('is_active', params.is_active);
+      if (params.status !== undefined) {
+        builder = builder.where('status', params.status);
       } else {
-        builder = builder.where('is_active', Const.USER_ACTIVE);
+        builder = builder.where('status', Const.USER_STATUS.ACTIVE);
       }
       return builder;
     }
@@ -85,53 +85,51 @@ class UserService {
       }
     }
 
-    async confirmEmail(token, role) {
+    async confirmEmail(token) {
       const user = await this.findUser({
-        role,
         confirmation_token: token,
-        is_active: Const.USER_INACTIVE,
+        status: Const.USER_STATUS.UNVERIFIED,
       });
-
-      if (user) {
-        const userExist = await this.findUser({
-          role,
-          wallet_address: user.wallet_address,
-          is_active: Const.USER_ACTIVE,
-        });
-
-        console.log('========================');
-        console.log('USER NEED VERIFY CONFIRM:');
-        console.log(user);
-        console.log('========================');
-        console.log('USER ACTIVED EXIST:');
-        console.log(userExist);
-        console.log('========================');
-
-        if (userExist) {
-          // console.log('CLEAR RECORDS DUPLICATE (NOT ACTIVE):');
-          // // Remove duplicate account EXPIRED and NOT ACTIVE
-          // const duplicateUserNotActive = await this.buildQueryBuilder({
-          //   role,
-          //   wallet_address: user.wallet_address,
-          //   is_active: Const.USER_INACTIVE,
-          // }).delete();
-          //
-          // console.log('========================');
-          // console.log('DUPLICATE USERS:');
-          // console.log(duplicateUserNotActive);
-          // console.log('========================');
-
-          return false;
-        }
-
-        console.log('Confirm Email for USER ID', user.id);
-        user.confirmation_token = null;
-        user.is_active = Const.USER_ACTIVE;
-        user.save();
-        return true;
-      } else {
+      console.log('user======>', user);
+      if (!user) {
+        // User not exist
         return false;
       }
+
+      const userExist = await this.findUser({
+        wallet_address: user.wallet_address,
+        status: Const.USER_STATUS.ACTIVE,
+      });
+
+      console.log('========================');
+      console.log('USER NEED VERIFY CONFIRM:');
+      console.log(user);
+      console.log('========================');
+      console.log('USER ACTIVED EXIST:');
+      console.log(userExist);
+      console.log('========================');
+
+      if (userExist) {
+        console.log('CLEAR RECORDS DUPLICATE (NOT ACTIVE):');
+        // Remove duplicate account EXPIRED and NOT ACTIVE
+        const duplicateUserNotActive = await this.buildQueryBuilder({
+          wallet_address: user.wallet_address,
+          status: Const.USER_STATUS.UNVERIFIED,
+        }).delete();
+
+        console.log('========================');
+        console.log('DUPLICATE USERS:');
+        console.log(duplicateUserNotActive);
+        console.log('========================');
+
+        return false;
+      }
+
+      console.log('Confirm Email for USER ID', user.id);
+      user.confirmation_token = null;
+      user.status = Const.USER_STATUS.ACTIVE;
+      user.save();
+      return true;
     }
 }
 

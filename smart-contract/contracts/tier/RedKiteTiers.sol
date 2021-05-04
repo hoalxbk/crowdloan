@@ -12,7 +12,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
 
     // Info of each user
     struct UserInfo {
-        uint256 staked;     // How many tokens the user has provided
+        uint256 staked; // How many tokens the user has provided
         uint256 stakedTime; // Block timestamp when the user provided token
     }
 
@@ -69,27 +69,32 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         address indexed user,
         address token,
         uint256 indexed amount,
-        uint256 fee
+        uint256 fee,
+        uint256 lastStakedTime
     );
     event WithdrawnSingleERC721(
         address indexed user,
         address token,
-        uint128 tokenId
+        uint128 tokenId,
+        uint256 lastStakedTime
     );
     event WithdrawnBatchERC721(
         address indexed user,
         address token,
-        uint128[] tokenIds
+        uint128[] tokenIds,
+        uint256 lastStakedTime
     );
     event EmergencyWithdrawnERC20(
         address indexed user,
         address token,
-        uint256 amount
+        uint256 amount,
+        uint256 lastStakedTime
     );
     event EmergencyWithdrawnERC721(
         address indexed user,
         address token,
-        uint128[] tokenIds
+        uint128[] tokenIds,
+        uint256 lastStakedTime
     );
     event AddExternalToken(
         address indexed token,
@@ -201,10 +206,10 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         emit StakedBatchERC721(msg.sender, _token, _tokenIds);
     }
 
-    function withdrawERC20(
-        address _token,
-        uint256 _amount
-    ) external nonReentrant() {
+    function withdrawERC20(address _token, uint256 _amount)
+        external
+        nonReentrant()
+    {
         UserInfo storage user = userInfo[msg.sender][_token];
         require(user.staked >= _amount, "not enough amount to withdraw");
 
@@ -223,7 +228,13 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         user.staked = user.staked.sub(_amount);
 
         IERC20(_token).transfer(msg.sender, _amount.sub(toPunish));
-        emit WithdrawnERC20(msg.sender, _token, _amount, toPunish);
+        emit WithdrawnERC20(
+            msg.sender,
+            _token,
+            _amount,
+            toPunish,
+            user.stakedTime
+        );
     }
 
     function withdrawSingleERC721(address _token, uint128 _tokenId)
@@ -241,7 +252,12 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         );
 
         IERC721(_token).safeTransferFrom(address(this), msg.sender, _tokenId);
-        emit WithdrawnSingleERC721(msg.sender, _token, _tokenId);
+        emit WithdrawnSingleERC721(
+            msg.sender,
+            _token,
+            _tokenId,
+            user.stakedTime
+        );
     }
 
     function withdrawBatchERC721(address _token, uint128[] memory _tokenIds)
@@ -260,7 +276,12 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         );
 
         _batchSafeTransferFrom(_token, address(this), msg.sender, _tokenIds);
-        emit WithdrawnBatchERC721(msg.sender, _token, _tokenIds);
+        emit WithdrawnBatchERC721(
+            msg.sender,
+            _token,
+            _tokenIds,
+            user.stakedTime
+        );
     }
 
     function setPenaltyWallet(address _penaltyWallet) external onlyOwner {
@@ -291,7 +312,12 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         );
 
         IERC20(_token).transfer(msg.sender, _amount);
-        emit EmergencyWithdrawnERC20(msg.sender, _token, _amount);
+        emit EmergencyWithdrawnERC20(
+            msg.sender,
+            _token,
+            _amount,
+            user.stakedTime
+        );
     }
 
     function emergencyWithdrawERC721(address _token, uint128[] memory _tokenIds)
@@ -323,7 +349,12 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
                 _tokenIds
             );
         }
-        emit EmergencyWithdrawnERC721(msg.sender, _token, _tokenIds);
+        emit EmergencyWithdrawnERC721(
+            msg.sender,
+            _token,
+            _tokenIds,
+            user.stakedTime
+        );
     }
 
     function addExternalToken(
@@ -449,6 +480,13 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         }
 
         return buf;
+    }
+
+    function userTotalStaked(address _userAddress) external view returns (uint256) {
+        return
+            userInfo[_userAddress][PKF].staked.add(
+                userExternalStaked[_userAddress]
+            );
     }
 
     function _batchSafeTransferFrom(

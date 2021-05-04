@@ -1,6 +1,5 @@
-import React from 'react';
 import useStyles from './style';
-import CircularProgress from "@material-ui/core/CircularProgress/CircularProgress";
+import { BeatLoader } from 'react-spinners';
 
 const Button = (props: any) => {
   const {
@@ -18,13 +17,14 @@ const Button = (props: any) => {
     <button
       className={`${mainClass} ${className} ${mainClass}--${buttonType}`}
       {...remainProps}
+      disabled={loading}
     >
-      {label}
-      {loading && (
+      {loading ? (
         <span className={`${mainClass}__loading`}>
-          <CircularProgress size={30} />
+          <BeatLoader color={'white'} size={10} />
         </span>
-      )}
+      ) : `${label}`
+      }
     </button>
   );
 };

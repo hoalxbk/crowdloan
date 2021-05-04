@@ -1,35 +1,44 @@
 'use strict'
 
-const Config = use('Config')
-const ErrorFactory = use('App/Common/ErrorFactory');
-const UserService = use('App/Services/UserService')
-const UserModel = use('App/Models/User')
-const PasswordResetModel = use('App/Models/PasswordReset')
-const Helpers = use('Helpers')
-const HelperUtils = use('App/Common/HelperUtils');
+const Config = use('Config');
+const Helpers = use('Helpers');
 const Const = use('App/Common/Const');
-const Mail = use('Mail')
-// const Bcrypt = use('bcrypt')
-const Env = use('Env')
-const randomString = use('random-string');
+const Env = use('Env');
 const Hash = use('Hash');
 const Event = use('Event')
 
-const SendForgotPasswordJob = use('App/Jobs/SendForgotPasswordJob')
+const ErrorFactory = use('App/Common/ErrorFactory');
+const ReservedListService = use('App/Services/ReservedListService');
+const UserService = use('App/Services/UserService')
+const UserModel = use('App/Models/User');
+const TierModel = use('App/Models/Tier');
+const PasswordResetModel = use('App/Models/PasswordReset');
+const HelperUtils = use('App/Common/HelperUtils');
+const randomString = use('random-string');
+
+const SendForgotPasswordJob = use('App/Jobs/SendForgotPasswordJob');
 
 class UserController {
-  async profile({ request, auth }) {
-    let user = auth.user;
-    const params = request.all();
+  async profile({ request }) {
     const userService = new UserService();
+    const params = request.all();
     const userAuthInfo = {
-      email: user.email,
-      username: user.username,
-      signature: params.signature,
+      wallet_address: params.wallet_address,
     };
 
+    const findedUser = await UserModel.query().where('wallet_address', params.wallet_address).first();
+    console.log('[profile] - findedUser', findedUser);
+    if (!findedUser) {
+      return HelperUtils.responseNotFound();
+    }
+
     return HelperUtils.responseSuccess({
-      user: await userService.findUser(userAuthInfo)
+      user: {
+        email: findedUser.email,
+        id: findedUser.id,
+        status: findedUser.status,
+        is_kyc: findedUser.is_kyc,
+      }
     });
   }
 
@@ -155,9 +164,6 @@ class UserController {
             .where('role', role)
             .delete();
 
-          console.log('Clear revokeTokensForUser: --- resetPassword', user.toJSON());
-          await auth.authenticator('jwt').revokeTokensForUser(user);
-
           return HelperUtils.responseSuccess()
         }else {
           return ErrorFactory.badRequest('Reset password failed!')
@@ -194,9 +200,6 @@ class UserController {
       userFind.token_jwt = token;
       await userFind.save();
 
-      console.log('Clear revokeTokensForUser: --- changePassword', userFind.toJSON());
-      await auth.authenticator('jwt').revokeTokensForUser(userFind);
-
       return {
         status: 200,
         data: userFind,
@@ -214,9 +217,9 @@ class UserController {
   async confirmEmail({request}) {
     try {
       const token = request.params.token;
-      const role = request.params.type == Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
+      // const role = Const.USER_ROLE.PUBLIC_USER;
       const userService = new UserService();
-      const checkToken = await userService.confirmEmail(token, role);
+      const checkToken = await userService.confirmEmail(token);
       if (!checkToken) {
         return HelperUtils.responseErrorInternal('Active account link has expried.');
       }
@@ -252,6 +255,55 @@ class UserController {
     findUser.token_jwt = token
     await findUser.save();
     return HelperUtils.responseSuccess();
+  }
+
+  async checkEmailVerified({request}) {
+    const inputParams = request.only(['email']);
+    const findUser = await UserModel.query()
+      .where('email', inputParams.email)
+      .where('status', Const.USER_STATUS.ACTIVE)
+      .first();
+
+    if (!findUser) {
+      return HelperUtils.responseNotFound('User is unverified !')
+    }
+    return HelperUtils.responseSuccess('User is verified !');
+  }
+
+  async checkUserActive({request}) {
+    const params = request.all();
+    console.log(`Check user active with params ${params}`);
+    const userService = new UserService();
+    // get user active by wallet_address
+    const user = userService.findUser({'wallet_address': params.wallet_address});
+    // check exist user or not and return result
+    return HelperUtils.responseSuccess(user == null);
+  }
+
+  async getCurrentTier({ request, params }) {
+    const { walletAddress, campaignId } = params;
+    const filterParams = {
+      wallet_address: walletAddress,
+      campaign_id: campaignId,
+    };
+    console.log('[getCurrentTier] - filterParams: ', filterParams);
+
+    // Check user is in reserved list
+    const isReserve = await (new ReservedListService).buildQueryBuilder(filterParams).first();
+    console.log('[getCurrentTier] - isReserve:', !!isReserve);
+    if (isReserve) {
+      // Tier is max tier of pool
+      const tier = await TierModel.query().where('campaign_id', campaignId).orderBy('level', 'desc').first();
+      console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
+      return HelperUtils.responseSuccess(tier);
+    } else {
+      // Get Tier in smart contract
+      const userTier = await HelperUtils.getUserTierSmartContract(walletAddress);
+      console.log('[getCurrentTier] - userTier:', userTier);
+      const tier = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
+      console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
+      return HelperUtils.responseSuccess(tier);
+    }
   }
 }
 

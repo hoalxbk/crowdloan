@@ -19,13 +19,13 @@ cp .env.example .env
 #### Step 3
 Generate app key
 ```
-adnonis key:generate
+adonis key:generate
 ```
 
 
 
 #### Step 4
-Edit .env file to config evironment
+Edit .env file to config environment
 
 ``Config Database``
 ```
@@ -57,7 +57,7 @@ SMTP_PORT=2525
 MAIL_USERNAME=your_mailtrap_username
 MAIL_PASSWORD=your_mailtrap_password
 MAIL_ENCRYPTION=tls
-MAIL_FROM_NAME=SotatekStarter
+MAIL_FROM_NAME=RedKite
 ```
 
 

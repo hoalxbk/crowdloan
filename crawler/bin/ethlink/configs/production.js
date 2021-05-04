@@ -1,6 +1,6 @@
 module.exports = {
-  // WEB3_API_URL: 'https://rinkeby.infura.io/v3/c745d07314904c539668b553dbd6b670',
-  WEB3_API_URL: 'https://rinkeby-rpc.sotatek.com',
+  WEB3_API_URL: 'https://goerli.infura.io/v3/c745d07314904c539668b553dbd6b670',
+  // WEB3_API_URL: 'https://rinkeby-rpc.sotatek.com',
   AVERAGE_BLOCK_TIME: 15000,
   REQUIRED_CONFIRMATION: 3,
   CHAIN_ID: 9876,
@@ -28,6 +28,14 @@ module.exports = {
       BLOCK_NUM_IN_ONE_GO: 100,
       BREAK_TIME_AFTER_ONE_GO: 15000,
       NEED_NOTIFY_BY_WEBHOOK: true
-    }
+    },
+    Tier: {
+      CONTRACT_DATA: require('./contracts/Tier.json'), // Tier
+      CONTRACT_ADDRESS: '0xDf2b8f344c54A600636f2C13001d59341Ed246e8',
+      FIRST_CRAWL_BLOCK: 4680953,
+      BLOCK_NUM_IN_ONE_GO: 100,
+      BREAK_TIME_AFTER_ONE_GO: 1000,
+      NEED_NOTIFY_BY_WEBHOOK: true
+    },
   },
 };

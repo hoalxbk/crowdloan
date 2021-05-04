@@ -8,7 +8,7 @@ import { useForm } from 'react-hook-form';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
-import {adminRoute, publicRoute} from "../../utils";
+import {adminRoute, apiRoute, publicRoute} from "../../utils";
 
 const MESSAGE_SIGNATURE = process.env.REACT_APP_MESSAGE_SIGNATURE || "";
 
@@ -69,7 +69,7 @@ const ForgotPassword: React.FC<any> = (props: any) => {
             return;
         }
 
-        let url = '/user/forgot-password';
+        let url = apiRoute('/forgot-password');
         const baseRequest = new BaseRequest();
         const response = await baseRequest.post(url, {
           signature: result.result,
@@ -125,7 +125,7 @@ const ForgotPassword: React.FC<any> = (props: any) => {
       <div className={classes.forgotPassword}>
         <span className="forgot-ps__logo">
           <img src={loginLogo} alt="login-logo" />
-          <h2 className="forgot-ps__brand">SotatekStarter</h2>
+          <h2 className="forgot-ps__brand">RedKite</h2>
         </span>
         <div className="forgot-ps__wrap">
           {

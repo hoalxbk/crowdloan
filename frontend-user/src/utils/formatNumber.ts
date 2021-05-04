@@ -1,10 +1,13 @@
 import BigNumber from 'bignumber.js';
+//@ts-ignore
+import removeTrailingZeros from 'remove-trailing-zeros'
+var commaNumber = require('comma-number');
 
 const ARROW_LEFT_KEY_CODE = 37;
 const ARROW_RIGHT_KEY_CODE = 39;
 const BACKSPACE_KEY_CODE = 8;
 const DELETE_KEY_CODE = 46;
-const DECIMAL_KEY_CODE = 190;
+export const DECIMAL_KEY_CODE = 190;
 
 const A_KEY_CODE = 65;
 const V_KEY_CODE = 86;
@@ -13,8 +16,8 @@ const C_KEY_CODE = 67;
 const START_NUMBER_KEY_CODE = 48;
 const END_NUMBER_KEY_CODE = 57;
 
-const INTEGER_NUMBER_KEY_CODE_LIST = [ARROW_LEFT_KEY_CODE, ARROW_RIGHT_KEY_CODE, BACKSPACE_KEY_CODE, DELETE_KEY_CODE];
-const FLOAT_NUMBER_KEY_CODE_LIST = [...INTEGER_NUMBER_KEY_CODE_LIST, DECIMAL_KEY_CODE];
+export const INTEGER_NUMBER_KEY_CODE_LIST = [ARROW_LEFT_KEY_CODE, ARROW_RIGHT_KEY_CODE, BACKSPACE_KEY_CODE, DELETE_KEY_CODE];
+export const FLOAT_NUMBER_KEY_CODE_LIST = [...INTEGER_NUMBER_KEY_CODE_LIST, DECIMAL_KEY_CODE];
 
 export const formatToNumber = (yourNumber: any) => {
   if (yourNumber && !isNaN(Number(yourNumber))) {
@@ -74,7 +77,11 @@ export const isNotValidASCIINumber = (keyCode: number, decimalRequired: boolean 
     return false;
   }
 
-  return keyCode > 31 && (keyCode < 48 || keyCode > 57); 
+  if (keyCode === 229) {
+    return true;
+  }
+
+  return keyCode > 31 && (keyCode < 48 || keyCode > 57) && (keyCode < 96 || keyCode > 105);
 };
 
 export const isPreventASCIICharacters = (key: string) => {
@@ -127,4 +134,37 @@ export const getDigitsAfterDecimals = (input: string): number => {
   }                                                                       
                                                                                                                       
   return totalDigits;     
+}
+
+function format(num: string){
+  const splittedStrs = num.split('.');
+  return splittedStrs[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + splittedStrs[1];
+}
+
+export function numberWithCommas(x: string = "", decimals: number = 6) {
+  x = typeof x === 'string' ? x: (x as number).toFixed();
+  return removeTrailingZeros(commaNumber(new BigNumber(x).toFixed(decimals), ",", "."));
+  // }
+
+  // return format(x);
+}
+export const nFormatter = (number: string, digits: any = 0) => {
+  const SI = [
+    { value: 1, symbol: "" },
+    { value: 1E3, symbol: "k" },
+    { value: 1E6, symbol: "M" },
+    { value: 1E9, symbol: "G" },
+    { value: 1E12, symbol: "T" },
+    { value: 1E15, symbol: "P" },
+    { value: 1E18, symbol: "E" }
+  ];
+  const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
+  const num = parseFloat(number)
+  let i;
+  for (i = SI.length - 1; i > 0; i--) {
+    if (num >= SI[i].value) {
+      break;
+    }
+  }
+  return (num / SI[i].value).toFixed(digits).replace(rx, "$1") + SI[i].symbol;
 }

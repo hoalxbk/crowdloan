@@ -15,7 +15,7 @@ import {MAX_BUY_CAMPAIGN, TRANSACTION_ERROR} from '../../constants';
 import { BaseRequest } from '../../request/Request';
 import {alertFailure} from "./alert";
 import {logout} from "./user";
-import campaignABI from "../../abi/Campaign.json";
+import campaignABI from "../../abi/Swap/Campaign.json";
 import BigNumber from "bignumber.js";
 import {getETHPrices} from "../../utils";
 
@@ -278,7 +278,7 @@ export const isCampaignPurchasable = () => {
         type: buyTokenActions.BUY_TOKEN_AVAILABLE_LOADING
       })
       const baseRequest = new BaseRequest();
-      const response = await baseRequest.post('/user/jwt/verify', {}, true) as any;
+      const response = await baseRequest.post('/public/jwt/verify', {}, true) as any;
       const resObj = await response.json();
 
       if (resObj?.status === 200 && resObj?.data) {

@@ -11,6 +11,7 @@ import { BaseRequest } from '../../request/Request';
 import { useTypedSelector } from '../../hooks/useTypedSelector';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
+import {apiRoute} from "../../utils";
 
 const API_BASE_URL = process.env.REACT_APP_API_BASE_URL || "";
 
@@ -27,7 +28,6 @@ const Profile: React.FC = () => {
 
   useEffect(() => {
     dispatch(getUserDetail());
-
     return () => {
       dispatch(clearUserProfileUpdate());
     }
@@ -48,7 +48,7 @@ const Profile: React.FC = () => {
     var form_data = new FormData();
     form_data.append('avatar', file);
 
-    request.postImage('user/upload-avatar', form_data)
+    request.postImage(apiRoute('/upload-avatar'), form_data)
       .then((response: any) => response.json())
       .then(data => {
         if (data.status === 200) {
@@ -59,7 +59,7 @@ const Profile: React.FC = () => {
       .catch((error) => {
         console.log(error)
       });
-  }
+  };
 
   const handleFormSubmit = (data:any) => {
     dispatch(updateUserProfile(data));

@@ -1,8 +1,18 @@
 import moment from 'moment'
+import momentTimezone from 'moment-timezone';
+
+export const convertTimeToStringFormat = (date: Date) => {
+  const timezone = momentTimezone.tz(date, moment.tz.guess());
+  return timezone.format("h:mm A, DD MMMM YYYY ([GMT]Z)");
+}
+
+export const convertTimeToStringFormatWithoutGMT = (date: Date) => {
+  const timezone = momentTimezone.tz(date, moment.tz.guess());
+  return timezone.format("h:mm A, DD MMMM YYYY");
+}
 
 export const convertUnixTimeToDateTime = (time: number) => {
-  // return moment.unix(time).format("DD/MM/yyyy hh:mm:ss a");
-  return moment.unix(time).format("hh:mm:ss A MM/DD/yyyy");
+  return moment.unix(time).format("hh:mm:ss A MM/DD/yyyy [GMT]ZZ");
 }
 
 export const convertDateTimeToUnix = (time: any): string => {
@@ -37,4 +47,8 @@ export const unixTimeNow = () => {
 
 export const unixTime = (time: any) => {
   return moment(time).unix();
+}
+
+export const timeAgo = (time: any) => {
+  return moment(time).fromNow()
 }

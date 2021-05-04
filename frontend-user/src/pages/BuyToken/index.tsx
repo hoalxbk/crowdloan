@@ -1,358 +1,506 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import {getCampaignDetail, getLatestActiveCampaign, getLatestCampaign} from '../../store/actions/campaign';
-import { getUsdtAllowance } from '../../store/actions/usdt-allowance';
-import { buyToken } from '../../store/actions/buy-token';
-import { approveUsdt } from '../../store/actions/usdt-approve';
-import Form from './Form';
-import Campaign from './Campaign';
-import _ from 'lodash';
-import CircularProgress from '@material-ui/core/CircularProgress/CircularProgress';
-import { login, register as registerAccount, logout, resetUserState } from '../../store/actions/user';
-import { getBalance } from '../../store/actions/balance';
-import { getUsdtDetail } from '../../store/actions/usdt-detail';
-import { isCampaignPurchasable } from '../../store/actions/buy-token';
-import { userAlreadyExists } from '../../utils/user';
-import { alertFailure } from '../../store/actions/alert';
+import { useState, useEffect, useCallback } from 'react';
+import { HashLoader } from "react-spinners";
+import { useParams, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+//@ts-ignore
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import BigNumber from 'bignumber.js'; 
+import Tooltip from '@material-ui/core/Tooltip';
+import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
+
+import { useTypedSelector } from '../../hooks/useTypedSelector';
+import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
+import useAuth from '../../hooks/useAuth';
+import usePoolDetails from '../../hooks/usePoolDetails';
+import useTokenSoldProgress from './hooks/useTokenSoldProgress';
+import usePoolJoinAction from './hooks/usePoolJoinAction';
+import useFetch from '../../hooks/useFetch';
+
+import Tiers from '../Account/Tiers';
+import LotteryWinners from './LotteryWinners';
+import PoolAbout from './PoolAbout';
+import ClaimToken from './ClaimToken';
+import BuyTokenForm from './BuyTokenForm';
+import Button from './Button';
+import Countdown from '../../components/Base/Countdown';
+import DefaultLayout  from '../../components/Layout/DefaultLayout';
+import { ETH_CHAIN_ID } from '../../constants/network';
+
+import { NETWORK_ETH_NAME, NETWORK_BSC_NAME } from '../../constants/network';
+import { getPoolCountDown } from '../../utils/getPoolCountDown';
+import { getPoolStatus } from '../../utils/getPoolStatus';
+import { numberWithCommas } from '../../utils/formatNumber';
+
+import { sotaTiersActions } from '../../store/constants/sota-tiers';
+
 import useStyles from './style';
-import {adminRoute, publicRoute} from "../../utils";
-import {BaseRequest} from "../../request/Request";
-import {MAX_BUY_CAMPAIGN} from "../../constants";
-import BigNumber from "bignumber.js";
-import {useTypedSelector} from "../../hooks/useTypedSelector";
-import {getTokenRemainingCanBuy} from "../../utils/campaign";
-import ComingSoon from "../ComingSoon/ComingSoon";
-import moment from "moment";
-import {unixTimeNow} from "../../utils/convertDate";
 
-const queryString = require('query-string');
-const byTokenLogo = '/images/logo-in-buy-page.png';
+const copyImage = "/images/copy.svg";
+const poolImage = "/images/pool_circle.svg";
 
-const BuyToken = (props: any) => {
-  const classes = useStyles();
+enum HeaderType {
+  Main = "Main",
+  About = "About the project",
+  Participants = "Winner"
+}
 
+const headers = [HeaderType.Main, HeaderType.About, HeaderType.Participants];
+
+const ETHERSCAN_BASE_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL; 
+
+const BuyToken: React.FC<any> = (props: any) => {
   const dispatch = useDispatch();
+  const styles = useStyles();
 
-  const [loadingUserExists, setLoadingUserExists] = useState(false);
-  const [userExists, setUserExists] = useState(false);
+  const [buyTokenSuccess, setBuyTokenSuccess] = useState<boolean>(false);
+  const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
+  const [copiedAddress, setCopiedAddress] = useState(false);
+  const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
-  const { loading: investorRegisterLoading, error: errorRegister } = useSelector((state: any) => state.investorRegister);
-  const { data: loginInvestor, loading: investorLoginLoading, error } = useSelector((state: any) => state.investor);
-  const { data: ethAddress = '' } = useSelector((state: any) => state.userConnect);
+  const { pathname } = useLocation();
+  const { id } = useParams() as any;
+  const userTier = useTypedSelector(state => state.userTier).data;
+  const { appChainID } = useTypedSelector(state => state.appNetwork).data;
+  const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
+  const { isAuth, connectedAccount, wrongChain } = useAuth();
+  // Fetch token sold, total tokens sold
+  const { tokenSold, soldProgress } = useTokenSoldProgress(
+      poolDetails?.poolAddress, 
+      poolDetails?.amount,
+      poolDetails?.networkAvailable 
+  );
+  const { joinPool, poolJoinLoading, joinPoolSuccess } = usePoolJoinAction({ poolId: poolDetails?.id });
+  const { data: existedWinner } = useFetch<Array<any>>(
+    poolDetails ? `/pool/${poolDetails?.id}/check-exist-winner?wallet_address=${connectedAccount}`: undefined, 
+    poolDetails?.method !== "whitelist" 
+  );
+  const { data: alreadyJoinPool } = useFetch<boolean>(
+    poolDetails && connectedAccount ?
+    `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
+    : undefined
+  );
+  const { data: verifiedEmail = true } = useFetch<boolean>(
+    poolDetails && connectedAccount && isAuth ?
+    `/user/check-wallet-address?wallet_address=${connectedAccount}`
+    : undefined
+  );
+  const { data: currentUserTier } = useFetch<any>(
+    id && connectedAccount ? 
+    `pool/${id}/user/${connectedAccount}/current-tier`
+    : undefined,
+  )
+  const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
-  const { data: isPurchasable, loading: isPurchasableLoading = false } = useSelector((state: any) => state.buyTokenPurchasable);
-  const { data: campaignLatestActive = {}, loading: campaignLatestActiveLoading = false } = useSelector((state: any) => state.campaignLatestActive);
-  const { data: campaignDetail = {}, loading: campaignDetailLoading = false } = useSelector((state: any) => state.campaignDetail);
+  // Use for check whether pool exist in selected network or not
+  const networkAvailable = poolDetails?.networkAvailable === 'eth'? NETWORK_ETH_NAME: NETWORK_BSC_NAME;
+  const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
+  const ableToFetchFromBlockchain = appNetwork === poolDetails?.networkAvailable && !wrongChain;
 
-  const { loading: buyLoading } = useSelector((state: any) => state.buyToken);
-  const { data: usdtAllowance = false, loading: usdtAllowanceLoading } = useSelector((state: any) => state.usdtAllowance);
-  const { loading: usdtApproveLoading = false } = useSelector((state: any) => state.usdtApprove);
-  const { data: loginUser = '' } = useSelector((state: any) => state.user);
-  const { data: balance = {} } = useSelector((state: any) => state.balance);
-  const { data: usdtDetail = {} } = useSelector((state: any) => state.usdtDetail);
-  const { history } = props;
+  const userBuyLimit = currentUserTier?.max_buy || 0;
+  const userBuyMinimum = currentUserTier?.min_buy || 0;
+  
+  // With Whitelist situation, Enable when join time < current < end join time
+  // With FCFS, always disable join button
+  const joinTimeInDate = new Date(Number(poolDetails?.joinTime) * 1000);
+  const endJoinTimeInDate = new Date(Number(poolDetails?.endJoinTime) * 1000);
+  const startBuyTimeInDate = new Date(Number(poolDetails?.startBuyTime) * 1000);
+  const endBuyTimeInDate = new Date(Number(poolDetails?.endBuyTime) * 1000);
+  const tierStartBuyInDate = new Date(Number(currentUserTier?.start_time) * 1000);
+  const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000);
+  const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
 
-  const searchLocation = _.get(props, 'location.search');
-  const parsed = queryString.parse(searchLocation);
-  const { referral = '', campaignIndex = '' } = parsed;
-  const campaignId = parsed.campaignId || (campaignLatestActive && campaignLatestActive.campaign_hash) || '';
-
-  const { register, getValues, setValue, watch, errors, handleSubmit } = useForm({
-    mode: 'onChange'
-  });
-
-  const password = useRef({});
-  password.current = watch("password", "");
-
-  const renderErrorRequired = (errors: any, prop: string) => {
-    if (errors[prop]) {
-      if (errors[prop].type === "required") {
-        return 'This field is required';
-      }
-    }
-  }
-
-  useEffect(() => {
-    if (error || errorRegister) {
-      dispatch(alertFailure(error || errorRegister));
-    }
-  }, [error, errorRegister]);
-
-  useEffect(() => {
-    const checkUserExists = async () => {
-      setLoadingUserExists(true);
-
-      const userExists = await userAlreadyExists(ethAddress, true);
-      setLoadingUserExists(false);
-
-      setUserExists(userExists);
-    }
-
-    ethAddress && checkUserExists();
-  }, [ethAddress, loginInvestor]);
-
-  useEffect(() => {
-    loginInvestor && dispatch(isCampaignPurchasable());
-  }, [loginInvestor, dispatch]);
-
-  useEffect(() => {
-    if (!campaignId) {
-      if (!campaignDetail) {
-        dispatch(getLatestActiveCampaign());
-      }
-    } else if (campaignId && loginInvestor) {
-      dispatch(getCampaignDetail(campaignId, true));
-    }
-  }, [campaignId, loginInvestor, dispatch]);
-
-  useEffect(() => {
-    if (parsed.campaignId && campaignDetail && campaignDetail.isSuspend) {
-      console.log('CAMPAIGN SUSPENDED');
-      props.history.push(publicRoute('/buy-token'));
-    }
-  });
-
-  useEffect(() => {
-    if (loginInvestor) {
-      dispatch(getBalance(loginInvestor.wallet_address));
-    }
-
-    // reset user state when leave component or redirect to other pages
-    return () => {
-      error && dispatch(resetUserState(true));
-    }
-  }, [loginInvestor, isPurchasable, error, dispatch]);
-
-  useEffect(() => {
-    isPurchasable && dispatch(getUsdtDetail());
-  }, [isPurchasable, dispatch]);
-
-  const [prices, setPrices] = useState({});
-  const [userBought, setUserBought] = useState({});
-  const [isMaxBuy, setIsMaxBuy] = useState(false);
-
-  // console.log('Prices', prices);
-  // console.log('Investor', loginInvestor);
-  console.log('campaignDetail', campaignDetail);
-
-  const [totalUsdUserBought, setTotalUsdUserBought] = useState(0);
-  const getUserBought = async () => {
-    const baseRequest = new BaseRequest();
-    baseRequest.post(`/user/buy`, {
-      address: loginInvestor.wallet_address,
-      campaign: campaignDetail.transactionHash
-    })
-    .then(res => res.json())
-    .then(res => {
-      if (res.status === 200) {
-        setTotalUsdUserBought(res.data && res.data.total_usd)
-      }
-    });
-  };
-  useEffect(() => {
-    if (loginInvestor && loginInvestor.wallet_address && campaignDetail && campaignDetail.transactionHash) {
-      getUserBought();
-    }
-  }, [loginInvestor, campaignDetail]);
-
-  const [countdown, setCountdown] = useState(null);
-  useEffect(() => {
-    const getComingSoonTime = async () => {
-      const isInvestor = true;
-      const baseRequest = new BaseRequest();
-      baseRequest.get(`/coming-soon`, isInvestor)
-        .then(res => res.json())
-        .then(res => {
-          if (res.status === 200) {
-            setCountdown(res?.data?.value || '');
-          }
-        });
-    };
-    getComingSoonTime();
-  }, []);
-
-  if (countdown && !parsed.campaignId) {
-    const now = unixTimeNow();
-    const countdownUnix = moment(countdown).unix();
-    // campaignDetail && !campaignLatestActive &&
-    // ?campaignId=0x726A13d0da774eF8D4844f2aB93c54254B609824
-    if (now < countdownUnix) {
-      return (
-        <ComingSoon
-          countdown={countdown}
-          campaignDetail={campaignDetail}
-        />
-      );
-    }
-  }
-
-  const checkMaxUsd = async (ethAmount: number, usdtAmount: number) => {
-    const baseRequest = new BaseRequest();
-    const res = await baseRequest.post(`/public/check-max-usd`, {
-      campaign: campaignDetail.transactionHash,
-      eth: ethAmount,
-      usdt: usdtAmount,
-    }, true)
-      .then(res => res.json())
-      .then(res => {
-        if (res.status === 200) {
-          console.log('Res /public/check-max-usd', res);
-          return res;
-        } else {
-          dispatch(alertFailure(res.message));
-          return null;
-        }
-      })
-      .catch((err) => console.log(err));
-
-    return res;
-  };
-
-  const submitBuyToken = (data: any) => {
-    const { amount = '', unit = '' } = data;
-    const buyUnit = unit || 'eth';
-
-    if (buyUnit === 'usdt' && !usdtAllowance) {
-      dispatch(approveUsdt(amount, campaignId));
-      return;
-    }
-    console.log('Call submitBuyToken with data: ', data);
-    if (referral) {
-      dispatch(buyToken(amount, data.tokenConvert, campaignId, buyUnit, referral, campaignIndex));
-    } else {
-      dispatch(buyToken(amount, data.tokenConvert, campaignId, buyUnit, '', ''));
-    }
-  };
-
-  const onUsdtAllowance = (amount: string) => {
-    dispatch(getUsdtAllowance(amount, campaignId));
-  };
-
-  console.log('loginInvestor: ', loginInvestor);
-  if (!loginInvestor) {
-    setTimeout(() => {
-      history.push(publicRoute('/login'));
-    }, 500);
-
-    return (
-      <div className={classes.buyToken}>
-        <div className={`${classes.buyToken}__wrapper`}>
-          <div className={`${classes.buyToken}__loading`}>
-            <div className={`${classes.buyToken}__logo`}>
-              <img src={byTokenLogo} alt="logo" />
-            </div>
-            <div className="login__user-loading">
-              <CircularProgress size={75} thickness={4} value={100} />
-              <p className="login__user-loading-text">Loading Ethereum Wallet</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if ((campaignLatestActiveLoading && campaignLatestActive) || campaignDetailLoading || isPurchasableLoading) {
-    return (
-      <div className={classes.buyToken}>
-        <div className={`${classes.buyToken}__wrapper`}>
-          <div className={`${classes.buyToken}__loading`}>
-            <CircularProgress />
-          </div>
-        </div>
-      </div>
+  const today = new Date();
+  const availableJoin = poolDetails?.method === 'whitelist' 
+    ? (
+      today >= joinTimeInDate && 
+      today <= endJoinTimeInDate && 
+      today <= tierEndBuyInDate &&
+      connectedAccount && 
+      !wrongChain &&
+      userTier >= poolDetails?.minTier
+      && poolDetails?.isDeployed
+      && verifiedEmail
     )
+    : false;
+  const availablePurchase = 
+    today >= startBuyTimeInDate && 
+    today <= endBuyTimeInDate && 
+    today >= tierStartBuyInDate &&
+    today <= tierEndBuyInDate &&
+    poolDetails?.isDeployed &&
+    verifiedEmail &&
+    (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
+
+  // Get Pool Status
+  const poolStatus = getPoolStatus(
+    joinTimeInDate, 
+    endJoinTimeInDate, 
+    startBuyTimeInDate, 
+    endBuyTimeInDate,
+    releaseTimeInDate,
+    new BigNumber(tokenSold).div(poolDetails?.amount || 1).toFixed(),
+    poolDetails?.type !== 'swap',
+  );
+
+  const displayCountDownTime = useCallback((
+    method: string | undefined, 
+    startJoinTime: Date | undefined, 
+    endJoinTime: Date| undefined,
+    startBuyTime: Date | undefined,
+    endBuyTime: Date | undefined
+  ) => {
+    return getPoolCountDown(startJoinTime, endJoinTime, startBuyTime, endBuyTime, method);
+  }, [poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate]);
+
+  const { date: countDownDate, display } = displayCountDownTime(poolDetails?.method, joinTimeInDate, endJoinTimeInDate, startBuyTimeInDate, endBuyTimeInDate)
+
+  const shortenAddress = (address: string, digits: number = 4) => {
+    return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
 
-  if (!campaignDetail) {
-    return (
-      <div className={classes.buyToken}>
-        <div className={`${classes.buyToken}__wrapper`}>
-          {
-            loginInvestor && <button className={`${classes.buyToken}__logout`} onClick={() => dispatch(logout(true))}>Log out</button>
-          }
+  useEffect(() => {
+    availablePurchase && setActiveNav(HeaderType.Main);
+  }, [availablePurchase]);
 
-          <div className={`${classes.buyToken}__logo`}>
-            <img src={byTokenLogo} alt="logo" />
-          </div>
-          <div className={`${classes.buyToken}__campaign-not-found`}>
-            <div className="text-center text-danger">
-              Campaign not found
-            </div>
-          </div>
+  // Auto Scroll To Top When redirect from other pages
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  // Hide main tab after end buy time
+  useEffect(() => {
+    if (endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
+  }, [endBuyTimeInDate]);
+
+  useEffect(() => {
+    currentUserTier && dispatch({
+      type: sotaTiersActions.USER_TIER_SUCCESS,
+      payload: currentUserTier.level
+    })
+  }, [currentUserTier]);
+
+  const render = () => {
+    if (loadingPoolDetail)  {
+      return (
+        <div className={styles.loader} style={{ marginTop: 70 }}>
+          <HashLoader loading={true} color={'#3232DC'} />
+          <p className={styles.loaderText}>
+            <span style={{ marginRight: 10 }}>Loading Pool Details ...</span>
+          </p>
         </div>
-      </div>
-    );
-  }
+      )
+    } 
 
-  const isTokenValid = () => {
-    let tokenValid = false;
-    const tokenLeft = _.get(campaignDetail, 'tokenLeft', 0);
-    const remainToken = getTokenRemainingCanBuy(campaignDetail);
-    if (tokenLeft) {
-      tokenValid = new BigNumber(remainToken).gt(0);
+    if ((!poolDetails || !poolDetails?.isDisplay) && !loadingPoolDetail) {
+      return <p style={{ 
+        color: 'white', 
+        textAlign: 'center', 
+        fontSize: 16, 
+        fontWeight: 700,
+        marginTop: 20
+      }}>
+        This pool does not exist. Try later! 🙂
+      </p>
+    } else {
+      return (
+        <>
+          <header className={styles.poolDetailHeader}> 
+            <div className={styles.poolHeaderWrapper}>
+              <div className={styles.poolHeaderImage}>
+                <img src={poolDetails?.banner || poolImage} alt="pool-image" className={styles.poolImage}/>
+              </div>
+              <div className={styles.poolHeaderInfo}>
+                <h2 className={styles.poolHeaderTitle}>
+                  {poolDetails?.title}
+                </h2>
+                <p className={styles.poolHeaderAddress}>
+                  {isWidthUp('sm', props.width) && poolDetails?.tokenDetails?.address}
+                  {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.tokenDetails?.address || '', 8)}
+                  <CopyToClipboard text={poolDetails?.tokenDetails?.address}
+                    onCopy={() => { 
+                      setCopiedAddress(true);
+                      setTimeout(() => {
+                        setCopiedAddress(false);
+                      }, 2000);
+                    }}
+                  >
+                    {
+                      !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
+                      : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
+                    }
+                  </CopyToClipboard>
+                </p>
+              </div>
+            </div>
+            <div className={styles.poolType}>
+              <span className={styles.poolHeaderType}>
+                <div className={styles.poolHeaderTypeInner}>
+                  <img src={poolDetails?.networkIcon} />
+                  <strong className={styles.poolHeaderNetworkAvailable}>{networkAvailable}</strong>
+                </div>
+              </span>
+              <span className={`${styles.poolStatus} ${styles.poolStatus}--${poolStatus}`}>
+                {poolStatus}
+              </span>
+            </div>
+            {existedWinner && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
+              <p className={styles.poolTicketWinner}>
+                <div>
+                  {
+                    [...Array(3)].map((num, index) => (
+                      <img src="/images/fire-cracker.svg" alt="file-cracker" key={index} />
+                    ))
+                  }
+                </div>
+                <span style={{ marginLeft: 14 }}>
+                  Congratulations on your purchase of the lottery ticket at this pool !
+                </span>
+              </p>
+            }
+            {new Date() > endBuyTimeInDate && ableToFetchFromBlockchain &&
+              <p className={styles.poolTicketWinner}>
+                <div>
+                  {
+                    [...Array(3)].map((num, index) => (
+                      <img src="/images/fire-cracker.svg" alt="file-cracker" key={index} />
+                    ))
+                  }
+                </div>
+                <span style={{ marginLeft: 14 }}>
+                  This pool is ended, thanks for all! 
+                </span>
+              </p>
+            }
+            {
+              !verifiedEmail && (
+                <p className={styles.poolTicketWinner}>
+                  <div>
+                    <img src="/images/red-warning.svg" alt="warning" />
+                  </div>
+                  <span style={{ marginLeft: 14 }}>
+                    Your account has not been verified. To verify your account, please click&nbsp;
+                    <Link 
+                      to="/account" 
+                      style={{ color: 'white', textDecoration: 'underline' }}
+                    >
+                      here
+                    </Link>.
+                  </span>
+                </p>
+              )
+            }
+          </header>
+          <main className={styles.poolDetailInfo}>
+            <div className={styles.poolDetailTierWrapper}>
+              <div className={styles.poolDetailIntro}>
+              {
+                (loadingPoolDetail) ? (
+                  <div className={styles.loader}>
+                    <HashLoader loading={true} color={'#3232DC'} />
+                    <p className={styles.loaderText}>
+                      <span style={{ marginRight: 10 }}>Loading Pool Details ...</span>
+                    </p>
+                  </div>
+                ):  poolDetailsMapping && 
+                ( 
+                  <>
+                    {
+                      Object.keys(poolDetailsMapping).map((key: string) => {
+                        const poolDetail = poolDetailsMapping[key as poolDetailKey];
+                        if (poolDetails?.method !== 'whitelist' && key === PoolDetailKey.joinTime) return;
+                        return (
+                          <div className={styles.poolDetailBasic} key={key}>
+                            <span className={styles.poolDetailBasicLabel}>{poolDetail.label}</span>
+                            <p className={styles.poolsDetailBasicText}>
+                              {
+                                poolDetail.image && <img src={poolDetail.image} className={styles.poolDetailBasicIcon}  />
+                              }
+                              <Tooltip title={<p style={{ fontSize: 15 }}>{poolDetail.display}</p>}>
+                                  <span>
+                                  {
+                                    key !== PoolDetailKey.exchangeRate ? poolDetail.display: (
+                                      showRateReserve ? poolDetail.reverse: poolDetail.display
+                                    )
+                                  }
+                                  </span>
+                                </Tooltip>
+                              {
+                                poolDetail.utilIcon && ( 
+                                  <img 
+                                    src={poolDetail.utilIcon} 
+                                    className={styles.poolDetailUtil} 
+                                    onClick={() => {
+                                      if (key === PoolDetailKey.website) {
+                                        window.open(poolDetail.display as string, '_blank')
+                                      }
+
+                                      if (key === PoolDetailKey.exchangeRate) {
+                                        setShowRateReverse(!showRateReserve);
+                                      }
+                                    }} 
+                                    key={key}
+                                  />)
+                              }
+                            </p>
+                          </div>
+                        )})
+                    }
+                    <div className={styles.btnGroup}>
+                      {
+                        <Button 
+                          text={'Join Pool'} 
+                          backgroundColor={'#D01F36'} 
+                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess} 
+                          loading={poolJoinLoading}
+                          onClick={joinPool}
+                        />
+                      }
+                      <Button 
+                        text={'Etherscan'} 
+                        backgroundColor={'#3232DC'} 
+                        onClick={() => {
+                          poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
+                        }} 
+                      />
+                    </div>
+                  </>
+                )
+              }
+              </div>
+              <div className={styles.poolDetailTier}>
+                <Tiers 
+                  showMoreInfomation 
+                  tiersBuyLimit={poolDetails?.buyLimit || [] }
+                  tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
+                />
+                <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
+                <div className={styles.poolDetailProgress}>
+                  <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
+                  {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
+                    <span className={styles.poolDetailProgressPercent}>
+                      {numberWithCommas(new BigNumber(soldProgress).gt(100) ? '100': soldProgress)}%
+                    </span>
+                    <span>
+                      {
+                        numberWithCommas(new BigNumber(tokenSold).gt(`${poolDetails?.amount}`) ? `${poolDetails?.amount}`: tokenSold)}&nbsp; 
+                        / {numberWithCommas(`${poolDetails?.amount}` || "0")
+                      }
+                    </span>
+                  </div>}
+                  {isWidthDown('xs', props.width) && <div className={styles.poolDetailProgressStat}>
+                    <span className={styles.poolDetailProgressPercent}>
+                      {parseFloat(soldProgress).toFixed(2)}%
+                    </span>
+                    <span>
+                      {
+                        numberWithCommas(new BigNumber(tokenSold).gt(`${poolDetails?.amount}`) ? `${poolDetails?.amount}`: tokenSold)}&nbsp;
+                        / {numberWithCommas(`${poolDetails?.amount}` || "0")
+                      }
+                    </span>
+                  </div>}
+                  <div className={styles.progress}>
+                    <div className={styles.achieved} style={{ width: `${new BigNumber(soldProgress).gt(100) ? '100': soldProgress}%` }}></div>
+                  </div>
+                </div>
+                <div className={styles.poolDetailStartTime}>
+                  {
+                    display ? (
+                      <>
+                        <span className={styles.poolDetailStartTimeTitle}>{display}</span>
+                        <Countdown startDate={countDownDate} />
+                      </>
+                    ): (
+                      <p 
+                        style={{ 
+                          color: '#D01F36',
+                          marginTop: 40,
+                          font: 'normal normal bold 14px/18px DM Sans'
+                        }}>
+                        This pool is ended.
+                      </p>
+                    )
+                  }
+                </div>
+              </div> 
+            </div>
+            <div className={styles.poolDetailBuy}>
+              <nav className={styles.poolDetailBuyNav}>
+                <ul className={styles.poolDetailLinks}>
+                  {
+                    headers.map((header) => {
+                      if (header === HeaderType.Main && new Date() > endBuyTimeInDate) {
+                        return null;
+                      }
+                      return <li 
+                        className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`} 
+                        onClick={() => setActiveNav(header)}
+                        key={header}
+                      >
+                        {header}
+                      </li>
+                    })
+                  }
+                </ul>
+              </nav>
+              <div className={styles.poolDetailBuyForm}>
+                {
+                  activeNav === HeaderType.Main && new Date() <= endBuyTimeInDate && ( 
+                      <BuyTokenForm 
+                        tokenDetails={poolDetails?.tokenDetails} 
+                        rate={poolDetails?.ethRate}
+                        poolAddress={poolDetails?.poolAddress}
+                        maximumBuy={userBuyLimit}
+                        minimumBuy={userBuyMinimum}
+                        poolAmount={poolDetails?.amount}
+                        purchasableCurrency={poolDetails?.purchasableCurrency?.toUpperCase()}
+                        poolId={poolDetails?.id}
+                        joinTime={joinTimeInDate}
+                        method={poolDetails?.method}
+                        availablePurchase={availablePurchase}
+                        ableToFetchFromBlockchain={ableToFetchFromBlockchain}
+                        minTier={poolDetails?.minTier}
+                        isDeployed={poolDetails?.isDeployed}
+                        startBuyTimeInDate={startBuyTimeInDate}
+                        endBuyTimeInDate={endBuyTimeInDate}
+                        endJoinTimeInDate={endJoinTimeInDate}
+                        tokenSold={tokenSold}
+                        setBuyTokenSuccess={setBuyTokenSuccess}
+                      /> 
+                   )
+                }
+                {
+                  activeNav === HeaderType.About && <PoolAbout /> 
+                }
+                {
+                  activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
+                }
+                {
+                  poolDetails?.type === 'claimable' && ( 
+                    <ClaimToken 
+                      releaseTime={releaseTimeInDate} 
+                      ableToFetchFromBlockchain={ableToFetchFromBlockchain}
+                      poolAddress={poolDetails?.poolAddress}
+                      tokenDetails={poolDetails?.tokenDetails} 
+                      buyTokenSuccess={buyTokenSuccess}
+                    /> 
+                 )
+                }
+              </div>
+            </div>
+          </main>
+        </>
+      )
     }
-
-    return tokenValid;
-  };
-  const isClaimable = _.get(campaignDetail, 'isClaimable', '');
-  const tokenSoldOut = !isTokenValid();
-  const isOverBought = totalUsdUserBought >= MAX_BUY_CAMPAIGN;
-  const isShowBannerCampaignClosed = !isClaimable && isPurchasable && !isOverBought && tokenSoldOut;
+  }
 
   return (
-    <>
-    {isShowBannerCampaignClosed &&
-      <div className={classes.errorBanner}>
-        Thank you for your interest, we have reached the cap and campaign is closed
-      </div>
-    }
-    <div className={classes.buyToken}>
+    <DefaultLayout>
+      <div className={styles.poolDetailContainer}>
+        {render()}
+     </div>
+    </DefaultLayout>
+  )
+}
 
-      <div className={`${classes.buyToken}__wrapper`}>
-
-        {
-          loginInvestor &&
-          <button
-            className={`${classes.buyToken}__logout ${isShowBannerCampaignClosed ? classes.loginWithBanner : '' } `}
-            onClick={() => dispatch(logout(true))}
-          >
-            Log out
-          </button>
-        }
-        <div className={`${classes.buyToken}__logo ${isShowBannerCampaignClosed ? classes.withBanner : '' } `}>
-          <img src={byTokenLogo} alt="logo" />
-        </div>
-
-        <Campaign
-          classNamePrefix={classes.buyToken}
-          data={campaignDetail}
-        />
-
-        <Form
-          classNamePrefix={classes.buyToken}
-          submitBuyToken={submitBuyToken}
-          campaignDetail={campaignDetail}
-          buyLoading={buyLoading}
-          usdtAllowanceLoading={usdtAllowanceLoading}
-          usdtApproveLoading={usdtApproveLoading}
-          onUsdtAllowance={onUsdtAllowance}
-          usdtAllowance={usdtAllowance}
-          balance={balance}
-          usdtDetail={usdtDetail}
-          totalUsdUserBought={totalUsdUserBought}
-          setTotalUsdUserBought={setTotalUsdUserBought}
-          isMaxBuy={isMaxBuy}
-          setIsMaxBuy={setIsMaxBuy}
-          checkMaxUsd={checkMaxUsd}
-        />
-        <Link className={`login__form-redirect`} to="/change-password/investor">Change password ?</Link>
-      </div>
-    </div>
-    </>
-
-  );
-};
-
-export default withRouter(BuyToken);
+export default withWidth()(BuyToken);

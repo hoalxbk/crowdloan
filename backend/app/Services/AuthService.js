@@ -8,6 +8,7 @@ const Hash = use('Hash')
 const Env = use('Env')
 const HelperUtils = use('App/Common/HelperUtils');
 const SendConfirmationEmailJob = use('App/Jobs/SendConfirmationEmailJob')
+const SendAdminInfoEmailJob = use('App/Jobs/SendAdminInfoEmailJob')
 
 class AuthService extends BaseService {
 
@@ -15,19 +16,13 @@ class AuthService extends BaseService {
     const userService = new UserService();
     const filterParams = {
       wallet_address: params.wallet_address,
-      role: params.role,
+      role: Const.USER_ROLE.PUBLIC_USER
     };
     console.log('Login with filterParams: ', filterParams);
 
     const user = await userService.findUser(filterParams);
     if (!user) {
       ErrorFactory.unauthorizedInputException('The current ethereum address has not been signed up on the system !', Const.ERROR_CODE.AUTH_ERROR.ADDRESS_NOT_EXIST);
-    }
-
-    const isMatchPassword = await Hash.verify(params.password, user.password);
-
-    if (!isMatchPassword) {
-      ErrorFactory.unauthorizedInputException('Incorrect password !', Const.ERROR_CODE.AUTH_ERROR.PASSWORD_NOT_MATCH);
     }
     return user;
   }
@@ -36,7 +31,7 @@ class AuthService extends BaseService {
     const user = await UserModel.query()
       .where('role', role)
       .where('email', email)
-      .where('is_active', Const.USER_ACTIVE)
+      .where('status', Const.USER_STATUS.ACTIVE)
       .first();
     return user;
   }
@@ -45,7 +40,7 @@ class AuthService extends BaseService {
     const user = await UserModel.query()
       .where('role', role)
       .where('wallet_address', wallet_address)
-      .where('is_active', Const.USER_ACTIVE)
+      .where('status', Const.USER_STATUS.ACTIVE)
       .first();
     return user;
   }
@@ -56,7 +51,8 @@ class AuthService extends BaseService {
   }
 
   async createUser({email, username, signature, password, wallet_address, type, role}) {
-    const isExistWhitelistUser = await this.checkExistWhitelistUser({ email });
+    // const isExistWhitelistUser = await this.checkExistWhitelistUser({ email });
+    const isExistWhitelistUser = false;
     const userType = isExistWhitelistUser ? Const.USER_TYPE.WHITELISTED : Const.USER_TYPE.REGULAR;
     try {
       const user = new UserModel;
@@ -70,7 +66,7 @@ class AuthService extends BaseService {
       await user.save();
       return user;
     } catch (e) {
-      console.error(e)
+      console.error(e);
       return ErrorFactory.internal('error')
     }
   }
@@ -91,6 +87,37 @@ class AuthService extends BaseService {
 
     return true;
   }
+
+  async sendNewVerifyEmail(params) {
+    const { user } = params;
+    const mailData = {};
+    mailData.username = user.username;
+    mailData.email = user.email;
+
+    const baseUrl = Env.get('FRONTEND_USER_APP_URL');
+    mailData.url = baseUrl + '/#/confirm-email/' + user.confirmation_token;
+
+    SendConfirmationEmailJob.doDispatch(mailData);
+
+    return true;
+  }
+
+  async sendAdminInfoEmail(params) {
+    const { user, password } = params;
+    const mailData = {};
+    mailData.username = user.username;
+    mailData.email = user.email;
+    mailData.password = user.password;
+
+    // const baseUrl = Env.get('FRONTEND_USER_APP_URL');
+    // mailData.url = baseUrl + '/#/confirm-email/' + user.confirmation_token;
+
+    SendAdminInfoEmailJob.doDispatch(mailData);
+
+    return true;
+  }
+
+
 }
 
 module.exports = AuthService;

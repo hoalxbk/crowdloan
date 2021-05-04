@@ -1,0 +1,63 @@
+import BigNumber from 'bignumber.js';
+
+export enum PoolStatus {
+  Upcoming = "Upcoming",
+  Joining = "Joining",
+  Closed = "Ended",
+  Filled = "Filled",
+  Progress = "In-progress",
+  Claimable = "Claimable"
+}
+
+export type poolStatus = Extract<
+  PoolStatus, 
+  PoolStatus.Progress | 
+  PoolStatus.Upcoming | 
+  PoolStatus.Joining | 
+  PoolStatus.Filled |
+  PoolStatus.Closed | 
+  PoolStatus.Claimable
+>
+
+export const getPoolStatus = (
+  startJoinTime: Date | undefined,
+  endJoinTime: Date | undefined,
+  startBuyTime: Date | undefined,
+  endBuyTime: Date | undefined,
+  releaseTime: Date | undefined,
+  soldProgress: string | undefined,
+  isClaimable: boolean | undefined
+): poolStatus => {
+  const today = new Date().getTime();
+
+  if (startJoinTime && today < startJoinTime.getTime()) {
+    return PoolStatus.Upcoming;
+  }
+
+  if (startJoinTime && endJoinTime && today > startJoinTime.getTime() && today < endJoinTime.getTime()) {
+    return PoolStatus.Joining;
+  }
+
+  if (endJoinTime && startBuyTime && today > endJoinTime.getTime() && today < startBuyTime.getTime()) {
+    return PoolStatus.Upcoming;
+  }
+
+  if (
+    startJoinTime 
+    && endBuyTime 
+    && today > startJoinTime.getTime() 
+    && today < endBuyTime.getTime() 
+  ) {
+    return new BigNumber(soldProgress || 0).multipliedBy(100).gte(99) ?  PoolStatus.Filled: PoolStatus.Progress;
+  }
+
+  if (releaseTime && today > releaseTime.getTime() && isClaimable) {
+    return PoolStatus.Claimable;
+  }
+
+  if (endBuyTime && today > endBuyTime?.getTime()) {
+    return PoolStatus.Closed;
+  }
+
+  return PoolStatus.Upcoming;
+}

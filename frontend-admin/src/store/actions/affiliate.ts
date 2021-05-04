@@ -26,7 +26,7 @@ export const getAffiliateByCampaign = () => {
 
         const response = await baseRequest.get(`/affiliate-campaign/${tokenAddress}`) as any;
         const resObject = await response.json();
-  
+
         const affiliateCampaigns = resObject.data;
 
         if (resObject.status === 200) {
@@ -37,9 +37,9 @@ export const getAffiliateByCampaign = () => {
             }
           }
 
-          dispatch({ 
+          dispatch({
               type: affiliateActions.AFFILIATE_BY_CAMPAIGN_SUCCESS,
-              payload: affiliateCampaigns 
+              payload: affiliateCampaigns
             });
           }
 

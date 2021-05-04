@@ -1,15 +1,19 @@
 import {alertFailure, alertSuccess} from '../../store/actions/alert';
+import { ConnectorNames, connectorNames } from '../../constants/connectors';
 import { userActions } from '../constants/user';
+import { walletActions } from '../constants/wallet';
 import { alertActions } from '../constants/alert';
 import { BaseRequest } from '../../request/Request';
 import { getWeb3Instance } from '../../services/web3';
 import { AnyAction, Dispatch } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
+import { Web3Provider } from '@ethersproject/providers'
+import { ethers } from 'ethers';
 
 type UserRegisterProps = {
-  username: string;
   email: string;
-  password: string;
+  address: string;
+  library: Web3Provider;
 }
 
 type UserProfileProps = {
@@ -22,15 +26,34 @@ type UserProfileProps = {
 
 const MESSAGE_INVESTOR_SIGNATURE = process.env.REACT_APP_MESSAGE_INVESTOR_SIGNATURE || "";
 
-const getMessageParams = (isInvestor: boolean = false) => {
+const getMessageParams = () => {
   const msgSignature = MESSAGE_INVESTOR_SIGNATURE;
 
   return [{
     type: 'string',      // Any valid solidity type
     name: 'Message',     // Any string label you want
-    value: msgSignature  // The value to sign
+    value: msgSignature // The value to sign
   }]
 }
+
+export const getParamsWithConnector = (connectedAccount: string) => ({
+  [ConnectorNames.BSC]: {
+    method: 'eth_sign',
+    params: [connectedAccount, MESSAGE_INVESTOR_SIGNATURE]
+  },
+  [ConnectorNames.WalletConnect]: {
+    method: 'eth_sign',
+    params: [connectedAccount, MESSAGE_INVESTOR_SIGNATURE]
+  },
+  [ConnectorNames.Fortmatic]: {
+    method: 'eth_signTypedData',
+    params: [getMessageParams(), connectedAccount]
+  },
+  [ConnectorNames.MetaMask]: {
+    method: 'eth_signTypedData',
+    params: [getMessageParams(), connectedAccount]
+  },
+})
 
 const dispatchErrorWithMsg = (dispatch: Dispatch, action: string, msg: string) => {
   dispatch({
@@ -70,97 +93,116 @@ export const clearUserProfileUpdate = () => {
   }
 }
 
-export const login = (password: string, isInvestor: boolean = false) => {
-  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+export const login = (connectedAccount: string, library: Web3Provider) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     try {
       dispatch({
-        type: !isInvestor ? userActions.USER_LOGIN_LOADING: userActions.INVESTOR_LOGIN_LOADING
+        type: userActions.INVESTOR_LOGIN_LOADING
       });
 
       const baseRequest = new BaseRequest();
-      const ethAddress = await getCurrentAccount();
+      const connector = getState().connector.data;
+      const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
 
-      if (ethAddress) {
-        const windowObj = window as any;
-        const { ethereum } = windowObj;
-       await ethereum.sendAsync({
-            method: 'eth_signTypedData',
-            params: [getMessageParams(isInvestor), ethAddress],
-            from: ethAddress,
-        }, async function(err: Error, result: any) {
-          if (err || result.error) {
-             const errMsg = err.message || result.error.message
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_LOGIN_FAILURE: userActions.INVESTOR_LOGIN_FAILURE, errMsg);
-          } else {
-            const response = await baseRequest.post(`/${isInvestor ? 'public': 'user'}/login`, {
-              password,
-              signature: result.result,
-              // message: baseRequest.getSignatureMessage(isInvestor),
-              wallet_address: ethAddress,
-            }, isInvestor) as any;
+      if (connectedAccount && library && paramsWithConnector) {
+        const provider = library.provider;
+        if (connector !== ConnectorNames.WalletConnect) {
+          const res = await (provider as any).sendAsync({
+              method: paramsWithConnector.method,
+              params: paramsWithConnector.params
+          }, async function(err: Error, result: any) {
+            if (err || result.error) {
+               const errMsg = (err.message || (err as any).error) || result.error.message
+               console.log('Error when signing message: ', errMsg);
+                dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
+            } else {
+              console.log(result.result);
+              const response = await baseRequest.post(`/user/login`, {
+                signature: result.result,
+                wallet_address: connectedAccount,
+              }) as any;
 
-            const resObj = await response.json();
+              const resObj = await response.json();
 
-            if (resObj.status && resObj.status === 200 && resObj.data) {
-              const { token, user } = resObj.data;
+              if (resObj.status && resObj.status === 200 && resObj.data) {
+                const { token, user } = resObj.data;
 
-              localStorage.setItem(!isInvestor ? 'access_token': 'investor_access_token', token.token);
+                localStorage.setItem('investor_access_token', token.token);
 
-              dispatch({
-                type: !isInvestor ? userActions.USER_LOGIN_SUCCESS: userActions.INVESTOR_LOGIN_SUCCESS,
-                payload: user
-              });
+                dispatch({ type: walletActions.WALLET_CONNECT_LAYER2_SUCCESS });
+
+                dispatch({
+                  type: userActions.INVESTOR_LOGIN_SUCCESS,
+                  payload: user
+                });
+
+              }
+
+              if (resObj.status && resObj.status !== 200) {
+                if (resObj.status == 404) {
+                  // redirect to register page
+                  dispatch(alertFailure(resObj.message));
+                  dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+                } else {
+                  // show error
+                  console.log('RESPONSE Login: ', resObj);
+                  dispatch(alertFailure(resObj.message));
+                  dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+                }
+              }
             }
+          });
+        } else {
+          var rawMessage = MESSAGE_INVESTOR_SIGNATURE;
+          var rawMessageLength = new Blob([rawMessage]).size
+          var message = ethers.utils.toUtf8Bytes("\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage)
+          var messageHash = ethers.utils.keccak256(message)
+          var params = [
+            connectedAccount,
+            messageHash
+          ]
+          await (library as any).provider.enable();
 
-            if (resObj.status && resObj.status !== 200) {
-              console.log('RESPONSE Login: ', resObj);
-              dispatch(alertFailure(resObj.message));
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_LOGIN_FAILURE: userActions.INVESTOR_LOGIN_FAILURE, '');
-            }
-          }
-        });
+          var signature = await (library as any).provider.wc.signMessage(params);
+          console.log(signature);
+        }
       }
     } catch (error) {
       console.log('ERROR Login: ', error);
       dispatch(alertFailure(error.message));
-      dispatchErrorWithMsg(dispatch, userActions.USER_LOGIN_FAILURE, '');
+      dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
     }
   }
 }
 
-export const register = ({ username, email, password }: UserRegisterProps, isInvestor: boolean = false) => {
-  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
+export const register = ({ email, address: connectedAccount, library }: UserRegisterProps) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({
-      type: !isInvestor ? userActions.USER_REGISTER_LOADING: userActions.INVESTOR_REGISTER_LOADING
+      type: userActions.INVESTOR_REGISTER_LOADING
     });
     try {
       const baseRequest = new BaseRequest();
-      const windowObj = window as any;
-      const { ethereum } = windowObj;
-      const ethAddress = await getCurrentAccount();
 
-      if (ethAddress) {
+      const connector = getState().connector.data;
+      const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
 
-       await ethereum.sendAsync({
-            method: 'eth_signTypedData',
-            params: [getMessageParams(isInvestor), ethAddress],
-            from: ethAddress,
+      if (connectedAccount && library && paramsWithConnector) {
+        const provider = library.provider;
+        provider && await (provider as any).sendAsync({
+            method: paramsWithConnector.method,
+            params: paramsWithConnector.params
         }, async function(err: Error, result: any) {
           if (err || result.error) {
-             const errMsg = err.message || result.error.message
-              dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_REGISTER_FAILURE: userActions.INVESTOR_REGISTER_FAILURE, errMsg);
-
-            return;
+             const errMsg = (err.message || (err as any).error) || result.error.message
+              dispatchErrorWithMsg(dispatch, userActions.INVESTOR_REGISTER_FAILURE, errMsg);
+              return;
           }
 
-          const response = await baseRequest.post(`/${isInvestor ? 'public': 'user'}/register/`, {
-            username,
+          const response = await baseRequest.post(`/user/register/`, {
             email,
-            password,
-            wallet_address: ethAddress,
+            wallet_address: connectedAccount,
             signature: result.result,
-            // message: baseRequest.getSignatureMessage(isInvestor),
-          }, isInvestor) as any;
+          }) as any;
 
           const resObj = await response.json();
 
@@ -169,7 +211,9 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
             if (resObj.data) {
               const { token, user } = resObj.data;
 
-              localStorage.setItem(!isInvestor ? 'access_token': 'investor_access_token', token.token);
+              localStorage.setItem('investor_access_token', token.token);
+
+              dispatch({ type: walletActions.WALLET_CONNECT_LAYER2_SUCCESS });
 
               dispatch({
                 type: alertActions.SUCCESS_MESSAGE,
@@ -177,14 +221,15 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
               });
 
               dispatch({
-                type: !isInvestor ? userActions.USER_REGISTER_SUCCESS: userActions.INVESTOR_REGISTER_SUCCESS,
+                type: userActions.INVESTOR_REGISTER_SUCCESS,
                 payload: user
               });
 
               dispatch({
-                type: !isInvestor ? userActions.USER_LOGIN_SUCCESS: userActions.INVESTOR_LOGIN_SUCCESS,
+                type: userActions.INVESTOR_LOGIN_SUCCESS,
                 payload: user
               });
+
             } else {
               dispatch({
                 type: alertActions.SUCCESS_MESSAGE,
@@ -192,7 +237,7 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
               });
 
               dispatch({
-                type: !isInvestor ? userActions.USER_REGISTER_SUCCESS: userActions.INVESTOR_REGISTER_SUCCESS,
+                type: userActions.INVESTOR_REGISTER_SUCCESS,
                 payload: resObj.message
               });
             }
@@ -202,14 +247,14 @@ export const register = ({ username, email, password }: UserRegisterProps, isInv
           if (resObj.status && resObj.status !== 200) {
             console.log('RESPONSE Register: ', resObj);
             dispatch(alertFailure(resObj.message));
-            dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_REGISTER_FAILURE: userActions.INVESTOR_REGISTER_FAILURE, '');
+            dispatchErrorWithMsg(dispatch, userActions.INVESTOR_REGISTER_FAILURE, '');
           }
         });
       }
     } catch (error) {
       console.log('ERROR Register: ', error);
       dispatch(alertFailure(error.message));
-      dispatchErrorWithMsg(dispatch, !isInvestor ? userActions.USER_REGISTER_FAILURE: userActions.INVESTOR_REGISTER_FAILURE, '');
+      dispatchErrorWithMsg(dispatch, userActions.INVESTOR_REGISTER_FAILURE, '');
     }
   }
 };
@@ -282,7 +327,7 @@ export const updateUserProfile = (updatedUser: UserProfileProps) => {
       if (ethAddress) {
         const windowObj = window as any;
         const { ethereum } = windowObj;
-        const { firstName, lastName, avatar } = updatedUser;
+        const { avatar } = updatedUser;
        await ethereum.sendAsync({
             method: 'eth_signTypedData',
             params: [getMessageParams(), ethAddress],
@@ -293,8 +338,6 @@ export const updateUserProfile = (updatedUser: UserProfileProps) => {
               dispatchErrorWithMsg(dispatch, userActions.USER_PROFILE_UPDATE_FAILURE, errMsg);
           } else {
             const response = await baseRequest.post(`/user/update-profile`, {
-              firstname: firstName,
-              lastname: lastName,
               avatar,
               signature: result.result
             }) as any;
@@ -325,6 +368,84 @@ export const updateUserProfile = (updatedUser: UserProfileProps) => {
       }
     } catch (error) {
       dispatchErrorWithMsg(dispatch, userActions.USER_PROFILE_UPDATE_FAILURE, error.message);
+    }
+  }
+}
+
+export const joinPool = (connectedAccount: string, library: Web3Provider, poolId?: number) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
+    try {
+      const baseRequest = new BaseRequest();
+      const connector = getState().connector.data;
+      const paramsWithConnector = getParamsWithConnector(connectedAccount)[connector as connectorNames];
+
+      if (connectedAccount && library && paramsWithConnector) {
+        const provider = library.provider;
+        if (connector !== ConnectorNames.WalletConnect) {
+          const res = await (provider as any).sendAsync({
+              method: paramsWithConnector.method,
+              params: paramsWithConnector.params
+          }, async function(err: Error, result: any) {
+            if (err || result.error) {
+               const errMsg = (err.message || (err as any).error) || result.error.message
+               console.log('Error when signing message: ', errMsg);
+                dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, errMsg);
+            } else {
+              console.log(result.result);
+              const response = await baseRequest.post(`/user/login`, {
+                signature: result.result,
+                wallet_address: connectedAccount,
+              }) as any;
+
+              const resObj = await response.json();
+
+              if (resObj.status && resObj.status === 200 && resObj.data) {
+                const { token, user } = resObj.data;
+
+                localStorage.setItem('investor_access_token', token.token);
+
+                dispatch({ type: walletActions.WALLET_CONNECT_LAYER2_SUCCESS });
+
+                dispatch({
+                  type: userActions.INVESTOR_LOGIN_SUCCESS,
+                  payload: user
+                });
+
+              }
+
+              if (resObj.status && resObj.status !== 200) {
+                if (resObj.status == 404) {
+                  // redirect to register page
+                  dispatch(alertFailure(resObj.message));
+                  dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+                } else {
+                  // show error
+                  console.log('RESPONSE Login: ', resObj);
+                  dispatch(alertFailure(resObj.message));
+                  dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
+                }
+              }
+            }
+          });
+        } else {
+          var rawMessage = MESSAGE_INVESTOR_SIGNATURE;
+          var rawMessageLength = new Blob([rawMessage]).size
+          var message = ethers.utils.toUtf8Bytes("\x19Ethereum Signed Message:\n" + rawMessageLength + rawMessage)
+          var messageHash = ethers.utils.keccak256(message)
+          var params = [
+            connectedAccount,
+            messageHash
+          ]
+          await (library as any).provider.enable();
+
+          var signature = await (library as any).provider.wc.signMessage(params);
+          console.log(signature);
+        }
+      }
+    } catch (error) {
+      console.log('ERROR Login: ', error);
+      dispatch(alertFailure(error.message));
+      dispatchErrorWithMsg(dispatch, userActions.INVESTOR_LOGIN_FAILURE, '');
     }
   }
 }
