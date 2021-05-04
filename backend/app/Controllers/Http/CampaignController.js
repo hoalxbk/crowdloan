@@ -13,19 +13,19 @@ const Const = use('App/Common/Const');
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
 const BigNumber = use('bignumber.js')
-BigNumber.config({ EXPONENTIAL_AT: 50 });
+BigNumber.config({EXPONENTIAL_AT: 50});
 
 const CONFIGS_FOLDER = '../../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
 const CONTRACT_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGN];
 const CONTRACT_FACTORY_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGNFACTORY];
 
-const { abi: CONTRACT_ABI } = CONTRACT_CONFIGS.CONTRACT_DATA;
-const { abi: CONTRACT_FACTORY_NORMAL_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
-const { abi: CONTRACT_CLAIM_ABI } = CONTRACT_CONFIGS.CONTRACT_CLAIMABLE;
-const { abi: CONTRACT_FACTORY_CLAIM_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_CLAIMABLE;
-const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
-const { abi: CONTRACT_TIER_ABI } = require('../../../blockchain_configs/contracts/Normal/Tier.json');
+const {abi: CONTRACT_ABI} = CONTRACT_CONFIGS.CONTRACT_DATA;
+const {abi: CONTRACT_FACTORY_NORMAL_ABI} = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
+const {abi: CONTRACT_CLAIM_ABI} = CONTRACT_CONFIGS.CONTRACT_CLAIMABLE;
+const {abi: CONTRACT_FACTORY_CLAIM_ABI} = CONTRACT_FACTORY_CONFIGS.CONTRACT_CLAIMABLE;
+const {abi: CONTRACT_ERC20_ABI} = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
+const {abi: CONTRACT_TIER_ABI} = require('../../../blockchain_configs/contracts/Normal/Tier.json');
 
 const Web3 = require('web3');
 const BadRequestException = require("../../Exceptions/BadRequestException");
@@ -33,53 +33,53 @@ const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
 const tierSmartContract = process.env.TIER_SMART_CONTRACT;
-const SMART_CONTRACT_USDT_ADDRESS =  process.env.SMART_CONTRACT_USDT_ADDRESS
-const SMART_CONTRACT_USDC_ADDRESS =  process.env.SMART_CONTRACT_USDC_ADDRESS;
+const SMART_CONTRACT_USDT_ADDRESS = process.env.SMART_CONTRACT_USDT_ADDRESS
+const SMART_CONTRACT_USDC_ADDRESS = process.env.SMART_CONTRACT_USDC_ADDRESS;
 
 class CampaignController {
-  async campaignList ({request}) {
+  async campaignList({request}) {
     const param = request.all();
     const limit = param.limit ? param.limit : Config.get('const.limit_default');
     const page = param.page ? param.page : Config.get('const.page_default');
     const filter = {};
     let listData = CampaignModel.query().orderBy('id', 'DESC');
-    if(param.title){
-      listData =  listData.where(builder => {
-        builder.where('title', 'like', '%'+ param.title +'%')
-          .orWhere('symbol', 'like', '%'+ param.title +'%')
-        if((param.title).toLowerCase() == Config.get('const.suspend')){
+    if (param.title) {
+      listData = listData.where(builder => {
+        builder.where('title', 'like', '%' + param.title + '%')
+          .orWhere('symbol', 'like', '%' + param.title + '%')
+        if ((param.title).toLowerCase() == Config.get('const.suspend')) {
           builder.orWhere('is_pause', '=', 1)
         }
-        if((param.title).toLowerCase() == Config.get('const.active')){
+        if ((param.title).toLowerCase() == Config.get('const.active')) {
           builder.orWhere('is_pause', '=', 0)
         }
       })
     }
-    if(param.start_time && !param.finish_time){
+    if (param.start_time && !param.finish_time) {
       listData = listData.where('start_time', '>=', param.start_time)
     }
-    if(param.finish_time && !param.start_time ){
+    if (param.finish_time && !param.start_time) {
       listData = listData.where('finish_time', '<=', param.finish_time)
     }
-    if(param.finish_time && param.start_time ){
+    if (param.finish_time && param.start_time) {
       listData = listData.whereRaw('finish_time <=' + param.finish_time)
         .whereRaw('start_time >=' + param.start_time)
     }
-    if(param.registed_by){
+    if (param.registed_by) {
       listData = listData.where('registed_by', '=', param.registed_by)
     }
-    listData = await listData.paginate(page,limit);
+    listData = await listData.paginate(page, limit);
     return {
       status: 200,
       data: listData,
     }
   }
-  async icoCampaignCreate( {request}) {
-    try{
+  async icoCampaignCreate({request}) {
+    try {
       const param = request.all();
       console.log('[Webhook] - Create Pool with params: ', param);
 
-      if(param.event != Const.CRAWLER_EVENT.POOL_CREATED) {
+      if (param.event != Const.CRAWLER_EVENT.POOL_CREATED) {
         return ErrorFactory.badRequest('Event Name is invalid');
       }
 
@@ -114,9 +114,9 @@ class CampaignController {
       ]);
       const CampaignSv = new CampaignService();
       let campaign = {}
-      if(!findCampaign){
+      if (!findCampaign) {
         campaign = await CampaignSv.createCampaign(param, receipt, receiptData)
-      }else {
+      } else {
         campaign = await CampaignSv.updateCampaign(param, receipt, receiptData)
       }
       return {
@@ -129,7 +129,7 @@ class CampaignController {
     }
   }
 
-  async campaignShow(request){
+  async campaignShow(request) {
     const campaign_value = request.params.campaign
     const campaigns = await CampaignModel.query().with('transaction').where(function () {
       this.where('campaign_hash', "=", campaign_value)
@@ -137,7 +137,7 @@ class CampaignController {
     }).first();
     if (!campaigns) {
       return ErrorFactory.badRequest('Campaign not found')
-    }else {
+    } else {
       const data = JSON.parse(JSON.stringify(campaigns));
       return {
         status: 200,
@@ -146,7 +146,7 @@ class CampaignController {
     }
   }
 
-  async campaignNew(){
+  async campaignNew() {
     const campaigns = await CampaignModel.query().whereNotNull('campaign_hash').with('transaction').orderBy('created_at', 'desc').first();
     return {
       status: 200,
@@ -156,7 +156,7 @@ class CampaignController {
 
   async campaignLastestActive() {
     const campaigns = await CampaignModel.query().whereNotNull('campaign_hash').with('transaction')
-                          .where('is_pause', Const.ACTIVE).orderBy('created_at', 'desc').first();
+      .where('is_pause', Const.ACTIVE).orderBy('created_at', 'desc').first();
     return {
       status: 200,
       data: campaigns
@@ -170,7 +170,7 @@ class CampaignController {
     // const deleted =
   }
 
-  async CampaignChanged ({request}) {
+  async CampaignChanged({request}) {
     console.log('WEBHOOK-Update Campaign');
 
     const param = request.all();
@@ -178,7 +178,7 @@ class CampaignController {
     if (tx == null)
       return ErrorFactory.badRequest('campaign not found!')
     const campaign = await CampaignModel.query().where('campaign_hash', '=', tx.to).first();
-    if(!campaign){
+    if (!campaign) {
       console.log('waning! campaign not found!')
       return {
         status: 200
@@ -205,32 +205,32 @@ class CampaignController {
     return campaignUpdate
   }
 
-  async CampaignEditStatus({request}){
-    try{
+  async CampaignEditStatus({request}) {
+    try {
 
       const param = request.all();
       const tx = await web3.eth.getTransaction(param.txHash);
       if (tx == null)
         return ErrorFactory.badRequest('Transaction not found')
       const campaign = await CampaignModel.query().where('campaign_hash', '=', tx.to).first();
-      if(!campaign){
+      if (!campaign) {
         console.log('waning! campaign not found!')
         return {status: 200}
       }
-      if(param.event == Config.get('const.pause')){
+      if (param.event == Config.get('const.pause')) {
         const campaign = await CampaignModel.query().where('campaign_hash', '=', tx.to)
           .update({
             is_pause: true
           })
         return campaign;
-      }else {
+      } else {
         const campaign = await CampaignModel.query().where('campaign_hash', '=', tx.to)
           .update({
             is_pause: false
           })
         return campaign;
       }
-    }catch (e){
+    } catch (e) {
       console.log(e);
       return ErrorFactory.badRequest('error')
     }
@@ -238,36 +238,36 @@ class CampaignController {
   }
 
   async campaignCreate({request}) {
-    try{
+    try {
       const params = request.all();
       const findCampaign = await CampaignModel.query().where('transaction_hash', '=', params.transactionHash).first();
       const CampaignSv = new CampaignService();
-      if(findCampaign){
+      if (findCampaign) {
         const campaignChange = await CampaignSv.changeCampaign(params)
         return campaignChange;
-      }else {
+      } else {
         const campaign = await CampaignSv.addCampaign(params)
         return campaign;
       }
-    }catch (e){
+    } catch (e) {
       console.log(e)
       return ErrorFactory.badRequest('error')
     }
   }
 
   async myCampaign({request, auth}) {
-    try{
+    try {
       const param = request.all();
       const status = request.params.status;
       const statusCode = Config.get('const.status_' + status)
       const campaignService = new CampaignService;
       const wallet_address = auth.user !== null ? auth.user.wallet_address : null
-      const listData = await campaignService.getCampaignByFilter(statusCode, param , wallet_address)
+      const listData = await campaignService.getCampaignByFilter(statusCode, param, wallet_address)
       return {
         status: 200,
         data: listData,
       }
-    }catch (e){
+    } catch (e) {
       console.log("error", e)
       return ErrorFactory.internal("error")
     }
@@ -345,7 +345,7 @@ class CampaignController {
     if (campaign_id == null) {
       return HelperUtils.responseBadRequest('Bad request with campaign_id');
     }
-    console.log('Deposit campaign with params: ',params, campaign_id, userWalletAddress);
+    console.log('Deposit campaign with params: ', params, campaign_id, userWalletAddress);
     try {
       // get user info
       const userService = new UserService();
@@ -371,7 +371,7 @@ class CampaignController {
       let minBuy = 0, maxBuy = 0;
       let is_reserved = false;
       // check user winner or reserved lis if campaign is lottery
-      if(camp.buy_type === Const.BUY_TYPE.WHITELIST_LOTTERY){
+      if (camp.buy_type === Const.BUY_TYPE.WHITELIST_LOTTERY) {
         // check if exist in winner list
         const winnerListService = new WinnerListService();
         const winnerParams = {
@@ -459,8 +459,8 @@ class CampaignController {
       }
       console.log(`Conversion rate is ${camp.token_conversion_rate}`);
       // calc min, max token user can buy
-      const maxTokenAmount = new BigNumber (maxBuy).dividedBy(camp.token_conversion_rate).multipliedBy(Math.pow(10, unit)).toString();
-      const minTokenAmount = new BigNumber (minBuy).dividedBy(camp.token_conversion_rate).multipliedBy(Math.pow(10, unit)).toString();
+      const maxTokenAmount = new BigNumber(maxBuy).dividedBy(camp.token_conversion_rate).multipliedBy(Math.pow(10, unit)).toString();
+      const minTokenAmount = new BigNumber(minBuy).dividedBy(camp.token_conversion_rate).multipliedBy(Math.pow(10, unit)).toString();
       console.log(minTokenAmount, maxTokenAmount, userWalletAddress);
       // get message hash
       const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenAmount, minTokenAmount);
@@ -537,7 +537,7 @@ class CampaignController {
     if (campaign_id == null) {
       return HelperUtils.responseBadRequest('Bad request with campaign_id');
     }
-    console.log('Claim token with params: ',params, campaign_id, userWalletAddress);
+    console.log('Claim token with params: ', params, campaign_id, userWalletAddress);
 
     try {
       // check campaign info
@@ -598,7 +598,7 @@ class CampaignController {
         'signature': signature
       }
       return HelperUtils.responseSuccess(response);
-    }catch (e) {
+    } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal("Claim token has internal server error !");
     }
