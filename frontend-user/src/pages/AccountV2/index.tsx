@@ -41,7 +41,6 @@ const AccountV2 = (props: any) => {
   const [showAlertVerifyEmail, setShowAlertVerifyEmail] = useState(true);
   const [listTokenDetails, setListTokenDetails] = useState([]) as any;
   
-
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
       dispatch(getBalance(connectedAccount));

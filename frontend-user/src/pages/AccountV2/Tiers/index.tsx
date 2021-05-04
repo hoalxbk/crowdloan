@@ -165,7 +165,7 @@ const Tiers = (props: any) => {
         })}
       </ul>
 
-      <div className={styles.tierNote}>
+      {!showMoreInfomation && <div className={styles.tierNote}>
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
           <Tooltip title={<p style={{ fontSize: 15 }}>
@@ -183,7 +183,7 @@ const Tiers = (props: any) => {
               <br/>Get a lottery ticket for each 1000 PKF hold</span>
           </div>
         </div>}
-      </div>
+      </div>}
     </div>
   );
 };
