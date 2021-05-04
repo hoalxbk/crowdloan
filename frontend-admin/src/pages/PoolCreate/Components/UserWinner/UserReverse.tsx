@@ -102,7 +102,7 @@ function UserReverse(props: any) {
             variant="contained"
             color="primary"
             onClick={openPopupCreate}
-            style={{marginLeft: 10, marginTop: 10}}
+            style={{ marginLeft: 10, marginTop: 10, marginBottom: 15 }}
           >Add</Button>
 
           {isOpenEditPopup &&

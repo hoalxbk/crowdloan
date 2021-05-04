@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import useStyles from "../style";
 import FormControl from '@material-ui/core/FormControl';
-import { Controller, useForm } from "react-hook-form";
-import { TextField, Select, RadioGroup, Radio, MenuItem } from "@material-ui/core";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import {imageRoute} from "../../../utils";
+import {Controller} from "react-hook-form";
+import {MenuItem, Select} from "@material-ui/core";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import {TIERS} from "../../../constants";
 
 function MinTier(props: any) {
   const classes = useStyles();
@@ -40,13 +39,13 @@ function MinTier(props: any) {
               disabled={isDeployed}
             >
               {
-                [1,2,3,4,5].map((value, index) => {
+                TIERS.map((value, index) => {
                   return (
                     <MenuItem
                       key={index}
                       value={index}
                     >
-                      {'Tier ' + value}
+                      {value}
                     </MenuItem>
                   )
                 })

@@ -313,7 +313,8 @@ const useStyles = makeStyles(theme => ({
     right: 10,
     top: '50%',
     transform: 'translateY(-50%)'
-  }
+  },
+
 }))
 
 export default useStyles
