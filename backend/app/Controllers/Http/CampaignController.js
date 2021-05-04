@@ -386,7 +386,7 @@ class CampaignController {
           const reserved = await reservedListService.findOneByFilter(winnerParams);
           if (reserved == null) {
             console.log()
-            return HelperUtils.responseBadRequest("You're not in buyer list !");
+            return HelperUtils.responseBadRequest("Sorry, you are not on the list of winners to join this pool.");
           }
           is_reserved = true;
           // check time start buy for tier

@@ -350,7 +350,6 @@ class PoolController {
     const page = param.page ? param.page : Config.get('const.page_default');
     param.limit = limit;
     param.page = page;
-    param.is_display = Const.POOL_DISPLAY.DISPLAY;
     param.is_search = true;
     console.log('Start Pool List with params: ', param);
 
@@ -381,7 +380,6 @@ class PoolController {
     const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
     inputParams.limit = limit;
     inputParams.page = page;
-    inputParams.is_display = Const.POOL_DISPLAY.DISPLAY;
     inputParams.is_search = true;
     console.log('[getTopPools] - inputParams: ', inputParams);
 
@@ -403,7 +401,6 @@ class PoolController {
     const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
     inputParams.limit = limit;
     inputParams.page = page;
-    inputParams.is_display = Const.POOL_DISPLAY.DISPLAY;
     inputParams.is_search = true;
     console.log('[getJoinedPools] - inputParams: ', inputParams);
 
