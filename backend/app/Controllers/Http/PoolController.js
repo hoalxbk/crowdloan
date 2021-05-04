@@ -90,9 +90,9 @@ class PoolController {
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
-          min_buy: new BigNumber(item.minBuy).toFixed(),
-          max_buy: new BigNumber(item.maxBuy).toFixed(),
-          ticket_allow_percent: new BigNumber(item.ticket_allow_percent).toFixed(),
+          min_buy: new BigNumber(item.minBuy || 0).toFixed(),
+          max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
+          ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
           currency: item.currency,
         });
         return tierObj;
