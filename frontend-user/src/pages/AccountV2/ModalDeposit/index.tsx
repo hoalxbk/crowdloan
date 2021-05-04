@@ -33,10 +33,12 @@ const ModalDeposit = (props: any) => {
   const [currentToken, setCurrentToken] = useState(listTokenDetails[0]) as any;
   const [currentBalance, setCurrentBalance] = useState('0');
   const [currentStaked, setCurrentStaked] = useState('0');
+  const [currentAllowance, setCurrentAllowance] = useState(0);
 
   useEffect(() => {
     setCurrentBalance(balance.pkf)
     setCurrentStaked(userInfo.pkfStaked)
+    setCurrentAllowance(allowance.pkf)
   }, [balance, userInfo])
 
   useEffect(() => {
@@ -57,13 +59,13 @@ const ModalDeposit = (props: any) => {
 
   const onDeposit = () => {
     if(disableDeposit) return
-    dispatch(deposit(connectedAccount, depositAmount, library));
+    dispatch(deposit(connectedAccount, depositAmount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
   }
 
   const onApprove = () => {
-    dispatch(approve(connectedAccount, library));
+    dispatch(approve(connectedAccount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
   }
@@ -80,12 +82,15 @@ const ModalDeposit = (props: any) => {
     if(e.target.value == 'PKF') {
       setCurrentBalance(balance.pkf)
       setCurrentStaked(userInfo.pkfStaked)
+      setCurrentAllowance(allowance.pkf)
     } else if(e.target.value == 'UPKF') {
       setCurrentBalance(balance.uni)
       setCurrentStaked(userInfo.uniStaked)
+      setCurrentAllowance(allowance.uni)
     } else if(e.target.value == 'MPKF') {
       setCurrentBalance(balance.mantra)
       setCurrentStaked(userInfo.mantraStaked)
+      setCurrentAllowance(allowance.mantra)
     }
   }
 
@@ -99,8 +104,8 @@ const ModalDeposit = (props: any) => {
           </div>
           <div className="modal-content__body">
             <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
-              {listTokenDetails && listTokenDetails.map((tokenDetails: any) => {
-                return <option value={tokenDetails?.symbol}>{tokenDetails?.symbol}</option>
+              {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
+                return <option value={tokenDetails?.symbol} key={index}>{tokenDetails?.symbol}</option>
               })}
             </select>
 
@@ -121,11 +126,11 @@ const ModalDeposit = (props: any) => {
             </div>
           </div>
           <div className="modal-content__foot">
-            {allowance <= 0 && <button
+            {currentAllowance <= 0 && <button
               className={"btn-approve"}
               onClick={onApprove}
             >approve</button>}
-            {allowance > 0 && <button
+            {currentAllowance > 0 && <button
               className={"btn-staking " + (disableDeposit ? 'disabled' : '')}
               onClick={onDeposit}
             >Lock-in</button>}

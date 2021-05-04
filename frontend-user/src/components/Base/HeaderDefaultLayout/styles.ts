@@ -126,6 +126,7 @@ const useStyles = makeStyles((theme) => {
       color: 'white',
       cursor: 'pointer',
       transition: '.2s all ease-in',
+      font: 'normal normal 700 12px/14px DM Sans',
 
       '&:focus': {
         outline: 'none'
@@ -156,6 +157,7 @@ const useStyles = makeStyles((theme) => {
       }
     },
     loginErrorBannerText: {
+      font: 'normal normal 400 14px/24px Helvetica',
       marginLeft: 10,
       color: 'white',
       fontWeight: 500
