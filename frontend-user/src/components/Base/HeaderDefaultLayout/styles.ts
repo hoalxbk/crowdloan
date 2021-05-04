@@ -57,6 +57,10 @@ const useStyles = makeStyles((theme) => {
     
       '&:focus': {
         outline: 'none'
+      },
+      '&.my-account img': {
+        width: '20px',
+        filter: 'brightness(0) invert(1)'
       }
     },
     btnNetwork: {
@@ -198,7 +202,7 @@ const useStyles = makeStyles((theme) => {
         '&.start p': {
           padding: 0,
           marginBottom: '20px'
-        }
+        },
       },
       sideBarLogo: {
         position: 'absolute',

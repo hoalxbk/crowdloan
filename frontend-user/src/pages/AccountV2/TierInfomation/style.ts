@@ -5,16 +5,7 @@ const useStyles = makeStyles((theme: any) => {
     tierInfomation: {
       marginTop: "40px"
     },
-    tierNote: {
-      display: 'flex',
-      flexDirection: 'column',
-      marginBottom: '20px',
-      border: '1px solid #fff',
-      padding: '20px',
-      '& span, & h2': {
-        color: '#fff'
-      }
-    },
+    
     conversionRate: {
       display: 'flex',
       flexDirection: 'column',
@@ -23,10 +14,25 @@ const useStyles = makeStyles((theme: any) => {
         display: 'flex',
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+        minHeight: '42px',
       },
-      '& span, & h2': {
-        color: '#fff'
+      '& .group:last-child': {
+        borderBottom: 'none'
+      },
+      '& span': {
+        color: '#fff',
+        font: 'normal normal bold 14px/18px DM Sans',
+        width: '40%',
+      },
+      '& span:last-child': {
+        textAlign: 'right'
+      },
+      '& h3': {
+        color: '#FFF',
+        font: 'normal normal bold 18px/24px DM Sans',
+        marginBottom: '12px'
       }
     }
   };

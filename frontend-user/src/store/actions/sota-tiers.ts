@@ -113,10 +113,6 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
       const resultMantra = await contract?.methods.userInfo(address, process.env.REACT_APP_MANTRA_LP).call();
       const stakedMantra = convertFromWei(resultMantra.staked)
 
-      const resultStaked = await contract?.methods.userExternalStaked(address).call();
-      const totalStaked = parseFloat(stakedPkf) + parseFloat(convertFromWei(resultStaked))
-      console.log(totalStaked, "toe")
-
       result = {
         ...result,
         resultPkf: resultPkf,
@@ -125,9 +121,16 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
         uniStaked: stakedUni,
         resultMantra: resultMantra,
         mantraStaked: stakedMantra,
-        totalStaked: totalStaked
       }
 
+      const resultStaked = await contract?.methods.userTotalStaked(address).call();
+      const totalStaked = parseFloat(convertFromWei(resultStaked))
+
+      result = {
+        ...result,
+        totalStaked: totalStaked
+      }
+      
       dispatch({
         type: sotaTiersActions.USER_INFO_SUCCESS,
         payload: result,
@@ -151,6 +154,7 @@ export const deposit = (address: string | null | undefined, amount: string, libr
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
       result = await contract?.depositERC20(tokenAddress, convertToWei(amount))
+      
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));

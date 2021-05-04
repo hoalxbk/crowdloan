@@ -99,23 +99,7 @@ const ManageTier = (props: any) => {
     <div className={`${classNamePrefix}__component`}>
       <div className={styles.content}>
         <div className={styles.manageTier}>
-          <p className={styles.textDefault}>Available balance</p>
-          <div className="button-area">
-            <button
-              className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
-              onClick={() => {setOpenModalDeposit(true)}}
-              disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
-            >
-              Lock - in
-            </button>
-            <button
-              className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
-              onClick={() => {setOpenModalWithdraw(true)}}
-              disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
-            >
-              Unlock
-            </button>
-          </div>
+          <h2 className={styles.title}>Available balance</h2>
         </div>
         <div className={styles.walletBalance}>
           <div className={styles.tableHead}>
@@ -131,7 +115,22 @@ const ManageTier = (props: any) => {
             {renderToken(listTokenDetails[2]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
           </div>
         </div>
-
+        <div className="button-area">
+          <button
+            className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
+            onClick={() => {setOpenModalDeposit(true)}}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+          >
+            Lock - in
+          </button>
+          <button
+            className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
+            onClick={() => {setOpenModalWithdraw(true)}}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+          >
+            Unlock
+          </button>
+        </div>
         {/* <p className={styles.balance}>
           {(wrongChain || !isAuth) && <AnimatedNumber
             value={0}

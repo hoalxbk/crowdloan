@@ -70,8 +70,7 @@ const AccountInformation = (props: any) => {
         </div>
         <div className={styles.redKiteInfo}>
           <div className="kyc-info">
-            <span>Some pools may require you to be KYC verified</span>
-            <button onClick={handleKYC}> {isKYC ? 'KYC for Rekite projects' : 'KYC successful for Rekite projects'}</button>
+            <span>KYC for Redkite {isKYC ? 'verified' : 'unverified'}</span>
           </div>
           {/* <div className={styles.walletInfo}>
             <p>Wallet balance</p>

@@ -40,6 +40,8 @@ const AccountV2 = (props: any) => {
   const [isKYC, setIsKYC] = useState(false);
   const [showAlertVerifyEmail, setShowAlertVerifyEmail] = useState(true);
   const [listTokenDetails, setListTokenDetails] = useState([]) as any;
+  
+
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
       dispatch(getBalance(connectedAccount));
@@ -73,25 +75,27 @@ const AccountV2 = (props: any) => {
         <span>Your account has not been verified. To verify your account, please click on Verify Email button.</span>
       </div>}
       <div className={classes.accountContainer}>
-        <div className={classes.leftPanel}>
-          <AccountInformation
-            classNamePrefix="account-infomation"
-            balance={balance}
-            userInfo={userInfo}
-            tokenPKFDetails={tokenPKFDetails}
-            email={email}
-            emailVerified={emailVerified}
-            setEmail={setEmail}
-            isKYC={isKYC}
-          ></AccountInformation>
-          <Tiers
-            showMoreInfomation={false}
-            tokenSymbol={tokenPKFDetails?.symbol}
-          />
-          <TierInfomation/>
-        </div>
-        <div className={classes.rightPanel}>
-          <ManageTier listTokenDetails={listTokenDetails} emailVerified={emailVerified}/>
+        <div className={classes.mainContent}>
+          <div className={classes.leftPanel}>
+            <AccountInformation
+              classNamePrefix="account-infomation"
+              balance={balance}
+              userInfo={userInfo}
+              tokenPKFDetails={tokenPKFDetails}
+              email={email}
+              emailVerified={emailVerified}
+              setEmail={setEmail}
+              isKYC={isKYC}
+            ></AccountInformation>
+            <Tiers
+              showMoreInfomation={false}
+              tokenSymbol={tokenPKFDetails?.symbol}
+            />
+            <TierInfomation/>
+          </div>
+          <div className={classes.rightPanel}>
+            <ManageTier listTokenDetails={listTokenDetails} emailVerified={emailVerified}/>
+          </div>
         </div>
       </div>
     </DefaultLayout>

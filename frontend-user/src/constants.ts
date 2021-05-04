@@ -40,15 +40,32 @@ export const USER_STATUS = {
   DELETED: 3
 }
 
+export const CONVERSION_RATE = [
+  {
+    name: 'Uniswap LP',
+    rate: 150,
+    symbol: 'UPKF'
+  },
+  {
+    name: 'sPKF',
+    rate: 1,
+    symbol: 'MPKF'
+  },
+  // {
+  //   name: 'NFT',
+  //   rate: 100
+  // },
+]
+
 export const TIERS = [
   {
-    name: 'RedKite',
+    name: '',
     icon: '/images/icons/rocket.svg',
     bg: '/images/icons/red-kite-bg.png',
     bgColor: '#8D8DCC',
   },
   {
-    name: 'Hawk',
+    name: 'Dove',
     bg: '/images/icons/hawk-bg.png',
     bgColor: '#5252AD',
     icon: '/images/icons/bronze-medal.svg'
