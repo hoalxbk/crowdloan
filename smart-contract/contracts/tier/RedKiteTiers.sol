@@ -106,31 +106,19 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     );
     event ChangePenaltyWallet(address indexed penaltyWallet);
 
-    constructor(address _pkf, address _penaltyWallet) {
+    constructor(address _pkf, address _uniLp, address _penaltyWallet) {
         owner = msg.sender;
         penaltyWallet = _penaltyWallet;
 
         PKF = _pkf;
 
-        ExternalToken storage token = externalToken[PKF];
+        addExternalToken(_pkf, 0, 1 , false, true);
+        addExternalToken(_uniLp, 0, 150, false, true);
 
-        token.contractAddress = PKF;
-        token.decimals = 0;
-        token.rate = 1;
-        token.isERC721 = false;
-        token.canStake = true;
-
-        tierPrice[1] = 2000e18;
+        tierPrice[1] = 500e18;
         tierPrice[2] = 5000e18;
-        tierPrice[3] = 10000e18;
-        tierPrice[4] = 20000e18;
-
-        withdrawFeePercent.push(30);
-        withdrawFeePercent.push(25);
-        withdrawFeePercent.push(20);
-        withdrawFeePercent.push(10);
-        withdrawFeePercent.push(5);
-        withdrawFeePercent.push(0);
+        tierPrice[3] = 20000e18;
+        tierPrice[4] = 60000e18;
 
         daysLockLevel.push(10 days);
         daysLockLevel.push(20 days);
@@ -344,7 +332,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         uint256 _rate,
         bool _isERC721,
         bool _canStake
-    ) external onlyOwner {
+    ) public onlyOwner {
         ExternalToken storage token = externalToken[_token];
 
         require(_rate > 0, "TIER::INVALID_TOKEN_RATE");
