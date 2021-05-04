@@ -7,6 +7,7 @@ import ModalVerifyEmail from '../ModalVerifyEmail';
 import {isWidthDown, isWidthUp, withWidth} from '@material-ui/core';
 import { trimMiddlePartAddress } from '../../../utils/accountAddress';
 import { USER_STATUS } from '../../../constants';
+import { TIERS } from '../../../constants';
 //@ts-ignore
 import AnimatedNumber from "animated-number-react";
 import { numberWithCommas } from '../../../utils/formatNumber';
@@ -16,6 +17,8 @@ const AccountInformation = (props: any) => {
   const { classNamePrefix = '', balance = {}, userInfo = {} } = props;
   const [openModalVerifyEmail, setOpenModalVerifyEmail] = useState(false);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
+  const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
+  const { data: tiers = {} } = useSelector((state: any) => state.tiers);
 
   const handleKYC = () => {
     console.log('hande KYC')
@@ -31,7 +34,7 @@ const AccountInformation = (props: any) => {
   const formatValue = (value: string) => parseFloat(value).toFixed(2);
 
   return (
-    <div className={`${classNamePrefix}__component`}>
+    <div className={`${classNamePrefix}__component`} style={{marginBottom: '65px'}}>
       <h2 className={styles.title}>Account</h2>
       <div className={styles.mainInfomation}>
         <div className={styles.inputGroup}>
@@ -56,6 +59,12 @@ const AccountInformation = (props: any) => {
           <span>
             {isWidthUp('sm', props.width) && connectedAccount}
             {isWidthDown('xs', props.width) && trimMiddlePartAddress(connectedAccount || '')}
+          </span>
+        </div>
+        <div className={styles.inputGroup}>
+          <span>Your Tier</span>
+          <span>
+            {TIERS[userTier]?.name}
           </span>
         </div>
         <div className={styles.redKiteInfo}>

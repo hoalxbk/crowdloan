@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import { numberWithCommas } from '../../../utils/formatNumber';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
-import { convertTimeToStringFormat } from '../../../utils/convertDate';
+import { convertTimeToStringFormat, convertTimeToStringFormatWithoutGMT } from '../../../utils/convertDate';
 
 export enum PoolDetailKey {
   website = 'website',
@@ -114,11 +114,11 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         image: `/images/${purchasableCurrency.toUpperCase()}.png`
       },
       [PoolDetailKey.joinTime]: {
-        display: `${convertTimeToStringFormat(joinTimeInDate)}  -  ${convertTimeToStringFormat(endJoinTimeInDate)}`,
+        display: `${convertTimeToStringFormatWithoutGMT(joinTimeInDate)}  -  ${convertTimeToStringFormat(endJoinTimeInDate)}`,
         label: 'Join Time'
       },
       [PoolDetailKey.buyTime]: {
-        display: `${convertTimeToStringFormat(startBuyTimeInDate)}  -  ${convertTimeToStringFormat(endBuyTimeInDate)}`,
+        display: `${convertTimeToStringFormatWithoutGMT(startBuyTimeInDate)}  -  ${convertTimeToStringFormat(endBuyTimeInDate)}`,
         label: 'Buy Time'
       }
     }

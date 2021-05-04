@@ -1,39 +1,60 @@
 import { useEffect, useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _, { divide } from 'lodash';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
 import useCommonStyle from '../../styles/CommonStyle';
-import usePools from '../../hooks/usePools';
-import { getContractInstance, convertFromWei, convertToWei } from '../../services/web3';
+import { getContractInstance, convertFromWei } from '../../services/web3';
 import POOL_ABI from '../../abi/Pool.json';
 import moment from 'moment';
 import { POOL_STATUS } from '../../constants';
 import Pool from './Pool';
-import PoolMobile from './PoolMobile';
+import { debounce } from 'lodash';
 import { CircularProgress } from '@material-ui/core';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
+import useFetch from '../../hooks/useFetch';
+import useAuth from '../../hooks/useAuth';
+
+import Pagination from '@material-ui/lab/Pagination';
 
 const iconSearch = 'images/icons/search.svg';
-const iconPrev = 'images/icons/prev.svg';
-const iconNext = 'images/icons/next.svg';
 
 const Pools = (props: any) => {
   const styles = useStyles();
   const commonStyle = useCommonStyle()
-  const dispatch = useDispatch();
+  const [input, setInput] = useState("");
   const [tabActive, setTabActive] = useState(1);
-  const { pools = [], pagination, loading } = usePools();
-  const [upcommingPools, setUpcommingPools] = useState([]);
-  const [camePools, setCamePools] = useState([]);
   const { data: appChain } = useSelector((state: any) => state.appNetwork);
   const { data: connector } = useSelector((state: any) => state.connector);
-  const [currentPage, setCurrrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
-  const [perPage, setPerPage] = useState(1);
-  const [lastPage, setLastPage] = useState(1);
+  const [pools, setPools] = useState([]);
 
+  const { connectedAccount } = useAuth();
+
+  const getPoolsPrefixUri = () => {
+    let uri = '/pools'
+    if (tabActive === 1) {
+      return uri;
+    }
+
+    if (tabActive === 2) {
+      return `${uri}/top-pools`;
+    }
+
+    if (tabActive === 3) {
+      return `${uri}/user/${connectedAccount}/joined-pools`;
+    }
+  }
+
+  const { data: poolsList } = useFetch<any>(
+    `${getPoolsPrefixUri()}?page=${currentPage}&limit=10&title=${input}`
+  );
+
+  const handleInputChange = debounce((e: any) => {
+    setInput(e.target.value); setCurrentPage(1)
+  }, 500);
 
   const getTokenSold = async (pool: any) => {
     let result = '0';
@@ -50,49 +71,50 @@ const Pools = (props: any) => {
   }
 
   useEffect(() => {
-    if(!pagination) return;
-    setCurrrentPage(pagination.page);
-    setTotalPage(pagination.total);
-    setPerPage(pagination.perPage);
-    setLastPage(pagination.lastPage);
-  }, [pagination])
+    const manipulatePoolsData = async () => {
+      setTotalPage(poolsList.lastPage);
+      setCurrentPage(poolsList.page);
+      setPools(poolsList.data);
 
-  useEffect(() => {
-    setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING && pool?.is_display == 1))
-    setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING && pool?.is_display == 1))
-    pools.forEach(async (pool: any) => {
-      const currentTime = moment.utc().unix();
-      const startJoinPoolTime = parseInt(pool.start_join_pool_time);
-      const endJoinPoolTime = parseInt(pool.end_join_pool_time);
-      const startTime = parseInt(pool.start_time);
-      const finishTime = parseInt(pool.finish_time);
-      if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
-        pool.status = POOL_STATUS.UPCOMMING
-      } else if(startJoinPoolTime <= currentTime
-        && currentTime <= endJoinPoolTime
-        ) 
-      {
-        pool.status = POOL_STATUS.JOINING
-      } else if(currentTime >= startTime && currentTime <= finishTime) {
-        if(Math.round(pool.tokenSold * 100 / pool.total_sold_coin) == 100) {
-          pool.status = POOL_STATUS.FILLED
-        } else {
-          pool.status = POOL_STATUS.IN_PROGRESS
-        }
-      } else {
-        pool.status = POOL_STATUS.CLOSED
-      }
-    })
-    if(!appChain || !connector) return
-    pools.forEach(async (pool: any) => {
-      if(pool.is_deploy === 0) return
-      const tokenSold = await getTokenSold(pool)
-      pool.tokenSold = tokenSold
-    })
-  }, [pools, appChain, connector]);
+      const tempPools = [...poolsList.data] as never[];
+      tempPools.forEach(async (pool: any) => {
+        const currentTime = moment.utc().unix();
+        const startJoinPoolTime = parseInt(pool.start_join_pool_time);
+        const endJoinPoolTime = parseInt(pool.end_join_pool_time);
+        const startTime = parseInt(pool.start_time);
+        const finishTime = parseInt(pool.finish_time);
+        if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
+          pool.status = POOL_STATUS.UPCOMMING
+        } else if(startJoinPoolTime <= currentTime && currentTime <= endJoinPoolTime) 
+         {
+           pool.status = POOL_STATUS.JOINING
+         } else if(currentTime >= startTime && currentTime <= finishTime) {
+           if(Math.round(pool.tokenSold * 100 / pool.total_sold_coin) == 100) {
+             pool.status = POOL_STATUS.FILLED
+           } else {
+             pool.status = POOL_STATUS.IN_PROGRESS
+           }
+         } else {
+           pool.status = POOL_STATUS.CLOSED
+         }
+      });
+
+      if(!appChain || !connector) return;
+
+      await Promise.all(tempPools.map(async (pool: any) => {
+        if(pool.is_deploy === 0) return
+          const tokenSold = await getTokenSold(pool);
+          pool.tokenSold = tokenSold
+      }));
+
+      setPools(tempPools);
+    }
+
+    poolsList && poolsList.data && poolsList.data && manipulatePoolsData();
+  }, [poolsList, appChain, connector]);
 
   const handleChangeTab = (tab: number) => {
-    setTabActive(tab)
+    setTabActive(tab);
   }
 
   return (
@@ -119,6 +141,7 @@ const Pools = (props: any) => {
               type="text"
               placeholder="Search by Pool ID, Pool name, Token contract address, Token symbol"
               className={commonStyle.nnn1424h}
+              onChange={handleInputChange}
             />
             <img src={iconSearch}/>
           </div>
@@ -138,25 +161,25 @@ const Pools = (props: any) => {
               </tr>}
             </thead>
             <tbody className={styles.poolsBody + (pools.length <= 0 ? ' loading' : '')}>
-              {pools.length > 0 && pools.map((pool: any) => {
-                return <tr><Pool pool={pool}/></tr>
+              {pools.length > 0 && pools.map((pool: any, index: number) => {
+                return <tr key={index}><Pool pool={pool}/></tr>
               })}
-              {pools.length <= 0 && <tr className="loading"><td><CircularProgress size={80} /></td></tr>}
+              {/* {pools.length <= 0 && <tr className="loading"><td><CircularProgress size={80} /></td></tr>} */}
             </tbody>
             <tfoot>
-              <div className={styles.pagination}>
-                <img src={iconPrev}/>
-                {currentPage - 3 >= 1 && <a className="prev-page" href="#">{currentPage - 3}</a>}
-                {currentPage - 2 >= 1 && <a className="prev-page" href="#">{currentPage - 2}</a>}
-                {currentPage - 1 >= 1 && <a className="prev-page" href="#">{currentPage - 1}</a>}
-                {currentPage >= 1 && <a className="prev-page" href="#">{currentPage}</a>}
-                {currentPage + 1 <= lastPage && <a className="prev-page" href="#">{currentPage + 1}</a>}
-                {currentPage + 2 <= lastPage && <a className="prev-page" href="#">{currentPage + 2}</a>}
-                {currentPage + 3 <= lastPage && <a className="prev-page" href="#">{currentPage + 3}</a>}
-                <img src={iconNext}/>
-              </div>
             </tfoot>
           </table>
+          <div className={styles.pagination}>
+            {
+              totalPage > 1 && <Pagination 
+                count={totalPage} 
+                color="primary" 
+                style={{ marginTop: 30 }} className={styles.pagination} 
+                onChange={(e: any, value: any) => setCurrentPage(value)}
+                page={currentPage}
+              />
+            }
+          </div>
         </div>
       </div>
     </DefaultLayout>

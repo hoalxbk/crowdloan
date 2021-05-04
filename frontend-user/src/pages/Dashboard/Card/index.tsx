@@ -66,6 +66,9 @@ const Card = (props: any): JSX.Element => {
           {pool.status == POOL_STATUS.CLOSED && <div className="time closed">
             <span>Closed</span>
           </div>}
+          {pool.status == POOL_STATUS.TBA && <div className="time tba">
+            <span>TBA</span>
+          </div>}
           {pool.status == POOL_STATUS.FILLED && <div className="time filled">
             <span>Filled</span>
           </div>}

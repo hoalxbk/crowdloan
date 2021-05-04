@@ -5,6 +5,22 @@ import { convertFromWei, getContractInstance, getWeb3Instance } from '../../serv
 import erc20ABI from '../../abi/Erc20.json';
 import BigNumber from "bignumber.js";
 
+const balanceOf = async (tokenAddress: string | undefined, appChainID: any, connector: any, loginUser: string) => {
+  const tokenContract = getContractInstance(
+    erc20ABI,
+    tokenAddress as string,
+    connector,
+    appChainID
+  );
+  if (tokenContract) {
+    const tokenDecimals = await tokenContract.methods.decimals().call();
+    const tokenBalance = await tokenContract.methods.balanceOf(loginUser).call();
+    const tokenBalanceConvert = (new BigNumber(tokenBalance)).div(new BigNumber(`1e+${tokenDecimals}`)).toString();
+    return tokenBalanceConvert;
+  }
+  return 0;
+}
+
 export const getBalance = (loginUser: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: balanceActions.BALANCE_LOADING });
@@ -21,21 +37,16 @@ export const getBalance = (loginUser: string) => {
       const { appChainID } = getState().appNetwork.data;
       const { connector } = getState().connector.data;
 
-      const tokenContract = getContractInstance(
-        erc20ABI,
-        process.env.REACT_APP_SOTA as string,
-        connector,
-        appChainID
-      );
-      if (tokenContract) {
-        const tokenDecimals = await tokenContract.methods.decimals().call();
-        const tokenBalance = await tokenContract.methods.balanceOf(loginUser).call();
-        const tokenBalanceConvert = (new BigNumber(tokenBalance)).div(new BigNumber(`1e+${tokenDecimals}`)).toString();
-        result = {
-          ...result,
-          token: tokenBalanceConvert,
-        };
-      }
+      const pkfBalance = await balanceOf(process.env.REACT_APP_PKF, appChainID, connector, loginUser);
+      const uniBalance = await balanceOf(process.env.REACT_APP_UNI_LP, appChainID, connector, loginUser);
+      const mantraBalance = await balanceOf(process.env.REACT_APP_MANTRA_LP, appChainID, connector, loginUser);
+
+      result = {
+        ...result,
+        pkf: pkfBalance,
+        uni: uniBalance,
+        mantra: mantraBalance
+      };
 
       dispatch({
         type: balanceActions.BALANCE_SUCCESS,

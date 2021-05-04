@@ -6,7 +6,7 @@ import { getBalance } from '../../store/actions/balance';
 import { getTiers, getUserTier, getUserInfo } from '../../store/actions/sota-tiers';
 import { getAllowance } from '../../store/actions/sota-token';
 import Tiers from './Tiers';
-import DefaultLayout from './../../components/Layout/DefaultLayout';
+import DefaultLayout from '../../components/Layout/DefaultLayout';
 import AccountInformation from './AccountInformation';
 import ManageTier from './ManageTier';
 import useStyles from './style';
@@ -15,7 +15,7 @@ import useTokenDetails from '../../hooks/useTokenDetails';
 import useFetch from '../../hooks/useFetch';
 import { USER_STATUS } from '../../constants';
 
-const TOKEN_ADDRESS = process.env.REACT_APP_SOTA || '';
+const TOKEN_ADDRESS = process.env.REACT_APP_PKF || '';
 
 const iconWarning = "/images/icons/warning.svg";
 const iconClose = "/images/icons/close.svg";

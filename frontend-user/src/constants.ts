@@ -3,6 +3,7 @@ export const API_URL_PREFIX = 'user';
 export const ADMIN_URL_PREFIX = 'dashboard';
 export const MAX_BUY_CAMPAIGN = 1000;
 export const POOL_STATUS = {
+  TBA: 0,
   UPCOMMING: 1,
   JOINING: 2,
   IN_PROGRESS: 3,
@@ -41,23 +42,33 @@ export const USER_STATUS = {
 
 export const TIERS = [
   {
-    name: 'Start',
-    icon: '/images/icons/rocket.svg'
+    name: 'RedKite',
+    icon: '/images/icons/rocket.svg',
+    bg: '/images/icons/red-kite-bg.png',
+    bgColor: '#8D8DCC',
   },
   {
-    name: 'Bronze',
+    name: 'Hawk',
+    bg: '/images/icons/hawk-bg.png',
+    bgColor: '#5252AD',
     icon: '/images/icons/bronze-medal.svg'
   },
   {
-    name: 'Silver',
+    name: 'Falcon',
+    bg: '/images/icons/falcon-bg.png',
+    bgColor: '#3F3FA3',
     icon: '/images/icons/silver-medal.svg'
   },
   {
-    name: 'Gold',
+    name: 'Eagle',
+    bg: '/images/icons/eagle-bg.png',
+    bgColor: '#1B1BA3',
     icon: '/images/icons/golden-medal.svg'
   },
   {
-    name: 'Diamond',
+    name: 'Phoenix',
+    bg: '/images/icons/phoenix-bg.png',
+    bgColor: '',
     icon: '/images/icons/diamond.svg'
   }
 ]

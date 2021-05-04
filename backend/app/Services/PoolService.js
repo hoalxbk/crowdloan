@@ -25,7 +25,9 @@ class PoolService {
       if (params.is_search) {
         builder = builder.where(query => {
           query.where('title', 'like', '%'+ params.title +'%')
-            .orWhere('symbol', 'like', '%'+ params.title +'%');
+            .orWhere('symbol', 'like', '%'+ params.title +'%')
+            .orWhere('token', 'like', '%'+ params.title +'%')
+            .orWhere('campaign_hash', 'like', '%'+ params.title +'%');
 
           if((params.title).toLowerCase() == Config.get('const.suspend')) {
             query.orWhere('is_pause', '=', 1)
@@ -52,11 +54,12 @@ class PoolService {
     if(params.registed_by){
       builder = builder.where('registed_by', '=', params.registed_by)
     }
-    // if(params.is_display !== undefined){
-    //   builder = builder.where('is_display', '=', params.is_display)
-    // }
 
-    builder = builder.where('is_display', '=', Const.POOL_DISPLAY.DISPLAY);
+    if (params.is_display === undefined) {
+      builder = builder.where('is_display', '=', Const.POOL_DISPLAY.DISPLAY);
+    } else {
+      builder = builder.where('is_display', '=', params.is_display);
+    }
 
     return builder;
   }
@@ -73,13 +76,13 @@ class PoolService {
     return pool;
   }
 
-  // buildSearchQueryWithTitle(query, searchQueryText) {
-  //   return query.where((q) => {
-  //     q.where('email', 'like', `%${searchQueryText}%`)
-  //       .orWhere('wallet_address', 'like', `%${searchQueryText}%`)
-  //       .orWhere('username', 'like', `%${searchQueryText}%`);
-  //   })
-  // }
+  getJoinedPools(walletAddress, params) {
+    const query =  this.buildSearchQuery(params);
+    query.whereHas('whitelistUsers',(builder) => {
+      builder.where('wallet_address', walletAddress);
+    }, '>', 0);
+    return query;
+  }
 
 }
 

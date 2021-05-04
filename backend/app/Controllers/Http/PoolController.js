@@ -27,6 +27,7 @@ const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
 const moment = require('moment');
 const BigNumber = use('bignumber.js')
+const {pick} = require('lodash');
 
 class PoolController {
 
@@ -260,26 +261,17 @@ class PoolController {
     }
   }
 
-
-  async getPool({ request, auth, params }) {
+  async getPoolAdmin({ request, auth, params }) {
     const poolId = params.campaignId;
-    console.log('Start getPool with poolId: ', poolId);
+    console.log('Start getPool (Admin) with poolId: ', poolId);
     try {
-      if (await RedisUtils.checkExistRedisPoolDetail(poolId)) {
-        const cachedPoolDetail = await RedisUtils.getRedisPoolDetail(poolId);
-        console.log('Exist cache data Public Pool Detail: ', cachedPoolDetail);
-        return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
-      }
-
       let pool = await CampaignModel.query()
         .with('tiers')
         .where('id', poolId)
         .first();
 
       pool = JSON.parse(JSON.stringify(pool));
-
       console.log('[getPool] - pool.tiers: ', pool.tiers);
-
       if (pool.tiers && pool.tiers.length > 0) {
         pool.tiers = pool.tiers.map((item, index) => {
           return {
@@ -298,10 +290,56 @@ class PoolController {
         };
       }
 
-      // Cache data
-      RedisUtils.createRedisPoolDetail(poolId, pool);
-
       return HelperUtils.responseSuccess(pool);
+    } catch (e) {
+      console.log(e)
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
+  async getPoolPublic({ request, auth, params }) {
+    const poolId = params.campaignId;
+    console.log('[getPublicPool] - Start getPublicPool with poolId: ', poolId);
+    try {
+      if (await RedisUtils.checkExistRedisPoolDetail(poolId)) {
+        const cachedPoolDetail = await RedisUtils.getRedisPoolDetail(poolId);
+        console.log('Exist cache data Public Pool Detail: ', cachedPoolDetail);
+        return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
+      }
+
+      let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      pool = JSON.parse(JSON.stringify(pool));
+
+      const publicPool = pick(pool, [
+        // Pool Info
+        'id', 'title', 'website', 'banner', 'updated_at', 'created_at',
+        'campaign_hash', 'campaign_id', 'description', 'registed_by', 'register_by',
+
+        // Types
+        'buy_type', 'accept_currency', 'min_tier', 'network_available', 'pool_type', 'is_deploy', 'is_display', 'is_pause',
+
+        // Time
+        'release_time', 'start_join_pool_time', 'start_time', 'end_join_pool_time', 'finish_time',
+
+        // Token Info
+        'name', 'symbol', 'decimals', 'token', 'token_conversion_rate', 'ether_conversion_rate', 'token_images', 'total_sold_coin',
+      ]);
+
+      console.log('[getPublicPool] - pool.tiers: ', pool.tiers);
+      if (pool.tiers && pool.tiers.length > 0) {
+        publicPool.tiers = pool.tiers.map((item, index) => {
+          return {
+            ...item,
+            min_buy: (new BigNumber(item.min_buy)).toNumber(),
+            max_buy: (new BigNumber(item.max_buy)).toNumber(),
+          }
+        });
+      }
+
+      // Cache data
+      RedisUtils.createRedisPoolDetail(poolId, publicPool);
+
+      return HelperUtils.responseSuccess(publicPool);
     } catch (e) {
       console.log(e)
       return HelperUtils.responseErrorInternal(e.message);
@@ -329,16 +367,59 @@ class PoolController {
       listData = listData.orderBy('id', 'DESC');
       listData = await listData.paginate(page,limit);
 
-      // Cache data
-      RedisUtils.createRedisPoolList(param, listData);
+      // // Cache data
+      // RedisUtils.createRedisPoolList(param, listData);
 
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e)
       return HelperUtils.responseErrorInternal(e.message);
     }
+  }
 
+  async getTopPools({request}) {
+    const inputParams = request.all();
+    const limit = inputParams.limit ? inputParams.limit : Config.get('const.limit_default');
+    const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
+    inputParams.limit = limit;
+    inputParams.page = page;
+    inputParams.is_display = false;
+    inputParams.is_search = true;
+    console.log('[getTopPools] - inputParams: ', inputParams);
 
+    try {
+      let listData = (new PoolService).buildSearchQuery(inputParams);
+      listData = listData.orderBy('created_at', 'DESC');
+      listData = await listData.paginate(page,limit);
+
+      return HelperUtils.responseSuccess(listData);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
+  }
+
+  async getJoinedPools({ request, params }) {
+    const inputParams = request.all();
+    const limit = inputParams.limit ? inputParams.limit : Config.get('const.limit_default');
+    const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
+    inputParams.limit = limit;
+    inputParams.page = page;
+    inputParams.is_display = false;
+    inputParams.is_search = true;
+    console.log('[getJoinedPools] - inputParams: ', inputParams);
+
+    const walletAddress = params.walletAddress;
+    try {
+      let listData = (new PoolService).getJoinedPools(walletAddress, inputParams);
+      listData = listData.orderBy('created_at', 'DESC');
+      listData = await listData.paginate(page,limit);
+
+      return HelperUtils.responseSuccess(listData);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal(e.message);
+    }
   }
 
 }

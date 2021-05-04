@@ -48,7 +48,7 @@ const Tiers = (props: any) => {
     if(overTier) {
       return 100;
     }
-    let process = (parseInt(userTier)) * 100 / ListData.length + (parseFloat(current) - tierA) * 100 /((tierB - tierA) * ListData.length)
+    let process = (parseFloat(current) - tierA) * 100 /((tierB - tierA))
     if(process > 100) process = 100
     return process;
   }
@@ -62,21 +62,23 @@ const Tiers = (props: any) => {
       return
     }
     if(showMoreInfomation && !_.isEmpty(userTier)) {
-      let process = userTier*100/(tiersBuyLimit.length - 1)
-      setCurrentProcess(process);
-      setLoading(false);
+      // let process = userTier*100/(tiersBuyLimit.length - 1)
+      setCurrentProcess(100);
       return;
     }
     if(!showMoreInfomation && !_.isEmpty(userInfo) && !_.isEmpty(userTier)) {
       let process = calculateProcess(tiers, userInfo.staked);
       setCurrentProcess(process);
-      setLoading(false);
     }
   }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain])
 
   useEffect(() => {
     dispatch(getTiers());
   }, [])
+
+  useEffect(() => {
+    if(currentProcess != undefined) setLoading(false)
+  }, [currentProcess])
 
   return (
     <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>
@@ -90,28 +92,70 @@ const Tiers = (props: any) => {
         </>
       </div>}
       <ul className={styles.tierList}>
-        {isWidthUp('sm', props.width) && <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{width:`${currentProcess}%`}}></li>}
-        {isWidthDown('xs', props.width) && <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{height:`${currentProcess}%`}}></li>}
-        <li className={styles.tierInfo + ' active'}>
-          <div className="icon">
-            <img src={TIERS[0].icon} />
-          </div>
-          <div className="info">
-            <span className="tier-name">{TIERS[0].name}</span>
-            {!showMoreInfomation && <span>0</span>}
-            {showMoreInfomation && <span>{tiersBuyLimit[0]} {tokenSymbol}</span>}
+        {/* {isWidthUp('sm', props.width) && <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{width:`${currentProcess}%`}}></li>}
+        {isWidthDown('xs', props.width) && <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{height:`${currentProcess}%`}}></li>} */}
+        
+        <li className={styles.tierInfo + ' active first-tier'}>
+          {isWidthUp('sm', props.width) && <span
+            className={"progress-bar" + (loading ? ' inactive' : ' active')}
+            style={{
+              backgroundColor: TIERS[0].bgColor,
+              width: userTier == 0 ? `${currentProcess}%` : 'calc(100% - 1px)'
+            }}
+          ></span>}
+          {isWidthDown('xs', props.width) && <span
+            className={"progress-bar" + (loading ? ' inactive' : ' active')}
+            style={{
+              backgroundColor: TIERS[0].bgColor,
+              height: userTier == 0 ? `${currentProcess}%` : 'calc(100% - 1px)'
+            }}
+          ></span>}
+          <div>
+            <div className="icon">
+              <img src={TIERS[0].bg} alt=""/>
+              <img src={TIERS[0].icon} />
+            </div>
+            <div className="info">
+              <span className="tier-name">{TIERS[0].name}</span>
+              {!showMoreInfomation && <span>0</span>}
+              {showMoreInfomation && <span>{tiersBuyLimit[0]} {tokenSymbol}</span>}
+            </div>
           </div>
         </li>
         {tiers.length > 0 && tiers.map((tier: any, idx: any) => {
           if(tier != 0) {
-            return <li key={tier} className={styles.tierInfo + (userTier > idx ? ' active' : '')}>
-              <div className="icon">
-                <img src={TIERS[idx + 1].icon} />
-              </div>
-              <div className="info">
-                <span className="tier-name">{TIERS[idx + 1].name}</span>
-                { !showMoreInfomation && <span>{tier} {tokenSymbol}</span> }
-                { showMoreInfomation && <span>{tiersBuyLimit[idx + 1]} {tokenSymbol}</span> }
+            return <li key={tier} className={styles.tierInfo + (userTier > idx ? ' active ' : ' ') + TIERS[idx + 1].name}>
+              {userTier > idx + 1 && <span
+                className={"progress-bar" + (loading ? ' inactive' : ' active')}
+                style={{
+                  backgroundColor: TIERS[idx + 1].bgColor,
+                  transition: `all 1s ease ${idx + 1}s`
+                }}
+              ></span>}
+              {userTier == idx + 1 && isWidthUp('sm', props.width) && <span
+                className={"progress-bar" + (loading ? ' inactive' : ' active')}
+                style={{
+                  backgroundColor: TIERS[idx + 1].bgColor,
+                  width: `${currentProcess}%`
+                }}
+              ></span>}
+              {userTier == idx + 1 && isWidthDown('xs', props.width) && <span
+                className={"progress-bar" + (loading ? ' inactive' : ' active')}
+                style={{
+                  backgroundColor: TIERS[idx + 1].bgColor,
+                  height: `${currentProcess}%`
+                }}
+              ></span>}
+              <div>
+                <div className="icon">
+                  <img src={TIERS[idx + 1].bg} alt=""/>
+                  <img src={TIERS[idx + 1].icon} />
+                </div>
+                <div className="info">
+                  <span className="tier-name">{TIERS[idx + 1].name}</span>
+                  { !showMoreInfomation && <span>{tier} {tokenSymbol}</span> }
+                  { showMoreInfomation && <span>{tiersBuyLimit[idx + 1]} {tokenSymbol}</span> }
+                </div>
               </div>
             </li>
           }
