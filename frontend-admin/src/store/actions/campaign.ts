@@ -655,39 +655,22 @@ export const deployPool = (campaign: any, history: any) => {
       if (factorySmartContract) {
         let createdCampaign;
         const userWalletAddress = getState().user.data.wallet_address;
-
         const signerWallet = campaign.wallet.wallet_address;
         console.log('userWallet', signerWallet);
 
-        if (poolType === POOL_TYPE.CLAIMABLE) {
-          createdCampaign = await factorySmartContract.methods.registerPool(
-            token,
-            durationTime,
-            startTimeUnix,
+        createdCampaign = await factorySmartContract.methods.registerPool(
+          token,
+          durationTime,
+          startTimeUnix,
 
-            paidTokenAddress,
-            tokenByEthDecimals,
-            tokenByETHActualRate,
-            address_receiver,
-            signerWallet,
-          ).send({
-            from: userWalletAddress,
-          });
-        } else {
-          createdCampaign = await factorySmartContract.methods.registerPool(
-            token,
-            durationTime,
-            startTimeUnix,
-
-            paidTokenAddress,
-            tokenByEthDecimals,
-            tokenByETHActualRate,
-            address_receiver,
-            signerWallet,
-          ).send({
-            from: userWalletAddress,
-          });
-        }
+          paidTokenAddress,
+          tokenByEthDecimals,
+          tokenByETHActualRate,
+          address_receiver,
+          signerWallet,
+        ).send({
+          from: userWalletAddress,
+        });
 
         console.log('Deploy Response: ', createdCampaign);
         if (createdCampaign) {
