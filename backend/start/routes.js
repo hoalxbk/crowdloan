@@ -165,7 +165,7 @@ Route.get('pools/user/:walletAddress/joined-pools', 'PoolController.getJoinedPoo
 Route.get('pool/:campaignId', 'PoolController.getPoolPublic');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerAndReserveList');
-Route.get('pool/:campaignId/user/:walletAddress/current-tier', 'UserController.getCurrentTier').middleware(['formatEmailAndWallet']);
+Route.get('pool/:campaignId/user/:walletAddress/current-tier', 'UserController.getCurrentTier');
 Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
 Route.get('pool/:campaignId/check-exist-winner', 'WinnerListUserController.checkExistWinner').validator('CheckUserWinnerExist');
 
