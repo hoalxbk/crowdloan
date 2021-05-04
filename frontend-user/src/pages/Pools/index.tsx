@@ -166,15 +166,19 @@ const Pools = (props: any) => {
               })}
               {/* {pools.length <= 0 && <tr className="loading"><td><CircularProgress size={80} /></td></tr>} */}
             </tbody>
+            <tfoot>
+            </tfoot>
           </table>
           <div className={styles.pagination}>
-            <Pagination 
-              count={totalPage} 
-              color="primary" 
-              style={{ marginTop: 30 }} className={styles.pagination} 
-              onChange={(e: any, value: any) => setCurrentPage(value)}
-              page={currentPage}
-            />
+            {
+              totalPage > 1 && <Pagination 
+                count={totalPage} 
+                color="primary" 
+                style={{ marginTop: 30 }} className={styles.pagination} 
+                onChange={(e: any, value: any) => setCurrentPage(value)}
+                page={currentPage}
+              />
+            }
           </div>
         </div>
       </div>
