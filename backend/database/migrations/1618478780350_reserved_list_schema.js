@@ -7,7 +7,7 @@ class ReservedListSchema extends Schema {
   up () {
     this.create('reserved_list', (table) => {
       table.increments();
-      table.string('email', 255).notNullable();
+      table.string('email', 255).nullable();
       table.string('wallet_address', 255).notNullable();
       table.string('start_time').nullable();
       table.string('end_time').nullable();
