@@ -243,7 +243,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const purchasable = 
      availablePurchase 
      && estimateTokens > 0 
-     && (purchasableCurrency !== PurchaseCurrency.ETH ? input <= maximumBuy: new BigNumber(input).lte(tokenBalance))
+     && (purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(input).lte(new BigNumber(maximumBuy)): new BigNumber(input).lte(tokenBalance))
      && !poolErrorBeforeBuy
      && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)))
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
