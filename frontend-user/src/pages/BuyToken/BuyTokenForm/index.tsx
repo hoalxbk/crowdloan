@@ -252,8 +252,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && validTier    
      && ((purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(tokenAllowance || 0).gt(0): true));
 
-     console.log(purchasable);
-
   // Fetch User balance
   const fetchUserBalance = useCallback(async () => {
       if (appChainID && connectedAccount && connector) {
