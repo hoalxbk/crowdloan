@@ -114,8 +114,8 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
       const stakedMantra = convertFromWei(resultMantra.staked)
 
       const resultStaked = await contract?.methods.userExternalStaked(address).call();
-      console.log(resultStaked)
-      const totalStaked = stakedPkf + convertFromWei(resultStaked)
+      const totalStaked = parseFloat(stakedPkf) + parseFloat(convertFromWei(resultStaked))
+      console.log(totalStaked, "toe")
 
       result = {
         ...result,
@@ -143,14 +143,14 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
   }
 };
 
-export const deposit = (address: string | null | undefined, amount: string, library: Web3Provider) => {
+export const deposit = (address: string | null | undefined, amount: string, library: Web3Provider, tokenAddress: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
       let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
-      result = await contract?.depositERC20(process.env.REACT_APP_PKF, convertToWei(amount))
+      result = await contract?.depositERC20(tokenAddress, convertToWei(amount))
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
@@ -173,7 +173,7 @@ export const deposit = (address: string | null | undefined, amount: string, libr
   }
 };
 
-export const withdraw = (address: string | null | undefined, amount: string, library: Web3Provider) => {
+export const withdraw = (address: string | null | undefined, amount: string, library: Web3Provider, tokenAddress: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_LOADING });
     try {
@@ -181,7 +181,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
 
-      result = await contract?.withdrawERC20(process.env.REACT_APP_PKF, convertToWei(amount));
+      result = await contract?.withdrawERC20(tokenAddress, convertToWei(amount));
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));

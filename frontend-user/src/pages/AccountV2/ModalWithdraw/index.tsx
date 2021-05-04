@@ -37,7 +37,7 @@ const ModalWithdraw = (props: any) => {
 
   const onWithDraw = () => {
     if(disableWithdraw) return
-    dispatch(withdraw(connectedAccount, withdrawAmount, library));
+    dispatch(withdraw(connectedAccount, withdrawAmount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalWithdraw(false);
   }
@@ -90,8 +90,8 @@ const ModalWithdraw = (props: any) => {
           </div>
           <div className="modal-content__body">
             <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
-              {listTokenDetails && listTokenDetails.map((tokenDetails: any) => {
-                return <option value={tokenDetails?.symbol}>{tokenDetails?.symbol}</option>
+              {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
+                return <option value={tokenDetails?.symbol} key={index}>{tokenDetails?.symbol}</option>
               })}
             </select>
             <div className="subtitle">
