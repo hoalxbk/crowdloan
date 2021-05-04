@@ -48,6 +48,7 @@ function PoolForm(props: any) {
   const [loadingDeploy, setLoadingDeploy] = useState(false);
   const [deployed, setDeployed] = useState(false);
   const [token, setToken] = useState<TokenType | null>(null);
+  const [needValidate, setNeedValidate] = useState(false);
 
   useEffect(() => {
     const checkCampaignFactorySuspended = async () => {
@@ -155,6 +156,7 @@ function PoolForm(props: any) {
     }
   };
 
+  // Update After Deploy
   const updatePoolAfterDeloy = async (data: any) => {
     // Only allow update informations:
     // name
@@ -200,12 +202,16 @@ function PoolForm(props: any) {
     }
   };
 
+  // Create / Update Pool (Before Deploy)
   const handleCampaignCreate = () => {
-    if (poolDetail?.is_deploy) {
-      handleSubmit(handleUpdateAfterDeloy)();
-    } else {
-      handleSubmit(handleFormSubmit)();
-    }
+    setNeedValidate(false);
+    setTimeout(() => {
+      if (poolDetail?.is_deploy) {
+        handleSubmit(handleUpdateAfterDeloy)();
+      } else {
+        handleSubmit(handleFormSubmit)();
+      }
+    }, 100);
   };
 
   const getTokenInforDetail = async (token: string) => {
@@ -218,6 +224,7 @@ function PoolForm(props: any) {
     return tokenInfo;
   }
 
+  // Deploy Pool And Update
   const handleDeloySubmit = async (data: any) => {
     if (poolDetail.is_deploy || deployed) {
       alert('Pool is deployed !!!');
@@ -226,6 +233,7 @@ function PoolForm(props: any) {
     // eslint-disable-next-line no-restricted-globals
     if (!confirm('The system will store the latest pool information.\n' +
      'Are you sure you want to deploy?')) {
+      setNeedValidate(false);
       return false;
     }
 
@@ -310,7 +318,10 @@ function PoolForm(props: any) {
   };
 
   const handlerDeploy = () => {
-    handleSubmit(handleDeloySubmit)();
+    setNeedValidate(true);
+    setTimeout(() => {
+      handleSubmit(handleDeloySubmit)();
+    }, 100);
   };
 
   const watchBuyType = watch('buyType');
@@ -457,6 +468,7 @@ function PoolForm(props: any) {
               control={control}
               getValues={getValues}
               watch={watch}
+              needValidate={needValidate}
             />
           </div>
 

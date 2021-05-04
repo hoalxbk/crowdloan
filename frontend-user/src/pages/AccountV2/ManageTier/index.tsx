@@ -31,16 +31,14 @@ const ManageTier = (props: any) => {
   const { data: depositTransaction, error: depositError } = useSelector((state: any) => state.deposit);
   const { data: approveTransaction, error: approveError } = useSelector((state: any) => state.approve);
   const { data: withdrawTransaction, error: withdrawError } = useSelector((state: any) => state.withdraw);
-  const { data: withdrawPercent = {} } = useSelector((state: any) => state.withdrawPercent)
-  const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee)
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = {} } = useSelector((state: any) => state.balance);
   const { connectedAccount, isAuth, wrongChain } = useAuth();
 
   const { 
     classNamePrefix = '',
-    tokenDetails,
-    emailVerified
+    emailVerified,
+    listTokenDetails
   } = props;
 
   const handleKYC = () => {
@@ -75,16 +73,66 @@ const ManageTier = (props: any) => {
     if(withdrawError.message) setOpenModalTransactionSubmitting(false);
   }, [withdrawTransaction, withdrawError])
 
-  useEffect(() => {
-    if(_.isEmpty(userInfo) || _.isEmpty(connectedAccount)) return
-    dispatch(getWithdrawFee(connectedAccount, userInfo.staked));
-  }, [connectedAccount, userInfo])
+  const renderToken = (symbol: string, balance: any, staked: any) => {
+    return <div className="group">
+      <span>{symbol}</span>
+      {(wrongChain || !isAuth) && <AnimatedNumber
+        value={0}
+        formatValue={numberWithCommas}
+      />}
+      {!wrongChain && isAuth && <AnimatedNumber
+        value={balance}
+        formatValue={numberWithCommas}
+      />}
+      {(wrongChain || !isAuth) && <AnimatedNumber
+        value={0}
+        formatValue={numberWithCommas}
+      />}
+      {!wrongChain && isAuth && <AnimatedNumber
+        value={staked}
+        formatValue={numberWithCommas}
+      />}
+    </div>
+  }
 
   return (
     <div className={`${classNamePrefix}__component`}>
       <div className={styles.content}>
-        <p className={styles.textDefault}>Available balance</p>
-        <p className={styles.balance}>
+        <div className={styles.manageTier}>
+          <p className={styles.textDefault}>Available balance</p>
+          <div className="button-area">
+            <button
+              className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
+              onClick={() => {setOpenModalDeposit(true)}}
+              disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+            >
+              Lock - in
+            </button>
+            <button
+              className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
+              onClick={() => {setOpenModalWithdraw(true)}}
+              disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+            >
+              Unlock
+            </button>
+          </div>
+        </div>
+        <div className={styles.walletBalance}>
+          <div className={styles.tableHead}>
+            <div className="group">
+              <span>Currency</span>
+              <span>Available Balance</span>
+              <span>Locked-in</span>
+            </div>
+          </div>
+          <div className={styles.tableBody}>
+            {renderToken(listTokenDetails[0]?.symbol, balance?.pkf, userInfo?.pkfStaked)}
+            {renderToken(listTokenDetails[1]?.symbol, balance?.uni, userInfo?.uniStaked)}
+            {renderToken(listTokenDetails[2]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
+          </div>
+        </div>
+
+        {/* <p className={styles.balance}>
           {(wrongChain || !isAuth) && <AnimatedNumber
             value={0}
             formatValue={numberWithCommas}
@@ -94,74 +142,17 @@ const ManageTier = (props: any) => {
             formatValue={numberWithCommas}
           />}
           &nbsp;{tokenDetails?.symbol}
-        </p>
-        <div className="button-area">
-          <button
-            className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
-            onClick={() => {setOpenModalDeposit(true)}}
-            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
-          >
-            Lock - in
-          </button>
-          <button
-            className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
-            onClick={() => {setOpenModalWithdraw(true)}}
-            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
-          >
-            Unlock
-          </button>
-        </div>
-        
-        <div className={styles.PenaltyInfomation}>
-          <p className="title">Disclaimer</p>
-          <p className="subcription">There are penalties when you unlock, based on the date you deposited your last tokens:</p>
-          <ul>
-            <li>
-              <span className={styles.textDefault}>less than 10 days ago</span>
-              <span>{ `${withdrawPercent.penaltiesPercent && withdrawPercent.penaltiesPercent[0] || 0 }%` }</span>
-            </li>
-            <li>
-              <span className={styles.textDefault}>less than 20 days ago</span>
-              <span>{ `${withdrawPercent.penaltiesPercent && withdrawPercent.penaltiesPercent[1] || 0 }%` }</span>
-            </li>
-            <li>
-            <span className={styles.textDefault}>less than 30 days ago</span>
-              <span>{ `${withdrawPercent.penaltiesPercent && withdrawPercent.penaltiesPercent[2] || 0 }%` }</span>
-            </li>
-            <li>
-            <span className={styles.textDefault}>less than 60 days ago</span>
-              <span>{ `${withdrawPercent.penaltiesPercent && withdrawPercent.penaltiesPercent[3] || 0 }%` }</span>
-            </li>
-            <li>
-            <span className={styles.textDefault}>less than 90 days ago</span>
-              <span>{ `${withdrawPercent.penaltiesPercent && withdrawPercent.penaltiesPercent[4] || 0 }%` }</span>
-            </li>
-            <li>
-            <span className={styles.textDefault}>after 90 days</span>
-              <span>{ `${withdrawPercent.penaltiesPercent && withdrawPercent.penaltiesPercent[5] || 0 }%` }</span>
-            </li>
-          </ul>
-
-          <p className="subtitle">Disclaimer</p>
-          <div className="current-penalty">
-            <span className={styles.textDefault}>Current penalty</span>
-            <span>{ `${withdrawFee.feePercent || 0}%` }</span>
-          </div>
-          <div className="last-deposit">
-            <span className={styles.textDefault}>Last Deposit</span>
-            <span>{userInfo.stakedTime != '0' ? timeAgo(parseInt(userInfo.stakedTime)*1000) : '0 days ago'}</span>
-          </div>
-        </div>
+        </p> */}
       </div>
       {openModalDeposit && <ModalDeposit
         setOpenModalDeposit={setOpenModalDeposit}
         setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
-        token={tokenDetails}
+        listTokenDetails={listTokenDetails}
       />}
       {openModalWithdraw && <ModalWithdraw
         setOpenModalWithdraw={setOpenModalWithdraw}
         setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
-        token={tokenDetails}
+        listTokenDetails={listTokenDetails}
       />}
       {openModalTransactionSubmitting && <div className={commonStyles.loadingTransaction}>
         <div className="content">

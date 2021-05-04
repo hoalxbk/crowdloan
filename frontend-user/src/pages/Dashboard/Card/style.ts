@@ -6,6 +6,7 @@ const useStyles = makeStyles((theme: any) => {
       borderRadius: '20px',
       background: 'linear-gradient(360deg, rgba(55, 57, 73, 0.4) 0%, rgba(37, 39, 50, 0.4) 23.38%)',
       overflow: 'hidden',
+      height: '100%',
 
       '&:hover': {
         border: '1px solid rgba(208, 31, 54, 0.4)',

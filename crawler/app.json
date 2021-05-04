@@ -19,6 +19,12 @@
       "watch": false
     },
     {
+      "name": "SotatekStarterTierCrawler",
+      "script": "bin/ethlink/TierLogCrawler.js",
+      "cwd": "dist",
+      "watch": false
+    },
+    {
       "name": "SotatekStarterWebhook",
       "script": "bin/ethlink/WebhookWorker.js",
       "cwd": "dist",

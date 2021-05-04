@@ -37,6 +37,7 @@ class UserController {
         email: findedUser.email,
         id: findedUser.id,
         status: findedUser.status,
+        is_kyc: findedUser.is_kyc,
       }
     });
   }

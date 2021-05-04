@@ -161,25 +161,25 @@ const Pools = (props: any) => {
               </tr>}
             </thead>
             <tbody className={styles.poolsBody + (pools.length <= 0 ? ' loading' : '')}>
-              {pools.length > 0 && pools.map((pool: any) => {
-                return <tr><Pool pool={pool}/></tr>
+              {pools.length > 0 && pools.map((pool: any, index: number) => {
+                return <tr key={index}><Pool pool={pool}/></tr>
               })}
               {/* {pools.length <= 0 && <tr className="loading"><td><CircularProgress size={80} /></td></tr>} */}
             </tbody>
             <tfoot>
-              <div className={styles.pagination}>
-                {
-                  totalPage > 1 && <Pagination 
-                    count={totalPage} 
-                    color="primary" 
-                    style={{ marginTop: 30 }} className={styles.pagination} 
-                    onChange={(e: any, value: any) => setCurrentPage(value)}
-                    page={currentPage}
-                  />
-                }
-              </div>
             </tfoot>
           </table>
+          <div className={styles.pagination}>
+            {
+              totalPage > 1 && <Pagination 
+                count={totalPage} 
+                color="primary" 
+                style={{ marginTop: 30 }} className={styles.pagination} 
+                onChange={(e: any, value: any) => setCurrentPage(value)}
+                page={currentPage}
+              />
+            }
+          </div>
         </div>
       </div>
     </DefaultLayout>

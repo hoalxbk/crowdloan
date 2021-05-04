@@ -1,11 +1,10 @@
 import { sotaTokenActions } from '../constants/sota-token';
 import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
-import { getContractInstance, convertToWei } from '../../services/web3';
+import { getContractInstance } from '../../services/web3';
 import erc20ABI from '../../abi/Erc20.json';
-import { convertFromWei, MAX_INT } from './../../services/web3';
-import BN from 'bn.js';
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { MAX_INT } from './../../services/web3';
+import { Web3Provider } from '@ethersproject/providers'
 import { getContract } from '../../utils/contract';
 
 export const getAllowance = (owner: string) => {
@@ -14,9 +13,9 @@ export const getAllowance = (owner: string) => {
     try {
       let result = {};
 
-      const contract = getContractInstance(erc20ABI, process.env.REACT_APP_SOTA as string);
+      const contract = getContractInstance(erc20ABI, process.env.REACT_APP_PKF as string);
 
-      result = await contract?.methods.allowance(owner, process.env.REACT_APP_PKFTIERS).call();
+      result = await contract?.methods.allowance(owner, process.env.REACT_APP_TIERS).call();
 
       dispatch({
         type: sotaTokenActions.ALLOWANCE_SUCCESS,
@@ -38,8 +37,8 @@ export const approve = (address: string | null | undefined, library: Web3Provide
     try {
       let result = {} as any;
 
-      const contract = getContract(process.env.REACT_APP_SOTA as string, erc20ABI, library, address || '');
-      result = await contract?.approve(process.env.REACT_APP_PKFTIERS, MAX_INT)
+      const contract = getContract(process.env.REACT_APP_PKF as string, erc20ABI, library, address || '');
+      result = await contract?.approve(process.env.REACT_APP_TIERS, MAX_INT)
       await result.wait(1);
       if(result) {
         dispatch(getAllowance(address || ''));
