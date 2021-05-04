@@ -1,9 +1,13 @@
 'use strict'
 
+const TierModel = use('App/Models/Tier');
+const CampaignModel = use('App/Models/Campaign');
 const WhitelistService = use('App/Services/WhitelistUserService')
-const WinnerListService = use('App/Services/WinnerListUserService')
+const TierService = use('App/Services/TierService');
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
+
+const PickRandomWinnerJob = use('App/Jobs/PickRandomWinnerJob')
 
 class WhiteListUserController {
   async getWhiteList({request}) {
@@ -97,17 +101,46 @@ class WhiteListUserController {
   async getRandomWinners({request}) {
     // get request params
     const campaign_id = request.params.campaignId;
-    const num = request.params.number;
-    if (isNaN(Number(campaign_id)) || isNaN(Number(num))) {
-      return HelperUtils.responseBadRequest(`Bad request params with campaignId ${campaign_id} and number ${num}`)
-    }
+    const total_ticket = request.params.number;
+    console.log(`Pick random winner with campaign ${campaign_id} and total ticket ${total_ticket}`);
     try {
-      const whitelistService = new WhitelistService();
-      const winnerList = await whitelistService.getRandomWinners(num, campaign_id);
-      // save to winner list
-      const winnerListService = new WinnerListService();
-      await winnerListService.saveRandomWinner(winnerList);
-      return HelperUtils.responseSuccess(winnerList);
+      // get tier setting from db
+      const tierService = new TierService();
+      const oldTiers = await tierService.findAllByFilter({'campaign_id': campaign_id});
+      if (oldTiers === undefined || oldTiers.length == 0) {
+        console.log(`Do not found tiers with campaign ${campaign_id}`);
+        return HelperUtils.responseBadRequest('Do not found tiers with campaign request');
+      }
+      // calc number of ticket allowance for each tier then save to db
+      const newTiers = oldTiers.toJSON().map((item, index) => {
+        const tierObj = new TierModel();
+        tierObj.fill({
+          level: item.level,
+          name: item.name,
+          start_time: item.start_time,
+          end_time: item.end_time,
+          min_buy: item.min_buy,
+          max_buy: item.max_buy,
+          ticket_allow_percent: item.ticket_allow_percent,
+          ticket_allow : Math.floor(total_ticket * item.ticket_allow_percent/100)
+        });
+        return tierObj;
+      });
+      // save to db
+      const campaignUpdated = await CampaignModel.query().where('id', campaign_id).first();
+      await campaignUpdated.tiers().delete();
+      await campaignUpdated.tiers().saveMany(newTiers);
+
+      const randomData = newTiers.map(item => {
+        const tierObj = {
+          level: item.level,
+          ticket_allow: item.ticket_allow
+        };
+        return tierObj;
+      });
+      // dispatch to job to pick random user
+      PickRandomWinnerJob.doDispatch(randomData);
+      return HelperUtils.responseSuccess(null, "Pickup random winner successful !")
     } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal('Get Random Winners Failed !');

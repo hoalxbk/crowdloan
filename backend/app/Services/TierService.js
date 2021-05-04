@@ -1,10 +1,7 @@
 'use strict'
 
-const ErrorFactory = use('App/Common/ErrorFactory');
 const TierModel = use('App/Models/Tier');
 const CONFIGS_FOLDER = '../../../blockchain_configs/';
-// const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
-// const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 
 class TierService {
   buildQueryBuilder(params) {
@@ -28,6 +25,14 @@ class TierService {
   async findByLevelAndCampaign(params) {
     let builder = this.buildQueryBuilder(params);
     return await builder.first();
+  }
+
+  async findOneByFilter(filterParams) {
+    return await this.buildQueryBuilder(filterParams).first();
+  }
+
+  async findAllByFilter(filterParams) {
+    return await this.buildQueryBuilder(filterParams).fetch();
   }
 }
 
