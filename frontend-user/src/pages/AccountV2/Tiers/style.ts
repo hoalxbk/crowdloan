@@ -12,6 +12,10 @@ const useStyles = makeStyles((theme: any) => {
       },
       '&.active': {
         opacity: 1,
+      },
+      '&.bg-none': {
+        background: 'none',
+        padding: '0',
       }
     },
     tierNote: {
@@ -37,7 +41,8 @@ const useStyles = makeStyles((theme: any) => {
         alignItems: 'flex-start',
       },
       '& .notice img': {
-        marginTop: '5px'
+        marginTop: '5px',
+        width: '25px'
       },
       '& .notice span:first-child': {
         color: '#fff',
@@ -254,7 +259,8 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .tier-name': {
         font: 'normal normal bold 14px/18px DM Sans',
-        opacity: '1'
+        opacity: '1',
+        minHeight: '18px'
       },
     },
     [theme.breakpoints.down('xs')]: {

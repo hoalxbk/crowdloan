@@ -7,7 +7,7 @@ import useStyles from './style';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
-import { getTiers } from '../../../store/actions/sota-tiers';
+import { getTiers, getUserInfo } from '../../../store/actions/sota-tiers';
 import Tooltip from '@material-ui/core/Tooltip';
 import { numberWithCommas } from '../../../utils/formatNumber';
 
@@ -76,14 +76,19 @@ const Tiers = (props: any) => {
 
   useEffect(() => {
     dispatch(getTiers());
-  }, [])
+    if (isAuth && connectedAccount && !wrongChain) { 
+      dispatch(getUserInfo(connectedAccount));
+    }
+  }, [isAuth, wrongChain, connectedAccount])
 
   useEffect(() => {
     if(currentProcess != undefined) setLoading(false)
   }, [currentProcess])
 
   return (
-    <div className={styles.tierComponent + (!loading ? ' active' : ' inactive')}>
+    <div
+      className={styles.tierComponent + (!loading ? ' active' : ' inactive') + (showMoreInfomation ? ' bg-none' : '')}
+    >
       {showMoreInfomation && <div className={styles.title}>
         <>
           <p>
@@ -96,10 +101,10 @@ const Tiers = (props: any) => {
       <ul className={styles.tierList}>
         <li className={styles.tierInfo + ' active first-tier'}>
           {isWidthUp('sm', props.width) && <span
-            className={"progress-bar" + (loading ? ' inactive' : ' active')}
+            className={"progress-bar"}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              width: userTier == 0 || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
+              width: userTier == 0 ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
             }}
           ></span>}
           {isWidthDown('xs', props.width) && <span
@@ -115,9 +120,8 @@ const Tiers = (props: any) => {
               <img src={TIERS[0].icon} />
             </div>
             <div className="info">
-              <span className="tier-name">{TIERS[0].name}</span>
-              {!showMoreInfomation && <span>0</span>}
-              {showMoreInfomation && <span>{tiersBuyLimit[0]} {tokenSymbol}</span>}
+              <span className="tier-name"></span>
+              <span className="tier-name"></span>
             </div>
           </div>
         </li>

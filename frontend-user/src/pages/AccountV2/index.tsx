@@ -45,7 +45,6 @@ const AccountV2 = (props: any) => {
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
       dispatch(getBalance(connectedAccount));
-      dispatch(getUserInfo(connectedAccount));
       dispatch(getUserTier(connectedAccount));
       dispatch(getAllowance(connectedAccount));
     }

@@ -115,18 +115,14 @@ const ModalDeposit = (props: any) => {
             </select>
 
             <div className={styles.group}>
-              <div className="subtitle">
-                <span>Input</span>
-              </div>
               <div className="balance">
                 <div>
                   <span>Your wallet balance</span>
-                  <span>{ _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(2) } {currentToken?.symbol}</span>
+                  <span>{ _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(6) } {currentToken?.symbol}</span>
                 </div>
-                <div>
-                  <span>Equivalent</span>
-                  <span>{(parseFloat(depositAmount) * currentRate || 0).toFixed(2)} {listTokenDetails[0].symbol}</span>
-                </div>
+              </div>
+              <div className="subtitle">
+                <span>Input</span>
               </div>
               <div className="input-group">
                 <input
@@ -137,6 +133,12 @@ const ModalDeposit = (props: any) => {
                 />
                 <div>
                   <button className="btn-max" id="btn-max-deposit" onClick={() => setDepositAmount(currentBalance)}>MAX</button>
+                </div>
+              </div>
+              <div className="balance" style={{marginTop: '10px'}}>
+                <div>
+                  <span>Equivalent</span>
+                  <span>{(parseFloat(depositAmount) * currentRate || 0).toFixed(6)} {listTokenDetails[0].symbol}</span>
                 </div>
               </div>
             </div>
