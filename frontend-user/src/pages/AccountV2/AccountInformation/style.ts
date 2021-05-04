@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .email-xs span': {
         color: '#FFF!important',
-        font: 'normal normal bold 16px/24px DM Sans!important'
+        font: 'normal normal bold 14px/18px DM Sans!important'
       },
 
       '& span:first-child': {
@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme: any) => {
         fontFamily: 'DM Sans',
         fontStyle: 'normal',
         fontWeight: 'bold',
-        fontSize: '16px',
-        lineHeight: '24px',
+        fontSize: '14px',
+        lineHeight: '18px',
         color: '#FFFFFF',
         width: 'calc(100% - 125px)',
         [theme.breakpoints.down('sm')]: {
@@ -98,7 +98,7 @@ const useStyles = makeStyles((theme: any) => {
         mixBlendMode: 'normal',
         padding: '7px 11px',
         background: '#D01F36',
-        borderRadius: '3px',
+        borderRadius: '50px',
         height: '28px',
         border: 'none',
         outline: 'none',

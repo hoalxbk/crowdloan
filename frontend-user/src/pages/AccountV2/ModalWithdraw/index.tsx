@@ -94,19 +94,26 @@ const ModalWithdraw = (props: any) => {
                 return <option value={tokenDetails?.symbol} key={index}>{tokenDetails?.symbol}</option>
               })}
             </select>
-            <div className="subtitle">
-              <span>Input</span>
-              <span>Your wallet staked: { _.isEmpty(userInfo) ? 0 : parseFloat(currentStaked).toFixed() } {currentToken?.symbol}</span>
-            </div>
-            <div className="input-group">
-              <input
-                type="text"
-                value={withdrawAmount}
-                onChange={e => (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) && setWithdrawAmount(e.target.value)}
-                placeholder="0.00"
-              />
-              <div>
-                <button className="btn-max" onClick={() => setWithdrawAmount(currentStaked)}>MAX</button>
+            <div className={styles.group}>
+              <div className="subtitle">
+                <span>Input</span>
+              </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  value={withdrawAmount}
+                  onChange={e => (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) && setWithdrawAmount(e.target.value)}
+                  placeholder="0.00"
+                />
+                <div>
+                  <button className="btn-max" id="btn-max-withdraw" onClick={() => setWithdrawAmount(currentStaked)}>MAX</button>
+                </div>
+              </div>
+              <div className="balance">
+                <div>
+                  <span>Your wallet staked</span>
+                  <span>{ _.isEmpty(userInfo) ? 0 : parseFloat(currentStaked).toFixed() } {currentToken?.symbol}</span>
+                </div>
               </div>
             </div>
           </div>

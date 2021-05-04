@@ -109,19 +109,30 @@ const ModalDeposit = (props: any) => {
               })}
             </select>
 
-            <div className="subtitle">
-              <span>Input</span>
-              <span>Your wallet balance: { _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(2) } {currentToken?.symbol}</span>
-            </div>
-            <div className="input-group">
-              <input
-                type="text"
-                value={depositAmount}
-                onChange={e => (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) && setDepositAmount(e.target.value)}
-                placeholder="0.00"
-              />
-              <div>
-                <button className="btn-max" onClick={() => setDepositAmount(currentBalance)}>MAX</button>
+            <div className={styles.group}>
+              <div className="subtitle">
+                <span>Input</span>
+              </div>
+              <div className="input-group">
+                <input
+                  type="text"
+                  value={depositAmount}
+                  onChange={e => (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) && setDepositAmount(e.target.value)}
+                  placeholder="0.00"
+                />
+                <div>
+                  <button className="btn-max" id="btn-max-deposit" onClick={() => setDepositAmount(currentBalance)}>MAX</button>
+                </div>
+              </div>
+              <div className="balance">
+                <div>
+                  <span>Your wallet balance</span>
+                  <span>{ _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(2) } {currentToken?.symbol}</span>
+                </div>
+                <div>
+                  <span>Equivalent:</span>
+                  <span>{ _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(2) } {currentToken?.symbol}</span>
+                </div>
               </div>
             </div>
           </div>

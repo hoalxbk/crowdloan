@@ -4,11 +4,56 @@ const useStyles = makeStyles((theme: any) => {
   return {
     tierComponent: {
       transition: '1s',
+      padding: '33px 22px',
+      borderRadius: '8px',
+      backgroundColor: 'rgba(255, 255, 255, 0.06)',
       '&.inactive': {
         opacity: 0,
       },
       '&.active': {
         opacity: 1,
+      }
+    },
+    tierNote: {
+      display: 'flex',
+      flexDirection: 'column',
+      marginTop: '60px',
+      '& > span': {
+        color: '#6398FF',
+        font: 'normal normal bold 28px/32px DM Sans',
+        margin: '12px 0 20px 0'
+      },
+      '& h3': {
+        color: '#fff',
+        font: 'normal normal bold 16px/24px DM Sans'
+      },
+      '& .notice': {
+        backgroundColor: 'rgba(50, 50, 220, 0.2)',
+        padding: '10px',
+        marginTop: '24px',
+        borderRadius: '4px',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+      },
+      '& .notice img': {
+        marginTop: '5px'
+      },
+      '& .notice span:first-child': {
+        color: '#fff',
+        font: 'normal normal bold 14px/18px DM Sans'
+      },
+      '& .notice span:last-child': {
+        color: '#999999',
+        font: 'normal normal normal 12px/18px Helvetica'
+      },
+      '& .notice-content': {
+        marginLeft: '10px',
+        display: 'flex',
+        flexDirection: 'column'
+      },
+      '& .subtitle': {
+        marginBottom: '0'
       }
     },
     title: {

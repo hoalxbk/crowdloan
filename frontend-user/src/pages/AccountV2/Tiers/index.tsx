@@ -8,8 +8,10 @@ import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
 import { getTiers } from '../../../store/actions/sota-tiers';
+import Tooltip from '@material-ui/core/Tooltip';
+import { numberWithCommas } from '../../../utils/formatNumber';
 
-const warningIcon = '/images/icons/warning.svg';
+const noticeIcon = '/images/icons/notice.svg';
 
 const Tiers = (props: any) => {
   const styles = useStyles();
@@ -158,6 +160,26 @@ const Tiers = (props: any) => {
           }
         })}
       </ul>
+
+      <div className={styles.tierNote}>
+        <h3 className="title">
+          Equivalent PKF&nbsp;&nbsp;
+          <Tooltip title={<p style={{ fontSize: 15 }}>
+            Equivalent PKF = PKF + Uniswap PKF*150 + sPKF*1
+          </p>}>
+            <img src={noticeIcon}/>
+          </Tooltip>
+        </h3>
+        <span className="subtitle">{numberWithCommas(userInfo.totalStaked)} PKF</span>
+        {!_.isEmpty(userTier) && <div className="notice">
+          <img src={TIERS[userTier].icon}/>
+          <div className="notice-content">
+            <span>you are in Tier {TIERS[userTier].name}</span>
+            <span>Please hold tokens in your wallet balance to maintain your tier! 
+              <br/>Get a lottery ticket for each 1000 PKF hold</span>
+          </div>
+        </div>}
+      </div>
     </div>
   );
 };

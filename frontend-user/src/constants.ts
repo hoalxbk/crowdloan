@@ -40,9 +40,24 @@ export const USER_STATUS = {
   DELETED: 3
 }
 
+export const CONVERSION_RATE = [
+  {
+    name: 'Uniswap LP',
+    rate: 150
+  },
+  {
+    name: 'sPKF',
+    rate: 1
+  },
+  // {
+  //   name: 'NFT',
+  //   rate: 100
+  // },
+]
+
 export const TIERS = [
   {
-    name: 'RedKite',
+    name: 'Dove',
     icon: '/images/icons/rocket.svg',
     bg: '/images/icons/red-kite-bg.png',
     bgColor: '#8D8DCC',
