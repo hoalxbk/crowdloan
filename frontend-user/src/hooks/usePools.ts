@@ -42,7 +42,6 @@ export type PoolsReturnType ={
 }
 
 const usePools = (): PoolsReturnType => {
-  console.log(111)
   const [poolsDone, setPoolsDone] = useState<boolean>(false);
   const { loading, error, data }  = useFetch<any>(`/pools`);
   const { data: connectedAccountTier } = useTypedSelector(state => state.userTier);
