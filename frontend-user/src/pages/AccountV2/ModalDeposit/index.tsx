@@ -22,15 +22,22 @@ const ModalDeposit = (props: any) => {
 
   const { data: allowance = 0 } = useSelector((state: any) => state.allowance);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
-  const { data: balance = 0 } = useSelector((state: any) => state.balance);
+  const { data: balance = {} } = useSelector((state: any) => state.balance);
   const { account: connectedAccount, library } = useWeb3React();
-
 
   const {
     setOpenModalDeposit,
     setOpenModalTransactionSubmitting,
-    token
+    listTokenDetails
   } = props;
+  const [currentToken, setCurrentToken] = useState(listTokenDetails[0]) as any;
+  const [currentBalance, setCurrentBalance] = useState('0');
+  const [currentStaked, setCurrentStaked] = useState('0');
+
+  useEffect(() => {
+    setCurrentBalance(balance.pkf)
+    setCurrentStaked(userInfo.pkfStaked)
+  }, [balance, userInfo])
 
   useEffect(() => {
     if(depositAmount === '' || depositAmount === '0') {
@@ -38,15 +45,15 @@ const ModalDeposit = (props: any) => {
       return
     }
     if(!connectedAccount) return
-    if(!isNaN(parseFloat(balance.token))
+    if(!isNaN(parseFloat(currentBalance))
       && !isNaN(parseFloat(depositAmount)))
     {
-      const tokenBalance = new BigNumber(balance.token).multipliedBy(new BigNumber(10).pow(18))
+      const tokenBalance = new BigNumber(currentBalance).multipliedBy(new BigNumber(10).pow(18))
       const amount = new BigNumber(depositAmount).multipliedBy(new BigNumber(10).pow(18))
       const zero = new BigNumber('0')
       setDisableDeposit(tokenBalance.lt(amount) || amount.lte(zero))
     }
-  }, [connectedAccount, balance, depositAmount]);
+  }, [connectedAccount, balance, depositAmount, currentToken]);
 
   const onDeposit = () => {
     if(disableDeposit) return
@@ -65,18 +72,41 @@ const ModalDeposit = (props: any) => {
     setOpenModalDeposit(false);
   }
 
+  const handleSelectToken = (e: any) => {
+    const tokens = listTokenDetails.filter((tokenDetails: any) => {
+      return tokenDetails.symbol == e.target.value
+    })
+    setCurrentToken(tokens[0])
+    if(e.target.value == 'PKF') {
+      setCurrentBalance(balance.pkf)
+      setCurrentStaked(userInfo.pkfStaked)
+    } else if(e.target.value == 'UPKF') {
+      setCurrentBalance(balance.uni)
+      setCurrentStaked(userInfo.uniStaked)
+    } else if(e.target.value == 'MPKF') {
+      setCurrentBalance(balance.mantra)
+      setCurrentStaked(userInfo.mantraStaked)
+    }
+  }
+
   return (
     <>
       <div className={commonStyles.modal + ' ' + styles.modalDeposit}>
         <div className="modal-content">
           <div className="modal-content__head">
             <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-            <h2 className="title">You have {userInfo.staked} {token?.symbol} locked-in</h2>
+            <h2 className="title">You have {currentStaked} {currentToken?.symbol} locked-in</h2>
           </div>
           <div className="modal-content__body">
+            <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
+              {listTokenDetails && listTokenDetails.map((tokenDetails: any) => {
+                return <option value={tokenDetails?.symbol}>{tokenDetails?.symbol}</option>
+              })}
+            </select>
+
             <div className="subtitle">
               <span>Input</span>
-              <span>Your wallet balance: { _.isEmpty(balance) ? 0 : parseFloat(balance.token).toFixed(2) } {token.symbol}</span>
+              <span>Your wallet balance: { _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(2) } {currentToken?.symbol}</span>
             </div>
             <div className="input-group">
               <input
@@ -86,7 +116,7 @@ const ModalDeposit = (props: any) => {
                 placeholder="0.00"
               />
               <div>
-                <button className="btn-max" onClick={() => setDepositAmount(balance.token)}>MAX</button>
+                <button className="btn-max" onClick={() => setDepositAmount(currentBalance)}>MAX</button>
               </div>
             </div>
           </div>

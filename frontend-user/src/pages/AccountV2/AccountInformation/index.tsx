@@ -28,7 +28,8 @@ const AccountInformation = (props: any) => {
     tokenDetails,
     email,
     setEmail,
-    emailVerified
+    emailVerified,
+    isKYC
   } = props;
 
   const formatValue = (value: string) => parseFloat(value).toFixed(2);
@@ -70,9 +71,9 @@ const AccountInformation = (props: any) => {
         <div className={styles.redKiteInfo}>
           <div className="kyc-info">
             <span>Some pools may require you to be KYC verified</span>
-            <button onClick={handleKYC}> KYC for Rekite projects</button>
+            <button onClick={handleKYC}> {isKYC ? 'KYC for Rekite projects' : 'KYC successful for Rekite projects'}</button>
           </div>
-          <div className={styles.walletInfo}>
+          {/* <div className={styles.walletInfo}>
             <p>Wallet balance</p>
             {!_.isEmpty(balance) && !_.isEmpty(userInfo) && <span>
               <AnimatedNumber
@@ -93,7 +94,7 @@ const AccountInformation = (props: any) => {
             {(_.isEmpty(balance) || _.isEmpty(userInfo)) && <span>
               0&nbsp;{tokenDetails?.symbol}
             </span>}
-          </div>
+          </div> */}
         </div>
       </div>
       {openModalVerifyEmail && <ModalVerifyEmail

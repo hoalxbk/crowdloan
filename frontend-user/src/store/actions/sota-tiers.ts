@@ -3,8 +3,7 @@ import { AnyAction } from 'redux';
 import { ThunkDispatch } from 'redux-thunk';
 import { getContractInstance, convertFromWei, convertToWei, SmartContractMethod } from '../../services/web3';
 import { getContract } from '../../utils/contract';
-import sotaTiersABI from '../../abi/SotaTiers.json';
-import PKFTiersABI from '../../abi/PKFTiers.json';
+import RedKite from '../../abi/RedKiteTiers.json';
 import { getBalance } from './balance';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
 
@@ -24,8 +23,8 @@ export const getTiers = (forceUsingEther?: string) => {
       const connector  = getState().connector.data;
 
       const contract = getContractInstance(
-        PKFTiersABI,
-        process.env.REACT_APP_PKFTIERS as string,
+        RedKite.abi,
+        process.env.REACT_APP_TIERS as string,
         connector, 
         appChainID,
         SmartContractMethod.Read,
@@ -63,8 +62,8 @@ export const getUserTier = (address: string, forceUsingEther?: string) => {
       let result = {};
 
       const contract = getContractInstance(
-        PKFTiersABI, 
-        process.env.REACT_APP_PKFTIERS as string, 
+        RedKite.abi, 
+        process.env.REACT_APP_TIERS as string, 
         connector, 
         appChainID,
         SmartContractMethod.Read,
@@ -88,26 +87,45 @@ export const getUserTier = (address: string, forceUsingEther?: string) => {
   }
 };
 
-export const getUserInfo = (address: string, forceUsingEther?: string) => {
+export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddress: string = '') => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
       const { connector } = getState().connector.data;
       const contract = getContractInstance(
-        PKFTiersABI,
-        process.env.REACT_APP_PKFTIERS as string,
+        RedKite.abi,
+        process.env.REACT_APP_TIERS as string,
         connector,
         appChainID,
         SmartContractMethod.Read,
         forceUsingEther === 'eth'
       );
 
-      let result = await contract?.methods.userInfo(address, process.env.REACT_APP_SOTA).call();
-      const staked = convertFromWei(result.staked)
+      let result = {};
+
+      const resultPkf = await contract?.methods.userInfo(address, process.env.REACT_APP_PKF).call();
+      const stakedPkf = convertFromWei(resultPkf.staked)
+
+      const resultUni = await contract?.methods.userInfo(address, process.env.REACT_APP_UNI_LP).call();
+      const stakedUni = convertFromWei(resultUni.staked)
+
+      const resultMantra = await contract?.methods.userInfo(address, process.env.REACT_APP_MANTRA_LP).call();
+      const stakedMantra = convertFromWei(resultMantra.staked)
+
+      const resultStaked = await contract?.methods.userExternalStaked(address).call();
+      console.log(resultStaked)
+      const totalStaked = stakedPkf + convertFromWei(resultStaked)
+
       result = {
         ...result,
-        staked: staked
+        resultPkf: resultPkf,
+        pkfStaked: stakedPkf,
+        resultUni: resultUni,
+        uniStaked: stakedUni,
+        resultMantra: resultMantra,
+        mantraStaked: stakedMantra,
+        totalStaked: totalStaked
       }
 
       dispatch({
@@ -129,12 +147,10 @@ export const deposit = (address: string | null | undefined, amount: string, libr
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
-      const { appChainID } = getState().appNetwork.data;
-      const connector = getState().connector.data;
       let result = {} as any;
 
-      const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
-      result = await contract?.depositERC20(process.env.REACT_APP_SOTA, convertToWei(amount))
+      const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
+      result = await contract?.depositERC20(process.env.REACT_APP_PKF, convertToWei(amount))
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
@@ -161,13 +177,11 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_LOADING });
     try {
-      const { appChainID } = getState().appNetwork.data;
-      const connector = getState().connector.data;
       let result = {} as any;
 
-      const contract = getContract(process.env.REACT_APP_PKFTIERS as string, PKFTiersABI, library, address || '');
+      const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
 
-      result = await contract?.withdrawERC20(process.env.REACT_APP_SOTA, convertToWei(amount));
+      result = await contract?.withdrawERC20(process.env.REACT_APP_PKF, convertToWei(amount));
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
@@ -198,9 +212,9 @@ export const getWithdrawFee = (address: string | null | undefined, amount: strin
       const { appChainID } = getState().appNetwork.data;
       const connector = getState().connector.data;
       let data = {};
-      const contract = getContractInstance(PKFTiersABI, process.env.REACT_APP_PKFTIERS as string, connector, appChainID);
+      const contract = getContractInstance(RedKite.abi, process.env.REACT_APP_TIERS as string, connector, appChainID);
 
-      data = await contract?.methods.calculateWithdrawFee(address, process.env.REACT_APP_SOTA, convertToWei(amount)).call();
+      data = await contract?.methods.calculateWithdrawFee(address, process.env.REACT_APP_PKF, convertToWei(amount)).call();
       
       const fee = convertFromWei(data);
       const feePercent = parseFloat(fee || '0')*100/parseFloat(amount || '0')
@@ -234,7 +248,7 @@ export const getWithdrawPercent = () => {
       const { connector } = getState().connector.data || "Metamask";
       let result = {};
       let data = [];
-      const contract = getContractInstance(PKFTiersABI, process.env.REACT_APP_PKFTIERS as string, connector, appChainID);
+      const contract = getContractInstance(RedKite.abi, process.env.REACT_APP_TIERS as string, connector, appChainID);
  
      result = await contract?.methods.withdrawFeePercent(0).call();
       data.push(result)

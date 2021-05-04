@@ -67,7 +67,7 @@ const Tiers = (props: any) => {
       return;
     }
     if(!showMoreInfomation && !_.isEmpty(userInfo) && !_.isEmpty(userTier)) {
-      let process = calculateProcess(tiers, userInfo.staked);
+      let process = calculateProcess(tiers, userInfo.totalStaked);
       setCurrentProcess(process);
     }
   }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain])
@@ -92,22 +92,19 @@ const Tiers = (props: any) => {
         </>
       </div>}
       <ul className={styles.tierList}>
-        {/* {isWidthUp('sm', props.width) && <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{width:`${currentProcess}%`}}></li>}
-        {isWidthDown('xs', props.width) && <li className={(loading ? 'inactive ' : 'active ') + 'process'} style={{height:`${currentProcess}%`}}></li>} */}
-        
         <li className={styles.tierInfo + ' active first-tier'}>
           {isWidthUp('sm', props.width) && <span
             className={"progress-bar" + (loading ? ' inactive' : ' active')}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              width: userTier == 0 ? `${currentProcess}%` : 'calc(100% - 1px)'
+              width: userTier == 0 || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
             }}
           ></span>}
           {isWidthDown('xs', props.width) && <span
             className={"progress-bar" + (loading ? ' inactive' : ' active')}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              height: userTier == 0 ? `${currentProcess}%` : 'calc(100% - 1px)'
+              height: userTier == 0 || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
             }}
           ></span>}
           <div>
