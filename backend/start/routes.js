@@ -70,7 +70,7 @@ Route.group(() => {
 
   Route.post('pool/create', 'PoolController.createPool');
   Route.post('pool/:campaignId/update', 'PoolController.updatePool');
-  Route.get('pool/:campaignId', 'PoolController.getPool');
+  Route.get('pool/:campaignId', 'PoolController.getPoolAdmin');
 
   // Participants
   Route.get('pool/:campaignId/participants', 'WhiteListUserController.getParticipants');
@@ -162,7 +162,7 @@ Route.get('pools', 'PoolController.getPoolList');
 Route.get('pools/top-pools', 'PoolController.getTopPools');
 Route.get('pools/user/:walletAddress/joined-pools', 'PoolController.getJoinedPools');
 
-Route.get('pool/:campaignId', 'PoolController.getPool');
+Route.get('pool/:campaignId', 'PoolController.getPoolPublic');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerAndReserveList');
 Route.get('pool/:campaignId/user/:walletAddress/current-tier', 'UserController.getCurrentTier').middleware(['formatEmailAndWallet']);
