@@ -4,9 +4,9 @@ import _, { gt } from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
 import { withdraw, getWithdrawFee } from '../../../store/actions/sota-tiers';
-import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
+import { CONVERSION_RATE } from '../../../constants';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
@@ -30,9 +30,11 @@ const ModalWithdraw = (props: any) => {
   } = props;
   const [currentToken, setCurrentToken] = useState(listTokenDetails[0]) as any;
   const [currentStaked, setCurrentStaked] = useState('0');
+  const [currentRate, setCurrentRate] = useState(0);
 
   useEffect(() => {
     setCurrentStaked(userInfo.pkfStaked)
+    setCurrentRate(1)
   }, [userInfo])
 
   const onWithDraw = () => {
@@ -73,10 +75,13 @@ const ModalWithdraw = (props: any) => {
     setCurrentToken(tokens[0])
     if(e.target.value == 'PKF') {
       setCurrentStaked(userInfo.pkfStaked)
+      setCurrentRate(1)
     } else if(e.target.value == 'UPKF') {
       setCurrentStaked(userInfo.uniStaked)
+      setCurrentRate(CONVERSION_RATE[0].rate)
     } else if(e.target.value == 'MPKF') {
       setCurrentStaked(userInfo.mantraStaked)
+      setCurrentRate(CONVERSION_RATE[1].rate)
     }
   }
 
@@ -98,6 +103,16 @@ const ModalWithdraw = (props: any) => {
               <div className="subtitle">
                 <span>Input</span>
               </div>
+              <div className="balance">
+                <div>
+                  <span>Your wallet staked</span>
+                  <span>{ _.isEmpty(userInfo) ? 0 : parseFloat(currentStaked).toFixed() } {currentToken?.symbol}</span>
+                </div>
+                <div>
+                  <span>Equivalent</span>
+                  <span>{(parseFloat(withdrawAmount) * currentRate || 0).toFixed(2)} {listTokenDetails[0].symbol}</span>
+                </div>
+              </div>
               <div className="input-group">
                 <input
                   type="text"
@@ -107,12 +122,6 @@ const ModalWithdraw = (props: any) => {
                 />
                 <div>
                   <button className="btn-max" id="btn-max-withdraw" onClick={() => setWithdrawAmount(currentStaked)}>MAX</button>
-                </div>
-              </div>
-              <div className="balance">
-                <div>
-                  <span>Your wallet staked</span>
-                  <span>{ _.isEmpty(userInfo) ? 0 : parseFloat(currentStaked).toFixed() } {currentToken?.symbol}</span>
                 </div>
               </div>
             </div>
@@ -125,7 +134,7 @@ const ModalWithdraw = (props: any) => {
             <button
               className="btn-cancel"
               onClick={() => setOpenModalWithdraw(false)}
-            >cancel</button>
+            >Cancel</button>
           </div>
         </div>
       </div>

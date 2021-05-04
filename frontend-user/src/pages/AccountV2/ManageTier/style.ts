@@ -7,9 +7,11 @@ const useStyles = makeStyles((theme: any) => {
       background: 'rgba(255, 255, 255, 0.06)',
       borderRadius: '8px', 
       padding: '25px 40px 15px 40px',
+      marginTop: '60px',
 
       [theme.breakpoints.down('xs')]: {
         padding: '25px 20px 15px 20px',
+        marginTop: '0',
       },
 
       '& .button-area': {

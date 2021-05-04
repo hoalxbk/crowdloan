@@ -43,11 +43,13 @@ export const USER_STATUS = {
 export const CONVERSION_RATE = [
   {
     name: 'Uniswap LP',
-    rate: 150
+    rate: 150,
+    symbol: 'UPKF'
   },
   {
     name: 'sPKF',
-    rate: 1
+    rate: 1,
+    symbol: 'MPKF'
   },
   // {
   //   name: 'NFT',
@@ -57,13 +59,13 @@ export const CONVERSION_RATE = [
 
 export const TIERS = [
   {
-    name: 'Dove',
+    name: '',
     icon: '/images/icons/rocket.svg',
     bg: '/images/icons/red-kite-bg.png',
     bgColor: '#8D8DCC',
   },
   {
-    name: 'Hawk',
+    name: 'Dove',
     bg: '/images/icons/hawk-bg.png',
     bgColor: '#5252AD',
     icon: '/images/icons/bronze-medal.svg'

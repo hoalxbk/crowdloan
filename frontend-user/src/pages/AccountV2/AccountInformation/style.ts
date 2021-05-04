@@ -86,26 +86,7 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .kyc-info span': {
         font: 'normal normal normal 14px/24px Helvetica',
-        color: '#999999',
-      },
-      '& .kyc-info button': {
-        fontFamily: 'DM Sans',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: '12px',
-        lineHeight: '14px',
-        color: '#FFFFFF',
-        mixBlendMode: 'normal',
-        padding: '7px 11px',
-        background: '#D01F36',
-        borderRadius: '50px',
-        height: '28px',
-        border: 'none',
-        outline: 'none',
-
-        '&:hover': {
-          cursor: 'pointer'
-        }
+        color: '#fff',
       },
 
       [theme.breakpoints.down('xs')]: {

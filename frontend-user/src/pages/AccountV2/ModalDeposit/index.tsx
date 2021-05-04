@@ -5,9 +5,9 @@ import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
 import { approve } from '../../../store/actions/sota-token';
 import { deposit } from '../../../store/actions/sota-tiers';
-import { convertFromWei, convertToWei, convertToBN } from '../../../services/web3';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
+import { CONVERSION_RATE } from '../../../constants';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
@@ -34,11 +34,13 @@ const ModalDeposit = (props: any) => {
   const [currentBalance, setCurrentBalance] = useState('0');
   const [currentStaked, setCurrentStaked] = useState('0');
   const [currentAllowance, setCurrentAllowance] = useState(0);
+  const [currentRate, setCurrentRate] = useState(0);
 
   useEffect(() => {
     setCurrentBalance(balance.pkf)
     setCurrentStaked(userInfo.pkfStaked)
     setCurrentAllowance(allowance.pkf)
+    setCurrentRate(1)
   }, [balance, userInfo])
 
   useEffect(() => {
@@ -83,14 +85,17 @@ const ModalDeposit = (props: any) => {
       setCurrentBalance(balance.pkf)
       setCurrentStaked(userInfo.pkfStaked)
       setCurrentAllowance(allowance.pkf)
+      setCurrentRate(1)
     } else if(e.target.value == 'UPKF') {
       setCurrentBalance(balance.uni)
       setCurrentStaked(userInfo.uniStaked)
       setCurrentAllowance(allowance.uni)
+      setCurrentRate(CONVERSION_RATE[0].rate)
     } else if(e.target.value == 'MPKF') {
       setCurrentBalance(balance.mantra)
       setCurrentStaked(userInfo.mantraStaked)
       setCurrentAllowance(allowance.mantra)
+      setCurrentRate(CONVERSION_RATE[1].rate)
     }
   }
 
@@ -113,6 +118,16 @@ const ModalDeposit = (props: any) => {
               <div className="subtitle">
                 <span>Input</span>
               </div>
+              <div className="balance">
+                <div>
+                  <span>Your wallet balance</span>
+                  <span>{ _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(2) } {currentToken?.symbol}</span>
+                </div>
+                <div>
+                  <span>Equivalent</span>
+                  <span>{(parseFloat(depositAmount) * currentRate || 0).toFixed(2)} {listTokenDetails[0].symbol}</span>
+                </div>
+              </div>
               <div className="input-group">
                 <input
                   type="text"
@@ -124,23 +139,13 @@ const ModalDeposit = (props: any) => {
                   <button className="btn-max" id="btn-max-deposit" onClick={() => setDepositAmount(currentBalance)}>MAX</button>
                 </div>
               </div>
-              <div className="balance">
-                <div>
-                  <span>Your wallet balance</span>
-                  <span>{ _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(2) } {currentToken?.symbol}</span>
-                </div>
-                <div>
-                  <span>Equivalent:</span>
-                  <span>{ _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(2) } {currentToken?.symbol}</span>
-                </div>
-              </div>
             </div>
           </div>
           <div className="modal-content__foot">
             {currentAllowance <= 0 && <button
               className={"btn-approve"}
               onClick={onApprove}
-            >approve</button>}
+            >Approve</button>}
             {currentAllowance > 0 && <button
               className={"btn-staking " + (disableDeposit ? 'disabled' : '')}
               onClick={onDeposit}
@@ -148,7 +153,7 @@ const ModalDeposit = (props: any) => {
             <button
               className="btn-cancel"
               onClick={() => setOpenModalDeposit(false)}
-            >cancel</button>
+            >Cancel</button>
           </div>
         </div>
       </div>

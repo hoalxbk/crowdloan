@@ -34,6 +34,7 @@ const useStyles = makeStyles((theme: any) => {
 
       '& input': {
         color: '#fff',
+        borderBottom: '1px solid rgba(255, 255, 255, 0.1)!important'
       },
       '& button#btn-max-withdraw': {
         font: 'normal normal bold 12px/14px DM Sans',
