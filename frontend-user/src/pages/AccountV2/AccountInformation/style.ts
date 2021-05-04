@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme: any) => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'flex-start',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       marginBottom: '15px',
 
       '& .email-xs span': {
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme: any) => {
       },
 
       '& span:first-child': {
-        minWidth: '100px',
+        minWidth: '120px',
         marginRight: '20px',
         font: 'normal normal normal 14px/24px Helvetica',
         color: '#999999',

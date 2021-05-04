@@ -17,7 +17,7 @@ import useTokenSoldProgress from './hooks/useTokenSoldProgress';
 import usePoolJoinAction from './hooks/usePoolJoinAction';
 import useFetch from '../../hooks/useFetch';
 
-import Tiers from '../Account/Tiers';
+import Tiers from '../AccountV2/Tiers';
 import LotteryWinners from './LotteryWinners';
 import PoolAbout from './PoolAbout';
 import ClaimToken from './ClaimToken';

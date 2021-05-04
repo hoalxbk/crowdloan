@@ -123,8 +123,9 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
         mantraStaked: stakedMantra,
       }
 
-      const resultStaked = await contract?.methods.userTotalStaked(address).call();
-      const totalStaked = parseFloat(convertFromWei(resultStaked))
+      // const resultStaked = await contract?.methods.userTotalStaked(address).call();
+      // const totalStaked = parseFloat(convertFromWei(resultStaked))
+      const totalStaked = parseFloat(stakedPkf) + parseFloat(stakedUni) * 150 + parseFloat(stakedMantra as string)
 
       result = {
         ...result,
