@@ -21,7 +21,7 @@ const Dashboard = (props: any) => {
   const dispatch = useDispatch();
   const { pools = [], pagination, loading } = usePools();
   const [upcommingPools, setUpcommingPools] = useState([]);
-  const [camePools, setCamePools] = useState([]);
+  const [featurePools, setFeaturePools] = useState([]);
   const { data: appChain } = useSelector((state: any) => state.appNetwork);
   const { data: connector } = useSelector((state: any) => state.connector);
   const [poolFetched, setPoolFetched] = useState(false);
@@ -41,12 +41,10 @@ const Dashboard = (props: any) => {
   }
 
   const setStatusPools = () => {
-    let changed = false;
     pools.forEach(async (pool: any) => {
       const currentTime = moment.utc().unix();
       if(!pool.start_join_pool_time || !pool.start_time) {
         pool.status = POOL_STATUS.TBA
-        changed = true
         return;
       }
       const startJoinPoolTime = parseInt(pool.start_join_pool_time);
@@ -55,21 +53,17 @@ const Dashboard = (props: any) => {
       const finishTime = parseInt(pool.finish_time);
       const isClaimable = pool.type !== 'swap';
       const releaseTime = parseInt(pool.release_time);
-      if(startJoinPoolTime )
       if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
-        if(pool.status != POOL_STATUS.UPCOMMING) changed = true;
         pool.status = POOL_STATUS.UPCOMMING
       } else if(startJoinPoolTime <= currentTime
         && currentTime <= endJoinPoolTime
         ) 
       {
-        if(pool.status != POOL_STATUS.JOINING) changed = true;
         pool.status = POOL_STATUS.JOINING
       } else if(currentTime >= startTime && currentTime <= finishTime) {
         if(Math.round(pool.tokenSold * 100 / pool.total_sold_coin) == 100) {
           pool.status = POOL_STATUS.FILLED
         } else {
-          if(pool.status != POOL_STATUS.IN_PROGRESS) changed = true;
           pool.status = POOL_STATUS.IN_PROGRESS
         }
       } else if(releaseTime && currentTime >= releaseTime && isClaimable) {
@@ -80,20 +74,15 @@ const Dashboard = (props: any) => {
       }
     })
 
-    if(changed) {
-      setUpcommingPools(pools.filter((pool: any) => pool?.status == POOL_STATUS.UPCOMMING && pool?.is_display == 1))
-      setCamePools(pools.filter((pool: any) => pool?.status != POOL_STATUS.UPCOMMING && pool?.is_display == 1))
-    }
+    setUpcommingPools(pools.filter((pool: any) => pool?.status != POOL_STATUS.CLAIMABLE && pool?.status != POOL_STATUS.CLOSED))
+    setFeaturePools(pools.filter((pool: any) => pool?.status == POOL_STATUS.CLAIMABLE || pool?.status == POOL_STATUS.CLOSED))
+    console.log(featurePools, upcommingPools)
   }
 
   useEffect(() => {
     if(pools.length == 0 || poolFetched) return;
-    const interval = setInterval(setStatusPools, 1000)
+    setStatusPools();
     setPoolFetched(true);
-
-    return () => {
-      clearInterval(interval)
-    }
   }, [pools]);
 
   useEffect(() => {
@@ -123,7 +112,7 @@ const Dashboard = (props: any) => {
       <div className={styles.listPools} style={{marginTop: '220px'}}>
         <h2>Featured Pools</h2>
         <div className="pools">
-          {camePools.map((pool: any, index) => {
+          {featurePools.map((pool: any, index) => {
             return index < 8 && <Card pool={pool} key={pool.id}/>
           })}
         </div>
