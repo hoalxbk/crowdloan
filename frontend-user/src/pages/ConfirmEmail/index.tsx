@@ -32,7 +32,7 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
         const resObj = await response.json();
 
         if (resObj.status && resObj.status === 200) {
-          dispatch(alertSuccess('Email confirm successful!'));
+          dispatch(alertSuccess('Email address confirmed'));
           setVerifySuccess(true)
         } else {
           dispatch(alertFailure(resObj.message));

@@ -104,14 +104,14 @@ const Tiers = (props: any) => {
             className={"progress-bar"}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              width: userTier == 0 ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
+              width: _.isEmpty(userTier) || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
             }}
           ></span>}
           {isWidthDown('xs', props.width) && <span
             className={"progress-bar" + (loading ? ' inactive' : ' active')}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              height: userTier == 0 || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
+              height: _.isEmpty(userTier) || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
             }}
           ></span>}
           <div>
@@ -174,7 +174,7 @@ const Tiers = (props: any) => {
             <img src={noticeIcon}/>
           </Tooltip>
         </h3>
-        <span className="subtitle">{numberWithCommas(userInfo.totalStaked)} PKF</span>
+        <span className="subtitle">{numberWithCommas(userInfo.totalStaked || 0)} PKF</span>
         {!_.isEmpty(userTier) && <div className="notice">
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">

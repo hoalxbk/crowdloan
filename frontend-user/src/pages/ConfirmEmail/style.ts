@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme: any) => {
         marginBottom: '8px'
       },
       '& p': {
-        color: '#fff',
+        color: '#999999',
         font: 'normal normal normal 16px/26px Helvetica',
         textAlign: 'center',
         marginBottom: '28px'
