@@ -13,14 +13,6 @@ describe('Pool Factory', function () {
     const ERC20Token = await hardhat.ethers.getContractFactory(
       'ERC20Token',
     );
-    const deployedTierToken = await ERC20Token.deploy(
-      "SotaToken",
-      "SOTA",
-      owner,
-      `5${'0'.repeat(27)}`
-    );
-    await deployedTierToken.deployed();
-    tierToken = deployedTierToken.address;
 
     // Deploy ICO Token
     const deployedIcoToken = await ERC20Token.deploy(
@@ -31,15 +23,6 @@ describe('Pool Factory', function () {
     );
     await deployedIcoToken.deployed();
     icoToken = deployedIcoToken.address;
-
-    // Deploy Tier Contract
-    const SotaTier = await hardhat.ethers.getContractFactory(
-      'PKFTiers'
-    );
-
-    const deployedTierContract = await SotaTier.deploy(tierToken, owner);
-    await deployedTierContract.deployed();
-    tierContract = deployedTierContract.address;
 
     // Deploy Pool Factory
     const PoolFactory = await hardhat.ethers.getContractFactory(
@@ -56,10 +39,6 @@ describe('Pool Factory', function () {
 
   it('Should return false for initialize suspending status', async function () {
     expect(await poolFactory.paused()).to.equal(false);
-  });
-
-  it('Should return the Tier Address', async function () {
-    expect(await poolFactory.getTier()).to.equal(tierContract);
   });
 
   // Test Functions
