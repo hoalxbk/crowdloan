@@ -46,7 +46,7 @@ const AccountInformation = (props: any) => {
           </>}
           {isWidthDown('xs', props.width) && <div className="email-xs">
             {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
-            {(emailVerified == USER_STATUS.UNVERIFIED || !email) &&
+            {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
               <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
                 Verify Email
               </button>}
@@ -56,7 +56,7 @@ const AccountInformation = (props: any) => {
           <span>Your Wallet</span>
           <span>
             {isWidthUp('sm', props.width) && connectedAccount}
-            {isWidthDown('xs', props.width) && trimMiddlePartAddress(connectedAccount || '')}
+            {isWidthDown('xs', props.width) && connectedAccount && trimMiddlePartAddress(connectedAccount || '')}
           </span>
         </div>
         <div className={styles.inputGroup}>
