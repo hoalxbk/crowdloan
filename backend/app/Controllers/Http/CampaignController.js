@@ -579,7 +579,7 @@ class CampaignController {
       const campaignClaimSC = new web3.eth.Contract(CONTRACT_CLAIM_ABI, camp.campaign_hash);
       const tokenPurchased = await campaignClaimSC.methods.userPurchased(userWalletAddress).call();
       // calc max token that user can claimable
-      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).multipliedBy(tokenPurchased);
+      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased);
       console.log(`user token purchased ${tokenPurchased} and max token claim ${maxTokenClaim}`);
       // get message hash
       const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenClaim);

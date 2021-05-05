@@ -205,6 +205,9 @@ const useCommonStyle = makeStyles((theme) => {
         padding: '60px',
         background: '#020616',
         borderRadius: '4px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
       },
 
       '& .content img': {

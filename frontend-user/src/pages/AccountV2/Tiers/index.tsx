@@ -76,9 +76,7 @@ const Tiers = (props: any) => {
 
   useEffect(() => {
     dispatch(getTiers());
-    if (isAuth && connectedAccount && !wrongChain) { 
-      dispatch(getUserInfo(connectedAccount));
-    }
+    dispatch(getUserInfo(connectedAccount || ''));
   }, [isAuth, wrongChain, connectedAccount])
 
   useEffect(() => {
@@ -174,7 +172,7 @@ const Tiers = (props: any) => {
             <img src={noticeIcon}/>
           </Tooltip>
         </h3>
-        <span className="subtitle">{numberWithCommas(userInfo.totalStaked || 0)} PKF</span>
+        <span className="subtitle">{(connectedAccount && isAuth && !wrongChain) ? numberWithCommas(userInfo.totalStaked || 0) : 0} PKF</span>
         {!_.isEmpty(userTier) && <div className="notice">
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">

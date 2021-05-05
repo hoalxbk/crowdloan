@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
-import { LinearProgress } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { getWithdrawPercent, getWithdrawFee } from '../../../store/actions/sota-tiers';
 import ModalDeposit from '../ModalDeposit';
 import ModalWithdraw from '../ModalWithdraw';
@@ -69,25 +69,13 @@ const ManageTier = (props: any) => {
     if(withdrawError.message) setOpenModalTransactionSubmitting(false);
   }, [withdrawTransaction, withdrawError])
 
-  const renderToken = (name: string, balance: any, staked: any) => {
+  const renderToken = (symbol: string, balance: any, staked: any) => {
     return <div className="group">
-      <span>{name}</span>
-      {(wrongChain || !isAuth) && <AnimatedNumber
-        value={0}
-        formatValue={numberWithCommas}
-      />}
-      {!wrongChain && isAuth && <AnimatedNumber
-        value={balance}
-        formatValue={numberWithCommas}
-      />}
-      {(wrongChain || !isAuth) && <AnimatedNumber
-        value={0}
-        formatValue={numberWithCommas}
-      />}
-      {!wrongChain && isAuth && <AnimatedNumber
-        value={staked}
-        formatValue={numberWithCommas}
-      />}
+      <span>{symbol}</span>
+      {(wrongChain || !isAuth) && <span>0</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(balance)}</span>}
+      {(wrongChain || !isAuth) && <span>0</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(staked)}</span>}
     </div>
   }
 
@@ -106,9 +94,9 @@ const ManageTier = (props: any) => {
             </div>
           </div>
           <div className={styles.tableBody}>
-            {renderToken('Polkafoundry', balance?.pkf, userInfo?.pkfStaked)}
-            {renderToken(CONVERSION_RATE[0]?.name, balance?.uni, userInfo?.uniStaked)}
-            {renderToken(CONVERSION_RATE[1]?.name, balance?.mantra, userInfo?.mantraStaked)}
+            {renderToken('PKF', balance?.pkf, userInfo?.pkfStaked)}
+            {renderToken(CONVERSION_RATE[0]?.symbol, balance?.uni, userInfo?.uniStaked)}
+            {renderToken(CONVERSION_RATE[1]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
           </div>
         </div>
         <div className="button-area">
@@ -153,7 +141,7 @@ const ManageTier = (props: any) => {
         <div className="content">
           <img src={iconClose} onClick={() => setOpenModalTransactionSubmitting(false)}/>
           <span className={commonStyles.nnb1824d}>Transaction Submitting</span>
-          <LinearProgress color="primary" />
+          <CircularProgress color="primary" />
         </div>
       </div>}
 
