@@ -57,7 +57,9 @@ const Dashboard = (props: any) => {
       const finishTime = parseInt(pool.finish_time);
       const isClaimable = pool.type !== 'swap';
       const releaseTime = parseInt(pool.release_time);
-      if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
+      if(pool.buy_type == BUY_TYPE.FCFS && currentTime < startTime
+        || pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime))
+      {
         pool.status = POOL_STATUS.UPCOMMING
       } else if(startJoinPoolTime <= currentTime
         && currentTime <= endJoinPoolTime
@@ -80,7 +82,6 @@ const Dashboard = (props: any) => {
 
     setUpcommingPools(pools.filter((pool: any) => pool?.status != POOL_STATUS.CLAIMABLE && pool?.status != POOL_STATUS.CLOSED && pool?.is_display == 1))
     setFeaturePools(pools.filter((pool: any) => (pool?.status == POOL_STATUS.CLAIMABLE || pool?.status == POOL_STATUS.CLOSED) && pool?.is_display == 1))
-    console.log(featurePools, upcommingPools)
   }
 
   useEffect(() => {
