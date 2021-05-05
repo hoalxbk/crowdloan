@@ -130,8 +130,19 @@ class UserAuthController {
   async registerVerifyEmail({ request, params }) {
     try {
       const param = request.only(['email', 'signature', 'wallet_address']);
+      const email = param.email;
       const role = Const.USER_ROLE.PUBLIC_USER; // Only public user verify email
       const wallet_address = Web3.utils.toChecksumAddress(param.wallet_address);
+
+      let checkExistEmail = await UserModel.query().where('email', email).where('status', Const.USER_STATUS.ACTIVE).first();
+      if (checkExistEmail) {
+        return HelperUtils.responseBadRequest('Email account has been registered.');
+      }
+
+      let checkExistWallet = await UserModel.query().where('wallet_address', wallet_address).where('status', Const.USER_STATUS.ACTIVE).first();
+      if (checkExistWallet) {
+        return HelperUtils.responseBadRequest('Your wallet has been verified email.');
+      }
 
       console.log('[registerVerifyEmail]: Wallet Address: ', wallet_address);
       let user = await UserModel.query().where('wallet_address', wallet_address).first();
@@ -147,7 +158,6 @@ class UserAuthController {
         user.signature = param.email;
         user.status = Const.USER_STATUS.UNVERIFIED; // Not verify email
         console.log('user.status', user.status);
-
         await user.save();
       }
       if (user.is_active === Const.USER_STATUS.ACTIVE) {
