@@ -23,6 +23,7 @@ import PoolAbout from './PoolAbout';
 import ClaimToken from './ClaimToken';
 import BuyTokenForm from './BuyTokenForm';
 import Button from './Button';
+import StatusBar from './StatusBar';
 import Countdown from '../../components/Base/Countdown';
 import DefaultLayout  from '../../components/Layout/DefaultLayout';
 import { ETH_CHAIN_ID } from '../../constants/network';
@@ -232,6 +233,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                     }
                   </CopyToClipboard>
                 </p>
+                <StatusBar currentStatus={poolStatus} />
               </div>
             </div>
             <div className={styles.poolType}>
