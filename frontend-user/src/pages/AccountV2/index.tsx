@@ -47,6 +47,9 @@ const AccountV2 = (props: any) => {
       dispatch(getUserTier(connectedAccount));
       dispatch(getAllowance(connectedAccount));
     }
+    setEmail('')
+    setEmailVeryfied(USER_STATUS.UNVERIFIED)
+    setIsKYC(false)
   }, [isAuth, wrongChain, connectedAccount]);
 
   useEffect(() => {

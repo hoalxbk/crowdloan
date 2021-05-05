@@ -79,7 +79,7 @@ const Dashboard = (props: any) => {
       {
         pool.status = POOL_STATUS.JOINING
       } else if(currentTime >= startTime && currentTime <= finishTime) {
-        if(Math.round(pool.tokenSold * 100 / pool.total_sold_coin) == 100) {
+        if(Math.round(parseFloat(pool.tokenSold) * 100 / parseFloat(pool.total_sold_coin)) == 100) {
           pool.status = POOL_STATUS.FILLED
         } else {
           pool.status = POOL_STATUS.IN_PROGRESS
@@ -105,11 +105,11 @@ const Dashboard = (props: any) => {
   useEffect(() => {
     if(!appChain || !connector) return
     pools.forEach(async (pool: any) => {
-      if(pool.is_deploy === 0) return
+    if(pool.is_deploy === 0) return
       const tokenSold = await getTokenSold(pool)
       pool.tokenSold = tokenSold
     })
-  },[appChain, connector])
+  },[appChain, connector, pools])
 
   return (
     <DefaultLayout>
