@@ -6,18 +6,14 @@ const useStyles = makeStyles((theme: any) => {
       width: '100%',
       background: 'rgba(255, 255, 255, 0.06)',
       borderRadius: '8px', 
-      padding: '25px 40px 15px 40px',
-      marginTop: '60px',
-
-      [theme.breakpoints.down('xs')]: {
-        padding: '25px 20px 15px 20px',
-        marginTop: '0',
-      },
+      padding: '25px 40px 35px 40px',
+      marginTop: '270px',
 
       '& .button-area': {
         display: 'flex',
         alignItems: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'center'
       },
 
       '& .button-area .btn': {
@@ -35,7 +31,7 @@ const useStyles = makeStyles((theme: any) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '204px',
+        width: '40%',
 
         '&:hover': {
           cursor: 'pointer'
@@ -43,17 +39,38 @@ const useStyles = makeStyles((theme: any) => {
 
         '&.disabled': {
           backgroundColor: 'silver'
-        }
+        },
       },
 
       '& .button-area .btn-lock': {
         background: '#3232DC',
-        marginRight: '8px'
+        marginRight: '7%'
       },
 
       '& .button-area .btn-unlock': {
         background: '#D01F36',
-      }
+      },
+      [theme.breakpoints.down('md')]: {
+        marginTop: '0',
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        padding: '25px 24px 35px 24px',
+        marginTop: '0',
+
+        '& .button-area': {
+          flexDirection: 'column',
+
+          '& .btn': {
+            width: '100%',
+          },
+
+          '& .btn-lock': {
+            marginRight: '0',
+            marginBottom: '12px'
+          },
+        }
+      },
     },
     manageTier: {
       display: 'flex',
@@ -76,7 +93,7 @@ const useStyles = makeStyles((theme: any) => {
     },
     tableBody:  {
       color: '#fff',
-      height: '260px',
+      height: '200px',
       '& .group': {
         display: 'flex',
         justifyContent: 'space-between',

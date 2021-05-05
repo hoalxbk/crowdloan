@@ -6,6 +6,7 @@ import erc20ABI from '../../abi/Erc20.json';
 import { MAX_INT } from './../../services/web3';
 import { Web3Provider } from '@ethersproject/providers'
 import { getContract } from '../../utils/contract';
+import { alertFailure, alertSuccess } from '../../store/actions/alert';
 
 export const getAllowance = (owner: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
@@ -60,6 +61,7 @@ export const approve = (address: string | null | undefined, library: Web3Provide
 
     } catch (error) {
       console.log(error)
+      dispatch(alertFailure("Transaction submit failure"))
       dispatch({
         type: sotaTokenActions.APPROVE_FAILURE,
         payload: error

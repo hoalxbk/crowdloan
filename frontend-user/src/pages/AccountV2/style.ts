@@ -77,6 +77,16 @@ const useStyles = makeStyles((theme: any) => {
     },
     accountContainer: {
       padding: '50px 80px 80px 80px',
+    },
+    [theme.breakpoints.down('xs')]: {
+      accountContainer: {
+        padding: '24px',
+      },
+      mainContent: {
+        padding: '20px 0',
+        marginBottom: '80px',
+        gap: '60px'
+      },
     }
   };
 });

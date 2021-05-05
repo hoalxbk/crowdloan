@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import { TIERS } from '../../../constants';
+import { CONVERSION_RATE, TIERS } from '../../../constants';
 import useStyles from './style';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
@@ -93,8 +93,8 @@ const Tiers = (props: any) => {
         <>
           <p>
             You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}.&nbsp; 
-          To upgrade your tier, please click&nbsp;
-          <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
+            To upgrade your tier, please click&nbsp;
+            <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
           </p> 
         </>
       </div>}
@@ -104,14 +104,14 @@ const Tiers = (props: any) => {
             className={"progress-bar"}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              width: userTier == 0 ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
+              width: _.isEmpty(userTier) || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
             }}
           ></span>}
           {isWidthDown('xs', props.width) && <span
             className={"progress-bar" + (loading ? ' inactive' : ' active')}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              height: userTier == 0 || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
+              height: _.isEmpty(userTier) || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
             }}
           ></span>}
           <div>
@@ -120,7 +120,7 @@ const Tiers = (props: any) => {
               <img src={TIERS[0].icon} />
             </div>
             <div className="info">
-              <span className="tier-name"></span>
+              <span className="tier-name">{TIERS[0].name}</span>
               <span className="tier-name"></span>
             </div>
           </div>
@@ -168,19 +168,18 @@ const Tiers = (props: any) => {
       {!showMoreInfomation && <div className={styles.tierNote}>
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
-          <Tooltip title={<p style={{ fontSize: 15 }}>
-            Equivalent PKF = PKF + Uniswap PKF*150 + sPKF*1
+          <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} title={<p style={{ fontSize: 15 }}>
+            Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}*1
           </p>}>
             <img src={noticeIcon}/>
           </Tooltip>
         </h3>
-        <span className="subtitle">{numberWithCommas(userInfo.totalStaked)} PKF</span>
+        <span className="subtitle">{numberWithCommas(userInfo.totalStaked || 0)} PKF</span>
         {!_.isEmpty(userTier) && <div className="notice">
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">
-            <span>you are in Tier {TIERS[userTier].name}</span>
-            <span>Please hold tokens in your wallet balance to maintain your tier! 
-              <br/>Get a lottery ticket for each 1000 PKF hold</span>
+            <span>You are in Tier {TIERS[userTier].name}</span>
+            <span>Please hold tokens in your wallet balance to maintain your tier!</span>
           </div>
         </div>}
       </div>}

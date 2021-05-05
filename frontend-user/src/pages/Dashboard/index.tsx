@@ -7,7 +7,7 @@ import useStyles from './style';
 import BackgroundComponent from './BackgroundComponent';
 import Card from './Card';
 import usePools from '../../hooks/usePools';
-import { POOL_STATUS } from '../../constants';
+import { POOL_STATUS, POOL_TYPE, BUY_TYPE } from '../../constants';
 import POOL_ABI from '../../abi/Pool.json';
 import { getContractInstance, convertFromWei, convertToWei } from '../../services/web3';
 import moment from 'moment';
@@ -43,8 +43,12 @@ const Dashboard = (props: any) => {
   const setStatusPools = () => {
     pools.forEach(async (pool: any) => {
       const currentTime = moment.utc().unix();
-      if(!pool.start_join_pool_time || !pool.start_time) {
-        pool.status = POOL_STATUS.TBA
+      if(pool.pool_type == POOL_TYPE.SWAP && pool.buy_type == BUY_TYPE.FCFS && (!pool.start_time || !pool.finish_time)
+        || pool.pool_type == POOL_TYPE.SWAP && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (!pool.start_join_pool_time || !pool.end_join_pool_time || !pool.start_time || !pool.finish_time)
+        || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.FCFS && (!pool.start_time || !pool.finish_time || !pool.release_time)
+        || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (!pool.start_join_pool_time || !pool.end_join_pool_time || !pool.start_time || !pool.finish_time || !pool.release_time))
+      {
+        pool.status = POOL_STATUS.TBA;
         return;
       }
       const startJoinPoolTime = parseInt(pool.start_join_pool_time);
@@ -53,7 +57,9 @@ const Dashboard = (props: any) => {
       const finishTime = parseInt(pool.finish_time);
       const isClaimable = pool.type !== 'swap';
       const releaseTime = parseInt(pool.release_time);
-      if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
+      if(pool.buy_type == BUY_TYPE.FCFS && currentTime < startTime
+        || pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime))
+      {
         pool.status = POOL_STATUS.UPCOMMING
       } else if(startJoinPoolTime <= currentTime
         && currentTime <= endJoinPoolTime
@@ -76,7 +82,6 @@ const Dashboard = (props: any) => {
 
     setUpcommingPools(pools.filter((pool: any) => pool?.status != POOL_STATUS.CLAIMABLE && pool?.status != POOL_STATUS.CLOSED && pool?.is_display == 1))
     setFeaturePools(pools.filter((pool: any) => (pool?.status == POOL_STATUS.CLAIMABLE || pool?.status == POOL_STATUS.CLOSED) && pool?.is_display == 1))
-    console.log(featurePools, upcommingPools)
   }
 
   useEffect(() => {
