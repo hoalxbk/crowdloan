@@ -1,24 +1,23 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 import { CircularProgress } from '@material-ui/core';
-import Container from '@material-ui/core/Container';
 import { withRouter, useParams } from 'react-router-dom';
 
-import { AppContext } from '../../AppContext';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import { BaseRequest } from '../../request/Request';
 import useStyles from './style';
-import {adminRoute, apiRoute, publicRoute} from "../../utils";
+import { apiRoute } from "../../utils";
 import DefaultLayout from '../../components/Layout/DefaultLayout';
-import useAuth from '../../hooks/useAuth';
+import { Link } from 'react-router-dom';
 
-const loginLogo = '/images/login-logo.png';
+const logo = '/images/logo-red-kite.svg'
 
 const ConfirmEmail: React.FC<any> = (props: any) => {
-  const classes = useStyles();
+  const styles = useStyles();
   const dispatch = useDispatch();
 
   const [confirmEmailLoading, setConfirmEmailLoading] = useState(false);
+  const [verifySuccess, setVerifySuccess] = useState(false);
 
   const { token } = useParams() as any;
 
@@ -34,8 +33,10 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
 
         if (resObj.status && resObj.status === 200) {
           dispatch(alertSuccess('Email confirm successful!'));
+          setVerifySuccess(true)
         } else {
           dispatch(alertFailure(resObj.message));
+          setVerifySuccess(false)
         }
       }
 
@@ -47,20 +48,26 @@ const ConfirmEmail: React.FC<any> = (props: any) => {
 
   return (
     <DefaultLayout>
-      <Container fixed>
-      <div className={classes.forgotPassword}>
-        <div className="forgot-ps__wrap">
-          {confirmEmailLoading && (
-            <div style={{ textAlign: 'center' }}>
-              <CircularProgress size={80} />
-              <p style={{ marginTop: 10, fontSize: 17, fontWeight: 600 }}>
-                Email Confirmation Processing ...
-              </p>
-            </div>
-          )}
+      {confirmEmailLoading && <div className={styles.contentLoading}>
+        <div style={{ textAlign: 'center' }}>
+          <CircularProgress size={80} />
+          <p style={{ marginTop: 10, fontSize: 17, fontWeight: 600 }}>
+            Email Confirmation Processing ...
+          </p>
         </div>
-      </div>
-    </Container>
+      </div>}
+      {!confirmEmailLoading && verifySuccess && <div className={styles.confirmEmail}>
+        <img src={logo} alt=""/>
+        <h2>Email address confirmed</h2>
+        <p>You have successfully updated your email address. Please use your new email address to log in.</p>
+        <Link to="/account">Return</Link>
+      </div>}
+      {!confirmEmailLoading && !verifySuccess && <div className={styles.confirmEmail}>
+        <img src={logo} alt=""/>
+        <h2>Email address verify failure</h2>
+        <p>Active account link has expried.</p>
+        <Link to="/account">Return</Link>
+      </div>}
     </DefaultLayout>
   )
 };
