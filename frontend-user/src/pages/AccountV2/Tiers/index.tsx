@@ -93,8 +93,8 @@ const Tiers = (props: any) => {
         <>
           <p>
             You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}.&nbsp; 
-          To upgrade your tier, please click&nbsp;
-          <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
+            To upgrade your tier, please click&nbsp;
+            <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
           </p> 
         </>
       </div>}
@@ -120,7 +120,7 @@ const Tiers = (props: any) => {
               <img src={TIERS[0].icon} />
             </div>
             <div className="info">
-              <span className="tier-name"></span>
+              <span className="tier-name">{TIERS[0].name}</span>
               <span className="tier-name"></span>
             </div>
           </div>
@@ -168,7 +168,7 @@ const Tiers = (props: any) => {
       {!showMoreInfomation && <div className={styles.tierNote}>
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
-          <Tooltip title={<p style={{ fontSize: 15 }}>
+          <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} title={<p style={{ fontSize: 15 }}>
             Equivalent PKF = PKF + Uniswap PKF*150 + sPKF*1
           </p>}>
             <img src={noticeIcon}/>
@@ -178,9 +178,8 @@ const Tiers = (props: any) => {
         {!_.isEmpty(userTier) && <div className="notice">
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">
-            <span>you are in Tier {TIERS[userTier].name}</span>
-            <span>Please hold tokens in your wallet balance to maintain your tier! 
-              <br/>Get a lottery ticket for each 1000 PKF hold</span>
+            <span>You are in Tier {TIERS[userTier].name}</span>
+            <span>Please hold tokens in your wallet balance to maintain your tier!</span>
           </div>
         </div>}
       </div>}

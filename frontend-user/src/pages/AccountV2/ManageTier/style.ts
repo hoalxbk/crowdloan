@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: any) => {
       background: 'rgba(255, 255, 255, 0.06)',
       borderRadius: '8px', 
       padding: '25px 40px 15px 40px',
-      marginTop: '60px',
+      marginTop: '270px',
 
       [theme.breakpoints.down('xs')]: {
         padding: '25px 20px 15px 20px',
@@ -76,7 +76,7 @@ const useStyles = makeStyles((theme: any) => {
     },
     tableBody:  {
       color: '#fff',
-      height: '260px',
+      height: '200px',
       '& .group': {
         display: 'flex',
         justifyContent: 'space-between',

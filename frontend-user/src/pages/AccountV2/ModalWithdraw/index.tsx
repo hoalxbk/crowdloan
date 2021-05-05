@@ -91,7 +91,7 @@ const ModalWithdraw = (props: any) => {
         <div className="modal-content">
           <div className="modal-content__head">
             <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-            <h2 className="title">You have {currentStaked} {currentToken?.symbol} locked-in</h2>
+            <h2 className="title">You have {userInfo.totalStaked} {listTokenDetails[0]?.symbol} locked-in</h2>
           </div>
           <div className="modal-content__body">
             <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
