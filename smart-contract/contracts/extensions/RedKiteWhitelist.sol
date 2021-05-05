@@ -17,6 +17,13 @@ contract RedKiteWhitelist {
         return keccak256(abi.encodePacked(_candidate, _maxAmount, _minAmount));
     }
 
+    function getClaimMessageHash(
+        address _candidate,
+        uint256 _amount
+    ) public pure returns (bytes32) {
+        return keccak256(abi.encodePacked(_candidate, _amount));
+    }
+
     // Verify signature function
     function verify(
         address _signer,
@@ -26,6 +33,19 @@ contract RedKiteWhitelist {
         bytes memory signature
     ) public pure returns (bool) {
         bytes32 messageHash = getMessageHash(_candidate, _maxAmount, _minAmount);
+        bytes32 ethSignedMessageHash = getEthSignedMessageHash(messageHash);
+
+        return getSignerAddress(ethSignedMessageHash, signature) == _signer;
+    }
+
+    // Verify signature function
+    function verifyClaimToken(
+        address _signer,
+        address _candidate,
+        uint256 _amount,
+        bytes memory signature
+    ) public pure returns (bool) {
+        bytes32 messageHash = getClaimMessageHash(_candidate, _amount);
         bytes32 ethSignedMessageHash = getEthSignedMessageHash(messageHash);
 
         return getSignerAddress(ethSignedMessageHash, signature) == _signer;
