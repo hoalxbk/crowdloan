@@ -72,22 +72,10 @@ const ManageTier = (props: any) => {
   const renderToken = (name: string, balance: any, staked: any) => {
     return <div className="group">
       <span>{name}</span>
-      {(wrongChain || !isAuth) && <AnimatedNumber
-        value={0}
-        formatValue={numberWithCommas}
-      />}
-      {!wrongChain && isAuth && <AnimatedNumber
-        value={balance}
-        formatValue={numberWithCommas}
-      />}
-      {(wrongChain || !isAuth) && <AnimatedNumber
-        value={0}
-        formatValue={numberWithCommas}
-      />}
-      {!wrongChain && isAuth && <AnimatedNumber
-        value={staked}
-        formatValue={numberWithCommas}
-      />}
+      {(wrongChain || !isAuth) && <span>0</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(balance)}</span>}
+      {(wrongChain || !isAuth) && <span>0</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(staked)}</span>}
     </div>
   }
 

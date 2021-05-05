@@ -8,6 +8,7 @@ import { deposit } from '../../../store/actions/sota-tiers';
 import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { CONVERSION_RATE } from '../../../constants';
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
@@ -105,7 +106,7 @@ const ModalDeposit = (props: any) => {
         <div className="modal-content">
           <div className="modal-content__head">
             <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-            <h2 className="title">You have {userInfo.totalStaked} {listTokenDetails[0]?.symbol} locked-in</h2>
+            <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} locked-in</h2>
           </div>
           <div className="modal-content__body">
             <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
@@ -118,7 +119,7 @@ const ModalDeposit = (props: any) => {
               <div className="balance">
                 <div>
                   <span>Your wallet balance</span>
-                  <span>{ _.isEmpty(balance) ? 0 : parseFloat(currentBalance).toFixed(6) } {currentToken?.symbol}</span>
+                  <span>{ _.isEmpty(balance) ? 0 : numberWithCommas(currentBalance) } {currentToken?.symbol}</span>
                 </div>
               </div>
               <div className="subtitle">
@@ -138,7 +139,7 @@ const ModalDeposit = (props: any) => {
               <div className="balance" style={{marginTop: '10px'}}>
                 <div>
                   <span>Equivalent</span>
-                  <span>{(parseFloat(depositAmount) * currentRate || 0).toFixed(6)} {listTokenDetails[0].symbol}</span>
+                  <span>{numberWithCommas((parseFloat(depositAmount) * currentRate || 0).toString())} {listTokenDetails[0].symbol}</span>
                 </div>
               </div>
             </div>
