@@ -422,7 +422,6 @@ const useCommonStyle = makeStyles((theme) => {
 
     [theme.breakpoints.down('xs')]: {
       modal: {
-        width: '100vw',
         '& .modal-content': {
           width: 'calc(100% - 40px)',
           padding: '15px',

@@ -8,9 +8,6 @@ import {isWidthDown, isWidthUp, withWidth} from '@material-ui/core';
 import { trimMiddlePartAddress } from '../../../utils/accountAddress';
 import { USER_STATUS } from '../../../constants';
 import { TIERS } from '../../../constants';
-//@ts-ignore
-import AnimatedNumber from "animated-number-react";
-import { numberWithCommas } from '../../../utils/formatNumber';
 
 const AccountInformation = (props: any) => {
   const styles = useStyles();
@@ -18,7 +15,6 @@ const AccountInformation = (props: any) => {
   const [openModalVerifyEmail, setOpenModalVerifyEmail] = useState(false);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
   const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
-  const { data: tiers = {} } = useSelector((state: any) => state.tiers);
 
   const handleKYC = () => {
     window.open('https://docs.google.com/forms/d/e/1FAIpQLSeV_Sman6oEZ3UzNvgly_I-hxNMyGbS4WFhudCzcbDTc4Gaqg/viewform', '_blank');
@@ -31,7 +27,9 @@ const AccountInformation = (props: any) => {
     isKYC
   } = props;
 
-  const formatValue = (value: string) => parseFloat(value).toFixed(2);
+  useEffect(() => {
+    console.log(connectedAccount, emailVerified, USER_STATUS.UNVERIFIED, email)
+  })
 
   return (
     <div className={`${classNamePrefix}__component`} style={{marginBottom: '65px'}}>

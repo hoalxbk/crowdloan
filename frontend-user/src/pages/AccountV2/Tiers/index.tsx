@@ -154,8 +154,8 @@ const Tiers = (props: any) => {
                 </div>
                 <div className="info">
                   <span className="tier-name">{TIERS[idx + 1].name}</span>
-                  { !showMoreInfomation && <span>{tier} {tokenSymbol}</span> }
-                  { showMoreInfomation && <span>{tiersBuyLimit[idx + 1]} {tokenSymbol}</span> }
+                  { !showMoreInfomation && <span>{numberWithCommas(tier)} {tokenSymbol}</span> }
+                  { showMoreInfomation && <span>{numberWithCommas(tiersBuyLimit[idx + 1])} {tokenSymbol}</span> }
                 </div>
               </div>
             </li>
@@ -166,7 +166,7 @@ const Tiers = (props: any) => {
       {!showMoreInfomation && <div className={styles.tierNote}>
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
-          <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
+          <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} enterDelay={500} leaveDelay={200} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
             Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}
           </p>}>
             <img src={noticeIcon}/>

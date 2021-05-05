@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme: any) => {
       backgroundColor: '#030925',
       boxShadow: '0px 12px 20px rgba(0, 0, 0, 0.07)',
       borderRadius: '4px',
-      padding: '10px 15px',
+      padding: '7px 10px',
       '&:before': {
         content: '""',
         width: '10px',
@@ -282,6 +282,11 @@ const useStyles = makeStyles((theme: any) => {
       },
     },
     [theme.breakpoints.down('xs')]: {
+      customWidth: {
+        '&:before': {
+          bottom: '20px'
+        }
+      },
       tierInfo: {
         display: 'flex',
         flexDirection: 'row',
