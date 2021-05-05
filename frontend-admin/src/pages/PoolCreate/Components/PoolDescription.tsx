@@ -70,6 +70,7 @@ function PoolDescription(props: any) {
           className={classes.formControlInput}
           rows={10}
           cols={50}
+          maxLength={300}
         />
 
         <p className={classes.formErrorMessage}>
