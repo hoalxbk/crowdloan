@@ -56,9 +56,9 @@ export const getPoolStatus = (
   }
 
   if (
-    startJoinTime 
+    startBuyTime 
     && endBuyTime 
-    && today > startJoinTime.getTime() 
+    && today > startBuyTime.getTime() 
     && today < endBuyTime.getTime() 
   ) {
     return new BigNumber(soldProgress || 0).multipliedBy(100).gte(99) ?  PoolStatus.Filled: PoolStatus.Progress;
@@ -72,5 +72,5 @@ export const getPoolStatus = (
     return PoolStatus.Closed;
   }
 
-  return PoolStatus.Upcoming;
+  return PoolStatus.TBA;
 }

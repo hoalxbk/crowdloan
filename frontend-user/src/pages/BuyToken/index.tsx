@@ -21,6 +21,7 @@ import Tiers from '../AccountV2/Tiers';
 import LotteryWinners from './LotteryWinners';
 import PoolAbout from './PoolAbout';
 import ClaimToken from './ClaimToken';
+import MyTier from './MyTier';
 import BuyTokenForm from './BuyTokenForm';
 import Button from './Button';
 import StatusBar from './StatusBar';
@@ -43,10 +44,11 @@ const poolImage = "/images/pool_circle.svg";
 enum HeaderType {
   Main = "Main",
   About = "About the project",
-  Participants = "Winner"
+  Participants = "Winner",
+  MyTier = "My Tier"
 }
 
-const headers = [HeaderType.Main, HeaderType.About, HeaderType.Participants];
+const headers = [HeaderType.Main, HeaderType.MyTier, HeaderType.About, HeaderType.Participants];
 
 const ETHERSCAN_BASE_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL; 
 
@@ -483,6 +485,9 @@ const BuyToken: React.FC<any> = (props: any) => {
                 }
                 {
                   activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
+                }
+                {
+                  activeNav === HeaderType.MyTier && <MyTier tiers={poolDetails?.tiersWithDetails} />
                 }
                 {
                   poolDetails?.type === 'claimable' && ( 
