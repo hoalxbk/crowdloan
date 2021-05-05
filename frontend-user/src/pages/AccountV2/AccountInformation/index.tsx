@@ -25,7 +25,6 @@ const AccountInformation = (props: any) => {
   }
 
   const {
-    tokenDetails,
     email,
     setEmail,
     emailVerified,
@@ -41,14 +40,14 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>Email</span>
           {isWidthUp('sm', props.width) && <>
-            {email && <span>{email}</span>}
+            {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
             {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
               <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
                 Verify Email
               </button>}
           </>}
           {isWidthDown('xs', props.width) && <div className="email-xs">
-            {email && <span>{email}</span>}
+            {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
             {(emailVerified == USER_STATUS.UNVERIFIED || !email) &&
               <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
                 Verify Email

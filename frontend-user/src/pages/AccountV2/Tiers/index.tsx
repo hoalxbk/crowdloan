@@ -168,7 +168,7 @@ const Tiers = (props: any) => {
       {!showMoreInfomation && <div className={styles.tierNote}>
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
-          <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} title={<p style={{ fontSize: 15 }}>
+          <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
             Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}*1
           </p>}>
             <img src={noticeIcon}/>
