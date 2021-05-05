@@ -11,7 +11,6 @@ import moment from 'moment';
 import { POOL_STATUS } from '../../constants';
 import Pool from './Pool';
 import { debounce } from 'lodash';
-import { CircularProgress } from '@material-ui/core';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
 import useFetch from '../../hooks/useFetch';
 import useAuth from '../../hooks/useAuth';

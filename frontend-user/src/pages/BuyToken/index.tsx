@@ -470,7 +470,13 @@ const BuyToken: React.FC<any> = (props: any) => {
                    )
                 }
                 {
-                  activeNav === HeaderType.About && <PoolAbout /> 
+                  activeNav === HeaderType.About && ( 
+                     <PoolAbout 
+                       website={poolDetails?.website} 
+                       exchangeRate={poolDetailsMapping && poolDetailsMapping[PoolDetailKey.exchangeRate].display}
+                       description={poolDetails?.description}
+                     /> 
+                  ) 
                 }
                 {
                   activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
@@ -483,6 +489,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       poolAddress={poolDetails?.poolAddress}
                       tokenDetails={poolDetails?.tokenDetails} 
                       buyTokenSuccess={buyTokenSuccess}
+                      poolId={poolDetails?.id}
                     /> 
                  )
                 }

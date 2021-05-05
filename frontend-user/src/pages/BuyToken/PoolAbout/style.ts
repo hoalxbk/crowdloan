@@ -10,6 +10,10 @@ const useStyles = makeStyles((theme: any) => {
       [theme.breakpoints.down('xs')]: {
         width: '100%'
       },
+      [theme.breakpoints.down('md')]: {
+        width: '100%',
+        marginRight: 0
+      },
     },
     PoolAboutBlock: {
       display: 'grid',

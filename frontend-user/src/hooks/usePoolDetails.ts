@@ -30,6 +30,7 @@ export type PoolDetails = {
   isDisplay: boolean;
   addressReceiver: string;
   minimumBuy: number[];
+  description: string;
 }
 
 export type PoolDetailsReturnType ={
@@ -48,7 +49,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const { data: connectedAccountTier } = useTypedSelector(state => state.userTier);
 
   const poolDetails = useMemo(() => {
-    if (data && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
+    if (data && data.tiers && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
       const buyLimit = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.max_buy): [0,0,0,0,0];
       const minimumBuy = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.min_buy): [0,0,0,0,0];
 
@@ -79,6 +80,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         isDeployed: data.is_deploy === 1,
         isDisplay: data.is_display === 1,
         addressReceiver: data.address_receiver,
+        description: data.description
       } 
     }
 
