@@ -6,7 +6,8 @@ export enum PoolStatus {
   Closed = "Ended",
   Filled = "Filled",
   Progress = "In-progress",
-  Claimable = "Claimable"
+  Claimable = "Claimable",
+  TBA = "TBA"
 }
 
 export type poolStatus = Extract<
@@ -16,7 +17,8 @@ export type poolStatus = Extract<
   PoolStatus.Joining | 
   PoolStatus.Filled |
   PoolStatus.Closed | 
-  PoolStatus.Claimable
+  PoolStatus.Claimable |
+  PoolStatus.TBA
 >
 
 export const getPoolStatus = (
@@ -26,9 +28,22 @@ export const getPoolStatus = (
   endBuyTime: Date | undefined,
   releaseTime: Date | undefined,
   soldProgress: string | undefined,
-  isClaimable: boolean | undefined
+  isClaimable: boolean | undefined,
+  poolType: string | undefined
 ): poolStatus => {
   const today = new Date().getTime();
+
+  const requiredReleaseTime = isClaimable ? !releaseTime: false;
+
+  console.log(startJoinTime);
+
+  if ((!startBuyTime || !startJoinTime || !endBuyTime || !endJoinTime || requiredReleaseTime) && poolType === 'whitelist') {
+    return PoolStatus.TBA;
+  }
+
+  if ((!startBuyTime || !endBuyTime || requiredReleaseTime) && poolType === 'fcfs') {
+    return PoolStatus.TBA;
+  }
 
   if (startJoinTime && today < startJoinTime.getTime()) {
     return PoolStatus.Upcoming;
