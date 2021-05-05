@@ -317,6 +317,34 @@ class UserController {
       return HelperUtils.responseSuccess(tier);
     }
   }
+
+  async activeKyc({ request, params }) {
+    const inputParams = request.only([
+      'wallet_address',
+      'email',
+    ]);
+    try {
+      const userService = new UserService();
+      const userFound = await userService.findUser(inputParams);
+      console.log('[activeKyc] - userFound: ', JSON.stringify(userFound));
+
+      if (!userFound) {
+        return HelperUtils.responseNotFound('User Not found');
+      }
+      if (!userFound.is_kyc) {
+        const user = await userService.buildQueryBuilder({id: userFound.id}).update({ is_kyc: true });
+        console.log('[activeKyc] - User: ', JSON.stringify(user));
+      }
+
+      return HelperUtils.responseSuccess({
+        ...inputParams,
+        id: userFound.id,
+      });
+    } catch (e) {
+      console.log('[activeKyc] - Error: ', e);
+      return HelperUtils.responseErrorInternal('Error: ' + (e.message || 'Can\'t active KYC'));
+    }
+  }
 }
 
 module.exports = UserController

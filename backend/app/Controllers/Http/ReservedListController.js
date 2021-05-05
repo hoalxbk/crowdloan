@@ -4,6 +4,10 @@ const ReservedListService = use('App/Services/ReservedListService')
 const HelperUtils = use('App/Common/HelperUtils');
 const ReservedListModel = use('App/Models/ReservedList');
 const UserModel = use('App/Models/User');
+const TierModel = use('App/Models/Tier');
+const ConfigModel = use('App/Models/Config');
+const BigNumber = use('bignumber.js')
+const moment = require('moment')
 
 const Redis = use('Redis');
 
@@ -107,20 +111,14 @@ class ReservedListController {
 
   async addReserveUser({ request, params }) {
     try {
-      console.log('[addReserveUser] - Params: ', params);
-
       const { campaignId } = params;
-      const inputParams = request.only(['email', 'wallet_address', 'maxBuy', 'minBuy', 'startTime', 'endTime']);
+      const inputParams = request.only(['email', 'wallet_address']);
+      console.log('[addReserveUser] - Params: ', params, inputParams);
 
-      // TODO: Check user exist in system
       const reservedUser = new ReservedListModel;
       reservedUser.campaign_id = campaignId;
       reservedUser.email = inputParams.email;
       reservedUser.wallet_address = inputParams.wallet_address;
-      reservedUser.max_buy = inputParams.maxBuy;
-      reservedUser.min_buy = inputParams.minBuy;
-      reservedUser.start_time = inputParams.startTime;
-      reservedUser.end_time = inputParams.endTime;
       await reservedUser.save();
 
       console.log('Res: ', reservedUser);
@@ -146,6 +144,53 @@ class ReservedListController {
 
       return HelperUtils.responseSuccess(existRecord, 'User exist in Reserve User List');
     } catch (e) {
+      return HelperUtils.responseErrorInternal();
+    }
+  }
+
+  async updateReserveSetting({ request, params }) {
+    try {
+      const inputParams = request.only(['maxBuy', 'minBuy', 'startTime', 'endTime']);
+      console.log('[addReserveUser] - Params: ', params, inputParams);
+      const updateData = {
+        max_buy: new BigNumber(inputParams.maxBuy).toFixed(),
+        min_buy: new BigNumber(inputParams.minBuy).toFixed(),
+        start_time: inputParams.startTime,
+        end_time: inputParams.endTime,
+        start_time_unix: moment(inputParams.startTime).unix(),
+        end_time_unix: moment(inputParams.endTime).unix(),
+
+      };
+
+      const configReserve = await ConfigModel.query().where('key', 'reserve_setting').first();
+      if (!configReserve) {
+        const reserveSetting = new ConfigModel;
+        reserveSetting.key = 'reserve_setting';
+        reserveSetting.value = JSON.stringify(updateData);
+        await reserveSetting.save();
+      }
+      await ConfigModel.query().where('key', 'reserve_setting').update({ value: JSON.stringify(updateData) });
+
+      console.log('[updateReserveSetting] - response: ', JSON.stringify(updateData));
+      return HelperUtils.responseSuccess();
+    } catch (e) {
+      console.log('[updateReserveSetting] - Error: ', e);
+      return HelperUtils.responseErrorInternal();
+    }
+  }
+
+  async reserveSetting({ request, params }) {
+    try {
+      const configReserve = await ConfigModel.query().where('key', 'reserve_setting').first();
+      if (!configReserve) {
+        return HelperUtils.responseSuccess(null);
+      }
+
+      const responseData = JSON.parse((configReserve && configReserve.value) || '');
+      console.log('[reserveSetting] - response: ', JSON.stringify(responseData));
+      return HelperUtils.responseSuccess(responseData);
+    } catch (e) {
+      console.log('[reserveSetting] - Error: ', e);
       return HelperUtils.responseErrorInternal();
     }
   }

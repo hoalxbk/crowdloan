@@ -23,10 +23,10 @@ export const NETWORK_AVAILABLE = {
 };
 export const TIERS = [
   '-',
-  'Hawk Tier',
-  'Falcon Tier',
-  'Eagle Tier',
-  'Phoenix Tier',
+  'Dove',
+  'Hawk',
+  'Eagle',
+  'Phoenix',
 ];
 
 export const DEFAULT_LIMIT = 10;

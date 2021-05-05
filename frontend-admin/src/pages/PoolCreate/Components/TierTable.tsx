@@ -21,17 +21,17 @@ const useStylesTable = makeStyles({
   },
 });
 
-const createData = (name: string, startTime: string, endTime: string, minBuy: number, maxBuy: number, isEdit: boolean) => {
-  return { name, startTime, endTime, minBuy, maxBuy, isEdit };
+const createData = (name: string, startTime: string, endTime: string, minBuy: number, maxBuy: number, isEdit: boolean, ticket_allow_percent = 0) => {
+  return { name, startTime, endTime, minBuy, maxBuy, isEdit, ticket_allow_percent };
 };
 
 const createDefaultTiers = () => {
   return [
     createData('-', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 1000, false),
-    createData('Hawk Tier', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 2000, false),
-    createData('Falcon Tier', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 3000, false),
-    createData('Eagle Tier', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 4000, false),
-    createData('Phoenix Tier', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 5000, false),
+    createData('Dove', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 2000, false),
+    createData('Hawk', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 3000, false),
+    createData('Eagle', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 4000, false),
+    createData('Phoenix', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 5000, false),
   ];
 };
 
@@ -58,7 +58,8 @@ function TierTable(props: any) {
           moment.unix(item.end_time).format(DATETIME_FORMAT),
           (new BigNumber(item.min_buy)).toNumber(),
           (new BigNumber(item.max_buy)).toNumber(),
-          false
+          false,
+          item.ticket_allow_percent || 0,
         );
       });
       setRows(dataFormatted);
@@ -139,6 +140,7 @@ function TierTable(props: any) {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
+              <TableCell align="right">Allocation (%)</TableCell>
               <TableCell align="right">Start Buy Time</TableCell>
               <TableCell align="right">End Time</TableCell>
               <TableCell align="right">Min Buy</TableCell>
@@ -165,6 +167,7 @@ function TierTable(props: any) {
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>
+                  <TableCell align="right">{row.ticket_allow_percent || 0}</TableCell>
                   <TableCell align="right">{startTime}</TableCell>
                   <TableCell align="right">{endTime}</TableCell>
                   <TableCell align="right">{minBuy}</TableCell>

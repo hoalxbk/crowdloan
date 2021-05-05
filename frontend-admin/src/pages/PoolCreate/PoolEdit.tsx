@@ -10,6 +10,7 @@ import BackButton from "../../components/Base/ButtonLink/BackButton";
 import {useDispatch, useSelector} from "react-redux";
 import {get} from 'lodash';
 import {getPoolBlockchainInfo} from "../../utils/blockchain";
+import {alertFailure} from "../../store/actions/alert";
 
 const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   const isEdit = true;
@@ -36,14 +37,18 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
   useEffect(() => {
     getPoolDetail(id)
       .then(async (res) => {
+        if (res.status !== 200) {
+          dispatch(alertFailure('Server Error: ' + (res.message || 'Load pool fail !!!')));
+          return false;
+        }
         const data = res.data;
         const newData = {
           ...data,
-          start_time: moment.unix(data?.start_time).format(DATETIME_FORMAT),
-          finish_time: moment.unix(data?.finish_time).format(DATETIME_FORMAT),
-          release_time: moment.unix(data?.release_time).format(DATETIME_FORMAT),
-          start_join_pool_time: moment.unix(data?.start_join_pool_time).format(DATETIME_FORMAT),
-          end_join_pool_time: moment.unix(data?.end_join_pool_time).format(DATETIME_FORMAT),
+          start_time: data?.start_time ? moment.unix(data?.start_time).format(DATETIME_FORMAT) : null,
+          finish_time: data?.finish_time ? moment.unix(data?.finish_time).format(DATETIME_FORMAT) : null,
+          release_time: data?.release_time ? moment.unix(data?.release_time).format(DATETIME_FORMAT) : null,
+          start_join_pool_time: data?.start_join_pool_time ? moment.unix(data?.start_join_pool_time).format(DATETIME_FORMAT) : null,
+          end_join_pool_time: data?.start_join_pool_time ? moment.unix(data?.end_join_pool_time).format(DATETIME_FORMAT) : null,
         };
         setPoolDetail(newData);
 
@@ -53,6 +58,10 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
         // }
 
         return res.data;
+      })
+      .catch((e) => {
+        console.log('Error: ', e);
+        dispatch(alertFailure('Pool load fail !!!'));
       });
   }, [id]);
 
