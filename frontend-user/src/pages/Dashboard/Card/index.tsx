@@ -63,8 +63,8 @@ const Card = (props: any): JSX.Element => {
       <div className={styles.card}>
         <div className={styles.cardHeader}>
           <img src={pool.banner} />
-          {pool.status == POOL_STATUS.CLOSED && <div className="time closed">
-            <span>Closed</span>
+          {pool.status == POOL_STATUS.CLOSED && <div className="time ended">
+            <span>Ended</span>
           </div>}
           {pool.status == POOL_STATUS.TBA && <div className="time tba">
             <span>TBA</span>
