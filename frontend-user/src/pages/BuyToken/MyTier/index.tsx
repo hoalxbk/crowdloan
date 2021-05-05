@@ -20,7 +20,7 @@ type MyTierProps = {
   tiers: Tier[] | undefined
 }
 
-const headers = ['Tier', 'Allocation (%)', ''];
+const headers = ['Tier', 'Allocation (%)', 'Max Buy/Ticket', 'Start Buy Time', 'End Buy Time'];
 
 const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
   const styles = useStyles();
@@ -36,6 +36,44 @@ const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
       <p className={styles.MyTierRulesHeader}>
         At current tier, you will be able to purchase with the following rules:
       </p>
+        <TableContainer component={Paper} className={styles.tableContainer}>
+          <Table className={styles.table} aria-label="simple table">
+            <TableHead className={styles.tableHeaderWrapper}>
+              <TableRow>
+              {
+                headers.map(header => (
+                  <TableCell key={header} className={styles.tableHeader}>
+                    <span>
+                      {header}
+                    </span>
+                  </TableCell>
+                ))
+              }
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {tiers && tiers.length> 0 && tiers.map((row: any, index) => (
+              <TableRow key={index}>
+                <TableCell component="th" scope="row">
+                  {row.name}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.allocation}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.maxBuy}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.startTime}
+                </TableCell>
+                <TableCell component="th" scope="row">
+                  {row.endTime}
+                </TableCell>
+                </TableRow>
+            ))}
+            </TableBody>
+            </Table>
+        </TableContainer>
     </div>
   )
 }
