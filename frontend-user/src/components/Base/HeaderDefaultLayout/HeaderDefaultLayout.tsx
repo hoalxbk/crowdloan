@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { BeatLoader } from 'react-spinners';
 import { css } from "@emotion/core";
-import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 import useStyles from './styles';
 
 import ButtonLink from '../ButtonLink'
@@ -17,6 +17,7 @@ import { trimMiddlePartAddress } from '../../../utils/accountAddress';
 import { connectorsByName, connectorNames } from '../../../constants/connectors';
 import { WalletConnectionState } from  '../../../store/reducers/wallet';
 
+const AccountIcon = "user.svg";
 const BrightStartIcon = "bright-star.svg";
 const WalletIcon = "wallet.svg";
 const EthereumIcon = "ethereum.svg";
