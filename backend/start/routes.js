@@ -88,6 +88,8 @@ Route.group(() => {
   Route.get('pool/:campaignId/reserves', 'ReservedListController.getReservedList');
   Route.post('pool/:campaignId/reserves/add', 'ReservedListController.addReserveUser');
   Route.delete('pool/:campaignId/reserves/:walletAddress/delete', 'ReservedListController.deleteReserve');
+  Route.post('pool/reserves/update-setting', 'ReservedListController.updateReserveSetting');
+  Route.get('pool/reserves/setting', 'ReservedListController.reserveSetting');
 
   Route.put('active-kyc', 'UserController.activeKyc');//.middleware(['formatEmailAndWallet']);
 

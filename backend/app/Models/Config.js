@@ -4,6 +4,9 @@
 const Model = use('Model')
 
 class Config extends Model {
+  static get table() {
+    return 'configs';
+  }
 }
 
 module.exports = Config

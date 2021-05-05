@@ -21,8 +21,8 @@ const useStylesTable = makeStyles({
   },
 });
 
-const createData = (name: string, startTime: string, endTime: string, minBuy: number, maxBuy: number, isEdit: boolean) => {
-  return { name, startTime, endTime, minBuy, maxBuy, isEdit };
+const createData = (name: string, startTime: string, endTime: string, minBuy: number, maxBuy: number, isEdit: boolean, ticket_allow_percent = 0) => {
+  return { name, startTime, endTime, minBuy, maxBuy, isEdit, ticket_allow_percent };
 };
 
 const createDefaultTiers = () => {
@@ -58,7 +58,8 @@ function TierTable(props: any) {
           moment.unix(item.end_time).format(DATETIME_FORMAT),
           (new BigNumber(item.min_buy)).toNumber(),
           (new BigNumber(item.max_buy)).toNumber(),
-          false
+          false,
+          item.ticket_allow_percent || 0,
         );
       });
       setRows(dataFormatted);
@@ -139,6 +140,7 @@ function TierTable(props: any) {
           <TableHead>
             <TableRow>
               <TableCell>Name</TableCell>
+              <TableCell align="right">Allocation (%)</TableCell>
               <TableCell align="right">Start Buy Time</TableCell>
               <TableCell align="right">End Time</TableCell>
               <TableCell align="right">Min Buy</TableCell>
@@ -165,6 +167,7 @@ function TierTable(props: any) {
                   <TableCell component="th" scope="row">
                     {row.name}
                   </TableCell>
+                  <TableCell align="right">{row.ticket_allow_percent || 0}</TableCell>
                   <TableCell align="right">{startTime}</TableCell>
                   <TableCell align="right">{endTime}</TableCell>
                   <TableCell align="right">{minBuy}</TableCell>
