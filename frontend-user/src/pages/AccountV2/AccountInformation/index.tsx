@@ -65,15 +65,17 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>Your Tier</span>
           <span>
-            {TIERS[userTier]?.name}
+            {_.isEmpty(userTier) ? TIERS[0].name : TIERS[userTier]?.name}
           </span>
         </div>
         <div className={styles.inputGroup}>
           <span>KYC for Redkite</span>
-          <span>{isKYC ? 'Verified' : 'Unverified'}</span>
-          {!isKYC && <button className="verify-email" onClick={handleKYC}>
+          {connectedAccount && <>
+            <span>{isKYC ? 'Verified' : 'Unverified'}</span>
+            {!isKYC && <button className="verify-email" onClick={handleKYC}>
               Register KYC
             </button>}
+          </>}
         </div>
         <div className={styles.redKiteInfo}>
           {/* <div className={styles.walletInfo}>

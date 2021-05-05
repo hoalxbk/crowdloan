@@ -24,6 +24,17 @@ const useStyles = makeStyles((theme: any) => {
       boxShadow: '0px 12px 20px rgba(0, 0, 0, 0.07)',
       borderRadius: '4px',
       padding: '10px 15px',
+      '&:before': {
+        content: '""',
+        width: '10px',
+        height: '10px',
+        display: 'block',
+        backgroundColor: '#030925',
+        transform: 'rotate(-45deg)',
+        position: 'absolute',
+        left: '5px',
+        bottom: '10px'
+      }
     },
     tierNote: {
       display: 'flex',

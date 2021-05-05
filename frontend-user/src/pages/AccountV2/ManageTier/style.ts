@@ -50,6 +50,9 @@ const useStyles = makeStyles((theme: any) => {
       '& .button-area .btn-unlock': {
         background: '#D01F36',
       },
+      [theme.breakpoints.down('md')]: {
+        marginTop: '0',
+      },
 
       [theme.breakpoints.down('xs')]: {
         padding: '25px 24px 35px 24px',
