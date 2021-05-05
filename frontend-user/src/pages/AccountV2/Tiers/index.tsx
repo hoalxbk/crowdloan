@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
-import { TIERS } from '../../../constants';
+import { CONVERSION_RATE, TIERS } from '../../../constants';
 import useStyles from './style';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
@@ -169,7 +169,7 @@ const Tiers = (props: any) => {
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
           <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} title={<p style={{ fontSize: 15 }}>
-            Equivalent PKF = PKF + Uniswap PKF*150 + sPKF*1
+            Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}*1
           </p>}>
             <img src={noticeIcon}/>
           </Tooltip>

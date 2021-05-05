@@ -95,7 +95,7 @@ const ManageTier = (props: any) => {
     <div className={`${classNamePrefix}__component`}>
       <div className={styles.content}>
         <div className={styles.manageTier}>
-          <h2 className={styles.title}>Available balance</h2>
+          <h2 className={styles.title}>Wallet balance</h2>
         </div>
         <div className={styles.walletBalance}>
           <div className={styles.tableHead}>

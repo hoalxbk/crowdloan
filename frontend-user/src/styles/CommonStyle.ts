@@ -383,7 +383,7 @@ const useCommonStyle = makeStyles((theme) => {
           },
 
           '&:first-child': {
-            backgroundColor: '#29C08A'
+            backgroundColor: '#3232DC'
           },
 
           '&.btn-cancel': {
