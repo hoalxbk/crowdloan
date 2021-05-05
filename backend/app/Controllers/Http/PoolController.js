@@ -1,6 +1,7 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const CampaignClaimConfigModel = use('App/Models/CampaignClaimConfig');
 const WalletAccountModel = use('App/Models/WalletAccount');
 const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
@@ -75,13 +76,22 @@ class PoolController {
       'decimals': tokenInfo && tokenInfo.decimals,
       'token': tokenInfo && tokenInfo.address,
     };
-
     console.log('Create Pool with data: ', data);
 
     try {
       const campaign = new CampaignModel();
       campaign.fill(data);
       await campaign.save();
+
+      // save config claim token for campaign
+      const claimConfigData = {
+        campaign_id:  campaign.id,
+        start_time: inputParams.release_time,
+        max_percent_claim: 100,
+      };
+      const claimConfig = new CampaignClaimConfigModel();
+      claimConfig.fill(claimConfigData);
+      await claimConfig.save();
 
       const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
@@ -163,6 +173,17 @@ class PoolController {
         return HelperUtils.responseNotFound('Pool not found');
       }
       await CampaignModel.query().where('id', campaignId).update(data);
+
+      // update claim config
+      const claimConfig = await CampaignClaimConfigModel.query().where('campaign_id', campaignId).first();
+      if (!claimConfig) {
+        return HelperUtils.responseNotFound('Not found pool claim config !');
+      }
+      const claimConfigUpdate = {
+        ...claimConfig,
+        release_time: inputParams.release_time
+      }
+      await CampaignClaimConfigModel.query().where('campaign_id', campaignId).update(claimConfigUpdate);
 
       if (!campaign.is_deploy) {
         const tiers = (inputParams.tier_configuration || []).map((item, index) => {
