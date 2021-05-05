@@ -107,11 +107,11 @@ function PoolForm(props: any) {
       tokenInfo,
 
       // Time
-      start_time: data.start_time && data.start_time.unix(),
-      finish_time: data.finish_time && data.finish_time.unix(),
-      release_time: data.release_time && data.release_time.unix(),
-      start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
-      end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
+      start_time: data.start_time ? data.start_time.unix() : null,
+      finish_time: data.finish_time ? data.finish_time.unix() : null,
+      release_time: data.release_time ? data.release_time.unix() : null,
+      start_join_pool_time: data.start_join_pool_time ? data.start_join_pool_time.unix() : null,
+      end_join_pool_time: data.end_join_pool_time ? data.end_join_pool_time.unix() : null,
 
       // Types
       accept_currency: data.acceptCurrency,
@@ -285,11 +285,11 @@ function PoolForm(props: any) {
         tokenInfo,
 
         // Time
-        start_time: data.start_time && data.start_time.unix(),
-        finish_time: data.finish_time && data.finish_time.unix(),
-        release_time: data.release_time && data.release_time.unix(),
-        start_join_pool_time: data.start_join_pool_time && data.start_join_pool_time.unix(),
-        end_join_pool_time: data.end_join_pool_time && data.end_join_pool_time.unix(),
+        start_time: data.start_time ? data.start_time.unix() : null,
+        finish_time: data.finish_time ? data.finish_time.unix() : null,
+        release_time: data.release_time ? data.release_time.unix() : null,
+        start_join_pool_time: data.start_join_pool_time ? data.start_join_pool_time.unix() : null,
+        end_join_pool_time: data.end_join_pool_time ? data.end_join_pool_time.unix() : null,
 
         // Types
         accept_currency: data.acceptCurrency,
