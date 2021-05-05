@@ -13,7 +13,7 @@ import useAuth from '../../../hooks/useAuth';
 import AnimatedNumber from "animated-number-react";
 import { numberWithCommas } from '../../../utils/formatNumber';
 import { timeAgo } from '../../../utils/convertDate';
-import { USER_STATUS } from '../../../constants';
+import { USER_STATUS, CONVERSION_RATE } from '../../../constants';
 
 const iconClose = '/images/icons/close.svg'
 
@@ -40,10 +40,6 @@ const ManageTier = (props: any) => {
     emailVerified,
     listTokenDetails
   } = props;
-
-  const handleKYC = () => {
-    console.log('hande KYC')
-  }
 
   useEffect(() => {
     dispatch(getWithdrawPercent());
@@ -110,9 +106,9 @@ const ManageTier = (props: any) => {
             </div>
           </div>
           <div className={styles.tableBody}>
-            {renderToken(listTokenDetails[0]?.name, balance?.pkf, userInfo?.pkfStaked)}
-            {renderToken(listTokenDetails[1]?.name, balance?.uni, userInfo?.uniStaked)}
-            {renderToken(listTokenDetails[2]?.name, balance?.mantra, userInfo?.mantraStaked)}
+            {renderToken('Polkafoundry', balance?.pkf, userInfo?.pkfStaked)}
+            {renderToken(CONVERSION_RATE[0]?.name, balance?.uni, userInfo?.uniStaked)}
+            {renderToken(CONVERSION_RATE[1]?.name, balance?.mantra, userInfo?.mantraStaked)}
           </div>
         </div>
         <div className="button-area">

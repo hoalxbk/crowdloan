@@ -59,7 +59,7 @@ export const CONVERSION_RATE = [
 
 export const TIERS = [
   {
-    name: '',
+    name: '-',
     icon: '/images/icons/rocket.svg',
     bg: '/images/icons/red-kite-bg.png',
     bgColor: '#8D8DCC',

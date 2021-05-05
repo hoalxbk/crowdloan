@@ -61,6 +61,7 @@ const AccountV2 = (props: any) => {
     } else {
       setEmail('')
       setEmailVeryfied(USER_STATUS.UNVERIFIED)
+      setIsKYC(false)
     }
   }, [data]);
 
