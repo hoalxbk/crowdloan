@@ -47,10 +47,13 @@ const AccountV2 = (props: any) => {
       dispatch(getUserTier(connectedAccount));
       dispatch(getAllowance(connectedAccount));
     }
+  }, [isAuth, wrongChain, connectedAccount]);
+
+  useEffect(() => {
     setEmail('')
     setEmailVeryfied(USER_STATUS.UNVERIFIED)
     setIsKYC(false)
-  }, [isAuth, wrongChain, connectedAccount]);
+  }, [connectedAccount]);
 
   useEffect(() => {
     setListTokenDetails([tokenPKFDetails, tokenUniLPDetails, tokenMantraLPDetails]);

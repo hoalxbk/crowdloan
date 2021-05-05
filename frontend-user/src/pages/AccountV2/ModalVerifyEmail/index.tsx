@@ -49,10 +49,10 @@ const ModalVerifyEmail = (props: any) => {
       .then(res => {
         if(res.data.status == 200) {
           setEmail(inputEmail)
-          dispatch(alertSuccess('Register success, please check verify email'));
+          dispatch(alertSuccess(res.data.message));
           setOpenModalVerifyEmail(false);
         } else if(res.data.status == 400) {
-          dispatch(alertFailure('Email account has been registered.'));
+          dispatch(alertFailure(res.data.message));
         }
       }).catch(() => {
         dispatch(alertFailure('Email register failure, please try again later'));

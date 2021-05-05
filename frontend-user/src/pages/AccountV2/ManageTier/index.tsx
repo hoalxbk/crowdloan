@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
-import { LinearProgress } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { getWithdrawPercent, getWithdrawFee } from '../../../store/actions/sota-tiers';
 import ModalDeposit from '../ModalDeposit';
 import ModalWithdraw from '../ModalWithdraw';
@@ -72,22 +72,10 @@ const ManageTier = (props: any) => {
   const renderToken = (name: string, balance: any, staked: any) => {
     return <div className="group">
       <span>{name}</span>
-      {(wrongChain || !isAuth) && <AnimatedNumber
-        value={0}
-        formatValue={numberWithCommas}
-      />}
-      {!wrongChain && isAuth && <AnimatedNumber
-        value={balance}
-        formatValue={numberWithCommas}
-      />}
-      {(wrongChain || !isAuth) && <AnimatedNumber
-        value={0}
-        formatValue={numberWithCommas}
-      />}
-      {!wrongChain && isAuth && <AnimatedNumber
-        value={staked}
-        formatValue={numberWithCommas}
-      />}
+      {(wrongChain || !isAuth) && <span>0</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(balance)}</span>}
+      {(wrongChain || !isAuth) && <span>0</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(staked)}</span>}
     </div>
   }
 
@@ -153,7 +141,7 @@ const ManageTier = (props: any) => {
         <div className="content">
           <img src={iconClose} onClick={() => setOpenModalTransactionSubmitting(false)}/>
           <span className={commonStyles.nnb1824d}>Transaction Submitting</span>
-          <LinearProgress color="primary" />
+          <CircularProgress color="primary" />
         </div>
       </div>}
 
