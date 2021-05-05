@@ -10,7 +10,7 @@ import Paper from '@material-ui/core/Paper';
 import {Button, makeStyles} from "@material-ui/core";
 import CreateEditTierForm from "./CreateEditTierForm";
 import moment from "moment";
-import {DATETIME_FORMAT} from "../../../constants";
+import {DATETIME_FORMAT, TIERS} from "../../../constants";
 import {renderErrorCreatePool} from "../../../utils/validate";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import BigNumber from "bignumber.js";
@@ -27,7 +27,7 @@ const createData = (name: string, startTime: string, endTime: string, minBuy: nu
 
 const createDefaultTiers = () => {
   return [
-    createData('Kite', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 1000, false),
+    createData('-', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 1000, false),
     createData('Hawk Tier', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 2000, false),
     createData('Falcon Tier', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 3000, false),
     createData('Eagle Tier', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 4000, false),
@@ -51,9 +51,9 @@ function TierTable(props: any) {
 
   useEffect(() => {
     if (poolDetail && poolDetail.tiers) {
-      const dataFormatted = poolDetail.tiers.map((item: any) => {
+      const dataFormatted = poolDetail.tiers.map((item: any, index: any) => {
         return createData(
-          item.name,
+          TIERS[index],
           moment.unix(item.start_time).format(DATETIME_FORMAT),
           moment.unix(item.end_time).format(DATETIME_FORMAT),
           (new BigNumber(item.min_buy)).toNumber(),
