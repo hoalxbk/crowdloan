@@ -10,6 +10,7 @@ import BackButton from "../../components/Base/ButtonLink/BackButton";
 import {useDispatch, useSelector} from "react-redux";
 import {get} from 'lodash';
 import {getPoolBlockchainInfo} from "../../utils/blockchain";
+import {alertFailure} from "../../store/actions/alert";
 
 const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
   const isEdit = true;
@@ -36,6 +37,10 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
   useEffect(() => {
     getPoolDetail(id)
       .then(async (res) => {
+        if (res.status !== 200) {
+          dispatch(alertFailure('Server Error: ' + (res.message || 'Load pool fail !!!')));
+          return false;
+        }
         const data = res.data;
         const newData = {
           ...data,
@@ -53,6 +58,10 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
         // }
 
         return res.data;
+      })
+      .catch((e) => {
+        console.log('Error: ', e);
+        dispatch(alertFailure('Pool load fail !!!'));
       });
   }, [id]);
 

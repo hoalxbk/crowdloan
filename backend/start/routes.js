@@ -71,6 +71,8 @@ Route.group(() => {
   Route.post('pool/create', 'PoolController.createPool');
   Route.post('pool/:campaignId/update', 'PoolController.updatePool');
   Route.get('pool/:campaignId', 'PoolController.getPoolAdmin');
+  Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
+  Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 
   // Participants
   Route.get('pool/:campaignId/participants', 'WhiteListUserController.getParticipants');
@@ -86,8 +88,8 @@ Route.group(() => {
   Route.get('pool/:campaignId/reserves', 'ReservedListController.getReservedList');
   Route.post('pool/:campaignId/reserves/add', 'ReservedListController.addReserveUser');
   Route.delete('pool/:campaignId/reserves/:walletAddress/delete', 'ReservedListController.deleteReserve');
-  Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
-  Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
+
+  Route.put('active-kyc', 'UserController.activeKyc');//.middleware(['formatEmailAndWallet']);
 
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'formatEmailAndWallet']);
 

@@ -17,7 +17,7 @@ function PoolDescription(props: any) {
   } = props;
   const renderError = renderErrorCreatePool;
 
-  const defaultValue = '<p></p>';
+  const defaultValue = '';
   const [description, setDescription] = useState(defaultValue);
 
   useEffect(() => {
@@ -33,34 +33,43 @@ function PoolDescription(props: any) {
       <div className={classes.formCKEditor}>
         <label className={classes.formControlLabel}>About the pool: </label>
 
-        <CKEditor
-          editor={ ClassicEditor }
-          data={description}
-          onReady={ (editor: any) => {
-            // You can store the "editor" and use when it is needed.
-            // console.log( 'Editor is ready to use!', editor );
-          } }
-          onChange={ ( event: any, editor: any ) => {
-            const data = editor.getData();
-            // console.log( { event, editor, data } );
-            setDescription(data)
-          } }
-          onBlur={ ( event: any, editor: any ) => {
-            // console.log( 'Blur.', editor );
-          } }
-          onFocus={ ( event: any, editor: any ) => {
-            // console.log( 'Focus.', editor );
-          } }
-          // disabled={isDeployed}
-        />
-        <input
-          type="hidden"
+        {/*<CKEditor*/}
+        {/*  editor={ ClassicEditor }*/}
+        {/*  data={description}*/}
+        {/*  onReady={ (editor: any) => {*/}
+        {/*    // You can store the "editor" and use when it is needed.*/}
+        {/*    // console.log( 'Editor is ready to use!', editor );*/}
+        {/*  } }*/}
+        {/*  onChange={ ( event: any, editor: any ) => {*/}
+        {/*    const data = editor.getData();*/}
+        {/*    setDescription(data)*/}
+        {/*  } }*/}
+        {/*  onBlur={ ( event: any, editor: any ) => {*/}
+        {/*    // console.log( 'Blur.', editor );*/}
+        {/*  } }*/}
+        {/*  onFocus={ ( event: any, editor: any ) => {*/}
+        {/*    // console.log( 'Focus.', editor );*/}
+        {/*  } }*/}
+        {/*  // disabled={isDeployed}*/}
+        {/*/>*/}
+        {/*<input*/}
+        {/*  type="hidden"*/}
+        {/*  value={description}*/}
+        {/*  name="description"*/}
+        {/*  ref={register({*/}
+        {/*    // required: true*/}
+        {/*  })}*/}
+        {/*/>*/}
+
+        <textarea
           value={description}
           name="description"
           ref={register({
-            // required: true
           })}
-          // disabled={isDeployed}
+          onChange={e => setDescription(e?.target?.value)}
+          className={classes.formControlInput}
+          rows={10}
+          cols={50}
         />
 
         <p className={classes.formErrorMessage}>

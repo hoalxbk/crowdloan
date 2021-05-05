@@ -289,6 +289,9 @@ class PoolController {
         };
       }
 
+      // Cache data
+      RedisUtils.createRedisPoolDetail(poolId, pool);
+
       return HelperUtils.responseSuccess(pool);
     } catch (e) {
       console.log(e)
