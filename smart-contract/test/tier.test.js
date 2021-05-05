@@ -83,4 +83,113 @@ describe('Tier', function () {
     expect(await tier.userExternalStaked(owner)).to.equal("15000000000000000000000");
     expect(await tier.userTotalStaked(owner)).to.equal("15000000000000000000000");
   });
+
+  it('Deposit / withdraw sPKF with multiple accounts', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await sPKF.transfer(user1.address, utils.parseUnits("50000", 18));
+    await sPKF.transfer(user2.address, utils.parseUnits("50000", 18));
+
+    const depositAmount = utils.parseUnits('20000', 18);
+
+    await sPKF.connect(user1).approve(tier.address, depositAmount);
+    await sPKF.connect(user2).approve(tier.address, depositAmount);
+
+    await tier.connect(user1).depositERC20(sPKF.address, depositAmount);
+    await tier.connect(user2).depositERC20(sPKF.address, depositAmount);
+
+    const user1Info = await tier.userInfo(user1.address, sPKF.address);
+    const user2Info = await tier.userInfo(user1.address, sPKF.address);
+
+    expect(user1Info.staked).to.equal(depositAmount);
+    expect(user2Info.staked).to.equal(depositAmount);
+
+    await tier.connect(user1).withdrawERC20(sPKF.address, depositAmount);
+    await tier.connect(user2).withdrawERC20(sPKF.address, depositAmount);
+
+    expect((await tier.userInfo(user1.address, sPKF.address)).staked).to.equal(0);
+    expect((await tier.userInfo(user2.address, sPKF.address)).staked).to.equal(0);
+  });
+
+  it('Deposit / withdraw with withdraw < deposit sPKF with multiple accounts', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await sPKF.transfer(user1.address, utils.parseUnits("50000", 18));
+    await sPKF.transfer(user2.address, utils.parseUnits("50000", 18));
+
+    const depositAmount = utils.parseUnits('10000', 18);
+    const withdrawAmount = utils.parseUnits('6500', 18);
+    const remainingAmount = utils.parseUnits('3500', 18);
+
+    await sPKF.connect(user1).approve(tier.address, depositAmount);
+    await sPKF.connect(user2).approve(tier.address, depositAmount);
+
+    await tier.connect(user1).depositERC20(sPKF.address, depositAmount);
+    await tier.connect(user2).depositERC20(sPKF.address, depositAmount);
+
+    const user1Info = await tier.userInfo(user1.address, sPKF.address);
+    const user2Info = await tier.userInfo(user1.address, sPKF.address);
+
+    expect(user1Info.staked).to.equal(depositAmount);
+    expect(user2Info.staked).to.equal(depositAmount);
+
+    await tier.connect(user1).withdrawERC20(sPKF.address, withdrawAmount);
+    await tier.connect(user2).withdrawERC20(sPKF.address, withdrawAmount);
+
+    expect((await tier.userInfo(user1.address, sPKF.address)).staked).to.equal(remainingAmount);
+    expect((await tier.userInfo(user2.address, sPKF.address)).staked).to.equal(remainingAmount);
+  });
+
+  it('Deposit / withdraw with withdraw < deposit sPKF with multiple deposits', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await sPKF.transfer(user1.address, utils.parseUnits("50000", 18));
+
+    const depositAmount = utils.parseUnits('10000', 18);
+    const withdrawAmount = utils.parseUnits('10000', 18);
+    await sPKF.connect(user1).approve(tier.address, utils.parseUnits("50000", 18));
+
+    await tier.connect(user1).depositERC20(sPKF.address, depositAmount);
+    await tier.connect(user1).depositERC20(sPKF.address, depositAmount);
+    await tier.connect(user1).depositERC20(sPKF.address, depositAmount);
+    await tier.connect(user1).depositERC20(sPKF.address, depositAmount);
+    await tier.connect(user1).depositERC20(sPKF.address, depositAmount);
+
+    const user1Info = await tier.userInfo(user1.address, sPKF.address);
+
+    expect(user1Info.staked).to.equal(utils.parseUnits("50000", 18));
+
+    await tier.connect(user1).withdrawERC20(sPKF.address, withdrawAmount);
+    await tier.connect(user1).withdrawERC20(sPKF.address, withdrawAmount);
+    await tier.connect(user1).withdrawERC20(sPKF.address, withdrawAmount);
+    await tier.connect(user1).withdrawERC20(sPKF.address, withdrawAmount);
+    await tier.connect(user1).withdrawERC20(sPKF.address, withdrawAmount);
+
+    expect((await tier.userInfo(user1.address, sPKF.address)).staked).to.equal(utils.parseUnits("0", 18));
+  });
+
+  it('Revert when withdraw > deposit sPKF with multiple accounts', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await sPKF.transfer(user1.address, utils.parseUnits("50000", 18));
+    await sPKF.transfer(user2.address, utils.parseUnits("50000", 18));
+
+    const depositAmount = utils.parseUnits('10000', 18);
+    const withdrawAmount = utils.parseUnits('15000', 18);
+
+    await sPKF.connect(user1).approve(tier.address, depositAmount);
+    await sPKF.connect(user2).approve(tier.address, depositAmount);
+
+    await tier.connect(user1).depositERC20(sPKF.address, depositAmount);
+    await tier.connect(user2).depositERC20(sPKF.address, depositAmount);
+
+    const user1Info = await tier.userInfo(user1.address, sPKF.address);
+    const user2Info = await tier.userInfo(user1.address, sPKF.address);
+
+    expect(user1Info.staked).to.equal(depositAmount);
+    expect(user2Info.staked).to.equal(depositAmount);
+
+    await expect(tier.connect(user1).withdrawERC20(sPKF.address, withdrawAmount)).to.be.reverted;
+    await expect(tier.connect(user2).withdrawERC20(sPKF.address, withdrawAmount)).to.be.reverted;
+  });
 });
