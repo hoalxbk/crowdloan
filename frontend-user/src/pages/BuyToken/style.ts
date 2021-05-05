@@ -119,6 +119,9 @@ const useStyles = makeStyles((theme: any) => {
       },
       '&--Claimable': {
         backgroundColor: "#e16313"
+      },
+      '&--TBA': {
+        backgroundColor: "#9E63FF"
       }
     },
     poolHeaderAddress: {

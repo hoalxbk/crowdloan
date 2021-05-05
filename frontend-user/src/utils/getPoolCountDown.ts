@@ -10,7 +10,6 @@ export const getPoolCountDown = (
   let display;
 
   if (method && method === "whitelist" && startJoinTime && endJoinTime && startBuyTime && endBuyTime) {
-
     if (today < startJoinTime.getTime()) {
       date = startJoinTime; 
       display = "Start in";
