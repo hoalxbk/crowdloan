@@ -41,7 +41,6 @@ const useStyles = makeStyles((theme: any) => {
     },
     PoolAboutDesc: {
       width: 580, 
-      marginTop: 25,
       lineHeight: '1.6rem' ,
       color: '#999999', 
       font: 'normal normal normal 14px/24px Helvetica',
