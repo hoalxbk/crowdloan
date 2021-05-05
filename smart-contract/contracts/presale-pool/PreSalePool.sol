@@ -358,8 +358,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         require(_verifyClaimToken(_candidate, _amount, _signature), "POOL::NOT_ALLOW_TO_CLAIM");
         require(isFinalized(), "POOL::NOT_FINALLIZED");
 
-
-        uint256 claimAmount = userPurchased[_candidate];
+        uint256 claimAmount = userPurchased[_candidate].sub(userClaimed[_candidate]);
 
         if (claimAmount > _amount) {
             claimAmount = _amount;
@@ -367,12 +366,9 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
 
         userClaimed[_candidate] = userClaimed[_candidate].add(claimAmount);
 
-        require(userClaimed[_candidate] <= _amount, "POOL::CLAIM_EXCEED_ALLOWANCE");
-        
         _deliverTokens(msg.sender, claimAmount);
+        
         totalUnclaimed = totalUnclaimed.sub(claimAmount);
-
-        userPurchased[_candidate] = userPurchased[_candidate].sub(claimAmount);
 
         emit TokenClaimed(msg.sender, claimAmount);
     }
