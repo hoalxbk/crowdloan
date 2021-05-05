@@ -90,8 +90,9 @@ class PoolController {
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
-          min_buy: new BigNumber(item.minBuy).toFixed(),
-          max_buy: new BigNumber(item.maxBuy).toFixed(),
+          min_buy: new BigNumber(item.minBuy || 0).toFixed(),
+          max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
+          ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
           currency: item.currency,
         });
         return tierObj;
@@ -171,8 +172,9 @@ class PoolController {
             name: item.name,
             start_time: moment(item.startTime).unix(),
             end_time: moment(item.endTime).unix(),
-            min_buy: new BigNumber(item.minBuy).toFixed(),
-            max_buy: new BigNumber(item.maxBuy).toFixed(),
+            min_buy: new BigNumber(item.minBuy || 0).toFixed(),
+            max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
+            ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
             currency: item.currency,
           });
           return tierObj;
@@ -263,11 +265,10 @@ class PoolController {
     const poolId = params.campaignId;
     console.log('Start getPool (Admin) with poolId: ', poolId);
     try {
-      let pool = await CampaignModel.query()
-        .with('tiers')
-        .where('id', poolId)
-        .first();
-
+      let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      if (!pool) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
       pool = JSON.parse(JSON.stringify(pool));
       console.log('[getPool] - pool.tiers: ', pool.tiers);
       if (pool.tiers && pool.tiers.length > 0) {
@@ -306,6 +307,9 @@ class PoolController {
       }
 
       let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      if (!pool) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
       pool = JSON.parse(JSON.stringify(pool));
 
       const publicPool = pick(pool, [
@@ -350,7 +354,6 @@ class PoolController {
     const page = param.page ? param.page : Config.get('const.page_default');
     param.limit = limit;
     param.page = page;
-    param.is_display = false;
     param.is_search = true;
     console.log('Start Pool List with params: ', param);
 
@@ -381,7 +384,6 @@ class PoolController {
     const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
     inputParams.limit = limit;
     inputParams.page = page;
-    inputParams.is_display = false;
     inputParams.is_search = true;
     console.log('[getTopPools] - inputParams: ', inputParams);
 
@@ -403,7 +405,6 @@ class PoolController {
     const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
     inputParams.limit = limit;
     inputParams.page = page;
-    inputParams.is_display = false;
     inputParams.is_search = true;
     console.log('[getJoinedPools] - inputParams: ', inputParams);
 

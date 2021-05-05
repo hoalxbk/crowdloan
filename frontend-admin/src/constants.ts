@@ -21,4 +21,12 @@ export const NETWORK_AVAILABLE = {
   ETH: 'eth',
   BSC: 'bsc',
 };
+export const TIERS = [
+  '-',
+  'Hawk Tier',
+  'Falcon Tier',
+  'Eagle Tier',
+  'Phoenix Tier',
+];
+
 export const DEFAULT_LIMIT = 10;

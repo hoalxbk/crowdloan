@@ -21,7 +21,7 @@ const AccountInformation = (props: any) => {
   const { data: tiers = {} } = useSelector((state: any) => state.tiers);
 
   const handleKYC = () => {
-    console.log('hande KYC')
+    window.open('https://docs.google.com/forms/d/e/1FAIpQLSeV_Sman6oEZ3UzNvgly_I-hxNMyGbS4WFhudCzcbDTc4Gaqg/viewform', '_blank');
   }
 
   const {
@@ -68,11 +68,14 @@ const AccountInformation = (props: any) => {
             {TIERS[userTier]?.name}
           </span>
         </div>
+        <div className={styles.inputGroup}>
+          <span>KYC for Redkite</span>
+          <span>{isKYC ? 'Verified' : 'Unverified'}</span>
+          {!isKYC && <button className="verify-email" onClick={handleKYC}>
+              Register KYC
+            </button>}
+        </div>
         <div className={styles.redKiteInfo}>
-          <div className="kyc-info">
-            <span>Some pools may require you to be KYC verified</span>
-            <button onClick={handleKYC}> {isKYC ? 'KYC for Rekite projects' : 'KYC successful for Rekite projects'}</button>
-          </div>
           {/* <div className={styles.walletInfo}>
             <p>Wallet balance</p>
             {!_.isEmpty(balance) && !_.isEmpty(userInfo) && <span>

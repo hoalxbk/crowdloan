@@ -386,7 +386,7 @@ class CampaignController {
           const reserved = await reservedListService.findOneByFilter(winnerParams);
           if (reserved == null) {
             console.log()
-            return HelperUtils.responseBadRequest("You're not in buyer list !");
+            return HelperUtils.responseBadRequest("Sorry, you are not on the list of winners to join this pool.");
           }
           is_reserved = true;
           // check time start buy for tier
@@ -582,7 +582,7 @@ class CampaignController {
       const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).multipliedBy(tokenPurchased);
       console.log(`user token purchased ${tokenPurchased} and max token claim ${maxTokenClaim}`);
       // get message hash
-      const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenClaim, 0);
+      const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenClaim);
       console.log(`message hash to claim ${messageHash}`);
 
       // get private key for campaign from db
@@ -602,8 +602,7 @@ class CampaignController {
       const signature = await web3.eth.sign(messageHash, accAddress);
       console.log(`signature ${signature}`);
       const response = {
-        'max_claim': maxTokenClaim,
-        'min_claim': 0,
+        'amount': maxTokenClaim,
         'signature': signature
       }
       return HelperUtils.responseSuccess(response);

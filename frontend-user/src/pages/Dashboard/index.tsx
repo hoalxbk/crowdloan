@@ -74,8 +74,8 @@ const Dashboard = (props: any) => {
       }
     })
 
-    setUpcommingPools(pools.filter((pool: any) => pool?.status != POOL_STATUS.CLAIMABLE && pool?.status != POOL_STATUS.CLOSED))
-    setFeaturePools(pools.filter((pool: any) => pool?.status == POOL_STATUS.CLAIMABLE || pool?.status == POOL_STATUS.CLOSED))
+    setUpcommingPools(pools.filter((pool: any) => pool?.status != POOL_STATUS.CLAIMABLE && pool?.status != POOL_STATUS.CLOSED && pool?.is_display == 1))
+    setFeaturePools(pools.filter((pool: any) => (pool?.status == POOL_STATUS.CLAIMABLE || pool?.status == POOL_STATUS.CLOSED) && pool?.is_display == 1))
     console.log(featurePools, upcommingPools)
   }
 
