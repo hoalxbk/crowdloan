@@ -42,21 +42,25 @@ const useStyles = makeStyles((theme: any) => {
         padding: '6px 15px',
 
         '&.filled': {
-          backgroundColor: '#12A064'
+          backgroundColor: 'deeppink'
         },
-
         '&.in-progress': {
-          backgroundColor: '#ebc321'
+          backgroundColor: '#FFDE30'
         },
-
-        '&.closed': {
+        '&.ended': {
           backgroundColor: '#D01F36'
         },
         '&.joining': {
-          backgroundColor: '#6398FF'
+          backgroundColor: '#12A064'
         },
         '&.claimable': {
-          backgroundColor: '#e16313'
+          backgroundColor: '#FF9330'
+        },
+        '&.upcomming': {
+          backgroundColor: '#6398FF'
+        },
+        '&.tba': {
+          backgroundColor: '#9E63FF'
         }
       }
     },
