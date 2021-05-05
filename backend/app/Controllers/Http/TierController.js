@@ -1,8 +1,6 @@
 'use strict'
 
 const Tier = use('App/Models/Tier');
-// const Const = use('App/Common/Const');
-// const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
 const TierService = use('App/Services/TierService')

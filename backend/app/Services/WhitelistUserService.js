@@ -1,6 +1,5 @@
 'use strict'
 
-const ErrorFactory = use('App/Common/ErrorFactory');
 const WhitelistModel = use('App/Models/WhitelistUser');
 
 class WhitelistUserService {

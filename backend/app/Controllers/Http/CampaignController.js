@@ -33,7 +33,7 @@ const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const ErrorFactory = use('App/Common/ErrorFactory');
 const tierSmartContract = process.env.TIER_SMART_CONTRACT;
-const SMART_CONTRACT_USDT_ADDRESS = process.env.SMART_CONTRACT_USDT_ADDRESS
+const SMART_CONTRACT_USDT_ADDRESS = process.env.SMART_CONTRACT_USDT_ADDRESS;
 const SMART_CONTRACT_USDC_ADDRESS = process.env.SMART_CONTRACT_USDC_ADDRESS;
 
 class CampaignController {
@@ -369,8 +369,8 @@ class CampaignController {
         return HelperUtils.responseBadRequest("Do not found campaign");
       }
       let minBuy = 0, maxBuy = 0;
-      let is_reserved = false;
       // check user winner or reserved lis if campaign is lottery
+      let winner;
       if (camp.buy_type === Const.BUY_TYPE.WHITELIST_LOTTERY) {
         // check if exist in winner list
         const winnerListService = new WinnerListService();
@@ -378,17 +378,17 @@ class CampaignController {
           'wallet_address': userWalletAddress,
           'campaign_id': campaign_id
         }
-        const winner = await winnerListService.findOneByFilters(winnerParams);
+        winner = await winnerListService.findOneByFilters(winnerParams);
+        // get user tier from winner
         // if user not in winner list then check on reserved list
-        if (winner == null) {
+        if (!winner) {
           // if user is not in winner list then check with reserved list
           const reservedListService = new ReservedListService();
           const reserved = await reservedListService.findOneByFilter(winnerParams);
-          if (reserved == null) {
+          if (!reserved) {
             console.log()
             return HelperUtils.responseBadRequest("You're not in buyer list !");
           }
-          is_reserved = true;
           // check time start buy for tier
           const current = Math.floor(Date.now() / 1000)
           if (reserved.start_time > current || reserved.end_time < current) {
@@ -401,20 +401,17 @@ class CampaignController {
         }
       }
       // check user tier if user not in reserved list
-      if (!is_reserved) {
-        // check user tier
-        const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
-        const userTier = await tierSc.methods.getUserTier(userWalletAddress).call();
-        console.log(`user tier is ${userTier}`);
+      if (winner) {
+        console.log(`user tier is ${winner.level}`);
         // check user tier with min tier of campaign
-        if (camp.min_tier > userTier) {
+        if (camp.min_tier > winner.level) {
           return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign!");
         }
         // call to db to get tier info
         const tierService = new TierService();
         const tierParams = {
           'campaign_id': params.campaign_id,
-          'level': userTier
+          'level': winner.level
         };
         const tier = await tierService.findByLevelAndCampaign(tierParams);
         if (tier == null) {
@@ -427,8 +424,8 @@ class CampaignController {
           return HelperUtils.responseBadRequest("You're early come to join this campaign !");
         }
         // set min, max buy amount of user
-        minBuy = tier.min_buy;
-        maxBuy = tier.max_buy;
+        minBuy = tier.min_buy * winner.lottery_ticket;
+        maxBuy = tier.max_buy * winner.lottery_ticket;
       }
 
       // get private key for campaign from db
