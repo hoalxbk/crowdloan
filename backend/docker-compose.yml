@@ -14,7 +14,30 @@ services:
       - kue
       - redis
       # - mysql
-
+  server2:
+    image: "963933760463.dkr.ecr.us-east-1.amazonaws.com/prod-redkite-backend"
+    # build:
+    #   context: ./
+    #   dockerfile: local-server.dockerfile
+    ports:
+      - "3334:3333" 
+    volumes:
+      - backend-server:/app
+    links:
+      - kue
+      - redis
+  server3:
+    image: "963933760463.dkr.ecr.us-east-1.amazonaws.com/prod-redkite-backend"
+    # build:
+    #   context: ./
+    #   dockerfile: local-server.dockerfile
+    ports:
+      - "3335:3333" 
+    volumes:
+      - backend-server:/app
+    links:
+      - kue
+      - redis
   # The Kue
   kue:
     image: "963933760463.dkr.ecr.us-east-1.amazonaws.com/prod-redkite-kue"
