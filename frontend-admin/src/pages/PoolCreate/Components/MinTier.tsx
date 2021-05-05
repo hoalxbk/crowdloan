@@ -28,7 +28,7 @@ function MinTier(props: any) {
         <Controller
           rules={{ required: true }}
           control={control}
-          defaultValue={0}
+          defaultValue={1}
           name="minTier"
           as={
             <Select

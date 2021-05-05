@@ -265,11 +265,10 @@ class PoolController {
     const poolId = params.campaignId;
     console.log('Start getPool (Admin) with poolId: ', poolId);
     try {
-      let pool = await CampaignModel.query()
-        .with('tiers')
-        .where('id', poolId)
-        .first();
-
+      let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      if (!pool) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
       pool = JSON.parse(JSON.stringify(pool));
       console.log('[getPool] - pool.tiers: ', pool.tiers);
       if (pool.tiers && pool.tiers.length > 0) {
@@ -308,6 +307,9 @@ class PoolController {
       }
 
       let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      if (!pool) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
       pool = JSON.parse(JSON.stringify(pool));
 
       const publicPool = pick(pool, [
