@@ -104,14 +104,14 @@ const Tiers = (props: any) => {
             className={"progress-bar"}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              width: _.isEmpty(userTier) || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
+              width: userTier > 0 ?  'calc(100% - 1px)' : `${currentProcess || 0}%`
             }}
           ></span>}
           {isWidthDown('xs', props.width) && <span
             className={"progress-bar" + (loading ? ' inactive' : ' active')}
             style={{
               backgroundColor: TIERS[0].bgColor,
-              height: _.isEmpty(userTier) || !currentProcess ? `${currentProcess || 0}%` : 'calc(100% - 1px)'
+              height: userTier > 0 ?  'calc(100% - 1px)' : `${currentProcess || 0}%`
             }}
           ></span>}
           <div>
@@ -169,7 +169,7 @@ const Tiers = (props: any) => {
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
           <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
-            Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}*1
+            Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}
           </p>}>
             <img src={noticeIcon}/>
           </Tooltip>
