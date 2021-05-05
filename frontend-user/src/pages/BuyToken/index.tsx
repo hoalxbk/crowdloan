@@ -102,16 +102,16 @@ const BuyToken: React.FC<any> = (props: any) => {
   
   // With Whitelist situation, Enable when join time < current < end join time
   // With FCFS, always disable join button
-  const joinTimeInDate = new Date(Number(poolDetails?.joinTime) * 1000);
-  const endJoinTimeInDate = new Date(Number(poolDetails?.endJoinTime) * 1000);
-  const startBuyTimeInDate = new Date(Number(poolDetails?.startBuyTime) * 1000);
-  const endBuyTimeInDate = new Date(Number(poolDetails?.endBuyTime) * 1000);
+  const joinTimeInDate = poolDetails?.joinTime ? new Date(Number(poolDetails?.joinTime) * 1000): undefined;
+  const endJoinTimeInDate = poolDetails?.endJoinTime ? new Date(Number(poolDetails?.endJoinTime) * 1000): undefined;
+  const startBuyTimeInDate = poolDetails?.startBuyTime ? new Date(Number(poolDetails?.startBuyTime) * 1000): undefined;
+  const endBuyTimeInDate = poolDetails?.endBuyTime ? new Date(Number(poolDetails?.endBuyTime) * 1000): undefined;
   const tierStartBuyInDate = new Date(Number(currentUserTier?.start_time) * 1000);
   const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000);
-  const releaseTimeInDate = new Date(Number(poolDetails?.releaseTime) * 1000);
+  const releaseTimeInDate = poolDetails?.releaseTime ? new Date(Number(poolDetails?.releaseTime) * 1000): undefined;
 
   const today = new Date();
-  const availableJoin = poolDetails?.method === 'whitelist' 
+  const availableJoin = poolDetails?.method === 'whitelist' && joinTimeInDate && endJoinTimeInDate
     ? (
       today >= joinTimeInDate && 
       today <= endJoinTimeInDate && 
@@ -123,7 +123,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       && verifiedEmail
     )
     : false;
-  const availablePurchase = 
+  const availablePurchase = startBuyTimeInDate && endBuyTimeInDate &&
     today >= startBuyTimeInDate && 
     today <= endBuyTimeInDate && 
     today >= tierStartBuyInDate &&
@@ -141,6 +141,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     releaseTimeInDate,
     new BigNumber(tokenSold).div(poolDetails?.amount || 1).toFixed(),
     poolDetails?.type !== 'swap',
+    poolDetails?.method
   );
 
   const displayCountDownTime = useCallback((
@@ -170,7 +171,7 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   // Hide main tab after end buy time
   useEffect(() => {
-    if (endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
+    if (endBuyTimeInDate && endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
   }, [endBuyTimeInDate]);
 
   useEffect(() => {
@@ -244,7 +245,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {existedWinner && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
+            {existedWinner && startBuyTimeInDate && endBuyTimeInDate && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
               <p className={styles.poolTicketWinner}>
                 <div>
                   {
@@ -258,7 +259,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 </span>
               </p>
             }
-            {new Date() > endBuyTimeInDate && ableToFetchFromBlockchain &&
+            {endBuyTimeInDate && new Date() > endBuyTimeInDate && ableToFetchFromBlockchain &&
               <p className={styles.poolTicketWinner}>
                 <div>
                   {
@@ -429,7 +430,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 <ul className={styles.poolDetailLinks}>
                   {
                     headers.map((header) => {
-                      if (header === HeaderType.Main && new Date() > endBuyTimeInDate) {
+                      if (header === HeaderType.Main && endBuyTimeInDate && new Date() > endBuyTimeInDate) {
                         return null;
                       }
                       return <li 
@@ -445,7 +446,7 @@ const BuyToken: React.FC<any> = (props: any) => {
               </nav>
               <div className={styles.poolDetailBuyForm}>
                 {
-                  activeNav === HeaderType.Main && new Date() <= endBuyTimeInDate && ( 
+                  activeNav === HeaderType.Main && endBuyTimeInDate && new Date() <= endBuyTimeInDate && ( 
                       <BuyTokenForm 
                         tokenDetails={poolDetails?.tokenDetails} 
                         rate={poolDetails?.ethRate}

@@ -1,13 +1,11 @@
 export enum UserTier {
   Start = 'RedKite' ,
-  Bronze = 'Hawk',
-  Silver = 'Falcon',
-  Gold = 'Eagle',
-  Diamond = 'Phoenix'
+  Bronze = 'Falcon',
+  Silver = 'Eagle',
+  Gold = 'Phoenix',
 }
 
 export type userTiers = Extract<UserTier, 
-  UserTier.Diamond | 
   UserTier.Gold | 
   UserTier.Silver | 
   UserTier.Bronze |
@@ -31,10 +29,6 @@ export const userTierByNumber: { [key: number]: { text: userTiers, icon?: string
     text: UserTier.Gold,
     icon: '/images/icons/golden-medal.svg'
   },
-  4: { 
-    text: UserTier.Diamond,
-    icon: '/images/icons/diamond.svg'
-  }
 }
 
 export const getUserTierAlias = (tier: number) => {
