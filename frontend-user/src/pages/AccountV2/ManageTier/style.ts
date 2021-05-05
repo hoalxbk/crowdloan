@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme: any) => {
       width: '100%',
       background: 'rgba(255, 255, 255, 0.06)',
       borderRadius: '8px', 
-      padding: '25px 40px 15px 40px',
+      padding: '25px 40px 35px 40px',
       marginTop: '270px',
 
       '& .button-area': {
