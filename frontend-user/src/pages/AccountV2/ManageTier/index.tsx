@@ -69,9 +69,9 @@ const ManageTier = (props: any) => {
     if(withdrawError.message) setOpenModalTransactionSubmitting(false);
   }, [withdrawTransaction, withdrawError])
 
-  const renderToken = (name: string, balance: any, staked: any) => {
+  const renderToken = (symbol: string, balance: any, staked: any) => {
     return <div className="group">
-      <span>{name}</span>
+      <span>{symbol}</span>
       {(wrongChain || !isAuth) && <span>0</span>}
       {!wrongChain && isAuth && <span>{numberWithCommas(balance)}</span>}
       {(wrongChain || !isAuth) && <span>0</span>}
@@ -94,9 +94,9 @@ const ManageTier = (props: any) => {
             </div>
           </div>
           <div className={styles.tableBody}>
-            {renderToken('Polkafoundry', balance?.pkf, userInfo?.pkfStaked)}
-            {renderToken(CONVERSION_RATE[0]?.name, balance?.uni, userInfo?.uniStaked)}
-            {renderToken(CONVERSION_RATE[1]?.name, balance?.mantra, userInfo?.mantraStaked)}
+            {renderToken('PKF', balance?.pkf, userInfo?.pkfStaked)}
+            {renderToken(CONVERSION_RATE[0]?.symbol, balance?.uni, userInfo?.uniStaked)}
+            {renderToken(CONVERSION_RATE[1]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
           </div>
         </div>
         <div className="button-area">
