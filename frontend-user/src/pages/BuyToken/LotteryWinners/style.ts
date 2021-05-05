@@ -3,6 +3,16 @@ import { makeStyles } from '@material-ui/core';
 const useStyles = makeStyles((theme: any) => {
   return {
     LotteryWinners: {
+      marginRight: 120,
+      width: "50%",
+      [theme.breakpoints.down('md')]: {
+        marginRight: 0,
+        width: "100%",
+      },
+      [theme.breakpoints.down('xs')]: {
+        marginRight: 0,
+        width: "100%",
+      },
     },
     LotteryWinnersDesc: {
       marginTop: 30,
@@ -44,10 +54,19 @@ const useStyles = makeStyles((theme: any) => {
       color: 'white !important' as any,
       fontWeight: 700,
       fontSize: 15,
+      '& > span': {
+        display: 'inline-block',
+        width: '200px',
+      },
       [theme.breakpoints.down('xs')]: {
         '& > span': {
-          width: '150px',
+          width: '120px',
           display: 'inline-block'
+        }
+      },
+      [theme.breakpoints.down('md')]: {
+        '& > span': {
+          width: '120px',
         }
       },
     },

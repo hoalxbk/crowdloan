@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import useFetch from '../../../hooks/useFetch';
 import { numberWithCommas } from '../../../utils/formatNumber';
 import { debounce } from 'lodash';
+/* import { CircularProgress } from '@material-ui/core'; */
+import withWidth, {isWidthDown} from '@material-ui/core/withWidth';
 
+import Tooltip from '@material-ui/core/Tooltip';
 import Pagination from '@material-ui/lab/Pagination';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -17,6 +20,11 @@ const headers = ['Ticket Number', 'Address'];
 
 type LotteryWinnersProps = {
   poolId: number | undefined;
+  width: any;
+}
+
+const shortenAddress = (address: string, digits: number = 4) => {
+  return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
 }
 
 const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProps) => {
@@ -28,7 +36,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   const [totalPage, setTotalPage] = useState(1);
   const { data: totalParticipants } = useFetch<number>(poolId ? `/user/counting/${poolId}`: undefined);
   const { data: winnersList } = useFetch<any>(
-    `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&wallet_address=${input}`,
+    `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&${input ? `wallet_address=${input}`: ''}`,
     false,
     {},
   );
@@ -56,7 +64,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
           type="text" 
           name="lottery-search" 
           className={styles.tableSearch} 
-          placeholder="Search for Email Address/Wallet Address"
+          placeholder="Search for Wallet Address"
           onChange={handleInputChange}
         />
         <img src="/images/search.svg" className={styles.tableSearchIcon} alt="search-icon" />
@@ -83,7 +91,14 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
                   {row.id}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row.wallet_address}
+                  {isWidthDown('sm', props.width) ? 
+                    <Tooltip title={<p>{row.wallet_address}</p>}>
+                      <>
+                        {shortenAddress(row.wallet_address)}
+                      </>
+                    </Tooltip>
+                    : row.wallet_address
+                  }
                 </TableCell>
                 </TableRow>
             ))}
@@ -105,4 +120,4 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   )
 }
 
-export default LotteryWinners;
+export default withWidth()(LotteryWinners);
