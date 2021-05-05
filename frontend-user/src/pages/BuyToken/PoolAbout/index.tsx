@@ -12,30 +12,30 @@ const PoolAbout: React.FC<PoolAboutProps> = ({ website, exchangeRate, descriptio
 
   return (
     <div className={styles.PoolAbout}>
-      <div className={styles.PoolAboutBlock}>
-        <span className={styles.PoolAboutLabel}>Website</span>
-        <strong className={styles.PoolAboutText}>
-          {website}
-          <img 
-            src="/images/hyperlink.svg" 
-            className={styles.PoolAboutIcon}
-            onClick={() => window.open(website, '_blank')}
-          />
-        </strong>
-      </div>
-      <div className={styles.PoolAboutBlock}>
-        <span className={styles.PoolAboutLabel}>White Paper</span>
-        <strong className={styles.PoolAboutText}>
-          {'polkafoundry.pdf'}
-          <img src="/images/download.svg" className={styles.PoolAboutIcon} />
-        </strong>
-      </div>
-      <div className={styles.PoolAboutBlock}>
-        <span className={styles.PoolAboutLabel}>Exchange Rate</span>
-        <strong className={styles.PoolAboutText}>
-          {exchangeRate}
-        </strong>
-      </div>
+      {/* <div className={styles.PoolAboutBlock}> */}
+      {/*   <span className={styles.PoolAboutLabel}>Website</span> */}
+      {/*   <strong className={styles.PoolAboutText}> */}
+      {/*     {website} */}
+      {/*     <img */} 
+      {/*       src="/images/hyperlink.svg" */} 
+      {/*       className={styles.PoolAboutIcon} */}
+      {/*       onClick={() => window.open(website, '_blank')} */}
+      {/*     /> */}
+      {/*   </strong> */}
+      {/* </div> */}
+      {/* <div className={styles.PoolAboutBlock}> */}
+      {/*   <span className={styles.PoolAboutLabel}>White Paper</span> */}
+      {/*   <strong className={styles.PoolAboutText}> */}
+      {/*     {'polkafoundry.pdf'} */}
+      {/*     <img src="/images/download.svg" className={styles.PoolAboutIcon} /> */}
+      {/*   </strong> */}
+      {/* </div> */}
+      {/* <div className={styles.PoolAboutBlock}> */}
+      {/*   <span className={styles.PoolAboutLabel}>Exchange Rate</span> */}
+      {/*   <strong className={styles.PoolAboutText}> */}
+      {/*     {exchangeRate} */}
+      {/*   </strong> */}
+      {/* </div> */}
       <p className={styles.PoolAboutDesc}>
         {description}
       </p>
