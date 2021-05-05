@@ -28,35 +28,35 @@ const Card = (props: any): JSX.Element => {
     setProgress(pool.tokenSold * 100 / pool.total_sold_coin || 0);
   }, [pool.tokenSold])
 
-  useEffect(() => {
-    const currentTime = moment().unix()
-    let diffTime = 0;
-    if(pool.start_join_pool_time > currentTime) {
-      diffTime = parseInt(pool.start_join_pool_time) - currentTime;
-    } else if(pool.start_time > currentTime) {
-      diffTime = parseInt(pool.start_time) - currentTime;
-    }
+  // useEffect(() => {
+  //   const currentTime = moment().unix()
+  //   let diffTime = 0;
+  //   if(pool.start_join_pool_time > currentTime) {
+  //     diffTime = parseInt(pool.start_join_pool_time) - currentTime;
+  //   } else if(pool.start_time > currentTime) {
+  //     diffTime = parseInt(pool.start_time) - currentTime;
+  //   }
     
-    let intervalCount: any;
-    if (diffTime > 0) {
-      let timeLeftToStart = diffTime * 1000
-    const interval = 1000;
+  //   let intervalCount: any;
+  //   if (diffTime > 0) {
+  //     let timeLeftToStart = diffTime * 1000
+  //   const interval = 1000;
 
-      intervalCount = setInterval(() => {
-        timeLeftToStart -= interval;
-        const timeLeftDuration = moment.duration(timeLeftToStart, 'milliseconds');
-        let timeLeftString = '';
-        if (timeLeftToStart >= 86400000) {
-          timeLeftString = 'In ' + timeLeftDuration.days() + " days"
-        } else {
-          timeLeftString = 'In ' + timeLeftDuration.hours() + ":" + timeLeftDuration.minutes() + ":" + timeLeftDuration.seconds()
-        }
-        setTimeLeft(timeLeftString)
-      }, interval);
-    }
+  //     intervalCount = setInterval(() => {
+  //       timeLeftToStart -= interval;
+  //       const timeLeftDuration = moment.duration(timeLeftToStart, 'milliseconds');
+  //       let timeLeftString = '';
+  //       if (timeLeftToStart >= 86400000) {
+  //         timeLeftString = 'In ' + timeLeftDuration.days() + " days"
+  //       } else {
+  //         timeLeftString = 'In ' + timeLeftDuration.hours() + ":" + timeLeftDuration.minutes() + ":" + timeLeftDuration.seconds()
+  //       }
+  //       setTimeLeft(timeLeftString)
+  //     }, interval);
+  //   }
 
-    return () => clearInterval(intervalCount);
-  }, [])
+  //   return () => clearInterval(intervalCount);
+  // }, [])
 
   return (
     <Link to={`/buy-token/${pool.id}`}>
@@ -82,8 +82,7 @@ const Card = (props: any): JSX.Element => {
             <span>Claimable</span>
           </div>}
           {pool.status == POOL_STATUS.UPCOMMING && <div className="time upcomming">
-            <img src={dotIcon} />
-            <span>&nbsp;{timeLeft}</span>
+            <span>Upcomming</span>
           </div>}
         </div>
         <div className={styles.cardBody}>
