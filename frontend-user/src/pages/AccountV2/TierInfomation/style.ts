@@ -34,6 +34,11 @@ const useStyles = makeStyles((theme: any) => {
         font: 'normal normal bold 18px/24px DM Sans',
         marginBottom: '12px'
       }
+    },
+    [theme.breakpoints.down('xs')]: {
+      conversionRate: {
+        width: '100%'
+      }
     }
   };
 });
