@@ -71,7 +71,7 @@ export const TIERS = [
     icon: '/images/icons/bronze-medal.svg'
   },
   {
-    name: 'Falcon',
+    name: 'Hawk',
     bg: '/images/icons/falcon-bg.png',
     bgColor: '#3F3FA3',
     icon: '/images/icons/silver-medal.svg'

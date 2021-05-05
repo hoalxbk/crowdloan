@@ -47,11 +47,11 @@ const ModalVerifyEmail = (props: any) => {
       }
       axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register-email`, data, options)
       .then(res => {
-        if(res.status == 200) {
-          !email && setEmail(inputEmail)
+        if(res.data.status == 200) {
+          setEmail(inputEmail)
           dispatch(alertSuccess('Register success, please check verify email'));
           setOpenModalVerifyEmail(false);
-        } else if(res.status == 400) {
+        } else if(res.data.status == 400) {
           dispatch(alertFailure('Email account has been registered.'));
         }
       }).catch(() => {
@@ -93,7 +93,6 @@ const ModalVerifyEmail = (props: any) => {
                 value={inputEmail}
                 onChange={e => setInputEmail(e.target.value)}
                 placeholder="Please enter email"
-                disabled={email}
                 maxLength={190}
               />
             </div>

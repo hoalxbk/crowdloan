@@ -46,9 +46,9 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     // Minimum PKF need to stake each tier
     uint256[MAX_NUM_TIERS] tierPrice;
     // Percentage of penalties
-    uint256[] public withdrawFeePercent;
+    uint256[6] public withdrawFeePercent;
     // The maximum number of days of penalties
-    uint256[] public daysLockLevel;
+    uint256[5] public daysLockLevel;
     // Info of each token can stake
     mapping(address => ExternalToken) public externalToken;
 
@@ -111,37 +111,26 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
     );
     event ChangePenaltyWallet(address indexed penaltyWallet);
 
-    constructor(address _pkf, address _penaltyWallet) {
+    constructor(address _pkf, address _sPkf, address _uniLp, address _penaltyWallet) {
         owner = msg.sender;
         penaltyWallet = _penaltyWallet;
 
         PKF = _pkf;
 
-        ExternalToken storage token = externalToken[PKF];
+        addExternalToken(_pkf, 0, 1 , false, true);
+        addExternalToken(_sPkf, 0, 1, false, true);
+        addExternalToken(_uniLp, 0, 150, false, true);
 
-        token.contractAddress = PKF;
-        token.decimals = 0;
-        token.rate = 1;
-        token.isERC721 = false;
-        token.canStake = true;
-
-        tierPrice[1] = 2000e18;
+        tierPrice[1] = 500e18;
         tierPrice[2] = 5000e18;
-        tierPrice[3] = 10000e18;
-        tierPrice[4] = 20000e18;
+        tierPrice[3] = 20000e18;
+        tierPrice[4] = 60000e18;
 
-        withdrawFeePercent.push(30);
-        withdrawFeePercent.push(25);
-        withdrawFeePercent.push(20);
-        withdrawFeePercent.push(10);
-        withdrawFeePercent.push(5);
-        withdrawFeePercent.push(0);
-
-        daysLockLevel.push(10 days);
-        daysLockLevel.push(20 days);
-        daysLockLevel.push(30 days);
-        daysLockLevel.push(60 days);
-        daysLockLevel.push(90 days);
+        daysLockLevel[0] = 10 days;
+        daysLockLevel[1] = 20 days;
+        daysLockLevel[2] = 30 days;
+        daysLockLevel[3] = 60 days;
+        daysLockLevel[4] = 90 days;
     }
 
     function depositERC20(address _token, uint256 _amount)
@@ -228,7 +217,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         if (_token != PKF) {
             ExternalToken storage token = externalToken[_token];
             userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-                _amount.mul(10**token.decimals).div(token.rate)
+                _amount.mul(token.rate).div(10**token.decimals)
             );
         }
 
@@ -320,7 +309,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
 
         ExternalToken storage token = externalToken[_token];
         userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-            _amount.mul(10**token.decimals).div(token.rate)
+            _amount.mul(token.rate).div(10**token.decimals)
         );
 
         IERC20(_token).transfer(msg.sender, _amount);
@@ -375,7 +364,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         uint256 _rate,
         bool _isERC721,
         bool _canStake
-    ) external onlyOwner {
+    ) public onlyOwner {
         ExternalToken storage token = externalToken[_token];
 
         require(_rate > 0, "TIER::INVALID_TOKEN_RATE");

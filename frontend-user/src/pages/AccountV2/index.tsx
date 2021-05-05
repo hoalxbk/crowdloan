@@ -47,6 +47,9 @@ const AccountV2 = (props: any) => {
       dispatch(getUserTier(connectedAccount));
       dispatch(getAllowance(connectedAccount));
     }
+    setEmail('')
+    setEmailVeryfied(USER_STATUS.UNVERIFIED)
+    setIsKYC(false)
   }, [isAuth, wrongChain, connectedAccount]);
 
   useEffect(() => {
@@ -71,7 +74,8 @@ const AccountV2 = (props: any) => {
         &nbsp;&nbsp;<img src={iconWarning}/>
         <img src={iconClose} className="btn-close" onClick={() => setShowAlertVerifyEmail(false)}/>
         &nbsp;&nbsp;
-        <span>Your account has not been verified. To verify your account, please click on Verify Email button.</span>
+        {!email && <span>Your account has not been verified. To verify your account, please click on Verify Email button.</span>}
+        {email && <span>Please go to the mail to verify your account.</span>}
       </div>}
       <div className={classes.accountContainer}>
         <div className={classes.mainContent}>
