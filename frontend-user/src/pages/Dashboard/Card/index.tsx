@@ -103,11 +103,11 @@ const Card = (props: any): JSX.Element => {
             </li>
             <li>
               <span>Participants</span>
-              <span className="total">{ pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? participants : 'All' }</span>
+              <span className="total">{ pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? participants : 'All' }</span>
             </li>
             <li>
               <span>Access</span>
-              <span className="total">{pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? BUY_TYPE.WHITELIST_LOTTERY.toUpperCase() : BUY_TYPE.FCFS.toUpperCase()}</span>
+              <span className="total">{pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase()}</span>
             </li>
             {pool.status != POOL_STATUS.UPCOMMING && <li>
               <span>Network</span>
@@ -123,7 +123,7 @@ const Card = (props: any): JSX.Element => {
               <span>Ethereum</span>
             </div>}
             {pool.network_available === NETWORK.BSC && <div>
-              <img src={BSCIcon} />
+              <img src={BSCIcon}/>
               <span>BSC</span>
             </div>}
           </div>}
