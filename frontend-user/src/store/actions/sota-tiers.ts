@@ -6,6 +6,7 @@ import { getContract } from '../../utils/contract';
 import RedKite from '../../abi/RedKiteTiers.json';
 import { getBalance } from './balance';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { alertFailure, alertSuccess } from '../../store/actions/alert';
 
 import {approve, getAllowance} from './sota-token';
 
@@ -170,6 +171,8 @@ export const deposit = (address: string | null | undefined, amount: string, libr
       });
     } catch (error) {
       console.log(error)
+      dispatch(alertFailure("Transaction submit failure"))
+
       dispatch({
         type: sotaTiersActions.DEPOSIT_FAILURE,
         payload: error
@@ -202,6 +205,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
 
     } catch (error) {
       console.log(error)
+      dispatch(alertFailure("Transaction submit failure"))
       dispatch({
         type: sotaTiersActions.WITHDRAW_FAILURE,
         payload: error
