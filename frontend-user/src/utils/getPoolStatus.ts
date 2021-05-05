@@ -35,7 +35,6 @@ export const getPoolStatus = (
 
   const requiredReleaseTime = isClaimable ? !releaseTime: false;
 
-  debugger;
   if ((!startBuyTime || !startJoinTime || !endBuyTime || !endJoinTime || requiredReleaseTime) && poolType === 'whitelist') {
     return PoolStatus.TBA;
   }
