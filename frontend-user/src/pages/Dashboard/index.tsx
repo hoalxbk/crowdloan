@@ -40,13 +40,25 @@ const Dashboard = (props: any) => {
     return result;
   }
 
+  const checkBuyTime = (pool: any) => {
+    return !pool.start_time || !pool.finish_time || pool.start_time == '0' || pool.finish_time == '0'
+  }
+
+  const checkJoinTime = (pool: any) => {
+    return !pool.start_join_pool_time || !pool.end_join_pool_time || pool.start_join_pool_time == '0' || pool.end_join_pool_time == '0'
+  }
+
+  const checkTBA = (pool: any) => {
+    return pool.pool_type == POOL_TYPE.SWAP && pool.buy_type == BUY_TYPE.FCFS && checkBuyTime(pool)
+    || pool.pool_type == POOL_TYPE.SWAP && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (checkBuyTime(pool) || checkJoinTime(pool))
+    || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.FCFS && (checkBuyTime(pool) || !pool.release_time || pool.release_time == '0')
+    || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (checkBuyTime(pool) || checkJoinTime(pool) || !pool.release_time || pool.release_time == '0')
+  }
+
   const setStatusPools = () => {
     pools.forEach(async (pool: any) => {
       const currentTime = moment.utc().unix();
-      if(pool.pool_type == POOL_TYPE.SWAP && pool.buy_type == BUY_TYPE.FCFS && (!pool.start_time || !pool.finish_time)
-        || pool.pool_type == POOL_TYPE.SWAP && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (!pool.start_join_pool_time || !pool.end_join_pool_time || !pool.start_time || !pool.finish_time)
-        || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.FCFS && (!pool.start_time || !pool.finish_time || !pool.release_time)
-        || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (!pool.start_join_pool_time || !pool.end_join_pool_time || !pool.start_time || !pool.finish_time || !pool.release_time))
+      if(checkTBA(pool))
       {
         pool.status = POOL_STATUS.TBA;
         return;
