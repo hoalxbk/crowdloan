@@ -139,6 +139,11 @@ class UserAuthController {
         return HelperUtils.responseBadRequest('Email account has been registered.');
       }
 
+      let checkExistWallet = await UserModel.query().where('wallet_address', wallet_address).where('status', Const.USER_STATUS.ACTIVE).first();
+      if (checkExistWallet) {
+        return HelperUtils.responseBadRequest('Your wallet has been verified email.');
+      }
+
       console.log('[registerVerifyEmail]: Wallet Address: ', wallet_address);
       let user = await UserModel.query().where('wallet_address', wallet_address).first();
       console.log('[registerVerifyEmail]: User:  ', user);
