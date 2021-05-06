@@ -49,10 +49,15 @@ const usePools = (): PoolsReturnType => {
   const pools = useMemo(() => {
     if (data && !loading && !error && poolsDone)  {
       const result = data.data.map((p: any) => {
+        
         return {
           ...p,
           token_images: `${BASE_URL}/image/${p.token_images}`,
           banner: `${BASE_URL}/image/${p.banner}`,
+          symbol: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 'PRARE' : p.symbol,
+          name: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 'Polka Rare' : p.name,
+          decimals: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 18 : p.decimals,
+          campaign_hash: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 'TBD' : p.campaign_hash
         }
       })
       return result

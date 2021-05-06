@@ -25,7 +25,7 @@ const BSCIcon = "bsc.svg";
 const logo = "/images/logo-red-kite.svg";
 const iconClose = "/images/icons/close.svg";
 const iconHamburger = "/images/icons/hamburger.svg";
-const iconAccount = "/icons/account.svg";
+const iconAccount = "icons/account.svg";
 
 const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   const styles = useStyles();
