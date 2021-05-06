@@ -31,7 +31,13 @@ export abstract class BaseEventLogCrawler extends BaseIntervalWorker {
 
   public getOptions(): IEventLogCrawlerOptions {
     // TODO: Please remove when production
-    this._options.networkConfig.WEB3_API_URL = getWeb3ProviderLink();
+    if (process.env.NODE_ENV !== 'development') {
+      console.log('Production event log crawler.')
+    } else {
+      console.log('development event log crawler.')
+      this._options.networkConfig.WEB3_API_URL = getWeb3ProviderLink();  
+    }
+    
 
     return this._options;
   }

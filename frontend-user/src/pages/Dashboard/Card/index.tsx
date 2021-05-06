@@ -109,15 +109,15 @@ const Card = (props: any): JSX.Element => {
               <span>Access</span>
               <span className="total">{pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase()}</span>
             </li>
-            {pool.status != POOL_STATUS.UPCOMMING && <li>
+            <li>
               <span>Network</span>
               <span className="total">
                 {pool.network_available === NETWORK.ETHEREUM ? <img src={EthereumIcon} /> : <img src={BSCIcon} />}
               </span>
-            </li>}
+            </li>
           </ul>
 
-          {pool.status == POOL_STATUS.UPCOMMING && <div className="token-area">
+          {/* {pool.status == POOL_STATUS.UPCOMMING && <div className="token-area">
             {pool.network_available === NETWORK.ETHEREUM && <div>
               <img src={EthereumIcon} />
               <span>Ethereum</span>
@@ -126,9 +126,9 @@ const Card = (props: any): JSX.Element => {
               <img src={BSCIcon}/>
               <span>BSC</span>
             </div>}
-          </div>}
+          </div>} */}
 
-          {pool.status != POOL_STATUS.UPCOMMING && <div className="progress-area">
+          <div className="progress-area">
             <p>Progress</p>
             <div className="progress">
               <span className={`current-progress ${progress !== 0 ? '' : 'inactive'}`} style={{ width: `${progress > 100 ? 100 : Math.round(progress)}%` }}></span>
@@ -139,7 +139,7 @@ const Card = (props: any): JSX.Element => {
               </div>
               <span>{parseFloat(pool.tokenSold || 0).toFixed(0)}/{parseFloat(pool.total_sold_coin || 0).toFixed(0)}</span>
             </div>
-          </div>}
+          </div>
         </div>
       </div>
     </Link>

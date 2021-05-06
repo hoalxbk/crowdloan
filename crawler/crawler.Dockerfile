@@ -6,7 +6,7 @@ RUN mkdir /code \
 
 WORKDIR /code
 COPY . ./
-RUN cp .env.example .env \
+RUN cp .env.prod .env \
     && npm install -g typescript@4.0.2 \
     && npm install \
     && make all \
