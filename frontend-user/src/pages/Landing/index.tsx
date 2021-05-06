@@ -127,7 +127,7 @@ const Dashboard = (props: any) => {
             </LightSpeed>
           </div>
         </div>
-      {showModal && <ModalContent setShowModal={setShowModal}/>}
+      <ModalContent setShowModal={setShowModal} open={showModal}/>
     </LandingLayout>
   );
 };

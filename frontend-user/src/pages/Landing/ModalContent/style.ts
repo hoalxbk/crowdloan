@@ -6,9 +6,10 @@ const useStyles = makeStyles((theme: any) => {
       borderRadius: '4px',
       '& .modal-content': {
         minHeight: '336px',
-        width: '50%',
+        width: '600px',
         padding: '80px 20px',
         overflow: 'hidden',
+        background: 'none',
 
         '& .bg': {
           position: 'absolute',
@@ -60,9 +61,12 @@ const useStyles = makeStyles((theme: any) => {
       },
       [theme.breakpoints.down('xs')]: {
         '& .modal-content': {
-          width: 'calc(100% - 40px)',
+          width: '100%',
           padding: '60px 20px',
           borderRadius: '4px',
+          overflow: 'hidden'
+        },
+        '& .MuiPaper-rounded': {
           overflow: 'hidden'
         }
       }
