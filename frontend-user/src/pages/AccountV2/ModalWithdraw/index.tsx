@@ -8,6 +8,7 @@ import { useWeb3React } from '@web3-react/core';
 import BigNumber from 'bignumber.js';
 import { CONVERSION_RATE } from '../../../constants';
 import { numberWithCommas } from '../../../utils/formatNumber';
+import NumberFormat from 'react-number-format';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
@@ -85,6 +86,12 @@ const ModalWithdraw = (props: any) => {
       setCurrentRate(CONVERSION_RATE[1].rate)
     }
   }
+  const handleChange = (e: any) => {
+    const value = e.target.value.replaceAll(",", "")
+    if (value === '' || REGEX_NUMBER.test(value)) {
+      setWithdrawAmount(value);
+    }
+  }
 
   return (
     <>
@@ -116,11 +123,15 @@ const ModalWithdraw = (props: any) => {
                 <span>Input</span>
               </div>
               <div className="input-group">
-                <input
+                <NumberFormat 
                   type="text"
+                  placeholder={'0'} 
+                  thousandSeparator={true}  
+                  onChange={e => handleChange(e)} 
+                  decimalScale={6}
                   value={withdrawAmount}
-                  onChange={e => (e.target.value === '' || REGEX_NUMBER.test(e.target.value)) && setWithdrawAmount(e.target.value)}
-                  placeholder="0.00"
+                  min={0}
+                  maxLength={255}
                 />
                 <div>
                   <button className="btn-max" id="btn-max-withdraw" onClick={() => setWithdrawAmount(currentStaked)}>MAX</button>

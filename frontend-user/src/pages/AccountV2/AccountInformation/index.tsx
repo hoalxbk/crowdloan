@@ -34,6 +34,7 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>Email</span>
           {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
+          {emailVerified == USER_STATUS.UNVERIFIED && <span>Not Available</span>}
           {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
             <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
               Verify Email
@@ -49,7 +50,7 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>Your Tier</span>
           <span>
-            {_.isEmpty(userTier) ? TIERS[0].name : TIERS[userTier]?.name}
+            {(userTier > 0 && connectedAccount) ? TIERS[userTier]?.name : TIERS[0].name}
           </span>
         </div>
         <div className={styles.inputGroup}>
