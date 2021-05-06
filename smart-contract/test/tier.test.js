@@ -9,9 +9,7 @@ const {
 } = hardhat.ethers;
 
 describe('Tier', function () {
-  let owner, penaltyWallet, PKF, uniLP, sPKF, tier;
   beforeEach(async () => {
-    // Get accounts
     accounts = await provider.listAccounts();
     owner = accounts[0];
     penaltyWallet = owner;
@@ -22,12 +20,19 @@ describe('Tier', function () {
     uniLP = await ERC20TokenFactory.deploy("Uniswap V2", "UNI-V2", owner, utils.parseUnits("1000000", 18));
     sPKF = await ERC20TokenFactory.deploy("Staked PKF", "sPKF", owner, utils.parseUnits("1000000", 18));
 
+    const ERC721TokenFactory = await hardhat.ethers.getContractFactory('ERC721Token');
+    NFT = await ERC721TokenFactory.deploy("NFT", "NFT");
+
     // Deploy Tier Contract
     const RedKiteTiers = await hardhat.ethers.getContractFactory(
       'RedKiteTiers',
     );
     tier = await RedKiteTiers.deploy(PKF.address, sPKF.address, uniLP.address, penaltyWallet);
     await tier.deployed();
+
+    // Add NFT
+    const rate = utils.parseUnits("1000", 18);
+    await tier.addExternalToken(NFT.address, 0, rate, true, true);
   });
 
   // Initialize properties
@@ -217,6 +222,143 @@ describe('Tier', function () {
     await expect(tier.connect(user2).withdrawERC20(sPKF.address, withdrawAmount)).to.be.reverted;
   });
 
+  it('Deposit / withdraw ERC721 with multiple accounts', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await NFT.addNFT(user1.address); // Token id 1
+    await NFT.addNFT(user1.address); // Token id 2
+    await NFT.addNFT(user2.address); // Token id 3
+    await NFT.addNFT(user2.address); // Token id 4
+
+    await NFT.connect(user1).approve(tier.address, 1);
+    await NFT.connect(user2).approve(tier.address, 3);
+    await NFT.connect(user2).approve(tier.address, 4);
+
+    const user1DepositAmount = utils.parseUnits((1 * 1000).toString(), 18);
+    const user2DepositAmount = utils.parseUnits((2 * 1000).toString(), 18);
+
+    await tier.connect(user1).depositSingleERC721(NFT.address, 1);
+    await tier.connect(user2).depositBatchERC721(NFT.address, [3, 4]);
+
+    const user1Info = await tier.userInfo(user1.address, NFT.address);
+    const user2Info = await tier.userInfo(user2.address, NFT.address);
+
+    expect(user1Info.staked).to.equal(1);
+    expect(user2Info.staked).to.equal(2);
+    expect(await tier.userExternalStaked(user1.address)).to.equal(user1DepositAmount);
+    expect(await tier.userExternalStaked(user2.address)).to.equal(user2DepositAmount);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(user1DepositAmount);
+    expect(await tier.userTotalStaked(user2.address)).to.equal(user2DepositAmount);
+
+    await tier.connect(user1).withdrawSingleERC721(NFT.address, 1);
+    await tier.connect(user2).withdrawBatchERC721(NFT.address, [3, 4]);
+
+    expect((await tier.userInfo(user1.address, NFT.address)).staked).to.equal(0);
+    expect((await tier.userInfo(user2.address, NFT.address)).staked).to.equal(0);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(0);
+    expect(await tier.userTotalStaked(user2.address)).to.equal(0);
+  });
+
+  it('Deposit / withdraw with withdraw < deposit ERC721 by multiple accounts', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await NFT.addNFT(user1.address); // Token id 1
+    await NFT.addNFT(user1.address); // Token id 2
+    await NFT.addNFT(user2.address); // Token id 3
+    await NFT.addNFT(user2.address); // Token id 4
+
+    await NFT.connect(user1).approve(tier.address, 1);
+    await NFT.connect(user1).approve(tier.address, 2);
+    await NFT.connect(user2).approve(tier.address, 3);
+    await NFT.connect(user2).approve(tier.address, 4);
+
+    const depositAmount = utils.parseUnits((2 * 1000).toString(), 18);
+    const remainingAmount = utils.parseUnits((1 * 1000).toString(), 18);
+
+    await tier.connect(user1).depositBatchERC721(NFT.address, [1, 2]);
+    await tier.connect(user2).depositBatchERC721(NFT.address, [3, 4]);
+
+    const user1Info = await tier.userInfo(user1.address, NFT.address);
+    const user2Info = await tier.userInfo(user1.address, NFT.address);
+
+    expect(user1Info.staked).to.equal(2);
+    expect(user2Info.staked).to.equal(2);
+    expect(await tier.userExternalStaked(user1.address)).to.equal(depositAmount);
+    expect(await tier.userExternalStaked(user2.address)).to.equal(depositAmount);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(depositAmount);
+    expect(await tier.userTotalStaked(user2.address)).to.equal(depositAmount);
+
+    await tier.connect(user1).withdrawBatchERC721(NFT.address, [1]);
+    await tier.connect(user2).withdrawBatchERC721(NFT.address, [3]);
+
+    expect((await tier.userInfo(user1.address, NFT.address)).staked).to.equal(1);
+    expect((await tier.userInfo(user2.address, NFT.address)).staked).to.equal(1);
+    expect(await tier.userExternalStaked(user1.address)).to.equal(remainingAmount);
+    expect(await tier.userExternalStaked(user2.address)).to.equal(remainingAmount);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(remainingAmount);
+    expect(await tier.userTotalStaked(user2.address)).to.equal(remainingAmount);
+  });
+
+  it('Deposit / withdraw with withdraw < deposit ERC721 with multiple deposits', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await NFT.addNFT(user1.address); // Token id 1
+    await NFT.addNFT(user1.address); // Token id 2
+    await NFT.addNFT(user1.address); // Token id 3
+    await NFT.addNFT(user1.address); // Token id 4
+
+    await NFT.connect(user1).approve(tier.address, 1);
+    await NFT.connect(user1).approve(tier.address, 2);
+    await NFT.connect(user1).approve(tier.address, 3);
+    await NFT.connect(user1).approve(tier.address, 4);
+
+    const depositAmount = utils.parseUnits((4 * 1000).toString(), 18);
+
+    await tier.connect(user1).depositBatchERC721(NFT.address, [1, 2, 3, 4]);
+
+    const user1Info = await tier.userInfo(user1.address, NFT.address);
+
+    expect(user1Info.staked).to.equal(4);
+    expect(await tier.userExternalStaked(user1.address)).to.equal(depositAmount);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(depositAmount);
+
+    await tier.connect(user1).withdrawBatchERC721(NFT.address, [1, 2, 3, 4]);
+
+    expect((await tier.userInfo(user1.address, NFT.address)).staked).to.equal(0);
+    expect(await tier.userExternalStaked(user1.address)).to.equal(0);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(0);
+  });
+
+  it('Revert when withdraw > deposit ERC721 with multiple accounts', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await NFT.addNFT(user1.address); // Token id 1
+    await NFT.addNFT(user1.address); // Token id 2
+    await NFT.addNFT(user2.address); // Token id 3
+    await NFT.addNFT(user2.address); // Token id 4
+
+    await NFT.connect(user1).approve(tier.address, 1);
+    await NFT.connect(user2).approve(tier.address, 3);
+
+    const depositAmount = utils.parseUnits((1 * 1000).toString(), 18);
+
+    await tier.connect(user1).depositBatchERC721(NFT.address, [1]);
+    await tier.connect(user2).depositBatchERC721(NFT.address, [3]);
+
+    const user1Info = await tier.userInfo(user1.address, NFT.address);
+    const user2Info = await tier.userInfo(user1.address, NFT.address);
+
+    expect(user1Info.staked).to.equal(1);
+    expect(user2Info.staked).to.equal(1);
+    expect(await tier.userExternalStaked(user1.address)).to.equal(depositAmount);
+    expect(await tier.userExternalStaked(user2.address)).to.equal(depositAmount);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(depositAmount);
+    expect(await tier.userTotalStaked(user2.address)).to.equal(depositAmount);
+
+    await expect(tier.connect(user1).withdrawBatchERC721(NFT.address, [1, 2])).to.be.reverted;
+    await expect(tier.connect(user2).withdrawBatchERC721(NFT.address, [3, 4])).to.be.reverted;
+  });
+
   // Emergency Withdraw
   it('Emergency withdraw PKF with multiple accounts', async function () {
     const [owner, user1, user2] = await hardhat.ethers.getSigners();
@@ -243,7 +385,7 @@ describe('Tier', function () {
 
     expect(user1Info.staked).to.equal(0);
     expect(user2Info.staked).to.equal(0);
-  })
+  });
 
   it('Emergency withdraw sPKF with multiple accounts', async function () {
     const [owner, user1, user2] = await hardhat.ethers.getSigners();
@@ -266,9 +408,56 @@ describe('Tier', function () {
     await tier.connect(user2).emergencyWithdrawERC20(sPKF.address);
 
     const user1Info = await tier.userInfo(user1.address, sPKF.address);
-    const user2Info = await tier.userInfo(user1.address, sPKF.address);
+    const user2Info = await tier.userInfo(user2.address, sPKF.address);
 
     expect(user1Info.staked).to.equal(0);
     expect(user2Info.staked).to.equal(0);
-  })
+    expect(await tier.userExternalStaked(user1.address)).to.equal(0);
+    expect(await tier.userExternalStaked(user2.address)).to.equal(0);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(0);
+    expect(await tier.userTotalStaked(user2.address)).to.equal(0);
+  });
+
+  it('Emergency withdraw ERC721 with multiple accounts', async function () {
+    const [owner, user1, user2] = await hardhat.ethers.getSigners();
+
+    await NFT.addNFT(user1.address); // Token id 1
+    await NFT.addNFT(user1.address); // Token id 2
+    await NFT.addNFT(user2.address); // Token id 3
+    await NFT.addNFT(user2.address); // Token id 4
+
+    await NFT.connect(user1).approve(tier.address, 1);
+    await NFT.connect(user1).approve(tier.address, 2);
+    await NFT.connect(user2).approve(tier.address, 3);
+    await NFT.connect(user2).approve(tier.address, 4);
+
+    await tier.connect(user1).depositBatchERC721(NFT.address, [1, 2]);
+    await tier.connect(user2).depositBatchERC721(NFT.address, [3, 4]);
+
+    await tier.connect(owner).updateEmergencyWithdrawStatus(true);
+    expect(await tier.canEmergencyWithdraw()).to.equal(true);
+
+    await tier.connect(user1).emergencyWithdrawERC721(NFT.address, [1, 2]);
+    await tier.connect(user2).emergencyWithdrawERC721(NFT.address, [3, 4]);
+
+    const user1Info = await tier.userInfo(user1.address, NFT.address);
+    const user2Info = await tier.userInfo(user1.address, NFT.address);
+
+    expect(user1Info.staked).to.equal(0);
+    expect(user2Info.staked).to.equal(0);
+    expect(await tier.userExternalStaked(user1.address)).to.equal(0);
+    expect(await tier.userExternalStaked(user2.address)).to.equal(0);
+    expect(await tier.userTotalStaked(user1.address)).to.equal(0);
+    expect(await tier.userTotalStaked(user2.address)).to.equal(0);
+  });
+
+  it('Revert nothing to Emergency withdraw', async function () {
+    const [owner, user1] = await hardhat.ethers.getSigners();
+
+    await tier.connect(owner).updateEmergencyWithdrawStatus(true);
+    expect(await tier.canEmergencyWithdraw()).to.equal(true);
+
+    await expect(tier.connect(user1).emergencyWithdrawERC20(PKF.address, utils.parseUnits("1", 18))).to.be.reverted;
+    await expect(tier.connect(user1).emergencyWithdrawERC721(NFT.address, [1])).to.be.reverted;
+  });
 });
