@@ -4,7 +4,17 @@ const useStyles = makeStyles((theme: any) => {
   return {
     MyTier: {
       marginTop: 30,
-      font: 'normal normal bold 14px/18px DM Sans'
+      width: '50%',
+      font: 'normal normal bold 14px/18px DM Sans',
+      marginRight: 120,
+      [theme.breakpoints.down('md')]: {
+        marginRight: 0,
+        width: "100%",
+      },
+      [theme.breakpoints.down('xs')]: {
+        marginRight: 0,
+        width: "100%",
+      },
     },
     MyTierWinningLottery: {
     },
@@ -26,8 +36,8 @@ const useStyles = makeStyles((theme: any) => {
       }
     },
     tableContainer: {
-      maxWidth: 700,
-      width: 700,
+      maxWidth: '100%',
+      width: '100%',
       background: 'transparent',
       color: '#999999',
       border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -57,11 +67,10 @@ const useStyles = makeStyles((theme: any) => {
       fontSize: 15,
       '& > span': {
         display: 'inline-block',
-        width: '200px',
       },
       [theme.breakpoints.down('xs')]: {
         '& > span': {
-          width: '120px',
+          // width: '120px',
           display: 'inline-block'
         }
       },

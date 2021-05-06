@@ -307,6 +307,8 @@ const useStyles = makeStyles((theme: any) => {
     poolDetailBuyForm: {
       display: 'flex',
       justifyContent: 'space-between',
+      alignItems: 'flex-start',
+
       [theme.breakpoints.down('md')]: {
         flexDirection: 'column'     
       },

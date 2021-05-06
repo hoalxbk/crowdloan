@@ -48,7 +48,7 @@ enum HeaderType {
   MyTier = "My Tier"
 }
 
-const headers = [HeaderType.Main, HeaderType.MyTier, HeaderType.About, HeaderType.Participants];
+const headers = [HeaderType.Main, HeaderType.About, HeaderType.Participants];
 
 const ETHERSCAN_BASE_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL; 
 
@@ -218,24 +218,27 @@ const BuyToken: React.FC<any> = (props: any) => {
                 <h2 className={styles.poolHeaderTitle}>
                   {poolDetails?.title}
                 </h2>
-                <p className={styles.poolHeaderAddress}>
-                  {isWidthUp('sm', props.width) && poolDetails?.tokenDetails?.address}
-                  {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.tokenDetails?.address || '', 8)}
-                  <CopyToClipboard text={poolDetails?.tokenDetails?.address}
-                    onCopy={() => { 
-                      setCopiedAddress(true);
-                      setTimeout(() => {
-                        setCopiedAddress(false);
-                      }, 2000);
-                    }}
-                  >
-                    {
-                      !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
-                      : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
-                    }
-                  </CopyToClipboard>
-                </p>
-                <StatusBar currentStatus={poolStatus} />
+                <Tooltip title={<p style={{ fontSize: 15, textAlign: 'left' }}>Token ICO Address</p>}>
+                    <p className={styles.poolHeaderAddress}>
+                      {isWidthUp('sm', props.width) && poolDetails?.tokenDetails?.address}
+                      {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.tokenDetails?.address || '', 8)}
+
+                      <CopyToClipboard text={poolDetails?.tokenDetails?.address}
+                        onCopy={() => { 
+                        setCopiedAddress(true);
+                        setTimeout(() => {
+                          setCopiedAddress(false);
+                          }, 2000);
+                        }}
+                      >
+                      {
+                        !copiedAddress ? <img src={copyImage} alt="copy-icon" className={styles.poolHeaderCopy} />
+                        : <p style={{ color: '#6398FF', marginLeft: 10 }}>Copied</p>
+                      }
+                      </CopyToClipboard>
+                    </p>
+                </Tooltip>
+                {isWidthUp('md', props.width) && <StatusBar currentStatus={poolStatus} />}
               </div>
             </div>
             <div className={styles.poolType}>
@@ -378,6 +381,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   showMoreInfomation 
                   tiersBuyLimit={poolDetails?.buyLimit || [] }
                   tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
+                  verifiedEmail={verifiedEmail}
                 />
                 <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
                 <div className={styles.poolDetailProgress}>

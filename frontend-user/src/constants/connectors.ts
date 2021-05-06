@@ -87,15 +87,15 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     disableIcon: '/images/injected-binance-disabled.svg',
     href: null,
   },
-  FORTMATIC: {
-    connector: fortmatic,
-    name: ConnectorNames.Fortmatic,
-    icon: '/images/fortmatic.svg',
-    description: 'Login using Fortmatic hosted wallet',
-    disableIcon: '/images/fortmatic-disabled.svg',
-    href: null,
-    mobile: true
-  },
+  // FORTMATIC: {
+  //   connector: fortmatic,
+  //   name: ConnectorNames.Fortmatic,
+  //   icon: '/images/fortmatic.svg',
+  //   description: 'Login using Fortmatic hosted wallet',
+  //   disableIcon: '/images/fortmatic-disabled.svg',
+  //   href: null,
+  //   mobile: true
+  // },
 }
 
 

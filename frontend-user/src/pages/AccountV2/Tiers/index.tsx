@@ -27,6 +27,7 @@ const Tiers = (props: any) => {
     showMoreInfomation = false,
     tiersBuyLimit,
     tokenSymbol,
+    verifiedEmail
   } = props;
 
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
@@ -89,11 +90,17 @@ const Tiers = (props: any) => {
     >
       {showMoreInfomation && <div className={styles.title}>
         <>
-          <p>
-            You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}.&nbsp; 
-            To upgrade your tier, please click&nbsp;
-            <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
-          </p> 
+          {
+            (userTier > 0 && verifiedEmail && connectedAccount) ?  (
+              <p>
+                You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}. To upgrade your tier, please click <Link to="/account" className={styles.tierLinkToAccount}>here</Link>.
+              </p> 
+            ): (
+              <p>
+                You are not in any tier yet.
+              </p> 
+            )
+          }
         </>
       </div>}
       <ul className={styles.tierList}>
