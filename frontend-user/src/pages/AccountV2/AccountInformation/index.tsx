@@ -58,7 +58,7 @@ const AccountInformation = (props: any) => {
           {connectedAccount && <>
             <span>{isKYC ? 'Verified' : 'Unverified'}</span>
             {!isKYC && <button className="verify-email" onClick={handleKYC}>
-              Register KYC
+              How to KYC?
             </button>}
           </>}
         </div>
