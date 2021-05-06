@@ -1,13 +1,13 @@
 module.exports = {
-  WEB3_API_URL: 'https://goerli.infura.io/v3/c745d07314904c539668b553dbd6b670',
+  WEB3_API_URL: 'https://mainnet.infura.io/v3/514448fdbdb743aea877afebfdc21661',
   // WEB3_API_URL: 'https://rinkeby-rpc.sotatek.com',
   AVERAGE_BLOCK_TIME: 15000,
   REQUIRED_CONFIRMATION: 3,
-  CHAIN_ID: 9876,
+  CHAIN_ID: 1,
   contracts: {
     CampainFactory: {
       CONTRACT_DATA: require('./contracts/CampaignFactory.json'),
-      CONTRACT_ADDRESS: '0x0Ddb3a3BEC7eC0D9a13E76b5ECCFD9c9c5c3eD52',
+      CONTRACT_ADDRESS: '0x77010248524b58a01afa9e85c21a7316810d154b',
       FIRST_CRAWL_BLOCK: 4181605,
       BLOCK_NUM_IN_ONE_GO: 1000,
       BREAK_TIME_AFTER_ONE_GO: 15000,
@@ -31,8 +31,8 @@ module.exports = {
     },
     Tier: {
       CONTRACT_DATA: require('./contracts/Tier.json'), // Tier
-      CONTRACT_ADDRESS: '0xDf2b8f344c54A600636f2C13001d59341Ed246e8',
-      FIRST_CRAWL_BLOCK: 4680953,
+      CONTRACT_ADDRESS: '0x383478280136ee5b58b2eceeb93e551cd1749529',
+      FIRST_CRAWL_BLOCK: 12377225,
       BLOCK_NUM_IN_ONE_GO: 100,
       BREAK_TIME_AFTER_ONE_GO: 1000,
       NEED_NOTIFY_BY_WEBHOOK: true
