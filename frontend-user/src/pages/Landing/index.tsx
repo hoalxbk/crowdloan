@@ -81,8 +81,8 @@ const Dashboard = (props: any) => {
           </Fade>
           <Fade bottom>
             <div className="buttons">
-              <a onClick={() => setShowModal(true)}>
-              <button className={common.nnb1418d}>View all projects</button>
+              <a href="#/dashboard">
+                <button className={common.nnb1418d}>View all projects</button>
               </a>
               <a href="https://t.me/PolkaFoundryANN" target="_blank">
                 <button className={common.nnb1418d + ' btn'}>
@@ -127,7 +127,7 @@ const Dashboard = (props: any) => {
             </LightSpeed>
           </div>
         </div>
-      <ModalContent setShowModal={setShowModal} open={showModal}/>
+      {showModal && <ModalContent setShowModal={setShowModal}/>}
     </LandingLayout>
   );
 };
