@@ -194,14 +194,14 @@ const useCommonStyle = makeStyles((theme) => {
       top: '0',
       left: '0',
       zIndex: 10,
-      backgroundColor: 'rgba(3, 9, 46, 0.6)',
+      '& .MuiBackdrop-root': {
+        backgroundColor: 'rgba(3, 9, 46, 0.6)',
+      },
+      '& .MuiPaper-rounded': {
+        background: 'none',
+      },
 
       '& .content': {
-        position: 'relative',
-        transform: 'translate(-50%, -50%)',
-        top: '45%',
-        left: '50%',
-        width: '40%',
         padding: '60px',
         background: '#020616',
         borderRadius: '4px',
@@ -235,6 +235,12 @@ const useCommonStyle = makeStyles((theme) => {
         color: '#FDFDFD',
       },
 
+      '& .MuiBackdrop-root': {
+        background: 'none',
+      },
+      '& .MuiPaper-rounded': {
+        background: 'none',
+      },
       '& .modal-content__body': {
         backgroundColor: 'unset!important'
       },
@@ -253,21 +259,24 @@ const useCommonStyle = makeStyles((theme) => {
       zIndex: 5,
       backgroundColor: 'rgba(3, 9, 46, 0.6)',
 
+      '& .MuiBackdrop-root': {
+        background: 'none',
+      },
+      '& .MuiPaper-rounded': {
+        background: 'none',
+      },
       '& .modal-content': {
         width: '480px',
         maxWidth: '100%',
         maxHeight: '80%',
         overflow: 'auto',
         padding: '60px',
-        position: 'absolute',
-        transform: 'translate(-50%, -50%)',
-        top: '40%',
-        left: '50%',
         background: '#020616',
         borderRadius: '4px',
       },
 
       '& .modal-content__head': {
+        padding: '10px 0',
         '& .title': {
           color: '#FFFFFF',
           fontFamily: 'DM Sans',
@@ -361,6 +370,7 @@ const useCommonStyle = makeStyles((theme) => {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        padding: 0,
 
         '& button': {
           borderRadius: '60px',
@@ -441,8 +451,10 @@ const useCommonStyle = makeStyles((theme) => {
 
     [theme.breakpoints.down('xs')]: {
       modal: {
+        '& .modal-content__body': {
+          padding: '0'
+        },
         '& .modal-content': {
-          width: 'calc(100% - 40px)',
           padding: '15px',
         },
         '& .modal-content__foot': {
@@ -455,14 +467,18 @@ const useCommonStyle = makeStyles((theme) => {
             width: '100%',
             marginBottom: '15px',
           }
+        },
+        '& .MuiDialogActions-spacing > :not(:first-child)': {
+          marginLeft: '0',
         }
       },
       loadingTransaction: {
         width: '100vw',
         height: '100vh',
-  
+        '& .MuiPaper-rounded': {
+          width: '100%'
+        },
         '& .content': {
-          width: 'calc(100% - 40px)',
           padding: '15px',
         },
       },

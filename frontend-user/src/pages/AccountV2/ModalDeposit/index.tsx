@@ -10,6 +10,7 @@ import BigNumber from 'bignumber.js';
 import { CONVERSION_RATE } from '../../../constants';
 import { numberWithCommas } from '../../../utils/formatNumber';
 import NumberFormat from 'react-number-format';
+import {Dialog, DialogTitle, DialogContent, DialogActions} from '@material-ui/core';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
@@ -30,20 +31,22 @@ const ModalDeposit = (props: any) => {
   const {
     setOpenModalDeposit,
     setOpenModalTransactionSubmitting,
-    listTokenDetails
+    listTokenDetails,
+    open
   } = props;
-  const [currentToken, setCurrentToken] = useState(listTokenDetails[0]) as any;
+  const [currentToken, setCurrentToken] = useState(undefined) as any;
   const [currentBalance, setCurrentBalance] = useState('0');
   const [currentStaked, setCurrentStaked] = useState('0');
   const [currentAllowance, setCurrentAllowance] = useState(0);
   const [currentRate, setCurrentRate] = useState(0);
 
   useEffect(() => {
+    setCurrentToken(listTokenDetails[0])
     setCurrentBalance(balance.pkf)
     setCurrentStaked(userInfo.pkfStaked)
     setCurrentAllowance(allowance.pkf)
     setCurrentRate(1)
-  }, [balance, userInfo])
+  }, [balance, userInfo, listTokenDetails])
 
   useEffect(() => {
     if(depositAmount === '' || depositAmount === '0') {
@@ -108,75 +111,93 @@ const ModalDeposit = (props: any) => {
   }
 
   return (
-    <>
-      <div className={commonStyles.modal + ' ' + styles.modalDeposit}>
-        <div className="modal-content">
-          <div className="modal-content__head">
-            <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-            <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} locked-in</h2>
-          </div>
-          <div className="modal-content__body">
-            <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
-              {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
-                return <option value={tokenDetails?.symbol} key={index}>{
-                  index === 0 ? 'Polkafoundry (PKF)' : `${CONVERSION_RATE[index - 1].name} (${CONVERSION_RATE[index - 1].symbol})`
-                }</option>
-              })}
-            </select>
+    // <div className={commonStyles.modal + ' ' + styles.modalDeposit}>
+    //   <div className="layout">
+    //     <div className="modal-content">
+    //       <div className="modal-content__head">
+            
+    //       </div>
+    //       <div className="modal-content__body">
+    //       </div>
+    //       <div className="modal-content__foot">
+            
+    //       </div>
+    //     </div>
+    //   </div>
+    // </div>
+    <Dialog
+      open={open}
+      keepMounted
+      onClose={handleClose}
+      aria-labelledby="alert-dialog-slide-title"
+      aria-describedby="alert-dialog-slide-description"
+      className={commonStyles.modal + ' ' + styles.modalDeposit}
+    >
+      <div className="modal-content">
+        <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
+          <img src={closeIcon} className="btn-close" onClick={handleClose}/>
+          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} locked-in</h2>
+        </DialogTitle>
+        <DialogContent className="modal-content__body">
+          <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
+            {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
+              return <option value={tokenDetails?.symbol} key={index}>{
+                index === 0 ? 'Polkafoundry (PKF)' : `${CONVERSION_RATE[index - 1].name} (${CONVERSION_RATE[index - 1].symbol})`
+              }</option>
+            })}
+          </select>
 
-            <div className={styles.group}>
-              <div className="balance">
-                <div>
-                  <span>Your wallet balance</span>
-                  <span>{ _.isEmpty(balance) ? 0 : numberWithCommas(currentBalance) } {
-                    currentToken.symbol == 'PKF' ? 'PKF'
-                    : currentToken.symbol == 'UPKF' ? CONVERSION_RATE[0].symbol : CONVERSION_RATE[1].symbol
-                  }</span>
-                </div>
+          <div className={styles.group}>
+            <div className="balance">
+              <div>
+                <span>Your wallet balance</span>
+                <span>{ !currentBalance ? 0 : numberWithCommas(currentBalance) } {
+                  currentToken?.symbol == 'PKF' ? 'PKF'
+                  : currentToken?.symbol == 'UPKF' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
+                }</span>
               </div>
-              <div className="subtitle">
-                <span>Input</span>
+            </div>
+            <div className="subtitle">
+              <span>Input</span>
+            </div>
+            <div className="input-group">
+              <NumberFormat 
+                type="text"
+                placeholder={'0'} 
+                thousandSeparator={true}  
+                onChange={e => handleChange(e)} 
+                decimalScale={6}
+                value={depositAmount}
+                min={0}
+                maxLength={255}
+              />
+              <div>
+                <button className="btn-max" id="btn-max-deposit" onClick={() => setDepositAmount(currentBalance)}>MAX</button>
               </div>
-              <div className="input-group">
-                <NumberFormat 
-                  type="text"
-                  placeholder={'0'} 
-                  thousandSeparator={true}  
-                  onChange={e => handleChange(e)} 
-                  decimalScale={6}
-                  value={depositAmount}
-                  min={0}
-                  maxLength={255}
-                />
-                <div>
-                  <button className="btn-max" id="btn-max-deposit" onClick={() => setDepositAmount(currentBalance)}>MAX</button>
-                </div>
-              </div>
-              <div className="balance" style={{marginTop: '10px'}}>
-                <div>
-                  <span>Equivalent</span>
-                  <span>{numberWithCommas((parseFloat(depositAmount) * currentRate || 0).toString())} {listTokenDetails[0].symbol}</span>
-                </div>
+            </div>
+            <div className="balance" style={{marginTop: '10px'}}>
+              <div>
+                <span>Equivalent</span>
+                <span>{numberWithCommas((parseFloat(depositAmount) * currentRate || 0).toString())} {listTokenDetails[0]?.symbol}</span>
               </div>
             </div>
           </div>
-          <div className="modal-content__foot">
-            {currentAllowance <= 0 && <button
-              className={"btn-approve"}
-              onClick={onApprove}
-            >Approve</button>}
-            {currentAllowance > 0 && <button
-              className={"btn-staking " + (disableDeposit ? 'disabled' : '')}
-              onClick={onDeposit}
-            >Lock-in</button>}
-            <button
-              className="btn-cancel"
-              onClick={() => setOpenModalDeposit(false)}
-            >Cancel</button>
-          </div>
-        </div>
+        </DialogContent>
+        <DialogActions className="modal-content__foot">
+          {currentAllowance <= 0 ? <button
+            className={"btn-approve"}
+            onClick={onApprove}
+          >Approve</button> : <button
+            className={"btn-staking " + (disableDeposit ? 'disabled' : '')}
+            onClick={onDeposit}
+          >Lock-in</button>}
+          <button
+            className="btn-cancel"
+            onClick={() => setOpenModalDeposit(false)}
+          >Cancel</button>
+        </DialogActions>
       </div>
-    </>
+    </Dialog>
   );
 };
 

@@ -87,11 +87,12 @@ const AccountInformation = (props: any) => {
           </div> */}
         </div>
       </div>
-      {openModalVerifyEmail && <ModalVerifyEmail
+      <ModalVerifyEmail
         setOpenModalVerifyEmail={setOpenModalVerifyEmail}
         email={email}
         setEmail={setEmail}
-      />}
+        open={openModalVerifyEmail}
+      />
     </div>
   );
 };
