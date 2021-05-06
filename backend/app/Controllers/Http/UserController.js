@@ -309,9 +309,10 @@ class UserController {
       const tierDb = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
       // get lottery ticket from winner list
       const winner = await WinnerModel.query().where('campaign_id', campaignId).where('wallet_address', walletAddress).first();
+      const tickets = winner ? winner.lottery_ticket : 0;
       const tier = {
         min_buy : tierDb.min_buy,
-        max_buy : tierDb.max_buy * winner.lottery_ticket,
+        max_buy : tierDb.max_buy * tickets,
         start_time: tierDb.start_time,
         end_time: tierDb.end_time,
         level : tierDb.level
