@@ -9,16 +9,17 @@ async function main() {
 
   const penaltyWallet = owner.address;
 
-  const PKFTiers = await hre.ethers.getContractFactory("contracts/tier/RedKiteTiers.sol:RedKiteTiers");
-  const pkfTiers = await PKFTiers.deploy(PKF, sPKF, UniLp, penaltyWallet);
+  const RedKiteTiers = await hre.ethers.getContractFactory("contracts/tier/RedKiteTiers.sol:RedKiteTiers");
+  const redKiteTiers = await RedKiteTiers.deploy(PKF, sPKF, UniLp, penaltyWallet);
 
-  await pkfTiers.deployed();
+  await redKiteTiers.deployed();
 
-  console.log("PKFTiers deployed to:", pkfTiers.address);
+  console.log("RedKiteTiers deployed to:", redKiteTiers.address);
 
   console.log(
     await hre.run('verify:verify', {
-      address: pkfTiers.address,
+      address: redKiteTiers.address,
+      contract: "contracts/tier/RedKiteTiers.sol:RedKiteTiers",
       constructorArguments: [PKF, sPKF, UniLp, penaltyWallet],
     })
   );

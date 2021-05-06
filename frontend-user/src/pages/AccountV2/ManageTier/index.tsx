@@ -73,9 +73,9 @@ const ManageTier = (props: any) => {
     return <div className="group">
       <span>{symbol}</span>
       {(wrongChain || !isAuth) && <span>0</span>}
-      {!wrongChain && isAuth && <span>{numberWithCommas(balance)}</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(balance || 0)}</span>}
       {(wrongChain || !isAuth) && <span>0</span>}
-      {!wrongChain && isAuth && <span>{numberWithCommas(staked)}</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(staked || 0)}</span>}
     </div>
   }
 

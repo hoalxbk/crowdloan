@@ -107,14 +107,14 @@ const Tiers = (props: any) => {
       </div>}
       <ul className={styles.tierList}>
         <li className={styles.tierInfo + ' active first-tier'}>
-          {isWidthUp('sm', props.width) && <span
+          {isWidthUp('sm', props.width) && connectedAccount && <span
             className={"progress-bar"}
             style={{
               backgroundColor: TIERS[0].bgColor,
               width: userTier > 0 ?  'calc(100% - 1px)' : `${currentProcess || 0}%`
             }}
           ></span>}
-          {isWidthDown('xs', props.width) && <span
+          {isWidthDown('xs', props.width) && connectedAccount && <span
             className={"progress-bar" + (loading ? ' inactive' : ' active')}
             style={{
               backgroundColor: TIERS[0].bgColor,
@@ -135,21 +135,21 @@ const Tiers = (props: any) => {
         {tiers.length > 0 && tiers.map((tier: any, idx: any) => {
           if(tier != 0) {
             return <li key={tier} className={styles.tierInfo + (userTier > idx ? ' active ' : ' ') + TIERS[idx + 1].name}>
-              {userTier > idx + 1 && <span
+              {userTier > idx + 1 && connectedAccount && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
                   transition: `all 1s ease ${idx + 1}s`
                 }}
               ></span>}
-              {userTier == idx + 1 && isWidthUp('sm', props.width) && <span
+              {userTier == idx + 1 && connectedAccount && isWidthUp('sm', props.width) && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
                   width: `${currentProcess}%`
                 }}
               ></span>}
-              {userTier == idx + 1 && isWidthDown('xs', props.width) && <span
+              {userTier == idx + 1 && connectedAccount && isWidthDown('xs', props.width) && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
@@ -185,7 +185,7 @@ const Tiers = (props: any) => {
         {!_.isEmpty(userTier) && <div className="notice">
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">
-            <span>You are in Tier {TIERS[userTier].name}</span>
+            {(userTier > 0 && connectedAccount) ? <span>You are in Tier {TIERS[userTier].name}</span> : <span>You are not in any tier yet.</span>}
             <span>Please hold tokens in your wallet balance to maintain your tier!</span>
           </div>
         </div>}

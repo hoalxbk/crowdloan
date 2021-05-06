@@ -22,12 +22,13 @@ const useStyles = makeStyles((theme) => {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
+        width: '100%',
 
         '& a': {
           color: '#FFFFFF'
         },
 
-        '&.connects i': {
+        '& .connects i': {
           marginLeft: '20px',
 
           '&::before': {
@@ -44,9 +45,16 @@ const useStyles = makeStyles((theme) => {
         padding: '10px 40px',
       },
       [theme.breakpoints.down('xs')]: {
-        padding: '10px 32px',
-        flexDirection: 'row-reverse',
+        padding: '0',
+        flexDirection: 'column',
         position: 'relative',
+
+        '& > div:first-child': {
+          width: '100%',
+          padding: '10px 32px',
+          flexDirection: 'row-reverse',
+          position: 'static'
+        },
 
         '& .logo img': {
           width: '30px',
@@ -56,7 +64,8 @@ const useStyles = makeStyles((theme) => {
           position: 'absolute',
           top: 'calc(100% + 31px)',
           right: '20px',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          display: 'flex',
         }
       },
     },
@@ -75,7 +84,7 @@ const useStyles = makeStyles((theme) => {
       font: 'normal normal 400 14px/24px Helvetica',
       display: 'flex',
       alignItems: 'center',
-      marginLeft: '10px'
+      marginLeft: '10px',
     },
     btnChangeAppNetwork: {
       padding: '0 15px',
@@ -103,14 +112,15 @@ const useStyles = makeStyles((theme) => {
     },
     [theme.breakpoints.down('xs')]: {
       banner: {
-        top: '60px',
+        top: '0',
+        position: 'relative',
         '& img:first-child': {
           display: 'none',
         }
       },
       loginErrorBannerText: {
         flexDirection: 'column',
-        alignItems: 'flex-start',
+        alignItems: 'center',
         padding: '0 40px 0 20px',
         marginLeft: '0',
 
