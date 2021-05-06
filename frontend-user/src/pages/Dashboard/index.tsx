@@ -103,9 +103,9 @@ const Dashboard = (props: any) => {
   }, [pools]);
 
   useEffect(() => {
-    if(!appChain || !connector) return
+    if(!appChain) return
     pools.forEach(async (pool: any) => {
-    if(pool.is_deploy === 0) return
+      if(pool.is_deploy === 0) return
       const tokenSold = await getTokenSold(pool)
       pool.tokenSold = tokenSold
     })
