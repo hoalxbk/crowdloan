@@ -22,7 +22,7 @@ services:
     ports:
       - "3334:3333" 
     volumes:
-      - backend-server:/app
+      - /home/ubuntu/uploaded:/app
     links:
       - kue
       - redis
@@ -47,7 +47,7 @@ services:
     ports:
       - "3002:3001" 
     volumes:
-      - /home/ubuntu/uploaded:/app
+      - backend-kue:/app
     links:
       - redis
       # - mysql
