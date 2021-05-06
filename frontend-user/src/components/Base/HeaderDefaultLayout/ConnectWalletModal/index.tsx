@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { withStyles, Theme, createStyles, WithStyles } from '@material-ui/core/styles';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -50,6 +51,7 @@ export interface DialogTitleProps extends WithStyles<typeof styles> {
 export interface ComponentProps {
   opened: boolean,
   handleClose: () => void;
+  width: any;
 }
 
 const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
@@ -108,9 +110,8 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
             className={styles.dialogCheckbox}
           />
           <span className={styles.dialogPrivacyText}>
-            I read and accept 
-            <strong className={styles.dialogPrivacyHighlight}> Terms of Service</strong>,&nbsp;
-            <strong className={styles.dialogPrivacyHighlight}>Legal Disclosure</strong> and 
+            I read and accept the
+            <strong className={styles.dialogPrivacyHighlight}> Terms of Service</strong> and&nbsp;
             <strong className={styles.dialogPrivacyHighlight}> Privacy Policy</strong>
           </span>
         </div>
@@ -132,14 +133,16 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
           {
             Object.keys(connectorsByNetwork).map((key: string) => {
               const network = connectorsByNetwork[key];
-              return <ConnectWalletBox 
-                      key={key}
-                      wallet={network} 
-                      isAppNetwork={false} 
-                      handleProviderChosen={handleProviderChosen} 
-                      connectWalletLoading={connectWalletLoading}
-                      walletName={walletName}
-                    />
+              const isMobile = isWidthDown('xs', props.width);
+              const showConnectorInMobile = isMobile ? network.mobile: true;
+              return showConnectorInMobile && <ConnectWalletBox 
+                  key={key}
+                  wallet={network} 
+                  isAppNetwork={false} 
+                  handleProviderChosen={handleProviderChosen} 
+                  connectWalletLoading={connectWalletLoading}
+                  walletName={walletName}
+                />
             })
           }
         </div>
@@ -149,4 +152,4 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
 
 }
 
-export default ConnectWalletModal;
+export default withWidth()(ConnectWalletModal);
