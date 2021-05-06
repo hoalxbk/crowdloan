@@ -8,7 +8,7 @@ import useCommonStyle from '../../../styles/CommonStyle';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
-import { getTiers, getUserInfo } from '../../../store/actions/sota-tiers';
+import { getTiers, getUserInfo, getUserTier } from '../../../store/actions/sota-tiers';
 import Tooltip from '@material-ui/core/Tooltip';
 import { numberWithCommas } from '../../../utils/formatNumber';
 
@@ -79,7 +79,8 @@ const Tiers = (props: any) => {
 
   useEffect(() => {
     dispatch(getTiers());
-    dispatch(getUserInfo(connectedAccount || ''));
+    connectedAccount != '' && connectedAccount != undefined && dispatch(getUserInfo(connectedAccount));
+    connectedAccount != '' && connectedAccount != undefined && dispatch(getUserTier(connectedAccount));
   }, [isAuth, wrongChain, connectedAccount])
 
   useEffect(() => {
@@ -142,14 +143,14 @@ const Tiers = (props: any) => {
                   transition: `all 1s ease ${idx + 1}s`
                 }}
               ></span>}
-              {userTier == idx + 1 && connectedAccount && isWidthUp('sm', props.width) && <span
+              {userTier == idx + 1 && connectedAccount && !showMoreInfomation && isWidthUp('sm', props.width) && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
                   width: `${currentProcess}%`
                 }}
               ></span>}
-              {userTier == idx + 1 && connectedAccount && isWidthDown('xs', props.width) && <span
+              {userTier == idx + 1 && connectedAccount && !showMoreInfomation && isWidthDown('xs', props.width) && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
@@ -186,7 +187,7 @@ const Tiers = (props: any) => {
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">
             {(userTier > 0 && connectedAccount) ? <span>You are in Tier {TIERS[userTier].name}</span> : <span>You are not in any tier yet.</span>}
-            <span>Please hold tokens in your wallet balance to maintain your tier!</span>
+            <span>Please stake tokens in your wallet balance to maintain your tier!</span>
           </div>
         </div>}
       </div>}

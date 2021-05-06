@@ -112,8 +112,8 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
           />
           <span className={styles.dialogPrivacyText}>
             I read and accept the
-            <Link className={styles.dialogPrivacyHighlight} to="/terms"> Terms of Service</Link> and&nbsp;
-            <Link className={styles.dialogPrivacyHighlight} to="/privacy"> Privacy Policy</Link>
+            <Link className={styles.dialogPrivacyHighlight} to="/terms" target="_blank"> Terms of Service</Link> and&nbsp;
+            <Link className={styles.dialogPrivacyHighlight} to="/privacy" target="_blank"> Privacy Policy</Link>
           </span>
         </div>
         <Typography gutterBottom className={styles.dialogContentTypo} >

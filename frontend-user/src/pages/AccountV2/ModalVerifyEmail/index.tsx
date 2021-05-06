@@ -7,6 +7,7 @@ import { useWeb3React } from '@web3-react/core';
 import useWalletSignature from '../../../hooks/useWalletSignature';
 import axios from 'axios';
 import { alertFailure, alertSuccess } from '../../../store/actions/alert';
+import {Dialog, DialogTitle, DialogContent, DialogActions} from '@material-ui/core';
 
 const closeIcon = '/images/icons/close.svg';
 const REGEX = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -25,7 +26,8 @@ const ModalVerifyEmail = (props: any) => {
   const {
     setOpenModalVerifyEmail,
     email,
-    setEmail
+    setEmail,
+    open
   } = props;
   
   useEffect(() => {
@@ -33,6 +35,7 @@ const ModalVerifyEmail = (props: any) => {
   }, [email])
 
   useEffect(() => {
+    console.log('signature', signature)
     if(signature != '') {
       const data = {
         email: inputEmail,
@@ -57,6 +60,7 @@ const ModalVerifyEmail = (props: any) => {
       }).catch(() => {
         dispatch(alertFailure('Email register failure, please try again later'));
       })
+      setSignature('');
     }
   }, [signature])
 
@@ -76,42 +80,47 @@ const ModalVerifyEmail = (props: any) => {
   }
 
   return (
-    <>
-      <div className={commonStyles.modal + ' ' + styles.modalVerifyEmail}>
-        <div className="modal-content">
-          <div className="modal-content__head">
-            <img src={closeIcon} className="btn-close" onClick={() => setOpenModalVerifyEmail(false)}/>
-            <h2 className="title">Verify Email</h2>
+    <Dialog
+      open={open}
+      keepMounted
+      onClose={() => setOpenModalVerifyEmail(false)}
+      aria-labelledby="alert-dialog-slide-title"
+      aria-describedby="alert-dialog-slide-description"
+      className={commonStyles.modal + ' ' + styles.modalVerifyEmail}
+    >
+      <div className="modal-content">
+        <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
+          <img src={closeIcon} className="btn-close" onClick={() => setOpenModalVerifyEmail(false)}/>
+          <h2 className="title">Verify Email</h2>
+        </DialogTitle>
+        <DialogContent className="modal-content__body">
+          <div className="subtitle">
+            <span>Email</span>
           </div>
-          <div className="modal-content__body">
-            <div className="subtitle">
-              <span>Email</span>
-            </div>
-            <div className="input-group">
-              <input
-                type="text"
-                value={inputEmail}
-                onChange={e => setInputEmail(e.target.value)}
-                placeholder="Please enter email"
-                maxLength={190}
-              />
-            </div>
-            {invalidEmail && <span style={{color: '#D01F36'}}>Invalid Email</span>}
+          <div className="input-group">
+            <input
+              type="text"
+              value={inputEmail}
+              onChange={e => setInputEmail(e.target.value)}
+              placeholder="Please enter email"
+              maxLength={190}
+            />
           </div>
-          <div className="modal-content__foot">
-            <button
-              className={"btn-approve" + ((disableVerify) ? ' disabled': '')}
-              onClick={() => handleVerifyEmail()}
-              disabled={disableVerify}
-            >Verify</button>
-            <button
-              className="btn-cancel"
-              onClick={() => setOpenModalVerifyEmail(false)}
-            >Cancel</button>
-          </div>
-        </div>
+          {invalidEmail && <span style={{color: '#D01F36'}}>Invalid Email</span>}
+        </DialogContent>
+        <DialogActions className="modal-content__foot">
+          <button
+            className={"btn-approve" + ((disableVerify) ? ' disabled': '')}
+            onClick={() => handleVerifyEmail()}
+            disabled={disableVerify}
+          >Verify</button>
+          <button
+            className="btn-cancel"
+            onClick={() => setOpenModalVerifyEmail(false)}
+          >Cancel</button>
+        </DialogActions>
       </div>
-    </>
+    </Dialog>
   );
 };
 

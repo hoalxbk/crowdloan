@@ -16,6 +16,7 @@ import AnimatedNumber from "animated-number-react";
 import { numberWithCommas } from '../../../utils/formatNumber';
 import { timeAgo } from '../../../utils/convertDate';
 import { USER_STATUS, CONVERSION_RATE } from '../../../constants';
+import {Dialog, DialogTitle, DialogContent, DialogActions} from '@material-ui/core';
 
 const iconClose = '/images/icons/close.svg'
 
@@ -104,7 +105,7 @@ const ManageTier = (props: any) => {
             <div className="group">
               <span>Currency</span>
               <span>Available Balance</span>
-              <span>Locked-in</span>
+              <span>Staked</span>
             </div>
           </div>
           <div className={styles.tableBody}>
@@ -119,14 +120,14 @@ const ManageTier = (props: any) => {
             onClick={() => {setOpenModalDeposit(true)}}
             disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
-            Lock - in
+            Stake
           </button>
           <button
             className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalWithdraw(true)}}
             disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
-            Unlock
+            Unstake
           </button>
         </div>
         {/* <p className={styles.balance}>
@@ -141,28 +142,39 @@ const ManageTier = (props: any) => {
           &nbsp;{tokenDetails?.symbol}
         </p> */}
       </div>
-      {openModalDeposit && <ModalDeposit
+      <ModalDeposit
         setOpenModalDeposit={setOpenModalDeposit}
         setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
         listTokenDetails={listTokenDetails}
-      />}
-      {openModalWithdraw && <ModalWithdraw
+        open={openModalDeposit}
+      />
+      <ModalWithdraw
         setOpenModalWithdraw={setOpenModalWithdraw}
         setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
         listTokenDetails={listTokenDetails}
-      />}
-      {openModalTransactionSubmitting && <div className={commonStyles.loadingTransaction}>
-        <div className="content">
+        open={openModalWithdraw}
+      />
+
+      <Dialog
+        open={openModalTransactionSubmitting}
+        keepMounted
+        onClose={() => setOpenModalTransactionSubmitting(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+        className={commonStyles.loadingTransaction}
+      >
+        <DialogContent className="content">
           <img src={iconClose} onClick={() => setOpenModalTransactionSubmitting(false)}/>
           <span className={commonStyles.nnb1824d}>Transaction Submitting</span>
           <CircularProgress color="primary" />
-        </div>
-      </div>}
+        </DialogContent>
+      </Dialog>
 
-      {transactionHashes.length > 0 && <ModalTransaction
+      <ModalTransaction
         transactionHashes={transactionHashes}
         setTransactionHashes={setTransactionHashes}
-      />}
+        open={transactionHashes.length > 0}
+      />
     </div>
   );
 };

@@ -164,6 +164,7 @@ export const deposit = (address: string | null | undefined, amount: string, libr
         dispatch(getUserTier(address || ''));
         dispatch(getUserInfo(address || ''));
       }
+      dispatch(alertSuccess('You have successfully staked.'));
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,
@@ -171,7 +172,7 @@ export const deposit = (address: string | null | undefined, amount: string, libr
       });
     } catch (error) {
       console.log(error)
-      dispatch(alertFailure("Transaction submit failure"))
+      dispatch(alertFailure("Transaction submited failure"))
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_FAILURE,
@@ -197,6 +198,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
         dispatch(getUserTier(address || ''));
         dispatch(getUserInfo(address || ''));
       }
+      dispatch(alertSuccess('You have successfully unstaked.'));
 
       dispatch({
         type: sotaTiersActions.WITHDRAW_SUCCESS,
