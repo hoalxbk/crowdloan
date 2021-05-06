@@ -27,10 +27,6 @@ const AccountInformation = (props: any) => {
     isKYC
   } = props;
 
-  useEffect(() => {
-    console.log(connectedAccount, emailVerified, USER_STATUS.UNVERIFIED, email)
-  })
-
   return (
     <div className={`${classNamePrefix}__component`} style={{marginBottom: '65px'}}>
       <h2 className={styles.title}>Account</h2>

@@ -97,14 +97,19 @@ const ModalWithdraw = (props: any) => {
           <div className="modal-content__body">
             <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
               {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
-                return <option value={tokenDetails?.symbol} key={index}>{tokenDetails?.symbol}</option>
+                return <option value={tokenDetails?.symbol} key={index}>{
+                  index === 0 ? 'Polkafoundry (PKF)' : `${CONVERSION_RATE[index - 1].name} (${CONVERSION_RATE[index - 1].symbol})`
+                }</option>
               })}
             </select>
             <div className={styles.group}>
               <div className="balance">
                 <div>
                   <span>Your wallet staked</span>
-                  <span>{ _.isEmpty(userInfo) ? 0 : numberWithCommas(currentStaked) } {currentToken?.symbol}</span>
+                  <span>{ _.isEmpty(userInfo) ? 0 : numberWithCommas(currentStaked) } {
+                    currentToken.symbol == 'PKF' ? 'PKF'
+                    : currentToken.symbol == 'UPKF' ? CONVERSION_RATE[0].symbol : CONVERSION_RATE[1].symbol
+                  }</span>
                 </div>
               </div>
               <div className="subtitle">
