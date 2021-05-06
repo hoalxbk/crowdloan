@@ -59,9 +59,8 @@ const ModalVerifyEmail = (props: any) => {
         }
       }).catch(() => {
         dispatch(alertFailure('Email register failure, please try again later'));
-      }).finally(() => {
-        setSignature('');
       })
+      setSignature('');
     }
   }, [signature])
 
