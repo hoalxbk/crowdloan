@@ -47,6 +47,7 @@ const ModalWithdraw = (props: any) => {
     dispatch(withdraw(connectedAccount, withdrawAmount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalWithdraw(false);
+    setWithdrawAmount('');
   }
 
   const handleClose = () => {

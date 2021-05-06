@@ -69,12 +69,14 @@ const ModalDeposit = (props: any) => {
     dispatch(deposit(connectedAccount, depositAmount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
+    setDepositAmount('')
   }
 
   const onApprove = () => {
     dispatch(approve(connectedAccount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
+    setDepositAmount('')
   }
 
   const handleClose = () => {

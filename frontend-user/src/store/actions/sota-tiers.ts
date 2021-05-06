@@ -5,10 +5,10 @@ import { getContractInstance, convertFromWei, convertToWei, SmartContractMethod 
 import { getContract } from '../../utils/contract';
 import RedKite from '../../abi/RedKiteTiers.json';
 import { getBalance } from './balance';
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
 
-import {approve, getAllowance} from './sota-token';
+import {getAllowance} from './sota-token';
 
 export const resetTiers = () => {
   return {
