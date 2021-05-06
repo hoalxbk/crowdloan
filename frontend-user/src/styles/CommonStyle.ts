@@ -420,6 +420,25 @@ const useCommonStyle = makeStyles((theme) => {
       font: 'normal normal 400 12px/18px Helvetica',
     },
 
+    tooltip: {
+      maxWidth: 500,
+      backgroundColor: '#030925',
+      boxShadow: '0px 12px 20px rgba(0, 0, 0, 0.07)',
+      borderRadius: '4px',
+      padding: '7px 10px',
+      '&:before': {
+        content: '""',
+        width: '10px',
+        height: '10px',
+        display: 'block',
+        backgroundColor: '#030925',
+        transform: 'rotate(-45deg)',
+        position: 'absolute',
+        left: '5px',
+        bottom: '10px'
+      }
+    },
+
     [theme.breakpoints.down('xs')]: {
       modal: {
         '& .modal-content': {
