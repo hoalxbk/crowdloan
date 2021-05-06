@@ -143,14 +143,14 @@ const Tiers = (props: any) => {
                   transition: `all 1s ease ${idx + 1}s`
                 }}
               ></span>}
-              {userTier == idx + 1 && connectedAccount && isWidthUp('sm', props.width) && <span
+              {userTier == idx + 1 && connectedAccount && !showMoreInfomation && isWidthUp('sm', props.width) && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
                   width: `${currentProcess}%`
                 }}
               ></span>}
-              {userTier == idx + 1 && connectedAccount && isWidthDown('xs', props.width) && <span
+              {userTier == idx + 1 && connectedAccount && !showMoreInfomation && isWidthDown('xs', props.width) && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
