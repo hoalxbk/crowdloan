@@ -69,7 +69,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         tiersWithDetails.push({
           allocation: tier.ticket_allow_percent,
           name: tier.name,
-          maxBuy: tier.maxBuy,
+          maxBuy: tier.max_buy,
           startTime: tier.start_time,
           endTime: tier.end_time
         })
