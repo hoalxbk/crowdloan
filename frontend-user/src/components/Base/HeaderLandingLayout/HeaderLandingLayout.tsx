@@ -14,8 +14,8 @@ const HeaderDefaultLayout = () => {
       <div className={styles.navBar}>
         <div>
           <div className="pool">
-            <a href="#"><img src={BrightStartIcon} alt=""/></a>
-            <a href="#"><span>&nbsp;&nbsp;Pool</span></a>
+            <a href="#/dashboard"><img src={BrightStartIcon} alt=""/></a>
+            <a href="#/dashboard"><span>&nbsp;&nbsp;Pool</span></a>
           </div>
           <div className="logo">
             <img src={logo} alt=""/>

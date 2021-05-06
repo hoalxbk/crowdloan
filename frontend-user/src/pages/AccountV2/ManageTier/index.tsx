@@ -9,6 +9,8 @@ import ModalDeposit from '../ModalDeposit';
 import ModalWithdraw from '../ModalWithdraw';
 import ModalTransaction from '../ModalTransaction';
 import useAuth from '../../../hooks/useAuth';
+import { sotaTiersActions } from '../../../store/constants/sota-tiers';
+import { sotaTokenActions } from '../../../store/constants/sota-token';
 //@ts-ignore
 import AnimatedNumber from "animated-number-react";
 import { numberWithCommas } from '../../../utils/formatNumber';
@@ -46,25 +48,37 @@ const ManageTier = (props: any) => {
   }, [])
 
   useEffect(() => {
-    if(depositTransaction.hash) {
+    if(depositTransaction?.hash) {
       setTransactionHashes([...transactionHashes, depositTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
+      dispatch({
+        type: sotaTiersActions.DEPOSIT_SUCCESS,
+        payload: undefined,
+      });
     }
     if(depositError.message) setOpenModalTransactionSubmitting(false);
   }, [depositTransaction, depositError])
 
   useEffect(() => {
-    if(approveTransaction.hash) {
+    if(approveTransaction?.hash) {
       setTransactionHashes([...transactionHashes, approveTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
+      dispatch({
+        type: sotaTokenActions.APPROVE_SUCCESS,
+        payload: undefined,
+      });
     }
     if(approveError.message) setOpenModalTransactionSubmitting(false);
   }, [approveTransaction, approveError])
 
   useEffect(() => {
-    if(withdrawTransaction.hash) {
+    if(withdrawTransaction?.hash) {
       setTransactionHashes([...transactionHashes, withdrawTransaction.hash]);
       setOpenModalTransactionSubmitting(false);
+      dispatch({
+        type: sotaTiersActions.WITHDRAW_SUCCESS,
+        payload: undefined,
+      });
     }
     if(withdrawError.message) setOpenModalTransactionSubmitting(false);
   }, [withdrawTransaction, withdrawError])

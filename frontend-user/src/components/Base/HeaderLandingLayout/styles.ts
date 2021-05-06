@@ -24,6 +24,10 @@ const useStyles = makeStyles((theme) => {
         justifyContent: 'space-between',
         width: '100%',
 
+        '& .pool ': {
+          display: 'flex'
+        },
+
         '& a': {
           color: '#FFFFFF'
         },
