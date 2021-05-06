@@ -54,10 +54,10 @@ const usePools = (): PoolsReturnType => {
           ...p,
           token_images: `${BASE_URL}/image/${p.token_images}`,
           banner: `${BASE_URL}/image/${p.banner}`,
-          symbol: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 'PRARE' : p.symbol,
-          name: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 'Polka Rare' : p.name,
-          decimals: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 18 : p.decimals,
-          campaign_hash: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 'TBD' : p.campaign_hash
+          symbol: (p.token == null || p.token == '' || p.token == 'TBD') ? 'PRARE' : p.symbol,
+          name: (p.token == null || p.token == '' || p.token == 'TBD') ? 'Polka Rare' : p.name,
+          decimals: (p.token == null || p.token == '' || p.token == 'TBD') ? 18 : p.decimals,
+          token: (p.token == null || p.token == '' || p.token == 'TBD') ? 'TBD' : p.token
         }
       })
       return result
