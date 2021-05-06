@@ -9,6 +9,7 @@ import { TokenType } from '../../../hooks/useTokenDetails';
 import useUserPurchased from '../hooks/useUserPurchased';
 import useTokenClaim from '../hooks/useTokenClaim';
 import { convertTimeToStringFormat } from '../../../utils/convertDate';
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 type ClaimTokenProps = {
   releaseTime: Date | undefined
@@ -75,7 +76,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
       <div className={styles.poolDetailClaimInfo}>
         <div className={styles.poolDetailClaimInfoBlock}>
           <span>You can claim</span>
-          <span>{userPurchased} {tokenDetails?.name}</span>
+          <span>{numberWithCommas(`${userPurchased}`)} {tokenDetails?.name}</span>
         </div>
       </div>
       <Button 
