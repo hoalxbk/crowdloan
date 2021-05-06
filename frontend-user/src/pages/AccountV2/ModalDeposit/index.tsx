@@ -40,12 +40,16 @@ const ModalDeposit = (props: any) => {
   const [currentAllowance, setCurrentAllowance] = useState(0);
   const [currentRate, setCurrentRate] = useState(0);
 
-  useEffect(() => {
+  const setDefaultToken = () => {
     setCurrentToken(listTokenDetails[0])
     setCurrentBalance(balance.pkf)
     setCurrentStaked(userInfo.pkfStaked)
     setCurrentAllowance(allowance.pkf)
     setCurrentRate(1)
+  }
+
+  useEffect(() => {
+    setDefaultToken();
   }, [balance, userInfo, listTokenDetails])
 
   useEffect(() => {
@@ -70,6 +74,7 @@ const ModalDeposit = (props: any) => {
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
     setDepositAmount('')
+    setDefaultToken();
   }
 
   const onApprove = () => {
@@ -77,11 +82,13 @@ const ModalDeposit = (props: any) => {
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
     setDepositAmount('')
+    setDefaultToken();
   }
 
   const handleClose = () => {
     setOpenModalDeposit(false);
     setDepositAmount('')
+    setDefaultToken();
   }
 
   const handleSelectToken = (e: any) => {
@@ -128,13 +135,13 @@ const ModalDeposit = (props: any) => {
           <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">
-          <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
+          {open && <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
             {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
               return <option value={tokenDetails?.symbol} key={index}>{
                 index === 0 ? 'Polkafoundry (PKF)' : `${CONVERSION_RATE[index - 1].name} (${CONVERSION_RATE[index - 1].symbol})`
               }</option>
             })}
-          </select>
+          </select>}
 
           <div className={styles.group}>
             <div className="balance">

@@ -68,7 +68,7 @@ const Tiers = (props: any) => {
     }
     if(showMoreInfomation && !_.isEmpty(userTier)) {
       // let process = userTier*100/(tiersBuyLimit.length - 1)
-      setCurrentProcess(100);
+      setCurrentProcess(0);
       return;
     }
     if(!showMoreInfomation && !_.isEmpty(userInfo) && !_.isEmpty(userTier)) {

@@ -36,10 +36,14 @@ const ModalWithdraw = (props: any) => {
   const [currentStaked, setCurrentStaked] = useState('0');
   const [currentRate, setCurrentRate] = useState(0);
 
-  useEffect(() => {
+  const setDefaultToken = () => {
     setCurrentToken(listTokenDetails[0])
     setCurrentStaked(userInfo.pkfStaked)
     setCurrentRate(1)
+  }
+
+  useEffect(() => {
+    setDefaultToken()
   }, [userInfo, listTokenDetails])
 
   const onWithDraw = () => {
@@ -48,11 +52,13 @@ const ModalWithdraw = (props: any) => {
     setOpenModalTransactionSubmitting(true);
     setOpenModalWithdraw(false);
     setWithdrawAmount('');
+    setDefaultToken();
   }
 
   const handleClose = () => {
     setOpenModalWithdraw(false);
     setWithdrawAmount('');
+    setDefaultToken();
   }
 
   useEffect(() => {
@@ -113,13 +119,13 @@ const ModalWithdraw = (props: any) => {
           <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">
-          <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
+          {open && <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
             {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
               return <option value={tokenDetails?.symbol} key={index}>{
                 index === 0 ? 'Polkafoundry (PKF)' : `${CONVERSION_RATE[index - 1].name} (${CONVERSION_RATE[index - 1].symbol})`
               }</option>
             })}
-          </select>
+          </select>}
           <div className={styles.group}>
             <div className="balance">
               <div>
