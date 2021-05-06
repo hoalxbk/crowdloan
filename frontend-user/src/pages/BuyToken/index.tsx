@@ -371,7 +371,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         onClick={() => {
                           poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
                         }}
-                        disabled={!poolDetails?.tokenDetails?.address}
+                        disabled={true}
                       />
                     </div>
                   </>
