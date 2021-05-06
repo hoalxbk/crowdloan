@@ -35,6 +35,7 @@ const ModalVerifyEmail = (props: any) => {
   }, [email])
 
   useEffect(() => {
+    console.log('signature', signature)
     if(signature != '') {
       const data = {
         email: inputEmail,
@@ -58,6 +59,8 @@ const ModalVerifyEmail = (props: any) => {
         }
       }).catch(() => {
         dispatch(alertFailure('Email register failure, please try again later'));
+      }).finally(() => {
+        setSignature('');
       })
     }
   }, [signature])
