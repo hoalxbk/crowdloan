@@ -101,12 +101,12 @@ const ModalDeposit = (props: any) => {
       setCurrentStaked(userInfo.pkfStaked)
       setCurrentAllowance(allowance.pkf)
       setCurrentRate(1)
-    } else if(e.target.value == 'UPKF') {
+    } else if(e.target.value == 'UNI-V2') {
       setCurrentBalance(balance.uni)
       setCurrentStaked(userInfo.uniStaked)
       setCurrentAllowance(allowance.uni)
       setCurrentRate(CONVERSION_RATE[0].rate)
-    } else if(e.target.value == 'MPKF') {
+    } else if(e.target.value == 'sPKF') {
       setCurrentBalance(balance.mantra)
       setCurrentStaked(userInfo.mantraStaked)
       setCurrentAllowance(allowance.mantra)
@@ -149,7 +149,7 @@ const ModalDeposit = (props: any) => {
                 <span>Your wallet balance</span>
                 <span>{ !currentBalance ? 0 : numberWithCommas(currentBalance) } {
                   currentToken?.symbol == 'PKF' ? 'PKF'
-                  : currentToken?.symbol == 'UPKF' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
+                  : currentToken?.symbol == 'UNI-V2' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
                 }</span>
               </div>
             </div>

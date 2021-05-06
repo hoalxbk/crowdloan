@@ -89,10 +89,10 @@ const ModalWithdraw = (props: any) => {
     if(e.target.value == 'PKF') {
       setCurrentStaked(userInfo.pkfStaked)
       setCurrentRate(1)
-    } else if(e.target.value == 'UPKF') {
+    } else if(e.target.value == 'UNI-V2') {
       setCurrentStaked(userInfo.uniStaked)
       setCurrentRate(CONVERSION_RATE[0].rate)
-    } else if(e.target.value == 'MPKF') {
+    } else if(e.target.value == 'sPKF') {
       setCurrentStaked(userInfo.mantraStaked)
       setCurrentRate(CONVERSION_RATE[1].rate)
     }
@@ -132,7 +132,7 @@ const ModalWithdraw = (props: any) => {
                 <span>Your wallet staked</span>
                 <span>{ _.isEmpty(currentStaked) ? 0 : numberWithCommas(currentStaked) } {
                   currentToken?.symbol == 'PKF' ? 'PKF'
-                  : currentToken?.symbol == 'UPKF' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
+                  : currentToken?.symbol == 'UNI-V2' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
                 }</span>
               </div>
             </div>
