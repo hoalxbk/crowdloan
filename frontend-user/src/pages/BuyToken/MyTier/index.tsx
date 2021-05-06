@@ -2,7 +2,7 @@
 /* import useFetch from '../../../hooks/useFetch'; */
 import { Link } from 'react-router-dom';
 import { Tier } from '../../../hooks/usePoolDetails';
-import { convertTimeToStringFormatWithoutGMT } from '../../../utils/convertDate';
+import { convertTimeToStringFormat } from '../../../utils/convertDate';
 import withWidth, {isWidthDown} from '@material-ui/core/withWidth';
 
 /* import Tooltip from '@material-ui/core/Tooltip'; */
@@ -26,12 +26,9 @@ const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
 
   return (
     <div className={styles.MyTier}>
-      <p className={styles.MyTierWinningLottery}>
-        You are holding 10000 PKF and in tier Hawk, which corresponds to 10 lottery tickets. 
-      </p>
-      <p className={styles.MyTierAccountRedirect}>
-        To upgrade your tier, please click <Link to="/account" style={{ color: '#6399FF', textDecoration: 'underline' }}>here</Link> !
-      </p>
+      {/* <p className={styles.MyTierAccountRedirect}> */}
+      {/*   To upgrade your tier, please click <Link to="/account" style={{ color: '#6399FF', textDecoration: 'underline' }}>here</Link> ! */}
+      {/* </p> */}
       <p className={styles.MyTierRulesHeader}>
         At current tier, you will be able to purchase with the following rules:
       </p>
@@ -63,10 +60,10 @@ const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
                   {row.maxBuy}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {convertTimeToStringFormatWithoutGMT(new Date(row.startTime * 1000))}
+                  {convertTimeToStringFormat(new Date(row.startTime * 1000))}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {convertTimeToStringFormatWithoutGMT(new Date(row.endTime * 1000))}
+                  {convertTimeToStringFormat(new Date(row.endTime * 1000))}
                 </TableCell>
                 </TableRow>
             ))}
