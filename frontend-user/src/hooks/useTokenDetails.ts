@@ -56,7 +56,7 @@ const useTokenDetails = (address: string, networkAvailable: string) => {
         symbol: 'PRARE',
         name: 'Polka Rare',
         decimals: 18,
-        address: 'TBD'
+        address: 'Token contract not available yet.'
       });
     }
   }, [address, networkAvailable]);

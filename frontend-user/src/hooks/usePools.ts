@@ -57,7 +57,7 @@ const usePools = (): PoolsReturnType => {
           symbol: (p.token == null || p.token == '' || p.token == 'TBD') ? 'PRARE' : p.symbol,
           name: (p.token == null || p.token == '' || p.token == 'TBD') ? 'Polka Rare' : p.name,
           decimals: (p.token == null || p.token == '' || p.token == 'TBD') ? 18 : p.decimals,
-          token: (p.token == null || p.token == '' || p.token == 'TBD') ? 'TBD' : p.token
+          token: (p.token == null || p.token == '' || p.token == 'TBD') ? 'Token contract not available yet.' : p.token
         }
       })
       return result
