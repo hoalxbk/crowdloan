@@ -48,7 +48,7 @@ enum HeaderType {
   MyTier = "My Tier"
 }
 
-const headers = [HeaderType.Main, HeaderType.About, HeaderType.Participants];
+const headers = [HeaderType.Main, HeaderType.MyTier, HeaderType.About, HeaderType.Participants];
 
 const ETHERSCAN_BASE_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL; 
 
@@ -443,7 +443,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         return;
                       }
 
-                      if (header !== HeaderType.About && !poolDetails?.isDeployed) {
+                      if (header !== HeaderType.About && header !== HeaderType.MyTier && !poolDetails?.isDeployed) {
                         return;
                       }
 
