@@ -16,8 +16,8 @@ import Paper from '@material-ui/core/Paper';
 import useStyles from './style';
 
 type MyTierProps = {
-  tiers: Tier[] | undefined
-}
+  tiers: Tier[] | undefined,
+} 
 
 const headers = ['Tier', 'Allocation (%)', 'Max Buy/Ticket', 'Start Buy Time', 'End Buy Time'];
 
