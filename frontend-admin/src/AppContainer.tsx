@@ -52,33 +52,39 @@ const AppContainer = (props: any) => {
 
       web3Instance?.eth.getAccounts().then(accounts => {
         console.log('NO_ACCOUNT');
-        // if (accounts.length === 0) {
-        //   dispatch({ type: userActions.USER_CONNECT_WALLET_LOCK });
-        //   const pathName = history.location.pathname;
-        //
-        //   console.log('dispatch(logout());', pathName);
-        //
-        //   if (pathName !== '/network-change' && pathName !== '/dashboard/network-change') {
-        //     console.log('Mismatch route: /network-change');
-        //
-        //     let isInvestor = false;
-        //     if (loginUser && checkIsAdminRoute(history.location.pathname)) {
-        //       isInvestor = false;
-        //       dispatch(logout(isInvestor));
-        //     } else if (loginInvestor && checkIsInvestorRoute(history.location.pathname)) {
-        //       isInvestor = true;
-        //       dispatch(logout(isInvestor));
-        //     }
-        //     setTimeout(() => {
-        //       // Switch redirect
-        //       if (checkIsAdminRoute(history.location.pathname)) {
-        //         history.push(adminRoute('/login'));
-        //       } else if (checkIsInvestorRoute(history.location.pathname)) {
-        //         history.push(publicRoute('/login'));
-        //       }
-        //     }, 1500);
-        //   }
-        // }
+        if (accounts.length === 0) {
+          dispatch({ type: userActions.USER_CONNECT_WALLET_LOCK });
+          const pathName = history.location.pathname;
+
+          console.log('dispatch(logout());', pathName);
+
+          if (pathName !== '/network-change' && pathName !== '/dashboard/network-change') {
+            console.log('Mismatch route: /network-change');
+
+            // let isInvestor = false;
+            // if (loginUser && checkIsAdminRoute(history.location.pathname)) {
+            //   isInvestor = false;
+            //   dispatch(logout(isInvestor));
+            // } else if (loginInvestor && checkIsInvestorRoute(history.location.pathname)) {
+            //   isInvestor = true;
+            //   dispatch(logout(isInvestor));
+            // }
+            // setTimeout(() => {
+            //   // Switch redirect
+            //   if (checkIsAdminRoute(history.location.pathname)) {
+            //     history.push(adminRoute('/login'));
+            //   } else if (checkIsInvestorRoute(history.location.pathname)) {
+            //     history.push(publicRoute('/login'));
+            //   }
+            // }, 1500);
+
+            dispatch(logout(false));
+            setTimeout(() => {
+              history.push(adminRoute('/login'));
+            }, 1500);
+
+          }
+        }
       });
     }
   };
