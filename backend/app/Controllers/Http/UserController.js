@@ -12,6 +12,7 @@ const ReservedListService = use('App/Services/ReservedListService');
 const UserService = use('App/Services/UserService')
 const UserModel = use('App/Models/User');
 const TierModel = use('App/Models/Tier');
+const WinnerModel = use('App/Models/WinnerListUser');
 const PasswordResetModel = use('App/Models/PasswordReset');
 const HelperUtils = use('App/Common/HelperUtils');
 const randomString = use('random-string');
@@ -306,9 +307,11 @@ class UserController {
       const userTier = await HelperUtils.getUserTierSmartContract(walletAddress);
       console.log('[getCurrentTier] - userTier:', userTier);
       const tierDb = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
+      // get lottery ticket from winner list
+      const winner = await WinnerModel.query().where('campaign_id', campaignId).where('wallet_address', walletAddress).first();
       const tier = {
         min_buy : tierDb.min_buy,
-        max_buy : tierDb.max_buy,
+        max_buy : tierDb.max_buy * winner.lottery_ticket,
         start_time: tierDb.start_time,
         end_time: tierDb.end_time,
         level : tierDb.level
