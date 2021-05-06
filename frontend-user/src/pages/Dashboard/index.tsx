@@ -121,7 +121,7 @@ const Dashboard = (props: any) => {
             return index < 4 && <Card pool={pool} key={pool.id}/>
           })}
         </div>
-        <button className="btn">
+        <button className="btn" onClick={() => window.open('https://t.me/PolkaFoundryANN', '_blank')}>
           Get Notified&nbsp;
           <img src={arrowRightIcon}/>
         </button>
@@ -137,10 +137,10 @@ const Dashboard = (props: any) => {
           View all Pools&nbsp;
           <img src={arrowRightIcon}/>
         </button> */}
-        <Link to="pools" className="btn" style={{width: '170px'}}>
+        <a href="https://t.me/PolkaFoundryANN" target="_blank" className="btn" style={{width: '170px'}}>
           View all Pools&nbsp;
           <img src={arrowRightIcon}/>
-        </Link>
+        </a>
         {/* <a href="/pools" className="btn" style={{width: '170px'}}>
           View all Pools&nbsp;
           <img src={arrowRightIcon}/>
@@ -151,7 +151,7 @@ const Dashboard = (props: any) => {
         <div className="content">
           <h2>Get Alerts For New Pools</h2>
           <p>Subscribe to get notified about new pools and other relevant events.</p>
-          <button className="btn">
+          <button className="btn" onClick={() => window.open('https://t.me/PolkaFoundryANN', '_blank')}>
             Subscribe to upcoming pools&nbsp;
             <img src={arrowRightIcon}/>
           </button>
