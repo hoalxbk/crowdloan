@@ -1,12 +1,11 @@
-import { useState, useEffect } from 'react';
-import useFetch from '../../../hooks/useFetch';
+/* import { useState, useEffect } from 'react'; */
+/* import useFetch from '../../../hooks/useFetch'; */
 import { Link } from 'react-router-dom';
 import { Tier } from '../../../hooks/usePoolDetails';
-/* import { CircularProgress } from '@material-ui/core'; */
+import { convertTimeToStringFormatWithoutGMT } from '../../../utils/convertDate';
 import withWidth, {isWidthDown} from '@material-ui/core/withWidth';
 
-import Tooltip from '@material-ui/core/Tooltip';
-import Pagination from '@material-ui/lab/Pagination';
+/* import Tooltip from '@material-ui/core/Tooltip'; */
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -64,10 +63,10 @@ const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
                   {row.maxBuy}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row.startTime}
+                  {convertTimeToStringFormatWithoutGMT(new Date(row.startTime * 1000))}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {row.endTime}
+                  {convertTimeToStringFormatWithoutGMT(new Date(row.endTime * 1000))}
                 </TableCell>
                 </TableRow>
             ))}

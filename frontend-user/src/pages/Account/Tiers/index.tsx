@@ -85,9 +85,7 @@ const Tiers = (props: any) => {
       {showMoreInfomation && <div className={styles.title}>
         <>
           <p>
-            You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}.&nbsp; 
-          To upgrade your tier, please click&nbsp;
-          <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
+            You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}. To upgrade your tier, please click <Link to="/account" className={styles.tierLinkToAccount}>here</Link>.
           </p> 
         </>
       </div>}
