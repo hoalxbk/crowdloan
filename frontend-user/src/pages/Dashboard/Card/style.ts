@@ -232,6 +232,14 @@ const useStyles = makeStyles((theme: any) => {
         },
       }
     },
+    [theme.breakpoints.down('xs')]: {
+      card: {
+        '&:hover': {
+          border: 'none',
+          boxShadow: 'none'
+        }
+      },
+    }
   };
 });
 
