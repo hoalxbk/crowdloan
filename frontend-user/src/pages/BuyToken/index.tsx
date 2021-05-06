@@ -122,7 +122,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       connectedAccount && 
       !wrongChain &&
       userTier >= poolDetails?.minTier
-      && poolDetails?.isDeployed
+      // && poolDetails?.isDeployed
       && verifiedEmail
     )
     : false;

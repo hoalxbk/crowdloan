@@ -1,5 +1,5 @@
 module.exports = {
-  WEB3_API_URL: 'https://mainnet.infura.io/v3/514448fdbdb743aea877afebfdc21661',
+  WEB3_API_URL: 'https://mainnet.infura.io/v3/8eceb668320143dca7b05395869bde7e',
   // WEB3_API_URL: 'https://rinkeby-rpc.sotatek.com',
   AVERAGE_BLOCK_TIME: 15000,
   REQUIRED_CONFIRMATION: 3,

@@ -47,10 +47,12 @@ const ModalWithdraw = (props: any) => {
     dispatch(withdraw(connectedAccount, withdrawAmount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalWithdraw(false);
+    setWithdrawAmount('');
   }
 
   const handleClose = () => {
     setOpenModalWithdraw(false);
+    setWithdrawAmount('');
   }
 
   useEffect(() => {
@@ -108,7 +110,7 @@ const ModalWithdraw = (props: any) => {
       <div className="modal-content">
         <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
           <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} locked-in</h2>
+          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">
           <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
@@ -158,10 +160,10 @@ const ModalWithdraw = (props: any) => {
           <button
             className={"btn-staking " + (disableWithdraw ? 'disabled' : '')}
             onClick={onWithDraw}
-          >Unlock</button>
+          >Unstake</button>
           <button
             className="btn-cancel"
-            onClick={() => setOpenModalWithdraw(false)}
+            onClick={handleClose}
           >Cancel</button>
         </DialogActions>
       </div>

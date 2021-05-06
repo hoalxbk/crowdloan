@@ -69,16 +69,19 @@ const ModalDeposit = (props: any) => {
     dispatch(deposit(connectedAccount, depositAmount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
+    setDepositAmount('')
   }
 
   const onApprove = () => {
     dispatch(approve(connectedAccount, library, currentToken.address));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
+    setDepositAmount('')
   }
 
   const handleClose = () => {
     setOpenModalDeposit(false);
+    setDepositAmount('')
   }
 
   const handleSelectToken = (e: any) => {
@@ -111,20 +114,6 @@ const ModalDeposit = (props: any) => {
   }
 
   return (
-    // <div className={commonStyles.modal + ' ' + styles.modalDeposit}>
-    //   <div className="layout">
-    //     <div className="modal-content">
-    //       <div className="modal-content__head">
-            
-    //       </div>
-    //       <div className="modal-content__body">
-    //       </div>
-    //       <div className="modal-content__foot">
-            
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
     <Dialog
       open={open}
       keepMounted
@@ -136,7 +125,7 @@ const ModalDeposit = (props: any) => {
       <div className="modal-content">
         <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
           <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} locked-in</h2>
+          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">
           <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
@@ -190,10 +179,10 @@ const ModalDeposit = (props: any) => {
           >Approve</button> : <button
             className={"btn-staking " + (disableDeposit ? 'disabled' : '')}
             onClick={onDeposit}
-          >Lock-in</button>}
+          >Stake</button>}
           <button
             className="btn-cancel"
-            onClick={() => setOpenModalDeposit(false)}
+            onClick={handleClose}
           >Cancel</button>
         </DialogActions>
       </div>
