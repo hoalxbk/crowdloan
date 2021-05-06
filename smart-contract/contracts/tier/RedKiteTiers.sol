@@ -307,10 +307,12 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
         uint256 _amount = user.staked;
         user.staked = 0;
 
-        ExternalToken storage token = externalToken[_token];
-        userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-            _amount.mul(token.rate).div(10**token.decimals)
-        );
+        if (_token != PKF) {
+          ExternalToken storage token = externalToken[_token];
+          userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
+              _amount.mul(token.rate).div(10**token.decimals)
+          );
+        }
 
         IERC20(_token).transfer(msg.sender, _amount);
         emit EmergencyWithdrawnERC20(
@@ -333,7 +335,7 @@ contract RedKiteTiers is IERC721Receiver, Ownable, ReentrancyGuard {
 
         ExternalToken storage token = externalToken[_token];
         userExternalStaked[msg.sender] = userExternalStaked[msg.sender].sub(
-            _amount.mul(10**token.decimals).div(token.rate)
+            _amount.mul(token.rate).div(10**token.decimals)
         );
 
         if (_amount == 1) {
