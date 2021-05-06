@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: any) => {
       color: 'white',
       padding: '80px 500px',
       fontFamily: 'Helvetica',
-      fontSize: 16
+      fontSize: 15
     },
     policyDesc: {
       marginTop: 50,
