@@ -136,7 +136,7 @@ const ModalDeposit = (props: any) => {
       <div className="modal-content">
         <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
           <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} locked-in</h2>
+          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">
           <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
@@ -190,7 +190,7 @@ const ModalDeposit = (props: any) => {
           >Approve</button> : <button
             className={"btn-staking " + (disableDeposit ? 'disabled' : '')}
             onClick={onDeposit}
-          >Lock-in</button>}
+          >Stake</button>}
           <button
             className="btn-cancel"
             onClick={() => setOpenModalDeposit(false)}

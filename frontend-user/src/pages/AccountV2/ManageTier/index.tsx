@@ -105,7 +105,7 @@ const ManageTier = (props: any) => {
             <div className="group">
               <span>Currency</span>
               <span>Available Balance</span>
-              <span>Locked-in</span>
+              <span>Staked</span>
             </div>
           </div>
           <div className={styles.tableBody}>
@@ -120,14 +120,14 @@ const ManageTier = (props: any) => {
             onClick={() => {setOpenModalDeposit(true)}}
             disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
-            Lock - in
+            Stake
           </button>
           <button
             className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalWithdraw(true)}}
             disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
-            Unlock
+            Unstake
           </button>
         </div>
         {/* <p className={styles.balance}>

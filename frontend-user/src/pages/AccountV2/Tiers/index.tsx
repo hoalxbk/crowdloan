@@ -187,7 +187,7 @@ const Tiers = (props: any) => {
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">
             {(userTier > 0 && connectedAccount) ? <span>You are in Tier {TIERS[userTier].name}</span> : <span>You are not in any tier yet.</span>}
-            <span>Please hold tokens in your wallet balance to maintain your tier!</span>
+            <span>Please stake tokens in your wallet balance to maintain your tier!</span>
           </div>
         </div>}
       </div>}
