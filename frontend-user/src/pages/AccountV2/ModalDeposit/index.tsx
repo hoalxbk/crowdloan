@@ -79,6 +79,7 @@ const ModalDeposit = (props: any) => {
 
   const handleClose = () => {
     setOpenModalDeposit(false);
+    setDepositAmount('')
   }
 
   const handleSelectToken = (e: any) => {
@@ -111,20 +112,6 @@ const ModalDeposit = (props: any) => {
   }
 
   return (
-    // <div className={commonStyles.modal + ' ' + styles.modalDeposit}>
-    //   <div className="layout">
-    //     <div className="modal-content">
-    //       <div className="modal-content__head">
-            
-    //       </div>
-    //       <div className="modal-content__body">
-    //       </div>
-    //       <div className="modal-content__foot">
-            
-    //       </div>
-    //     </div>
-    //   </div>
-    // </div>
     <Dialog
       open={open}
       keepMounted
@@ -193,7 +180,7 @@ const ModalDeposit = (props: any) => {
           >Stake</button>}
           <button
             className="btn-cancel"
-            onClick={() => setOpenModalDeposit(false)}
+            onClick={handleClose}
           >Cancel</button>
         </DialogActions>
       </div>

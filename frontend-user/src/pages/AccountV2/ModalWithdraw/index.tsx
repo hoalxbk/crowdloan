@@ -51,6 +51,7 @@ const ModalWithdraw = (props: any) => {
 
   const handleClose = () => {
     setOpenModalWithdraw(false);
+    setWithdrawAmount('');
   }
 
   useEffect(() => {
@@ -161,7 +162,7 @@ const ModalWithdraw = (props: any) => {
           >Unstake</button>
           <button
             className="btn-cancel"
-            onClick={() => setOpenModalWithdraw(false)}
+            onClick={handleClose}
           >Cancel</button>
         </DialogActions>
       </div>
