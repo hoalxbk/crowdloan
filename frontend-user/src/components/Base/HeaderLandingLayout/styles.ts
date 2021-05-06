@@ -118,8 +118,10 @@ const useStyles = makeStyles((theme) => {
       banner: {
         top: '0',
         position: 'relative',
-        '& img:first-child': {
-          display: 'none',
+      },
+      navBar: {
+        '& > div': {
+          alignItems: 'flex-start'
         }
       },
       loginErrorBannerText: {

@@ -27,8 +27,7 @@ const useStyles = makeStyles((theme: any) => {
       borderRadius: 4,
       padding: '13px 8px',
       backgroundColor: 'rgba(50, 50, 220, 0.2)',
-      fontWeight: 600,
-      fontSize: 15,
+      fontSize: 'normal normal bold 14px/18px DM Sans',
       display: 'flex',
       alignItems: 'center',
       marginTop: 20,
@@ -41,7 +40,8 @@ const useStyles = makeStyles((theme: any) => {
       },
 
       [theme.breakpoints.down('xs')]: {
-        flexDirection: 'column'
+        flexDirection: 'row',
+        alignItems: 'flex-start'
       }
     },
     poolHeaderImage: {
