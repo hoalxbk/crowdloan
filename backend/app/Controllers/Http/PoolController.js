@@ -180,10 +180,12 @@ class PoolController {
         return HelperUtils.responseNotFound('Not found pool claim config !');
       }
       const claimConfigUpdate = {
-        ...claimConfig,
-        release_time: inputParams.release_time
+        min_percent_claim: claimConfig.min_percent_claim,
+        max_percent_claim: claimConfig.max_percent_claim,
+        campaign_id: claimConfig.campaign_id,
+        start_time: inputParams.release_time
       }
-      await CampaignClaimConfigModel.query().where('campaign_id', campaignId).update(claimConfigUpdate);
+      await CampaignClaimConfigModel.query().where('id', claimConfig.id).update(claimConfigUpdate);
 
       if (!campaign.is_deploy) {
         const tiers = (inputParams.tier_configuration || []).map((item, index) => {
