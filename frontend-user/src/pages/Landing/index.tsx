@@ -72,8 +72,7 @@ const Dashboard = (props: any) => {
             </Fade>
           </div>}
           {isWidthDown('xs', props.width) && <div className="title">
-            <h1 className={common.nnb1214d}>Soar with</h1>
-            <h1 className={common.nnb1214d}>Red Kite</h1>
+            <h1 className={common.nnb1214d}>Soar with <br/>Red Kite</h1>
           </div>}
           <Fade right>
             <div className="description">
@@ -110,11 +109,12 @@ const Dashboard = (props: any) => {
           <div className="main-content">
             <LightSpeed delay={1500} left>
               <div className="title">
-                {<h2 className={common.nnb1214d}>The first IDO will start in the first half of May,<br/>subscribe to PolkaFoundry Telegram for updates</h2>}
+                {isWidthUp('sm', props.width) && <h2 className={common.nnb1214d}>The first IDO will start in the first half of May,<br/>subscribe to PolkaFoundry Telegram for updates</h2>}
+                {isWidthDown('xs', props.width) && <h2 className={common.nnb1214d}>Get Alerts For <br/>New Pools</h2>}
                 {/* {isWidthDown('xs', props.width) && <h2 className={common.nnb1214d}>Get Alerts For New Pools</h2>} */}
               </div>
               <div className="description">
-                {/* {isWidthDown('xs', props.width) && <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about <br/>new pools and other relevant events.</p>} */}
+                {isWidthDown('xs', props.width) && <p className={common.nnn1424h} style={{opacity: 0.7, margin: '19px 0 -23px 0'}}>Subscribe to get notified about new pools and other relevant events.</p>}
               </div>
               <div className="buttons">
                 <a href="https://t.me/PolkaFoundryANN" target="_blank">
