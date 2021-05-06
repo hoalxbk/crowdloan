@@ -4,11 +4,79 @@ const useStyles = makeStyles((theme: any) => {
   return {
     tierComponent: {
       transition: '1s',
+      padding: '33px 22px',
+      borderRadius: '8px',
+      backgroundColor: 'rgba(255, 255, 255, 0.06)',
       '&.inactive': {
         opacity: 0,
       },
       '&.active': {
         opacity: 1,
+      },
+      '&.bg-none': {
+        background: 'none',
+        padding: '0',
+      }
+    },
+    customWidth: {
+      maxWidth: 500,
+      backgroundColor: '#030925',
+      boxShadow: '0px 12px 20px rgba(0, 0, 0, 0.07)',
+      borderRadius: '4px',
+      padding: '7px 10px',
+      '&:before': {
+        content: '""',
+        width: '10px',
+        height: '10px',
+        display: 'block',
+        backgroundColor: '#030925',
+        transform: 'rotate(-45deg)',
+        position: 'absolute',
+        left: '5px',
+        bottom: '10px'
+      }
+    },
+    tierNote: {
+      display: 'flex',
+      flexDirection: 'column',
+      marginTop: '60px',
+      '& > span': {
+        color: '#6398FF',
+        font: 'normal normal bold 28px/32px DM Sans',
+        margin: '12px 0 20px 0'
+      },
+      '& h3': {
+        color: '#fff',
+        font: 'normal normal bold 16px/24px DM Sans'
+      },
+      '& .notice': {
+        backgroundColor: 'rgba(50, 50, 220, 0.2)',
+        padding: '10px',
+        marginTop: '24px',
+        borderRadius: '4px',
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+      },
+      '& .notice img': {
+        marginTop: '5px',
+        width: '25px'
+      },
+      '& .notice span:first-child': {
+        color: '#fff',
+        font: 'normal normal bold 14px/18px DM Sans'
+      },
+      '& .notice span:last-child': {
+        color: '#999999',
+        font: 'normal normal normal 12px/18px Helvetica'
+      },
+      '& .notice-content': {
+        marginLeft: '10px',
+        display: 'flex',
+        flexDirection: 'column'
+      },
+      '& .subtitle': {
+        marginBottom: '0'
       }
     },
     title: {
@@ -209,10 +277,16 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .tier-name': {
         font: 'normal normal bold 14px/18px DM Sans',
-        opacity: '1'
+        opacity: '1',
+        minHeight: '18px'
       },
     },
     [theme.breakpoints.down('xs')]: {
+      customWidth: {
+        '&:before': {
+          bottom: '20px'
+        }
+      },
       tierInfo: {
         display: 'flex',
         flexDirection: 'row',

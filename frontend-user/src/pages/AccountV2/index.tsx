@@ -40,14 +40,20 @@ const AccountV2 = (props: any) => {
   const [isKYC, setIsKYC] = useState(false);
   const [showAlertVerifyEmail, setShowAlertVerifyEmail] = useState(true);
   const [listTokenDetails, setListTokenDetails] = useState([]) as any;
+  
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
       dispatch(getBalance(connectedAccount));
-      dispatch(getUserInfo(connectedAccount));
       dispatch(getUserTier(connectedAccount));
       dispatch(getAllowance(connectedAccount));
     }
   }, [isAuth, wrongChain, connectedAccount]);
+
+  useEffect(() => {
+    setEmail('')
+    setEmailVeryfied(USER_STATUS.UNVERIFIED)
+    setIsKYC(false)
+  }, [connectedAccount]);
 
   useEffect(() => {
     setListTokenDetails([tokenPKFDetails, tokenUniLPDetails, tokenMantraLPDetails]);
@@ -61,6 +67,7 @@ const AccountV2 = (props: any) => {
     } else {
       setEmail('')
       setEmailVeryfied(USER_STATUS.UNVERIFIED)
+      setIsKYC(false)
     }
   }, [data]);
 
@@ -70,28 +77,31 @@ const AccountV2 = (props: any) => {
         &nbsp;&nbsp;<img src={iconWarning}/>
         <img src={iconClose} className="btn-close" onClick={() => setShowAlertVerifyEmail(false)}/>
         &nbsp;&nbsp;
-        <span>Your account has not been verified. To verify your account, please click on Verify Email button.</span>
+        {!email && <span>Your account has not been verified. To verify your account, please click on Verify Email button.</span>}
+        {email && <span>Please go to the mail to verify your account.</span>}
       </div>}
       <div className={classes.accountContainer}>
-        <div className={classes.leftPanel}>
-          <AccountInformation
-            classNamePrefix="account-infomation"
-            balance={balance}
-            userInfo={userInfo}
-            tokenPKFDetails={tokenPKFDetails}
-            email={email}
-            emailVerified={emailVerified}
-            setEmail={setEmail}
-            isKYC={isKYC}
-          ></AccountInformation>
-          <Tiers
-            showMoreInfomation={false}
-            tokenSymbol={tokenPKFDetails?.symbol}
-          />
-          <TierInfomation/>
-        </div>
-        <div className={classes.rightPanel}>
-          <ManageTier listTokenDetails={listTokenDetails} emailVerified={emailVerified}/>
+        <div className={classes.mainContent}>
+          <div className={classes.leftPanel}>
+            <AccountInformation
+              classNamePrefix="account-infomation"
+              balance={balance}
+              userInfo={userInfo}
+              tokenPKFDetails={tokenPKFDetails}
+              email={email}
+              emailVerified={emailVerified}
+              setEmail={setEmail}
+              isKYC={isKYC}
+            ></AccountInformation>
+            <Tiers
+              showMoreInfomation={false}
+              tokenSymbol={tokenPKFDetails?.symbol}
+            />
+            <TierInfomation/>
+          </div>
+          <div className={classes.rightPanel}>
+            <ManageTier listTokenDetails={listTokenDetails} emailVerified={emailVerified}/>
+          </div>
         </div>
       </div>
     </DefaultLayout>

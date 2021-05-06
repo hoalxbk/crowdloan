@@ -1,6 +1,7 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const CampaignClaimConfigModel = use('App/Models/CampaignClaimConfig');
 const WalletAccountModel = use('App/Models/WalletAccount');
 const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
@@ -75,13 +76,22 @@ class PoolController {
       'decimals': tokenInfo && tokenInfo.decimals,
       'token': tokenInfo && tokenInfo.address,
     };
-
     console.log('Create Pool with data: ', data);
 
     try {
       const campaign = new CampaignModel();
       campaign.fill(data);
       await campaign.save();
+
+      // save config claim token for campaign
+      const claimConfigData = {
+        campaign_id:  campaign.id,
+        start_time: inputParams.release_time,
+        max_percent_claim: 100,
+      };
+      const claimConfig = new CampaignClaimConfigModel();
+      claimConfig.fill(claimConfigData);
+      await claimConfig.save();
 
       const tiers = (inputParams.tier_configuration || []).map((item, index) => {
         const tierObj = new Tier();
@@ -90,9 +100,9 @@ class PoolController {
           name: item.name,
           start_time: moment(item.startTime).unix(),
           end_time: moment(item.endTime).unix(),
-          min_buy: new BigNumber(item.minBuy).toFixed(),
-          max_buy: new BigNumber(item.maxBuy).toFixed(),
-          ticket_allow_percent: new BigNumber(item.ticket_allow_percent).toFixed(),
+          min_buy: new BigNumber(item.minBuy || 0).toFixed(),
+          max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
+          ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
           currency: item.currency,
         });
         return tierObj;
@@ -164,6 +174,17 @@ class PoolController {
       }
       await CampaignModel.query().where('id', campaignId).update(data);
 
+      // update claim config
+      const claimConfig = await CampaignClaimConfigModel.query().where('campaign_id', campaignId).first();
+      if (!claimConfig) {
+        return HelperUtils.responseNotFound('Not found pool claim config !');
+      }
+      const claimConfigUpdate = {
+        ...claimConfig,
+        release_time: inputParams.release_time
+      }
+      await CampaignClaimConfigModel.query().where('campaign_id', campaignId).update(claimConfigUpdate);
+
       if (!campaign.is_deploy) {
         const tiers = (inputParams.tier_configuration || []).map((item, index) => {
           const tierObj = new Tier();
@@ -172,9 +193,9 @@ class PoolController {
             name: item.name,
             start_time: moment(item.startTime).unix(),
             end_time: moment(item.endTime).unix(),
-            min_buy: new BigNumber(item.minBuy).toFixed(),
-            max_buy: new BigNumber(item.maxBuy).toFixed(),
-            ticket_allow_percent: new BigNumber(item.ticket_allow_percent).toFixed(),
+            min_buy: new BigNumber(item.minBuy || 0).toFixed(),
+            max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
+            ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
             currency: item.currency,
           });
           return tierObj;
@@ -265,11 +286,10 @@ class PoolController {
     const poolId = params.campaignId;
     console.log('Start getPool (Admin) with poolId: ', poolId);
     try {
-      let pool = await CampaignModel.query()
-        .with('tiers')
-        .where('id', poolId)
-        .first();
-
+      let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      if (!pool) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
       pool = JSON.parse(JSON.stringify(pool));
       console.log('[getPool] - pool.tiers: ', pool.tiers);
       if (pool.tiers && pool.tiers.length > 0) {
@@ -290,6 +310,9 @@ class PoolController {
         };
       }
 
+      // Cache data
+      RedisUtils.createRedisPoolDetail(poolId, pool);
+
       return HelperUtils.responseSuccess(pool);
     } catch (e) {
       console.log(e)
@@ -308,6 +331,9 @@ class PoolController {
       }
 
       let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      if (!pool) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
       pool = JSON.parse(JSON.stringify(pool));
 
       const publicPool = pick(pool, [
@@ -352,7 +378,6 @@ class PoolController {
     const page = param.page ? param.page : Config.get('const.page_default');
     param.limit = limit;
     param.page = page;
-    param.is_display = false;
     param.is_search = true;
     console.log('Start Pool List with params: ', param);
 
@@ -383,7 +408,6 @@ class PoolController {
     const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
     inputParams.limit = limit;
     inputParams.page = page;
-    inputParams.is_display = false;
     inputParams.is_search = true;
     console.log('[getTopPools] - inputParams: ', inputParams);
 
@@ -405,7 +429,6 @@ class PoolController {
     const page = inputParams.page ? inputParams.page : Config.get('const.page_default');
     inputParams.limit = limit;
     inputParams.page = page;
-    inputParams.is_display = false;
     inputParams.is_search = true;
     console.log('[getJoinedPools] - inputParams: ', inputParams);
 

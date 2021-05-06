@@ -25,46 +25,46 @@ const Card = (props: any): JSX.Element => {
   const { data: participants } = useFetch<any>(`/user/counting/${pool.id}`);
 
   useEffect(() => {
-    setProgress(pool.tokenSold * 100 / pool.total_sold_coin || 0);
+    setProgress(parseFloat(pool.tokenSold) * 100 / parseFloat(pool.total_sold_coin) || 0);
   }, [pool.tokenSold])
 
-  useEffect(() => {
-    const currentTime = moment().unix()
-    let diffTime = 0;
-    if(pool.start_join_pool_time > currentTime) {
-      diffTime = parseInt(pool.start_join_pool_time) - currentTime;
-    } else if(pool.start_time > currentTime) {
-      diffTime = parseInt(pool.start_time) - currentTime;
-    }
+  // useEffect(() => {
+  //   const currentTime = moment().unix()
+  //   let diffTime = 0;
+  //   if(pool.start_join_pool_time > currentTime) {
+  //     diffTime = parseInt(pool.start_join_pool_time) - currentTime;
+  //   } else if(pool.start_time > currentTime) {
+  //     diffTime = parseInt(pool.start_time) - currentTime;
+  //   }
     
-    let intervalCount: any;
-    if (diffTime > 0) {
-      let timeLeftToStart = diffTime * 1000
-    const interval = 1000;
+  //   let intervalCount: any;
+  //   if (diffTime > 0) {
+  //     let timeLeftToStart = diffTime * 1000
+  //   const interval = 1000;
 
-      intervalCount = setInterval(() => {
-        timeLeftToStart -= interval;
-        const timeLeftDuration = moment.duration(timeLeftToStart, 'milliseconds');
-        let timeLeftString = '';
-        if (timeLeftToStart >= 86400000) {
-          timeLeftString = 'In ' + timeLeftDuration.days() + " days"
-        } else {
-          timeLeftString = 'In ' + timeLeftDuration.hours() + ":" + timeLeftDuration.minutes() + ":" + timeLeftDuration.seconds()
-        }
-        setTimeLeft(timeLeftString)
-      }, interval);
-    }
+  //     intervalCount = setInterval(() => {
+  //       timeLeftToStart -= interval;
+  //       const timeLeftDuration = moment.duration(timeLeftToStart, 'milliseconds');
+  //       let timeLeftString = '';
+  //       if (timeLeftToStart >= 86400000) {
+  //         timeLeftString = 'In ' + timeLeftDuration.days() + " days"
+  //       } else {
+  //         timeLeftString = 'In ' + timeLeftDuration.hours() + ":" + timeLeftDuration.minutes() + ":" + timeLeftDuration.seconds()
+  //       }
+  //       setTimeLeft(timeLeftString)
+  //     }, interval);
+  //   }
 
-    return () => clearInterval(intervalCount);
-  }, [])
+  //   return () => clearInterval(intervalCount);
+  // }, [])
 
   return (
     <Link to={`/buy-token/${pool.id}`}>
       <div className={styles.card}>
         <div className={styles.cardHeader}>
           <img src={pool.banner} />
-          {pool.status == POOL_STATUS.CLOSED && <div className="time closed">
-            <span>Closed</span>
+          {pool.status == POOL_STATUS.CLOSED && <div className="time ended">
+            <span>Ended</span>
           </div>}
           {pool.status == POOL_STATUS.TBA && <div className="time tba">
             <span>TBA</span>
@@ -82,8 +82,7 @@ const Card = (props: any): JSX.Element => {
             <span>Claimable</span>
           </div>}
           {pool.status == POOL_STATUS.UPCOMMING && <div className="time upcomming">
-            <img src={dotIcon} />
-            <span>&nbsp;{timeLeft}</span>
+            <span>Upcomming</span>
           </div>}
         </div>
         <div className={styles.cardBody}>
@@ -104,11 +103,11 @@ const Card = (props: any): JSX.Element => {
             </li>
             <li>
               <span>Participants</span>
-              <span className="total">{ pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? participants : 'All' }</span>
+              <span className="total">{ pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? participants : 'All' }</span>
             </li>
             <li>
               <span>Access</span>
-              <span className="total">{pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? BUY_TYPE.WHITELIST_LOTTERY.toUpperCase() : BUY_TYPE.FCFS.toUpperCase()}</span>
+              <span className="total">{pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase()}</span>
             </li>
             {pool.status != POOL_STATUS.UPCOMMING && <li>
               <span>Network</span>
@@ -124,7 +123,7 @@ const Card = (props: any): JSX.Element => {
               <span>Ethereum</span>
             </div>}
             {pool.network_available === NETWORK.BSC && <div>
-              <img src={BSCIcon} />
+              <img src={BSCIcon}/>
               <span>BSC</span>
             </div>}
           </div>}

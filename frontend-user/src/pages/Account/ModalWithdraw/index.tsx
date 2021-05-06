@@ -31,7 +31,7 @@ const ModalWithdraw = (props: any) => {
 
   const onWithDraw = () => {
     if(disableWithdraw) return
-    dispatch(withdraw(connectedAccount, withdrawAmount, library));
+    dispatch(withdraw(connectedAccount, withdrawAmount, library, process.env.REACT_APP_PKF as string));
     setOpenModalTransactionSubmitting(true);
     setOpenModalWithdraw(false);
   }

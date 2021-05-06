@@ -6,27 +6,24 @@ const useStyles = makeStyles((theme: any) => {
       width: '100%',
       background: 'rgba(255, 255, 255, 0.06)',
       borderRadius: '8px', 
-      padding: '25px 40px 15px 40px',
-
-      [theme.breakpoints.down('xs')]: {
-        padding: '25px 20px 15px 20px',
-      },
+      padding: '25px 40px 35px 40px',
+      marginTop: '270px',
 
       '& .button-area': {
         display: 'flex',
         alignItems: 'center',
-        flexDirection: 'row'
+        flexDirection: 'row',
+        justifyContent: 'center'
       },
 
       '& .button-area .btn': {
-        height: '28px',
+        height: '42px',
         borderRadius: '40px',
         fontFamily: 'DM Sans',
         fontStyle: 'normal',
         fontWeight: 'bold',
         fontSize: '14px',
         lineHeight: '18px',
-        textAlign: 'right',
         color: '#FFFFFF',
         border: 'none',
         outline: 'none',
@@ -34,6 +31,7 @@ const useStyles = makeStyles((theme: any) => {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        width: '40%',
 
         '&:hover': {
           cursor: 'pointer'
@@ -41,17 +39,38 @@ const useStyles = makeStyles((theme: any) => {
 
         '&.disabled': {
           backgroundColor: 'silver'
-        }
+        },
       },
 
       '& .button-area .btn-lock': {
         background: '#3232DC',
-        marginRight: '8px'
+        marginRight: '7%'
       },
 
       '& .button-area .btn-unlock': {
         background: '#D01F36',
-      }
+      },
+      [theme.breakpoints.down('md')]: {
+        marginTop: '0',
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        padding: '25px 24px 35px 24px',
+        marginTop: '0',
+
+        '& .button-area': {
+          flexDirection: 'column',
+
+          '& .btn': {
+            width: '100%',
+          },
+
+          '& .btn-lock': {
+            marginRight: '0',
+            marginBottom: '12px'
+          },
+        }
+      },
     },
     manageTier: {
       display: 'flex',
@@ -60,10 +79,12 @@ const useStyles = makeStyles((theme: any) => {
       justifyContent: 'space-between'
     },
     walletBalance: {
-
+      marginTop: '55px'
     },
     tableHead: {
       color: '#fff',
+      font: 'normal normal bold 14px/18px DM Sans',
+      marginBottom: '20px',
 
       '& .group': {
         display: 'flex',
@@ -72,19 +93,31 @@ const useStyles = makeStyles((theme: any) => {
     },
     tableBody:  {
       color: '#fff',
+      height: '200px',
       '& .group': {
         display: 'flex',
         justifyContent: 'space-between',
+        borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+        minHeight: '48px',
+        alignItems: 'center'
       },
 
       '& .group span': {
         width: '33%',
 
+        '&:first-child': {
+          font: 'normal normal bold 14px/18px DM Sans',
+          color: '#fff'
+        },
         '&:last-child': {
-          textAlign: 'right'
+          textAlign: 'right',
+          font: 'normal normal normal 14px/24px Helvetica',
+          color: '#999999'
         },
         '&:nth-child(2)': {
-          textAlign: 'center'
+          textAlign: 'center',
+          font: 'normal normal normal 14px/24px Helvetica',
+          color: '#999999'
         }
       }
     },
@@ -106,6 +139,10 @@ const useStyles = makeStyles((theme: any) => {
       marginTop: '8px',
       marginBottom: '13px',
     },
+    title: {
+      color: '#FFF',
+      font: 'normal normal bold 24px/32px DM Sans'
+    }
   };
 });
 

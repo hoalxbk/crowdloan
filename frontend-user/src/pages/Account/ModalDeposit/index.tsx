@@ -50,13 +50,13 @@ const ModalDeposit = (props: any) => {
 
   const onDeposit = () => {
     if(disableDeposit) return
-    dispatch(deposit(connectedAccount, depositAmount, library));
+    dispatch(deposit(connectedAccount, depositAmount, library, process.env.REACT_APP_PKF as string));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
   }
 
   const onApprove = () => {
-    dispatch(approve(connectedAccount, library));
+    dispatch(approve(connectedAccount, library, process.env.REACT_APP_PKF as string));
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
   }

@@ -8,9 +8,6 @@ import {isWidthDown, isWidthUp, withWidth} from '@material-ui/core';
 import { trimMiddlePartAddress } from '../../../utils/accountAddress';
 import { USER_STATUS } from '../../../constants';
 import { TIERS } from '../../../constants';
-//@ts-ignore
-import AnimatedNumber from "animated-number-react";
-import { numberWithCommas } from '../../../utils/formatNumber';
 
 const AccountInformation = (props: any) => {
   const styles = useStyles();
@@ -18,21 +15,21 @@ const AccountInformation = (props: any) => {
   const [openModalVerifyEmail, setOpenModalVerifyEmail] = useState(false);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
   const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
-  const { data: tiers = {} } = useSelector((state: any) => state.tiers);
 
   const handleKYC = () => {
-    console.log('hande KYC')
+    window.open('https://docs.google.com/forms/d/e/1FAIpQLSeV_Sman6oEZ3UzNvgly_I-hxNMyGbS4WFhudCzcbDTc4Gaqg/viewform', '_blank');
   }
 
   const {
-    tokenDetails,
     email,
     setEmail,
     emailVerified,
     isKYC
   } = props;
 
-  const formatValue = (value: string) => parseFloat(value).toFixed(2);
+  useEffect(() => {
+    console.log(connectedAccount, emailVerified, USER_STATUS.UNVERIFIED, email)
+  })
 
   return (
     <div className={`${classNamePrefix}__component`} style={{marginBottom: '65px'}}>
@@ -41,15 +38,15 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>Email</span>
           {isWidthUp('sm', props.width) && <>
-            {email && <span>{email}</span>}
+            {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
             {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
               <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
                 Verify Email
               </button>}
           </>}
           {isWidthDown('xs', props.width) && <div className="email-xs">
-            {email && <span>{email}</span>}
-            {(emailVerified == USER_STATUS.UNVERIFIED || !email) &&
+            {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
+            {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
               <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
                 Verify Email
               </button>}
@@ -59,20 +56,25 @@ const AccountInformation = (props: any) => {
           <span>Your Wallet</span>
           <span>
             {isWidthUp('sm', props.width) && connectedAccount}
-            {isWidthDown('xs', props.width) && trimMiddlePartAddress(connectedAccount || '')}
+            {isWidthDown('xs', props.width) && connectedAccount && trimMiddlePartAddress(connectedAccount || '')}
           </span>
         </div>
         <div className={styles.inputGroup}>
           <span>Your Tier</span>
           <span>
-            {TIERS[userTier]?.name}
+            {_.isEmpty(userTier) ? TIERS[0].name : TIERS[userTier]?.name}
           </span>
         </div>
+        <div className={styles.inputGroup}>
+          <span>KYC for Redkite</span>
+          {connectedAccount && <>
+            <span>{isKYC ? 'Verified' : 'Unverified'}</span>
+            {!isKYC && <button className="verify-email" onClick={handleKYC}>
+              Register KYC
+            </button>}
+          </>}
+        </div>
         <div className={styles.redKiteInfo}>
-          <div className="kyc-info">
-            <span>Some pools may require you to be KYC verified</span>
-            <button onClick={handleKYC}> {isKYC ? 'KYC for Rekite projects' : 'KYC successful for Rekite projects'}</button>
-          </div>
           {/* <div className={styles.walletInfo}>
             <p>Wallet balance</p>
             {!_.isEmpty(balance) && !_.isEmpty(userInfo) && <span>

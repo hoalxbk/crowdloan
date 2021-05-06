@@ -71,6 +71,8 @@ Route.group(() => {
   Route.post('pool/create', 'PoolController.createPool');
   Route.post('pool/:campaignId/update', 'PoolController.updatePool');
   Route.get('pool/:campaignId', 'PoolController.getPoolAdmin');
+  Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
+  Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
 
   // Participants
   Route.get('pool/:campaignId/participants', 'WhiteListUserController.getParticipants');
@@ -86,8 +88,10 @@ Route.group(() => {
   Route.get('pool/:campaignId/reserves', 'ReservedListController.getReservedList');
   Route.post('pool/:campaignId/reserves/add', 'ReservedListController.addReserveUser');
   Route.delete('pool/:campaignId/reserves/:walletAddress/delete', 'ReservedListController.deleteReserve');
-  Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
-  Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
+  Route.post('pool/reserves/update-setting', 'ReservedListController.updateReserveSetting');
+  Route.get('pool/reserves/setting', 'ReservedListController.reserveSetting');
+
+  Route.put('active-kyc', 'UserController.activeKyc');//.middleware(['formatEmailAndWallet']);
 
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'formatEmailAndWallet']);
 
@@ -165,7 +169,7 @@ Route.get('pools/user/:walletAddress/joined-pools', 'PoolController.getJoinedPoo
 Route.get('pool/:campaignId', 'PoolController.getPoolPublic');
 Route.get('pool/:campaignId/tiers', 'TierController.getTiers');
 Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerAndReserveList');
-Route.get('pool/:campaignId/user/:walletAddress/current-tier', 'UserController.getCurrentTier').middleware(['formatEmailAndWallet']);
+Route.get('pool/:campaignId/user/:walletAddress/current-tier', 'UserController.getCurrentTier');
 Route.post('user/check-email-verified', 'UserController.checkEmailVerified');
 Route.get('pool/:campaignId/check-exist-winner', 'WinnerListUserController.checkExistWinner').validator('CheckUserWinnerExist');
 

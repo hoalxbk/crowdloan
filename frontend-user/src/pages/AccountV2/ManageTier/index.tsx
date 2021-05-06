@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import _ from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
-import { LinearProgress } from '@material-ui/core';
+import { CircularProgress } from '@material-ui/core';
 import { getWithdrawPercent, getWithdrawFee } from '../../../store/actions/sota-tiers';
 import ModalDeposit from '../ModalDeposit';
 import ModalWithdraw from '../ModalWithdraw';
@@ -13,7 +13,7 @@ import useAuth from '../../../hooks/useAuth';
 import AnimatedNumber from "animated-number-react";
 import { numberWithCommas } from '../../../utils/formatNumber';
 import { timeAgo } from '../../../utils/convertDate';
-import { USER_STATUS } from '../../../constants';
+import { USER_STATUS, CONVERSION_RATE } from '../../../constants';
 
 const iconClose = '/images/icons/close.svg'
 
@@ -40,10 +40,6 @@ const ManageTier = (props: any) => {
     emailVerified,
     listTokenDetails
   } = props;
-
-  const handleKYC = () => {
-    console.log('hande KYC')
-  }
 
   useEffect(() => {
     dispatch(getWithdrawPercent());
@@ -76,22 +72,10 @@ const ManageTier = (props: any) => {
   const renderToken = (symbol: string, balance: any, staked: any) => {
     return <div className="group">
       <span>{symbol}</span>
-      {(wrongChain || !isAuth) && <AnimatedNumber
-        value={0}
-        formatValue={numberWithCommas}
-      />}
-      {!wrongChain && isAuth && <AnimatedNumber
-        value={balance}
-        formatValue={numberWithCommas}
-      />}
-      {(wrongChain || !isAuth) && <AnimatedNumber
-        value={0}
-        formatValue={numberWithCommas}
-      />}
-      {!wrongChain && isAuth && <AnimatedNumber
-        value={staked}
-        formatValue={numberWithCommas}
-      />}
+      {(wrongChain || !isAuth) && <span>0</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(balance)}</span>}
+      {(wrongChain || !isAuth) && <span>0</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(staked)}</span>}
     </div>
   }
 
@@ -99,23 +83,7 @@ const ManageTier = (props: any) => {
     <div className={`${classNamePrefix}__component`}>
       <div className={styles.content}>
         <div className={styles.manageTier}>
-          <p className={styles.textDefault}>Available balance</p>
-          <div className="button-area">
-            <button
-              className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
-              onClick={() => {setOpenModalDeposit(true)}}
-              disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
-            >
-              Lock - in
-            </button>
-            <button
-              className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
-              onClick={() => {setOpenModalWithdraw(true)}}
-              disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
-            >
-              Unlock
-            </button>
-          </div>
+          <h2 className={styles.title}>Wallet balance</h2>
         </div>
         <div className={styles.walletBalance}>
           <div className={styles.tableHead}>
@@ -126,12 +94,27 @@ const ManageTier = (props: any) => {
             </div>
           </div>
           <div className={styles.tableBody}>
-            {renderToken(listTokenDetails[0]?.symbol, balance?.pkf, userInfo?.pkfStaked)}
-            {renderToken(listTokenDetails[1]?.symbol, balance?.uni, userInfo?.uniStaked)}
-            {renderToken(listTokenDetails[2]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
+            {renderToken('PKF', balance?.pkf, userInfo?.pkfStaked)}
+            {renderToken(CONVERSION_RATE[0]?.symbol, balance?.uni, userInfo?.uniStaked)}
+            {renderToken(CONVERSION_RATE[1]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
           </div>
         </div>
-
+        <div className="button-area">
+          <button
+            className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
+            onClick={() => {setOpenModalDeposit(true)}}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+          >
+            Lock - in
+          </button>
+          <button
+            className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
+            onClick={() => {setOpenModalWithdraw(true)}}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+          >
+            Unlock
+          </button>
+        </div>
         {/* <p className={styles.balance}>
           {(wrongChain || !isAuth) && <AnimatedNumber
             value={0}
@@ -158,7 +141,7 @@ const ManageTier = (props: any) => {
         <div className="content">
           <img src={iconClose} onClick={() => setOpenModalTransactionSubmitting(false)}/>
           <span className={commonStyles.nnb1824d}>Transaction Submitting</span>
-          <LinearProgress color="primary" />
+          <CircularProgress color="primary" />
         </div>
       </div>}
 

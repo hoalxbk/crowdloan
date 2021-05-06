@@ -10,6 +10,9 @@ const HelperUtils = use('App/Common/HelperUtils');
 class UserService {
     buildQueryBuilder(params) {
       let builder = UserModel.query();
+      if (params.id) {
+        builder = builder.where('id', params.id);
+      }
       if (params.username) {
         builder = builder.where('username', params.username);
       }
@@ -90,40 +93,39 @@ class UserService {
         confirmation_token: token,
         status: Const.USER_STATUS.UNVERIFIED,
       });
-      console.log('user======>', user);
+      console.log('user======>', JSON.stringify(user));
       if (!user) {
         // User not exist
         return false;
       }
 
-      const userExist = await this.findUser({
+      let userExist = await this.buildQueryBuilder({
         wallet_address: user.wallet_address,
         status: Const.USER_STATUS.ACTIVE,
-      });
+      }).where('id', '!=', user.id).first();
+
+      if (userExist) {
+        await UserModel.query().where('id', user.id).delete();
+        return false;
+      }
+
+      userExist = await this.buildQueryBuilder({
+        email: user.email,
+        status: Const.USER_STATUS.ACTIVE,
+      }).where('id', '!=', user.id).first();
+
+      if (userExist) {
+        await UserModel.query().where('id', user.id).delete();
+        return false;
+      }
 
       console.log('========================');
       console.log('USER NEED VERIFY CONFIRM:');
-      console.log(user);
+      console.log(JSON.stringify(user));
       console.log('========================');
       console.log('USER ACTIVED EXIST:');
-      console.log(userExist);
+      console.log(JSON.stringify(userExist));
       console.log('========================');
-
-      if (userExist) {
-        console.log('CLEAR RECORDS DUPLICATE (NOT ACTIVE):');
-        // Remove duplicate account EXPIRED and NOT ACTIVE
-        const duplicateUserNotActive = await this.buildQueryBuilder({
-          wallet_address: user.wallet_address,
-          status: Const.USER_STATUS.UNVERIFIED,
-        }).delete();
-
-        console.log('========================');
-        console.log('DUPLICATE USERS:');
-        console.log(duplicateUserNotActive);
-        console.log('========================');
-
-        return false;
-      }
 
       console.log('Confirm Email for USER ID', user.id);
       user.confirmation_token = null;

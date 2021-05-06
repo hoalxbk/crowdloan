@@ -6,6 +6,7 @@ import { getContract } from '../../utils/contract';
 import RedKite from '../../abi/RedKiteTiers.json';
 import { getBalance } from './balance';
 import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { alertFailure, alertSuccess } from '../../store/actions/alert';
 
 import {approve, getAllowance} from './sota-token';
 
@@ -113,10 +114,6 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
       const resultMantra = await contract?.methods.userInfo(address, process.env.REACT_APP_MANTRA_LP).call();
       const stakedMantra = convertFromWei(resultMantra.staked)
 
-      const resultStaked = await contract?.methods.userExternalStaked(address).call();
-      console.log(resultStaked)
-      const totalStaked = stakedPkf + convertFromWei(resultStaked)
-
       result = {
         ...result,
         resultPkf: resultPkf,
@@ -125,9 +122,17 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
         uniStaked: stakedUni,
         resultMantra: resultMantra,
         mantraStaked: stakedMantra,
-        totalStaked: totalStaked
       }
 
+      const resultStaked = await contract?.methods.userTotalStaked(address).call();
+      const totalStaked = convertFromWei(resultStaked)
+      // const totalStaked = parseFloat(stakedPkf) + parseFloat(stakedUni) * 150 + parseFloat(stakedMantra as string)
+
+      result = {
+        ...result,
+        totalStaked: totalStaked
+      }
+      
       dispatch({
         type: sotaTiersActions.USER_INFO_SUCCESS,
         payload: result,
@@ -143,14 +148,15 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
   }
 };
 
-export const deposit = (address: string | null | undefined, amount: string, library: Web3Provider) => {
+export const deposit = (address: string | null | undefined, amount: string, library: Web3Provider, tokenAddress: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
       let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
-      result = await contract?.depositERC20(process.env.REACT_APP_PKF, convertToWei(amount))
+      result = await contract?.depositERC20(tokenAddress, convertToWei(amount))
+      
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
@@ -165,6 +171,8 @@ export const deposit = (address: string | null | undefined, amount: string, libr
       });
     } catch (error) {
       console.log(error)
+      dispatch(alertFailure("Transaction submit failure"))
+
       dispatch({
         type: sotaTiersActions.DEPOSIT_FAILURE,
         payload: error
@@ -173,7 +181,7 @@ export const deposit = (address: string | null | undefined, amount: string, libr
   }
 };
 
-export const withdraw = (address: string | null | undefined, amount: string, library: Web3Provider) => {
+export const withdraw = (address: string | null | undefined, amount: string, library: Web3Provider, tokenAddress: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.WITHDRAW_LOADING });
     try {
@@ -181,7 +189,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
 
-      result = await contract?.withdrawERC20(process.env.REACT_APP_PKF, convertToWei(amount));
+      result = await contract?.withdrawERC20(tokenAddress, convertToWei(amount));
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
@@ -197,6 +205,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
 
     } catch (error) {
       console.log(error)
+      dispatch(alertFailure("Transaction submit failure"))
       dispatch({
         type: sotaTiersActions.WITHDRAW_FAILURE,
         payload: error

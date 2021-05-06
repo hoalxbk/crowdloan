@@ -109,7 +109,6 @@ export const deleteReservesUser = async (campaignId: any, data: any = {}) => {
   return resObject;
 };
 
-
 export const addReservesUser = async (campaignId: any, data: any = {}) => {
   const baseRequest = new BaseRequest();
 
@@ -117,5 +116,23 @@ export const addReservesUser = async (campaignId: any, data: any = {}) => {
   const response = await baseRequest.post(url, data) as any;
   const resObject = await response.json();
 
+  return resObject;
+};
+
+export const getReserveSetting = async () => {
+  const baseRequest = new BaseRequest();
+
+  let url = apiRoute(`/pool/reserves/setting`);
+  const response = await baseRequest.get(url) as any;
+  const resObject = await response.json();
+  return resObject;
+};
+
+export const updateReserveSetting = async (data: any) => {
+  const baseRequest = new BaseRequest();
+
+  let url = apiRoute(`/pool/reserves/update-setting`);
+  const response = await baseRequest.post(url, data) as any;
+  const resObject = await response.json();
   return resObject;
 };

@@ -5,6 +5,14 @@ import useTokenDetails, { TokenType } from './useTokenDetails';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+export type Tier = {
+  allocation: string,
+  name: string,
+  maxBuy: number,
+  startTime: string,
+  endTime: string 
+}
+
 export type PoolDetails = {
   id: number;
   website: string; 
@@ -30,6 +38,8 @@ export type PoolDetails = {
   isDisplay: boolean;
   addressReceiver: string;
   minimumBuy: number[];
+  description: string;
+  tiersWithDetails: Tier[];
 }
 
 export type PoolDetailsReturnType ={
@@ -48,9 +58,22 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const { data: connectedAccountTier } = useTypedSelector(state => state.userTier);
 
   const poolDetails = useMemo(() => {
-    if (data && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
-      const buyLimit = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.max_buy): [0,0,0,0,0];
-      const minimumBuy = data.tiers.length > 0 ? data.tiers.map((tier: any) => tier.min_buy): [0,0,0,0,0];
+    if (data && data.tiers && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
+      const buyLimit: number[] = [];
+      const minimumBuy: number[] = [];
+      const tiersWithDetails: Tier[] = [];
+      
+      data.tiers.length > 0 && data.tiers.map((tier: any) => { 
+        buyLimit.push(tier.max_buy);
+        minimumBuy.push(tier.min_buy);
+        tiersWithDetails.push({
+          allocation: tier.ticket_allow_percent,
+          name: tier.name,
+          maxBuy: tier.maxBuy,
+          startTime: tier.start_time,
+          endTime: tier.end_time
+        })
+      })
 
       return {
         method: data.buy_type,
@@ -79,6 +102,8 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         isDeployed: data.is_deploy === 1,
         isDisplay: data.is_display === 1,
         addressReceiver: data.address_receiver,
+        description: data.description,
+        tiersWithDetails 
       } 
     }
 

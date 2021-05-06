@@ -205,6 +205,9 @@ const useCommonStyle = makeStyles((theme) => {
         padding: '60px',
         background: '#020616',
         borderRadius: '4px',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center'
       },
 
       '& .content img': {
@@ -383,7 +386,7 @@ const useCommonStyle = makeStyles((theme) => {
           },
 
           '&:first-child': {
-            backgroundColor: '#29C08A'
+            backgroundColor: '#3232DC'
           },
 
           '&.btn-cancel': {
@@ -419,7 +422,6 @@ const useCommonStyle = makeStyles((theme) => {
 
     [theme.breakpoints.down('xs')]: {
       modal: {
-        width: '100vw',
         '& .modal-content': {
           width: 'calc(100% - 40px)',
           padding: '15px',

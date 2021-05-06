@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useWeb3React } from '@web3-react/core';
-import moment from 'moment';
 import Button from '../Button';
 import Countdown from '../../../components/Base/Countdown';
 import TransactionSubmitModal from '../../../components/Base/TransactionSubmitModal';
@@ -17,6 +16,7 @@ type ClaimTokenProps = {
   poolAddress: string | undefined
   ableToFetchFromBlockchain: boolean | undefined
   buyTokenSuccess: boolean | undefined
+  poolId: number | undefined;
 } 
 
 const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
@@ -29,11 +29,12 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
   const {
     tokenDetails,
     poolAddress,
+    poolId,
     ableToFetchFromBlockchain,
     buyTokenSuccess
   } = props;
 
-  const { claimToken, setClaimTokenLoading, transactionHash, claimTokenSuccess, loading, error } = useTokenClaim(poolAddress);
+  const { claimToken, setClaimTokenLoading, transactionHash, claimTokenSuccess, loading, error } = useTokenClaim(poolAddress, poolId);
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
   const availableClaim = releaseTime ? new Date() >= releaseTime: false;
 

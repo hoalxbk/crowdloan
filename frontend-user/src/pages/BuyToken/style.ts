@@ -103,10 +103,10 @@ const useStyles = makeStyles((theme: any) => {
       font: 'normal normal bold 12px/14px DM Sans',
 
       '&--In-progress': {
-        backgroundColor: '#ebc321'
+        backgroundColor: '#FFDE30'
       },
       '&--Joining': {
-        background: "#6398FF"
+        background: "#12A064"
       },
       '&--Upcoming': {
         background: "#6398FF"
@@ -115,10 +115,13 @@ const useStyles = makeStyles((theme: any) => {
         backgroundColor: "#D01F36"
       },
       '&--Filled': {
-        backgroundColor: "#12A064"
+        backgroundColor: "deeppink"
       },
       '&--Claimable': {
-        backgroundColor: "#e16313"
+        backgroundColor: "#FF9330"
+      },
+      '&--TBA': {
+        backgroundColor: "#9E63FF"
       }
     },
     poolHeaderAddress: {

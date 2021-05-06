@@ -47,6 +47,9 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     // Number of token user purchased
     mapping(address => uint256) public userPurchased;
 
+    // Number of token user claimed
+    mapping(address => uint256) public userClaimed;
+
     // Number of token user purchased
     mapping(address => mapping (address => uint)) public investedAmountOf;
 
@@ -273,14 +276,14 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
         require(getAvailableTokensForSale() >= tokens, "POOL::NOT_ENOUGHT_TOKENS_FOR_SALE");
-        require(tokens >= _minAmount || userPurchased[msg.sender].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
-        require(userPurchased[msg.sender].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
+        require(tokens >= _minAmount || userPurchased[_candidate].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
+        require(userPurchased[_candidate].add(tokens) <= _maxAmount, "POOL::PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _forwardFunds(weiAmount);
 
         _updatePurchasingState(weiAmount, tokens);
 
-        investedAmountOf[address(0)][msg.sender] = investedAmountOf[address(0)][msg.sender].add(weiAmount);
+        investedAmountOf[address(0)][_candidate] = investedAmountOf[address(0)][_candidate].add(weiAmount);
 
         emit TokenPurchaseByEther(msg.sender, _beneficiary, weiAmount, tokens);
     }
@@ -304,14 +307,14 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
 
         uint256 tokens = _getOfferedCurrencyToTokenAmount(_token, _amount);
         require(getAvailableTokensForSale() >= tokens, "POOL::NOT_ENOUGHT_TOKENS_FOR_SALE");
-        require(tokens >= _minAmount || userPurchased[msg.sender].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
-        require(userPurchased[msg.sender].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
+        require(tokens >= _minAmount || userPurchased[_candidate].add(tokens) >= _minAmount, "POOL::MIN_AMOUNT_UNREACHED");
+        require(userPurchased[_candidate].add(tokens) <= _maxAmount, "POOL:PURCHASE_AMOUNT_EXCEED_ALLOWANCE");
 
         _forwardTokenFunds(_token, _amount);
 
         _updatePurchasingState(_amount, tokens);
 
-        investedAmountOf[_token][msg.sender] = investedAmountOf[address(0)][msg.sender].add(_amount);
+        investedAmountOf[_token][_candidate] = investedAmountOf[address(0)][_candidate].add(_amount);
 
         emit TokenPurchaseByToken(
             msg.sender,
@@ -351,14 +354,23 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     /**
      * @notice User can receive their tokens when pool finished
      */
-    function claimTokens() public {
+    function claimTokens(address _candidate, uint256 _amount, bytes memory _signature) public {
+        require(_verifyClaimToken(_candidate, _amount, _signature), "POOL::NOT_ALLOW_TO_CLAIM");
         require(isFinalized(), "POOL::NOT_FINALLIZED");
 
-        uint256 claimableAmount = userPurchased[msg.sender];
-        _deliverTokens(msg.sender, claimableAmount);
-        totalUnclaimed = totalUnclaimed.sub(claimableAmount);
-        userPurchased[msg.sender] = 0;
-        emit TokenClaimed(msg.sender, claimableAmount);
+        uint256 claimAmount = userPurchased[_candidate].sub(userClaimed[_candidate]);
+
+        if (claimAmount > _amount) {
+            claimAmount = _amount;
+        }
+
+        userClaimed[_candidate] = userClaimed[_candidate].add(claimAmount);
+
+        _deliverTokens(msg.sender, claimAmount);
+        
+        totalUnclaimed = totalUnclaimed.sub(claimAmount);
+
+        emit TokenClaimed(msg.sender, claimAmount);
     }
 
     /**
@@ -476,9 +488,27 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         uint256 _minAmount,
         bytes memory _signature
     ) private view returns (bool) {
+        require(msg.sender == _candidate, "POOL::WRONG_CANDIDATE");
+        
         if (useWhitelist) {
             return (verify(signer, _candidate, _maxAmount, _minAmount, _signature));
         }
         return true;
+    }
+
+    /**
+     * @dev Verify permission of purchase
+     * @param _candidate Address of buyer
+     * @param _amount claimable amount
+     * @param _signature Signature of signers
+     */
+    function _verifyClaimToken(
+        address _candidate,
+        uint256 _amount,
+        bytes memory _signature
+    ) private view returns (bool) {
+        require(msg.sender == _candidate, "POOL::WRONG_CANDIDATE");
+        
+        return (verifyClaimToken(signer, _candidate, _amount, _signature));
     }
 }

@@ -18,16 +18,16 @@ const useStyles = makeStyles((theme: any) => {
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'flex-start',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       marginBottom: '15px',
 
       '& .email-xs span': {
         color: '#FFF!important',
-        font: 'normal normal bold 16px/24px DM Sans!important'
+        font: 'normal normal bold 14px/18px DM Sans!important'
       },
 
       '& span:first-child': {
-        minWidth: '100px',
+        minWidth: '120px',
         marginRight: '20px',
         font: 'normal normal normal 14px/24px Helvetica',
         color: '#999999',
@@ -36,8 +36,8 @@ const useStyles = makeStyles((theme: any) => {
         fontFamily: 'DM Sans',
         fontStyle: 'normal',
         fontWeight: 'bold',
-        fontSize: '16px',
-        lineHeight: '24px',
+        fontSize: '14px',
+        lineHeight: '18px',
         color: '#FFFFFF',
         width: 'calc(100% - 125px)',
         [theme.breakpoints.down('sm')]: {
@@ -86,26 +86,7 @@ const useStyles = makeStyles((theme: any) => {
 
       '& .kyc-info span': {
         font: 'normal normal normal 14px/24px Helvetica',
-        color: '#999999',
-      },
-      '& .kyc-info button': {
-        fontFamily: 'DM Sans',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: '12px',
-        lineHeight: '14px',
-        color: '#FFFFFF',
-        mixBlendMode: 'normal',
-        padding: '7px 11px',
-        background: '#D01F36',
-        borderRadius: '3px',
-        height: '28px',
-        border: 'none',
-        outline: 'none',
-
-        '&:hover': {
-          cursor: 'pointer'
-        }
+        color: '#fff',
       },
 
       [theme.breakpoints.down('xs')]: {

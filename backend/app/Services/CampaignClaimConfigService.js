@@ -14,7 +14,7 @@ class CampaignClaimConfigService {
     }
     if(params.current_time){
       builder = builder.where('start_time', '<=', params.current_time)
-                       .where('end_time', '>=', params.current_time)
+                       // .where('end_time', '>=', params.current_time)
     }
     return builder;
   }

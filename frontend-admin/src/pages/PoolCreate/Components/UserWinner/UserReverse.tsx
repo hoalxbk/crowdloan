@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -12,7 +12,7 @@ import {
   addReservesUser,
   deleteParticipantUser,
   deleteReservesUser,
-  getParticipantUser,
+  getParticipantUser, getReserveSetting,
   getReserveUser
 } from "../../../../request/participants";
 import {withRouter} from "react-router";
@@ -30,6 +30,8 @@ import {DATETIME_FORMAT} from "../../../../constants";
 import {etherscanRoute} from "../../../../utils";
 import Link from "@material-ui/core/Link";
 import BigNumber from "bignumber.js";
+import UserReverseSetting from "./UserReverseSetting";
+import Grid from "@material-ui/core/Grid";
 
 
 function UserReverse(props: any) {
@@ -89,9 +91,44 @@ function UserReverse(props: any) {
     }
   };
 
+  const [initTier, setInitTier] = useState();
+  useEffect(() => {
+    getReserveSetting()
+      .then((res: any) => {
+        const resData = res.data;
+        if (resData) {
+          setInitTier({
+            ...resData,
+            minBuy: resData.min_buy,
+            maxBuy: resData.max_buy,
+            start_time: resData.start_time_unix,
+            end_time: resData.end_time_unix,
+          });
+        } else if (poolDetail && poolDetail.tiers && poolDetail.tiers.length > 0) {
+          setInitTier(poolDetail.tiers[poolDetail.tiers.length - 1]);
+        }
+      });
+  }, []);
 
   return (
     <>
+      <Grid container spacing={3}>
+        <Grid item xs={8}>
+          <div className={commonStyle.boxSearch}
+            style={{
+              marginBottom: 25,
+            }}
+          >
+            {initTier &&
+              <UserReverseSetting
+                poolDetail={poolDetail}
+                initTier={initTier}
+              />
+            }
+          </div>
+        </Grid>
+      </Grid>
+
       <div className={commonStyle.boxSearch}>
         <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search reserve users" />
         <img src="/images/icon-search.svg" alt="" style={{ marginLeft: -30 }} />
@@ -102,7 +139,7 @@ function UserReverse(props: any) {
             variant="contained"
             color="primary"
             onClick={openPopupCreate}
-            style={{marginLeft: 10, marginTop: 10}}
+            style={{ marginLeft: 10, marginTop: 10, marginBottom: 15 }}
           >Add</Button>
 
           {isOpenEditPopup &&
@@ -115,12 +152,7 @@ function UserReverse(props: any) {
             />
           }
         </div>
-
       </div>
-
-
-
-
 
       <TableContainer component={Paper} className={commonStyle.tableScroll}>
         <Table className={classesTable.table} aria-label="simple table">
@@ -128,10 +160,10 @@ function UserReverse(props: any) {
             <TableRow>
               <TableCell size={'small'}>Email</TableCell>
               <TableCell align="center" size={'medium'}>Wallet Address</TableCell>
-              <TableCell size={'small'}>Min Buy</TableCell>
-              <TableCell size={'small'}>Max Buy</TableCell>
-              <TableCell size={'small'}>Start Time</TableCell>
-              <TableCell size={'small'}>End Time</TableCell>
+              {/*<TableCell size={'small'}>Min Buy</TableCell>*/}
+              {/*<TableCell size={'small'}>Max Buy</TableCell>*/}
+              {/*<TableCell size={'small'}>Start Time</TableCell>*/}
+              {/*<TableCell size={'small'}>End Time</TableCell>*/}
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -147,10 +179,10 @@ function UserReverse(props: any) {
                     {row.wallet_address}
                   </Link>
                 </TableCell>
-                <TableCell align="center">{new BigNumber(row.min_buy).toFixed()}</TableCell>
-                <TableCell align="center">{new BigNumber(row.max_buy).toFixed()}</TableCell>
-                <TableCell align="center">{row.start_time}</TableCell>
-                <TableCell align="center">{row.end_time}</TableCell>
+                {/*<TableCell align="center">{new BigNumber(row.min_buy).toFixed()}</TableCell>*/}
+                {/*<TableCell align="center">{new BigNumber(row.max_buy).toFixed()}</TableCell>*/}
+                {/*<TableCell align="center">{row.start_time}</TableCell>*/}
+                {/*<TableCell align="center">{row.end_time}</TableCell>*/}
 
                 <TableCell align="right">
                   <Button
@@ -160,7 +192,6 @@ function UserReverse(props: any) {
                     style={{marginLeft: 10, marginTop: 10}}
                   >Delete</Button>
                 </TableCell>
-
 
               </TableRow>
             ))}

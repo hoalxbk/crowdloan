@@ -289,20 +289,60 @@ class UserController {
     console.log('[getCurrentTier] - filterParams: ', filterParams);
 
     // Check user is in reserved list
-    const isReserve = await (new ReservedListService).buildQueryBuilder(filterParams).first();
-    console.log('[getCurrentTier] - isReserve:', !!isReserve);
-    if (isReserve) {
-      // Tier is max tier of pool
-      const tier = await TierModel.query().where('campaign_id', campaignId).orderBy('level', 'desc').first();
+    const reserve = await (new ReservedListService).buildQueryBuilder(filterParams).first();
+    console.log('[getCurrentTier] - isReserve:', !!reserve);
+    if (reserve) {
+      const tier = {
+        min_buy : reserve.min_buy,
+        max_buy : reserve.max_buy,
+        start_time: reserve.start_time,
+        end_time: reserve.end_time,
+        level : 0
+      }
       console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
       return HelperUtils.responseSuccess(tier);
     } else {
       // Get Tier in smart contract
       const userTier = await HelperUtils.getUserTierSmartContract(walletAddress);
       console.log('[getCurrentTier] - userTier:', userTier);
-      const tier = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
+      const tierDb = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
+      const tier = {
+        min_buy : tierDb.min_buy,
+        max_buy : tierDb.max_buy,
+        start_time: tierDb.start_time,
+        end_time: tierDb.end_time,
+        level : tierDb.level
+      }
       console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
       return HelperUtils.responseSuccess(tier);
+    }
+  }
+
+  async activeKyc({ request, params }) {
+    const inputParams = request.only([
+      'wallet_address',
+      'email',
+    ]);
+    try {
+      const userService = new UserService();
+      const userFound = await userService.findUser(inputParams);
+      console.log('[activeKyc] - userFound: ', JSON.stringify(userFound));
+
+      if (!userFound) {
+        return HelperUtils.responseNotFound('User Not found');
+      }
+      if (!userFound.is_kyc) {
+        const user = await userService.buildQueryBuilder({id: userFound.id}).update({ is_kyc: true });
+        console.log('[activeKyc] - User: ', JSON.stringify(user));
+      }
+
+      return HelperUtils.responseSuccess({
+        ...inputParams,
+        id: userFound.id,
+      });
+    } catch (e) {
+      console.log('[activeKyc] - Error: ', e);
+      return HelperUtils.responseErrorInternal('Error: ' + (e.message || 'Can\'t active KYC'));
     }
   }
 }

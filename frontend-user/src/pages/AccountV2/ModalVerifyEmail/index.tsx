@@ -47,11 +47,15 @@ const ModalVerifyEmail = (props: any) => {
       }
       axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register-email`, data, options)
       .then(res => {
-        !email && setEmail(inputEmail)
-        dispatch(alertSuccess('Register success, please check verify email'));
-        setOpenModalVerifyEmail(false);
+        if(res.data.status == 200) {
+          setEmail(inputEmail)
+          dispatch(alertSuccess(res.data.message));
+          setOpenModalVerifyEmail(false);
+        } else if(res.data.status == 400) {
+          dispatch(alertFailure(res.data.message));
+        }
       }).catch(() => {
-        dispatch(alertFailure('email register failure, please try again later'));
+        dispatch(alertFailure('Email register failure, please try again later'));
       })
     }
   }, [signature])
@@ -89,7 +93,6 @@ const ModalVerifyEmail = (props: any) => {
                 value={inputEmail}
                 onChange={e => setInputEmail(e.target.value)}
                 placeholder="Please enter email"
-                disabled={email}
                 maxLength={190}
               />
             </div>
@@ -104,7 +107,7 @@ const ModalVerifyEmail = (props: any) => {
             <button
               className="btn-cancel"
               onClick={() => setOpenModalVerifyEmail(false)}
-            >cancel</button>
+            >Cancel</button>
           </div>
         </div>
       </div>

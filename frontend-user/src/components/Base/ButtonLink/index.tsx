@@ -27,7 +27,7 @@ const ButtonLink: React.FC<IButton> = (props: IButton) => {
     >
       <p className={classes.buttonContent}>
           {
-            icon && <img src={`/images/${icon}`} />
+            icon && <img src={`/images/${icon}`} width={20} />
           }
           <span className={classes.buttonText}>{text}</span>
       </p>

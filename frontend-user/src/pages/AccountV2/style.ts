@@ -33,12 +33,26 @@ const useStyles = makeStyles((theme: any) => {
       marginBottom: 0,
       flex: 1,
     },
-    accountContainer: {
+    title: {
+      font: 'normal normal bold 28px/32px DM Sans',
+      color: '#FFF',
+      position: 'relative',
+
+      '&:after': {
+        content: '""',
+        display: 'block',
+        width: '100%',
+        height: '1px',
+        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        position: 'absolute',
+        bottom: '-10px',
+      }
+    },
+    mainContent: {
       display: 'grid',
       gridTemplateColumns: '5fr 4fr',
       gap: '100px',
-      padding: '120px 80px 80px 80px',
-      marginTop: '0',
+      marginTop: '10px',
       marginBottom: '120px',
       position: 'relative',
       [theme.breakpoints.down('md')]: {
@@ -59,7 +73,20 @@ const useStyles = makeStyles((theme: any) => {
     },
     rightPanel: {
       maxWidth: '100%',
-      width: '100%'
+      width: '100%',
+    },
+    accountContainer: {
+      padding: '50px 80px 80px 80px',
+    },
+    [theme.breakpoints.down('xs')]: {
+      accountContainer: {
+        padding: '24px',
+      },
+      mainContent: {
+        padding: '20px 0',
+        marginBottom: '80px',
+        gap: '60px'
+      },
     }
   };
 });
