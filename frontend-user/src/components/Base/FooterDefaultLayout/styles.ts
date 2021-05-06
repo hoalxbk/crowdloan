@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => {
       gridTemplateColumns: '2fr 1fr 1fr 1fr',
       gap: '20px',
       padding: '60px 0',
+      width: '100%',
       [theme.breakpoints.down('sm')]: {
         gridTemplateColumns: `1fr 1fr`,
       },
@@ -43,7 +44,24 @@ const useStyles = makeStyles((theme) => {
       marginBottom: 15
     },
     shareLink: {
-      marginTop: 15
+      marginTop: 15,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+
+      '& li': {
+        margin: '0 20px 0 0'
+      },
+      '& i': {
+        fontSize: '20px',
+        '&::before': {
+          color: '#9F9F9F'
+        },
+
+        '&:hover::before': {
+          color: '#D01F37'
+        }
+      }
     },
     teleGram: {
 
