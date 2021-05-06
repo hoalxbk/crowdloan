@@ -93,7 +93,7 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector = undefined;
       const contract = getContractInstance(
         RedKite.abi,
         process.env.REACT_APP_TIERS as string,
