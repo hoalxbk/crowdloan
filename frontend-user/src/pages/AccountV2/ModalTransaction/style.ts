@@ -36,9 +36,6 @@ const useStyles = makeStyles((theme: any) => {
     },
     [theme.breakpoints.down('xs')]: {
       modalTransaction: {
-        '& .modal-content': {
-          width: 'calc(100% - 40px)',
-        },
         '& .modal-content__body': {
           padding: '0'
         }

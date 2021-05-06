@@ -8,7 +8,7 @@ import useCommonStyle from '../../../styles/CommonStyle';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
-import { getTiers, getUserInfo } from '../../../store/actions/sota-tiers';
+import { getTiers, getUserInfo, getUserTier } from '../../../store/actions/sota-tiers';
 import Tooltip from '@material-ui/core/Tooltip';
 import { numberWithCommas } from '../../../utils/formatNumber';
 
@@ -79,7 +79,8 @@ const Tiers = (props: any) => {
 
   useEffect(() => {
     dispatch(getTiers());
-    dispatch(getUserInfo(connectedAccount || ''));
+    connectedAccount != '' && connectedAccount != undefined && dispatch(getUserInfo(connectedAccount));
+    connectedAccount != '' && connectedAccount != undefined && dispatch(getUserTier(connectedAccount));
   }, [isAuth, wrongChain, connectedAccount])
 
   useEffect(() => {
