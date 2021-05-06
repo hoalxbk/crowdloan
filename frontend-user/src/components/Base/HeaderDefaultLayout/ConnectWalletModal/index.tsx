@@ -109,7 +109,7 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
           />
           <span className={styles.dialogPrivacyText}>
             I read and accept 
-            <strong className={styles.dialogPrivacyHighlight}> Terms of Service</strong> ,
+            <strong className={styles.dialogPrivacyHighlight}> Terms of Service</strong>,&nbsp;
             <strong className={styles.dialogPrivacyHighlight}>Legal Disclosure</strong> and 
             <strong className={styles.dialogPrivacyHighlight}> Privacy Policy</strong>
           </span>

@@ -29,12 +29,12 @@ const HeaderDefaultLayout = () => {
           <img src="/images/icons/ring.svg" alt="red-warning icon" />
           <img src={iconClose} onClick={() => setShowBanner(false)} className={styles.closeBtn}/>
           <span className={styles.loginErrorBannerText}>
-          The first IDO will start in the first half of May. Subscribe PolkaFoundry Telegram for the latest updates.
+          PolkaRare (PRARE) launches on 11 May.
           &nbsp;&nbsp;<button 
             className={styles.btnChangeAppNetwork}
-            onClick={() => {window.open('https://t.me/PolkaFoundryANN', '_blank')}}
+            onClick={() => {window.open('#/buy-token/368', '_blank')}}
           >
-            Subscribe
+            View Details
           </button>
           </span>
         </div>}
