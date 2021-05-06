@@ -51,6 +51,14 @@ const useTokenDetails = (address: string, networkAvailable: string) => {
     }
 
     address && networkAvailable && ethers.utils.isAddress(address) && fetchTokenDetails(address);
+    if(address == '' || address == null || address == 'TBD') {
+      setTokenDetails({
+        symbol: 'PRARE',
+        name: 'Polka Rare',
+        decimals: 18,
+        address: 'TBD'
+      });
+    }
   }, [address, networkAvailable]);
 
   return {
