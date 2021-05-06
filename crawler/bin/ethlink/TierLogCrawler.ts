@@ -109,13 +109,10 @@ function makeContractLogEntity(eventLog: any, transaction: any, transactionRecei
   entity.contractName = contractName;
   entity.event = eventLog.event;
 
-  // console.log('Entity', eventLog.type, JSON.stringify(eventLog));
-
   entity.returnValues = JSON.stringify(makeFieldReturnValues(eventLog));
   entity.from = makeFieldFrom(eventLog, transaction);
   entity.to = makeFieldTo(eventLog, transaction);
   entity.value = makeFieldValue(eventLog, transaction);
-
   entity.blockNumber = eventLog.blockNumber;
   entity.blockHash = eventLog.blockHash;
   entity.transactionHash = eventLog.transactionHash;
@@ -194,7 +191,7 @@ function makeFieldTo(eventLog: any, transaction: any) {
     case campaignFactoryEvent.ChangePenaltyWallet:
       break; // use default
   }
-  return transaction.to;
+  return transaction.to || 0;
 }
 
 function makeFieldValue(eventLog: any, transaction: any) {
