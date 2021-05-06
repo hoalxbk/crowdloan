@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { CONVERSION_RATE, TIERS } from '../../../constants';
 import useStyles from './style';
+import useCommonStyle from '../../../styles/CommonStyle';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
@@ -15,6 +16,7 @@ const noticeIcon = '/images/icons/notice.svg';
 
 const Tiers = (props: any) => {
   const styles = useStyles();
+  const commonStyle = useCommonStyle();
   const dispatch = useDispatch();
 
   const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
@@ -166,7 +168,7 @@ const Tiers = (props: any) => {
       {!showMoreInfomation && <div className={styles.tierNote}>
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
-          <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} enterDelay={500} leaveDelay={200} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
+          <Tooltip placement="top-start" classes={{ tooltip: commonStyle.tooltip }} enterDelay={500} leaveDelay={200} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
             Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}
           </p>}>
             <img src={noticeIcon}/>
