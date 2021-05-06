@@ -59,7 +59,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [buyTokenSuccess, setBuyTokenSuccess] = useState<boolean>(false);
   const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
-  const [activeNav, setActiveNav] = useState(HeaderType.Main);
+  const [activeNav, setActiveNav] = useState(HeaderType.About);
 
   const { pathname } = useLocation();
   const { id } = useParams() as any;
@@ -164,8 +164,9 @@ const BuyToken: React.FC<any> = (props: any) => {
   }
 
   useEffect(() => {
-    availablePurchase && setActiveNav(HeaderType.Main);
-  }, [availablePurchase]);
+    if (!poolDetails?.isDeployed) setActiveNav(HeaderType.About);
+    if (availablePurchase) setActiveNav(HeaderType.Main);
+  }, [availablePurchase, poolDetails]);
 
   // Auto Scroll To Top When redirect from other pages
   useEffect(() => {
@@ -439,8 +440,13 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {
                     headers.map((header) => {
                       if (header === HeaderType.Main && endBuyTimeInDate && new Date() > endBuyTimeInDate) {
-                        return null;
+                        return;
                       }
+
+                      if (header !== HeaderType.About && !poolDetails?.isDeployed) {
+                        return;
+                      }
+
                       return <li 
                         className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`} 
                         onClick={() => setActiveNav(header)}
