@@ -18,6 +18,8 @@ import NetworkChange from './pages/NetworkChange';
 import ChangePassword from './pages/ChangePassword';
 import ConfirmEmail from './pages/ConfirmEmail';
 import AppContainer from "./AppContainer";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Terms from "./pages/Terms";
 
 import InvestorRegister from "./pages/Register/InvestorRegister";
 import InvestorForgotPassword from "./pages/ForgotPassword/InvestorForgotPassword";
@@ -126,6 +128,8 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
           <Route path={'/change-password/:role?'} component={ChangePassword} />
           <Route path={'/account'} component={AccountV2} />
           <Route path={'/pools'} component={Pools} />
+          <Route path={'/privacy'} component={PrivacyPolicy} />
+          <Route path={'/terms'} component={Terms} />
           <Route path={'/'} component={Landing} />
 
           <Route path={'/coming-soon'} component={ComingSoon} />

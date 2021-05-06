@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { withStyles, Theme, createStyles, WithStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
 import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
@@ -111,8 +112,8 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
           />
           <span className={styles.dialogPrivacyText}>
             I read and accept the
-            <strong className={styles.dialogPrivacyHighlight}> Terms of Service</strong> and&nbsp;
-            <strong className={styles.dialogPrivacyHighlight}> Privacy Policy</strong>
+            <Link className={styles.dialogPrivacyHighlight} to="/terms"> Terms of Service</Link> and&nbsp;
+            <Link className={styles.dialogPrivacyHighlight} to="/privacy"> Privacy Policy</Link>
           </span>
         </div>
         <Typography gutterBottom className={styles.dialogContentTypo} >
