@@ -93,9 +93,9 @@ const Tiers = (props: any) => {
       {showMoreInfomation && <div className={styles.title}>
         <>
           {
-            (userTier > 0 && verifiedEmail && connectedAccount) ?  (
+            (verifiedEmail && connectedAccount) ?  (
               <p>
-                You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}. To upgrade your tier, please click <Link to="/account" className={styles.tierLinkToAccount}>here</Link>.
+              {userTier > 0 ? `You are in tier ${getUserTierAlias(userTier as number).text}`: 'You are not in any tier yet'}. To upgrade your tier, please click <Link to="/account" className={styles.tierLinkToAccount}>here</Link>.
               </p> 
             ): (
               <p>
