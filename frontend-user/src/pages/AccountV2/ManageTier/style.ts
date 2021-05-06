@@ -121,6 +121,11 @@ const useStyles = makeStyles((theme: any) => {
         }
       }
     },
+    noteStake: {
+      font: 'normal normal bold 14px/18px DM Sans',
+      color: '#FFF',
+      marginBottom: '50px'
+    },
     textDefault: {
       fontFamily: 'Helvetica',
       fontStyle: 'normal',

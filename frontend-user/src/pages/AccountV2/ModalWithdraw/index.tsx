@@ -36,10 +36,14 @@ const ModalWithdraw = (props: any) => {
   const [currentStaked, setCurrentStaked] = useState('0');
   const [currentRate, setCurrentRate] = useState(0);
 
-  useEffect(() => {
+  const setDefaultToken = () => {
     setCurrentToken(listTokenDetails[0])
     setCurrentStaked(userInfo.pkfStaked)
     setCurrentRate(1)
+  }
+
+  useEffect(() => {
+    setDefaultToken()
   }, [userInfo, listTokenDetails])
 
   const onWithDraw = () => {
@@ -48,11 +52,13 @@ const ModalWithdraw = (props: any) => {
     setOpenModalTransactionSubmitting(true);
     setOpenModalWithdraw(false);
     setWithdrawAmount('');
+    setDefaultToken();
   }
 
   const handleClose = () => {
     setOpenModalWithdraw(false);
     setWithdrawAmount('');
+    setDefaultToken();
   }
 
   useEffect(() => {
@@ -83,10 +89,10 @@ const ModalWithdraw = (props: any) => {
     if(e.target.value == 'PKF') {
       setCurrentStaked(userInfo.pkfStaked)
       setCurrentRate(1)
-    } else if(e.target.value == 'UPKF') {
+    } else if(e.target.value == 'UNI-V2') {
       setCurrentStaked(userInfo.uniStaked)
       setCurrentRate(CONVERSION_RATE[0].rate)
-    } else if(e.target.value == 'MPKF') {
+    } else if(e.target.value == 'sPKF') {
       setCurrentStaked(userInfo.mantraStaked)
       setCurrentRate(CONVERSION_RATE[1].rate)
     }
@@ -113,20 +119,20 @@ const ModalWithdraw = (props: any) => {
           <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">
-          <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
+          {open && <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
             {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
               return <option value={tokenDetails?.symbol} key={index}>{
                 index === 0 ? 'Polkafoundry (PKF)' : `${CONVERSION_RATE[index - 1].name} (${CONVERSION_RATE[index - 1].symbol})`
               }</option>
             })}
-          </select>
+          </select>}
           <div className={styles.group}>
             <div className="balance">
               <div>
                 <span>Your wallet staked</span>
                 <span>{ _.isEmpty(currentStaked) ? 0 : numberWithCommas(currentStaked) } {
                   currentToken?.symbol == 'PKF' ? 'PKF'
-                  : currentToken?.symbol == 'UPKF' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
+                  : currentToken?.symbol == 'UNI-V2' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
                 }</span>
               </div>
             </div>

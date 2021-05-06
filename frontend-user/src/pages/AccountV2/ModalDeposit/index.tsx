@@ -40,12 +40,16 @@ const ModalDeposit = (props: any) => {
   const [currentAllowance, setCurrentAllowance] = useState(0);
   const [currentRate, setCurrentRate] = useState(0);
 
-  useEffect(() => {
+  const setDefaultToken = () => {
     setCurrentToken(listTokenDetails[0])
     setCurrentBalance(balance.pkf)
     setCurrentStaked(userInfo.pkfStaked)
     setCurrentAllowance(allowance.pkf)
     setCurrentRate(1)
+  }
+
+  useEffect(() => {
+    setDefaultToken();
   }, [balance, userInfo, listTokenDetails])
 
   useEffect(() => {
@@ -70,6 +74,7 @@ const ModalDeposit = (props: any) => {
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
     setDepositAmount('')
+    setDefaultToken();
   }
 
   const onApprove = () => {
@@ -77,11 +82,13 @@ const ModalDeposit = (props: any) => {
     setOpenModalTransactionSubmitting(true);
     setOpenModalDeposit(false);
     setDepositAmount('')
+    setDefaultToken();
   }
 
   const handleClose = () => {
     setOpenModalDeposit(false);
     setDepositAmount('')
+    setDefaultToken();
   }
 
   const handleSelectToken = (e: any) => {
@@ -94,12 +101,12 @@ const ModalDeposit = (props: any) => {
       setCurrentStaked(userInfo.pkfStaked)
       setCurrentAllowance(allowance.pkf)
       setCurrentRate(1)
-    } else if(e.target.value == 'UPKF') {
+    } else if(e.target.value == 'UNI-V2') {
       setCurrentBalance(balance.uni)
       setCurrentStaked(userInfo.uniStaked)
       setCurrentAllowance(allowance.uni)
       setCurrentRate(CONVERSION_RATE[0].rate)
-    } else if(e.target.value == 'MPKF') {
+    } else if(e.target.value == 'sPKF') {
       setCurrentBalance(balance.mantra)
       setCurrentStaked(userInfo.mantraStaked)
       setCurrentAllowance(allowance.mantra)
@@ -128,13 +135,13 @@ const ModalDeposit = (props: any) => {
           <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">
-          <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
+          {open && <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
             {listTokenDetails && listTokenDetails.map((tokenDetails: any, index: number) => {
               return <option value={tokenDetails?.symbol} key={index}>{
                 index === 0 ? 'Polkafoundry (PKF)' : `${CONVERSION_RATE[index - 1].name} (${CONVERSION_RATE[index - 1].symbol})`
               }</option>
             })}
-          </select>
+          </select>}
 
           <div className={styles.group}>
             <div className="balance">
@@ -142,7 +149,7 @@ const ModalDeposit = (props: any) => {
                 <span>Your wallet balance</span>
                 <span>{ !currentBalance ? 0 : numberWithCommas(currentBalance) } {
                   currentToken?.symbol == 'PKF' ? 'PKF'
-                  : currentToken?.symbol == 'UPKF' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
+                  : currentToken?.symbol == 'UNI-V2' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
                 }</span>
               </div>
             </div>

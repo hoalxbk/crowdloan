@@ -4,7 +4,6 @@ import { withRouter, Link } from 'react-router-dom';
 import _ from 'lodash';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
-import BackgroundComponent from './BackgroundComponent';
 import Card from './Card';
 import usePools from '../../hooks/usePools';
 import { POOL_STATUS, POOL_TYPE, BUY_TYPE } from '../../constants';
@@ -12,14 +11,13 @@ import POOL_ABI from '../../abi/Pool.json';
 import { getContractInstance, convertFromWei, convertToWei } from '../../services/web3';
 import moment from 'moment';
 
-const cardImage = '/images/icons/card-image.jpg';
 const arrowRightIcon = '/images/icons/arrow-right.svg';
 const background = '/images/icons/background2.svg';
 
 const Dashboard = (props: any) => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const { pools = [], pagination, loading } = usePools();
+  let { pools = [], pagination, loading } = usePools();
   const [upcommingPools, setUpcommingPools] = useState([]);
   const [featurePools, setFeaturePools] = useState([]);
   const { data: appChain } = useSelector((state: any) => state.appNetwork);

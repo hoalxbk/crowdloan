@@ -114,6 +114,7 @@ const ManageTier = (props: any) => {
             {renderToken(CONVERSION_RATE[1]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
           </div>
         </div>
+        <p className={styles.noteStake}>PKF under unstaking on MANTRA DAO will be counted later.</p>
         <div className="button-area">
           <button
             className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}

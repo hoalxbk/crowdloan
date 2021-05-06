@@ -103,7 +103,7 @@ const Card = (props: any): JSX.Element => {
             </li>
             <li>
               <span>Participants</span>
-              <span className="total">{ pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? participants : 'All' }</span>
+              <span className="total">{ pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? numberWithCommas(participants) : 'All' }</span>
             </li>
             <li>
               <span>Access</span>
@@ -137,7 +137,7 @@ const Card = (props: any): JSX.Element => {
               <div>
                 <span>{`${progress.toFixed(2)}%`}</span>
               </div>
-              <span>{parseFloat(pool.tokenSold || 0).toFixed(0)}/{parseFloat(pool.total_sold_coin || 0).toFixed(0)}</span>
+              <span>{numberWithCommas(pool.tokenSold || '0')}/{numberWithCommas(pool.total_sold_coin || '0')}</span>
             </div>
           </div>
         </div>
