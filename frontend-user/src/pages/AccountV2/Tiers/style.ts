@@ -320,7 +320,7 @@ const useStyles = makeStyles((theme: any) => {
         },
 
         '&:last-child .info': {
-          alignItems: 'flex-start',
+          alignItems: 'flex-start!important',
         },
 
         '& > div': {
