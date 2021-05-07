@@ -105,7 +105,7 @@ const useStyles = makeStyles((theme: any) => {
       '&--In-progress': {
         backgroundColor: '#FFDE30'
       },
-      '&--Joining': {
+      '&--Whitelisting': {
         background: "#12A064"
       },
       '&--Upcoming': {
