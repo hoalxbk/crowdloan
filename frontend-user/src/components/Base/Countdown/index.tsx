@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import useStyles from './style';
 
 type CountDownProps = {
-  startDate?: Date
+  startDate?: Date,
+  getCurrentDateRealTime?: (currentDate: Date) => void
 }
 
-const Countdown: React.FC<CountDownProps> = ({ startDate }: CountDownProps) => {
+const Countdown: React.FC<CountDownProps> = ({ startDate, getCurrentDateRealTime }: CountDownProps) => {
   const styles = useStyles();
   const [second, setSecond] = useState('0');
   const [minute, setMinute] = useState('0');
   const [hour, setHour] = useState('0');
   const [day, setDay] = useState('0');
+
+  const emitCurrentDate = useCallback((now: Date) => {
+    getCurrentDateRealTime && getCurrentDateRealTime(now);
+  }, [getCurrentDateRealTime]);
 
   useEffect(() => {
     let countDownInterval = undefined as any; 
@@ -36,6 +41,7 @@ const Countdown: React.FC<CountDownProps> = ({ startDate }: CountDownProps) => {
           setHour(currentHour < 10 ? `0${currentHour}`: `${currentHour}`);
           setMinute(currentMinute < 10 ? `0${currentMinute}`: `${currentMinute}`);
           setSecond(currentSecond < 10 ? `0${currentSecond}`: `${currentSecond}`);
+          emitCurrentDate(new Date(now));
         }
 
         //do something later when date is reached

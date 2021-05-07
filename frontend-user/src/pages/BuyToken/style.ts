@@ -14,7 +14,7 @@ const useStyles = makeStyles((theme: any) => {
     },
     poolHeaderWrapper: {
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
     },
     poolHeaderNetworkAvailable: {
       fontWeight: 400, 
