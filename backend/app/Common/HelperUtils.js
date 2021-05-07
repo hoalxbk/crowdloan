@@ -113,7 +113,7 @@ const getUserTierSmart = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
-    tierSc.methods.externalToken(process.env.MATRA_DAO_SPKF_TOKEN_SMART_CONTRACT).call(),
+    tierSc.methods.externalToken(process.env.MATRA_DAO_STAKE_SMART_CONTRACT).call(),
   ]);
 
   console.log('receivedData: ', receivedData)
