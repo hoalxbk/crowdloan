@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js';
 
 export enum PoolStatus {
   Upcoming = "Upcoming",
-  Joining = "Joining",
+  Joining = "Whitelisting",
   Closed = "Ended",
   Filled = "Filled",
   Progress = "In-progress",

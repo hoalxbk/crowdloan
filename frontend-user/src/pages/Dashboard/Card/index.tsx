@@ -76,7 +76,7 @@ const Card = (props: any): JSX.Element => {
             <span>In Progress</span>
           </div>}
           {pool.status == POOL_STATUS.JOINING && <div className="time joining">
-            <span>Joining</span>
+            <span>Whitelisting</span>
           </div>}
           {pool.status == POOL_STATUS.CLAIMABLE && <div className="time claimable">
             <span>Claimable</span>
