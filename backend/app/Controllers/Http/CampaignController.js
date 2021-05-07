@@ -34,6 +34,8 @@ const Config = use('Config');
 const tierSmartContract = process.env.TIER_SMART_CONTRACT;
 const SMART_CONTRACT_USDT_ADDRESS = process.env.SMART_CONTRACT_USDT_ADDRESS;
 const SMART_CONTRACT_USDC_ADDRESS = process.env.SMART_CONTRACT_USDC_ADDRESS;
+const OFFER_FREE_TIME = process.env.OFFER_FREE_TIME_SECOND || 1800;
+const OFFER_FREE_BUY = process.env.OFFER_FREE_BUY_LIMIT || 0;
 
 class CampaignController {
   async campaignList({request}) {
@@ -307,8 +309,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("You're not valid user to join this campaign !");
       }
       // check user tier
-      const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
-      const userTier = await tierSc.methods.getUserTier(wallet_address).call();
+      const userTier = await HelperUtils.getUserTierSmart(wallet_address);
       console.log(`user tier is ${userTier}`);
       // check user tier with min tier of campaign
       if (camp.min_tier > userTier) {
@@ -370,8 +371,15 @@ class CampaignController {
       }
       let minBuy = 0, maxBuy = 0;
       let is_reserved = false;
+      const current = Math.floor(Date.now() / 1000);
+      // check if current time is free to buy or not
+      const isFreeBuyTime = (current >= (Number(camp.start_time) + Number(OFFER_FREE_TIME)));
+      console.log(`isFreeBuyTime ${isFreeBuyTime}`);
+      if (isFreeBuyTime) {
+        maxBuy = Number(OFFER_FREE_BUY);
+      }
       // check user winner or reserved lis if campaign is lottery
-      if (camp.buy_type === Const.BUY_TYPE.WHITELIST_LOTTERY) {
+      if (!isFreeBuyTime && camp.buy_type === Const.BUY_TYPE.WHITELIST_LOTTERY) {
         // check if exist in winner list
         const winnerListService = new WinnerListService();
         const winnerParams = {
@@ -390,7 +398,6 @@ class CampaignController {
           }
           is_reserved = true;
           // check time start buy for tier
-          const current = Math.floor(Date.now() / 1000)
           if (reserved.start_time > current || reserved.end_time < current) {
             console.log(`Reserved ${reserved.start_time} ${reserved.end_time} ${current}`);
             return HelperUtils.responseBadRequest("You're early come to join this campaign !");
@@ -401,10 +408,9 @@ class CampaignController {
         }
       }
       // check user tier if user not in reserved list
-      if (!is_reserved) {
+      if (!isFreeBuyTime && !is_reserved) {
         // check user tier
-        const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
-        const userTier = await tierSc.methods.getUserTier(userWalletAddress).call();
+        const userTier = await HelperUtils.getUserTierSmart(userWalletAddress);
         console.log(`user tier is ${userTier}`);
         // check user tier with min tier of campaign
         if (camp.min_tier > userTier) {
@@ -421,7 +427,6 @@ class CampaignController {
           return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign !");
         }
         // check time start buy for tier
-        const current = Math.floor(Date.now() / 1000)
         if (tier.start_time > current || tier.end_time < current) {
           console.log(`${tier.start_time} ${tier.end_time} ${current}`);
           return HelperUtils.responseBadRequest("You're early come to join this campaign !");
