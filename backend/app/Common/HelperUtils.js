@@ -14,7 +14,6 @@ const { abi: CONTRACT_TIER_ABI } = require('../../blockchain_configs/contracts/N
 const tierSmartContract = process.env.TIER_SMART_CONTRACT;
 const { abi: CONTRACT_STAKE_ABI } = require('../../blockchain_configs/contracts/Normal/MantraStake.json');
 const mantraSmartContract = process.env.MATRA_DAO_STAKE_SMART_CONTRACT;
-const SPKF_RATE = process.env.SPKF_RATE
 /**
  * Generate "random" alpha-numeric string.
  *
