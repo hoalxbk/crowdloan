@@ -35,7 +35,6 @@ import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
 
 import { sotaTiersActions } from '../../store/constants/sota-tiers';
-import useUserTier from '../../hooks/useUserTier';
 
 import useStyles from './style';
 
@@ -68,8 +67,6 @@ const BuyToken: React.FC<any> = (props: any) => {
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
-  const { currentTier, totalStaked, totalUnstaked, total } = useUserTier(connectedAccount || '', 'eth')
-
   // Fetch token sold, total tokens sold
   const { tokenSold, soldProgress } = useTokenSoldProgress(
       poolDetails?.poolAddress,
@@ -98,6 +95,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   )
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
+
   // Use for check whether pool exist in selected network or not
   const networkAvailable = poolDetails?.networkAvailable === 'eth'? NETWORK_ETH_NAME: NETWORK_BSC_NAME;
   const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
@@ -124,11 +122,11 @@ const BuyToken: React.FC<any> = (props: any) => {
       today <= tierEndBuyInDate &&
       connectedAccount &&
       !wrongChain &&
-      userTier >= poolDetails?.minTier
-      // && poolDetails?.isDeployed
+      new BigNumber(currentUserTier.level).gte(poolDetails?.minTier) 
       && verifiedEmail
     )
     : false;
+
   const availablePurchase = startBuyTimeInDate && endBuyTimeInDate &&
     today >= startBuyTimeInDate &&
     today <= endBuyTimeInDate &&
@@ -187,6 +185,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       payload: currentUserTier.level
     })
   }, [currentUserTier]);
+  
   const render = () => {
     if (loadingPoolDetail)  {
       return (
@@ -373,7 +372,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         onClick={() => {
                           poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
                         }}
-                        disabled={!poolDetails?.poolAddress}
+                        disabled={true}
                       />
                     </div>
                   </>
@@ -386,8 +385,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   tiersBuyLimit={poolDetails?.buyLimit || [] }
                   tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
                   verifiedEmail={verifiedEmail}
-                  userTier={currentTier}
-                  total={total}
+                  userTier={currentUserTier?.level || 0}
                 />
                 <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
                 <div className={styles.poolDetailProgress}>
