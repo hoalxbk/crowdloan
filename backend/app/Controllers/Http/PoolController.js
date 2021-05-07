@@ -117,8 +117,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error')
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -213,8 +213,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error');
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -253,8 +253,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error');
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -279,8 +279,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess();
     } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error');
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -318,7 +318,7 @@ class PoolController {
       return HelperUtils.responseSuccess(pool);
     } catch (e) {
       console.log(e)
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -370,7 +370,7 @@ class PoolController {
       return HelperUtils.responseSuccess(publicPool);
     } catch (e) {
       console.log(e)
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -400,7 +400,7 @@ class PoolController {
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e)
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal('Get Pool Fail !!!');
     }
   }
 
@@ -421,7 +421,7 @@ class PoolController {
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal('Get Top Pools Fail !!!');
     }
   }
 
@@ -443,7 +443,7 @@ class PoolController {
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal('Joined Pool Fail !!!');
     }
   }
 
