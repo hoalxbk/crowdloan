@@ -73,7 +73,7 @@ const Tiers = (props: any) => {
       setCurrentProcess(0);
       return;
     }
-    if(!showMoreInfomation && total && userTier) {
+    if(!showMoreInfomation && total) {
       let process = calculateProcess(tiers, total);
       setCurrentProcess(process);
     }
@@ -190,13 +190,13 @@ const Tiers = (props: any) => {
           </Tooltip>
         </h3>
         <span className="subtitle">{(connectedAccount && isAuth && !wrongChain) ? numberWithCommas(total || 0) : 0} PKF</span>
-        {userTier && <div className="notice">
+        <div className="notice">
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">
             {(userTier > 0 && connectedAccount) ? <span>You are in Tier {TIERS[userTier].name}</span> : <span>You are not in any tier yet.</span>}
             <span>Please stake tokens in your wallet balance to maintain your tier!</span>
           </div>
-        </div>}
+        </div>
       </div>}
     </div>
   );

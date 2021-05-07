@@ -38,7 +38,7 @@ const useUserTier = (address: string, networkAvailable: string): UserTier => {
   }
 
   useEffect(() => {
-    !userInfoLoading && !tiersLoading && userInfo.totalStaked && setLoading(false);
+    (!userInfoLoading && !tiersLoading && userInfo.totalStaked) ? setLoading(false) : setLoading(true);
   }, [userInfoLoading, userInfo, tokenDetailsLoading]);
 
   useEffect(() => {
@@ -67,7 +67,6 @@ const useUserTier = (address: string, networkAvailable: string): UserTier => {
       }
     }
 
-    console.log(loading)
     !loading && getTotalUnstaked();
   }, [address, loading, userInfo]);
 
