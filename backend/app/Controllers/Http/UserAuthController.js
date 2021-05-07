@@ -166,13 +166,18 @@ class UserAuthController {
 
       user.email = param.email;
       user.confirmation_token = await HelperUtils.randomString(50);
+
+      // TODO: Remove after
+      user.status = Const.USER_STATUS.ACTIVE; // Not verify email
+
       await user.save();
 
       console.log('[registerVerifyEmail]: SendEmail:  ', param);
       const authService = new AuthService();
       await authService.sendNewVerifyEmail({ user });
 
-      return HelperUtils.responseSuccess(null, 'Success! Register email success');
+      // return HelperUtils.responseSuccess(null, 'Success! Register email success');
+      return HelperUtils.responseSuccess(null, 'You can start staking now. Please use this same email when doing KYC.');
     } catch(e) {
       console.log('ERROR: ', e);
       return HelperUtils.responseErrorInternal(e.message);
