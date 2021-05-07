@@ -29,17 +29,19 @@ const useUserTier = (address: string, networkAvailable: string): UserTier => {
 
 
   const calculateUserTier = (totalStaked: BigNumber) => {
+    let currentTier = 0;
     for(let i = 0; i < tiers.length; i++) {
       const tier = new BigNumber(tiers[i])
       if(tier.lt(totalStaked)) {
-        setCurrentUserTier(i + 1);
+        currentTier = i + 1
       }
     }
+    setCurrentUserTier(currentTier);
   }
 
   useEffect(() => {
-    (!userInfoLoading && !tiersLoading && userInfo.totalStaked) ? setLoading(false) : setLoading(true);
-  }, [userInfoLoading, userInfo, tokenDetailsLoading]);
+    (!userInfoLoading && !tiersLoading && userInfo.totalStaked && tokenDetails) ? setLoading(false) : setLoading(true);
+  }, [userInfoLoading, userInfo, tokenDetailsLoading, tokenDetails]);
 
   useEffect(() => {
     const getTotalUnstaked = async () => {

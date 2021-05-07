@@ -30,11 +30,15 @@ const Tiers = (props: any) => {
     tiersBuyLimit,
     tokenSymbol,
     verifiedEmail,
-    userTier,
+    userTier = 0,
     total
   } = props;
 
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
+
+  useEffect(() => {
+    console.log(userTier, 'userTier')
+  }, [userTier])
 
   const calculateProcess = (ListData: any, current: any) => {
     let tierA = 0;

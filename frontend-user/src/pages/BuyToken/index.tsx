@@ -185,7 +185,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       payload: currentUserTier.level
     })
   }, [currentUserTier]);
-
+  
   const render = () => {
     if (loadingPoolDetail)  {
       return (
