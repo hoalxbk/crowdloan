@@ -176,7 +176,8 @@ class UserAuthController {
       const authService = new AuthService();
       await authService.sendNewVerifyEmail({ user });
 
-      return HelperUtils.responseSuccess(null, 'Success! Register email success');
+      // return HelperUtils.responseSuccess(null, 'Success! Register email success');
+      return HelperUtils.responseSuccess(null, 'You can start staking now. Please use this same email when doing KYC.');
     } catch(e) {
       console.log('ERROR: ', e);
       return HelperUtils.responseErrorInternal(e.message);
