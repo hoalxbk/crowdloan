@@ -459,7 +459,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
           loading={tokenDepositLoading} 
         />
       </div>
-      <p className={styles.approveWarning}>{`You need to Approve once (and only once) before you start purchasing.`}</p>
+      <p className={styles.approveWarning}>{`You need to Approve once (and only once) before you can start purchasing.`}</p>
       <TransactionSubmitModal 
         opened={openSubmitModal} 
         handleClose={() => { setOpenSubmitModal(false); }} 
