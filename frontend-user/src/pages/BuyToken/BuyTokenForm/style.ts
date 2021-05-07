@@ -151,7 +151,8 @@ const useStyles = makeStyles((theme: any) => {
       fontWeight: 'bold',
       marginTop: 30,
       fontSize: 16,
-      color: '#8db4ff'
+      color: '#8db4ff',
+      fontFamily: 'Helvetica'
     }
   };
 });

@@ -100,7 +100,7 @@ const TransactionSubmitModal: React.FC<any> = (props: any) => {
                 </a>
                 {
                   additionalText && (
-                    <p style={{ marginTop: 30, fontWeight: 'bold', lineHeight: '18px', fontSize: 15.5, color: '#8db4ff' }}> 
+                    <p style={{ marginTop: 30, fontWeight: 'bold', lineHeight: '18px', fontSize: 15.5, color: '#8db4ff', fontFamily: 'Helvetica' }}> 
                       {additionalText}
                     </p>
                   )
