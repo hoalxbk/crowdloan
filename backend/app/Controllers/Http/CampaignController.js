@@ -30,10 +30,10 @@ const {abi: CONTRACT_TIER_ABI} = require('../../../blockchain_configs/contracts/
 const Web3 = require('web3');
 const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
-const Config = use('Config')
+const Config = use('Config');
 const ErrorFactory = use('App/Common/ErrorFactory');
 const tierSmartContract = process.env.TIER_SMART_CONTRACT;
-const SMART_CONTRACT_USDT_ADDRESS = process.env.SMART_CONTRACT_USDT_ADDRESS
+const SMART_CONTRACT_USDT_ADDRESS = process.env.SMART_CONTRACT_USDT_ADDRESS;
 const SMART_CONTRACT_USDC_ADDRESS = process.env.SMART_CONTRACT_USDC_ADDRESS;
 
 class CampaignController {

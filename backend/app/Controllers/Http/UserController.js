@@ -21,26 +21,31 @@ const SendForgotPasswordJob = use('App/Jobs/SendForgotPasswordJob');
 
 class UserController {
   async profile({ request }) {
-    const userService = new UserService();
-    const params = request.all();
-    const userAuthInfo = {
-      wallet_address: params.wallet_address,
-    };
+    try {
+      const userService = new UserService();
+      const params = request.all();
+      const userAuthInfo = {
+        wallet_address: params.wallet_address,
+      };
 
-    const findedUser = await UserModel.query().where('wallet_address', params.wallet_address).first();
-    console.log('[profile] - findedUser', findedUser);
-    if (!findedUser) {
-      return HelperUtils.responseNotFound();
-    }
-
-    return HelperUtils.responseSuccess({
-      user: {
-        email: findedUser.email,
-        id: findedUser.id,
-        status: findedUser.status,
-        is_kyc: findedUser.is_kyc,
+      const findedUser = await UserModel.query().where('wallet_address', params.wallet_address).first();
+      console.log('[profile] - findedUser', findedUser);
+      if (!findedUser) {
+        return HelperUtils.responseNotFound();
       }
-    });
+
+      return HelperUtils.responseSuccess({
+        user: {
+          email: findedUser.email,
+          id: findedUser.id,
+          status: findedUser.status,
+          is_kyc: findedUser.is_kyc,
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal();
+    }
   }
 
   async updateProfile({ request, auth }) {
@@ -135,7 +140,7 @@ class UserController {
       if (e.status === 400) {
         return HelperUtils.responseNotFound(e.message);
       } else {
-        return HelperUtils.responseErrorInternal(e.message);
+        return HelperUtils.responseErrorInternal();
       }
     }
   }

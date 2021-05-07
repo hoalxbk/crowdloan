@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme: any) => {
       marginBottom: '15px',
 
       '& > span:first-child': {
-        minWidth: '105px',
+        minWidth: '120px',
         marginRight: '20px',
         font: 'normal normal normal 14px/24px Helvetica',
         color: '#999999',
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme: any) => {
         cursor: 'pointer',
         width: 'auto'
       },
-      
+
       '& button': {
         fontFamily: 'DM Sans',
         fontStyle: 'normal',

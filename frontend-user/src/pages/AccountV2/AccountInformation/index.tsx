@@ -17,7 +17,7 @@ const AccountInformation = (props: any) => {
   const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
 
   const handleKYC = () => {
-    window.open('https://docs.google.com/forms/d/e/1FAIpQLSeV_Sman6oEZ3UzNvgly_I-hxNMyGbS4WFhudCzcbDTc4Gaqg/viewform', '_blank');
+    window.open('https://docs.google.com/forms/d/1XnPZrW4l21sFjtgkKky4w5eE1zB-1TmdACBSpa9uKO8/viewform', '_blank');
   }
 
   const {
@@ -54,11 +54,11 @@ const AccountInformation = (props: any) => {
           </span>
         </div>
         <div className={styles.inputGroup}>
-          <span>KYC for Redkite</span>
+          <span>KYC for Red Kite</span>
           {connectedAccount && <>
             <span>{isKYC ? 'Verified' : 'Unverified'}</span>
             {!isKYC && <button className="verify-email" onClick={handleKYC}>
-              How to KYC?
+              KYC NOW
             </button>}
           </>}
         </div>

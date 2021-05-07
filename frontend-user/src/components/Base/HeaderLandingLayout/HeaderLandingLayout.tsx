@@ -32,9 +32,9 @@ const HeaderDefaultLayout = () => {
           <img src={iconClose} onClick={() => setShowBanner(false)} className={styles.closeBtn}/>
           <span className={styles.loginErrorBannerText}>
           PolkaRare (PRARE) launches on 11 May.
-          &nbsp;&nbsp;<button 
+          &nbsp;&nbsp;<button
             className={styles.btnChangeAppNetwork}
-            onClick={() => {window.open('#/buy-token/368', '_blank')}}
+            onClick={() => {window.open('#/buy-token/22', '_blank')}}
           >
             View Details
           </button>
