@@ -309,8 +309,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("You're not valid user to join this campaign !");
       }
       // check user tier
-      const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
-      const userTier = await tierSc.methods.getUserTier(wallet_address).call();
+      const userTier = await HelperUtils.getUserTierSmart(wallet_address);
       console.log(`user tier is ${userTier}`);
       // check user tier with min tier of campaign
       if (camp.min_tier > userTier) {
@@ -411,8 +410,7 @@ class CampaignController {
       // check user tier if user not in reserved list
       if (!isFreeBuyTime && !is_reserved) {
         // check user tier
-        const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
-        const userTier = await tierSc.methods.getUserTier(userWalletAddress).call();
+        const userTier = await HelperUtils.getUserTierSmart(userWalletAddress);
         console.log(`user tier is ${userTier}`);
         // check user tier with min tier of campaign
         if (camp.min_tier > userTier) {

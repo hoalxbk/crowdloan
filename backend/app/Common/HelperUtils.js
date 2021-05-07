@@ -7,11 +7,14 @@ const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
 const Web3 = require('web3');
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
+const BigNumber = use('bignumber.js');
 
 // Tier Smart contract
 const { abi: CONTRACT_TIER_ABI } = require('../../blockchain_configs/contracts/Normal/Tier.json');
 const tierSmartContract = process.env.TIER_SMART_CONTRACT;
-
+const { abi: CONTRACT_STAKE_ABI } = require('../../blockchain_configs/contracts/Normal/MantraStake.json');
+const mantraSmartContract = process.env.MATRA_DAO_STAKE_SMART_CONTRACT;
+const SPKF_RATE = process.env.SPKF_RATE
 /**
  * Generate "random" alpha-numeric string.
  *
@@ -98,9 +101,29 @@ const getTierSmartContractInstance = () => {
   return tierSc;
 };
 
-const getUserTierSmartContract = async (wallet_address) => {
+const getMantraStakeSmartContractInstance = () => {
+  const mantraSc = new web3.eth.Contract(CONTRACT_STAKE_ABI, mantraSmartContract);
+  return mantraSc;
+};
+
+const getUserTierSmart = async (wallet_address) => {
   const tierSc = getTierSmartContractInstance();
-  const userTier = await tierSc.methods.getUserTier(wallet_address).call();
+  const mantraSc = getMantraStakeSmartContractInstance();
+  const receivedData = await Promise.all([
+    tierSc.methods.getTiers(wallet_address).call(),
+    tierSc.methods.userTotalStaked(wallet_address).call(),
+    mantraSc.methods.getUnstake(wallet_address)
+  ]);
+  // get 4 tiers
+  const tiers = receivedData[0].slice(0, 4);
+  // calc pfk equal
+  const pkfEq = new BigNumber(receivedData[1]).dividedBy(Math.pow(10, 18)) + new BigNumber(receivedData[2]).dividedBy(Math.pow(10, 18)).multipliedBy(Number(SPKF_RATE));
+  let userTier = 0;
+  tiers.map((pkfRequire, index) => {
+    if (pkfEq >= pkfRequire) {
+      userTier = index + 1;
+    }
+  });
   return userTier;
 };
 
@@ -113,5 +136,5 @@ module.exports = {
   checkSumAddress,
   paginationArray,
   getTierSmartContractInstance,
-  getUserTierSmartContract,
+  getUserTierSmart,
 };
