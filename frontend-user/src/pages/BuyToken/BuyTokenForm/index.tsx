@@ -459,12 +459,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
           loading={tokenDepositLoading} 
         />
       </div>
+      <p className={styles.approveWarning}>{`You need to Approve once (and only once) before you can start staking.`}</p>
       <TransactionSubmitModal 
         opened={openSubmitModal} 
         handleClose={() => { setOpenSubmitModal(false); }} 
         transactionHash={tokenDepositTransaction}
       />
       <TransactionSubmitModal 
+        additionalText={`Please be patient and no need to approve again, you can check the transaction status on Etherscan.`}
         opened={openApproveModal} 
         handleClose={() => { setApproveModal(false); }} 
         transactionHash={transactionHash}

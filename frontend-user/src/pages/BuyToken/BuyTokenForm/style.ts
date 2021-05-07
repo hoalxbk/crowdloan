@@ -146,6 +146,12 @@ const useStyles = makeStyles((theme: any) => {
       '&:active': {
         transform: 'translateY(-3px)'
       }
+    },
+    approveWarning: {
+      fontWeight: 'bold',
+      marginTop: 30,
+      fontSize: 16,
+      color: '#8db4ff'
     }
   };
 });
