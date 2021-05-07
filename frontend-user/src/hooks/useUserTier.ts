@@ -68,7 +68,13 @@ const useUserTier = (address: string, networkAvailable: string): UserTier => {
     }
 
     !loading && getTotalUnstaked();
-  }, [address, loading, userInfo]);
+  }, [loading, userInfo]);
+
+  useEffect(() => {
+    setTotalUnstaked('0')
+    setTotal('0')
+    setCurrentUserTier(0)
+  }, [address, appChainID])
 
   return  {
     currentTier: currentUserTier,
