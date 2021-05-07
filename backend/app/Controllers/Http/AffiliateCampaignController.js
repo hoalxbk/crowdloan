@@ -11,15 +11,15 @@ const CONTRACT_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGN];
 const { abi: CONTRACT_ABI } = CONTRACT_CONFIGS.CONTRACT_DATA;
 const Web3 = require('web3');
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
-const ErrorFactory = use('App/Common/ErrorFactory');
+const HelperUtils = use('App/Common/HelperUtils');
 
 class AffiliateCampaignController {
-  async affiliateCreate ({request}) {
+  async affiliateCreate({request}) {
     try {
       const param = request.all();
       const contractBlock = await web3.eth.getTransaction(param.txHash);
-      if(!contractBlock){
-        return ErrorFactory.badRequest('Affiliate not found')
+      if (!contractBlock) {
+        return HelperUtils.responseBadRequest('Affiliate not found')
       }
       const campaign = await CampaignModel.query().where('token', '=', param.params.tokenAddress).firstOrFail();
       let affiliateCampaign = new AffiliateCampaignModel();
@@ -34,28 +34,22 @@ class AffiliateCampaignController {
         status: 200,
         data: affiliateCampaign,
       }
-    }
-    catch (e){
+    } catch (e) {
       console.log('ERROR', e);
-      return ErrorFactory.badRequest('Error')
+      return HelperUtils.responseErrorInternal('Error')
     }
   }
 
   async affiliateList({request}) {
     try {
       const token = request.params.token
-      const dataList = await AffiliateCampaignModel.query().where('token_address', '=', token).fetch()
-      return {
-        status: 200,
-        data: dataList,
-      }
-    }
-    catch (e){
+      const dataList = await AffiliateCampaignModel.query().where('token_address', '=', token).fetch();
+      return HelperUtils.responseSuccess(dataList);
+    } catch (e) {
       console.log('ERROR', e);
-      return ErrorFactory.badRequest('Error')
+      return HelperUtils.responseErrorInternal('Error')
     }
   }
-
 }
 
 module.exports = AffiliateCampaignController

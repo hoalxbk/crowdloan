@@ -115,7 +115,7 @@ Route.group(() => {
 
 
 // Investor User
-Route.get('campaign-latest-active', 'CampaignController.campaignLastestActive')
+Route.get('campaign-latest-active', 'CampaignController.campaignLatestActive')
 
 Route.group(() => {
   Route.post('/login', 'UserAuthController.login').validator('Login').middleware('checkSignature');

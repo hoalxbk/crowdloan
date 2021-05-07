@@ -7,36 +7,45 @@ const Const = use('App/Common/Const');
 
 class FileController {
   async uploadAvatar({request}) {
-    const validationOptions = {
-      types: ['image'],
-      size: Const.FILE_SITE,
-      extnames: Const.FILE_EXT
-    };
+    try {
+      const validationOptions = {
+        types: ['image'],
+        size: Const.FILE_SITE,
+        extnames: Const.FILE_EXT
+      };
 
-    const profilePic = request.file('avatar', validationOptions);
-    const timeStamp = Date.now();
-    // const fileName = timeStamp + '_' + (HelperUtils.randomString(10)).replace(/\s/g, '_');
-    const fileName = timeStamp + '_' + (await HelperUtils.randomString(15)) + '.' + (profilePic.extname || 'txt');
+      const profilePic = request.file('avatar', validationOptions);
+      const timeStamp = Date.now();
+      // const fileName = timeStamp + '_' + (HelperUtils.randomString(10)).replace(/\s/g, '_');
+      const fileName = timeStamp + '_' + (await HelperUtils.randomString(15)) + '.' + (profilePic.extname || 'txt');
 
-    console.log('[uploadFile] - fileName: ', fileName, profilePic.extname);
-    await profilePic.move(Helpers.tmpPath('uploads'), {
-      name: fileName,
-      overwrite: true
-    });
-    if (!profilePic.moved()) {
-      return profilePic.error()
+      console.log('[uploadFile] - fileName: ', fileName, profilePic.extname);
+      await profilePic.move(Helpers.tmpPath('uploads'), {
+        name: fileName,
+        overwrite: true
+      });
+      if (!profilePic.moved()) {
+        return profilePic.error()
+      }
+      return HelperUtils.responseSuccess({fileName});
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('ERROR: Update avatar fail !');
     }
-
-    return HelperUtils.responseSuccess({ fileName });
   }
 
-  async getImage({ response, params }) {
-    const filePath = `uploads/${params.fileName}`;
-    const isExist = await Drive.exists(filePath);
-    if (isExist) {
-      return response.download(Helpers.tmpPath(filePath));
+  async getImage({response, params}) {
+    try {
+      const filePath = `uploads/${params.fileName}`;
+      const isExist = await Drive.exists(filePath);
+      if (isExist) {
+        return response.download(Helpers.tmpPath(filePath));
+      }
+      return 'File does not exist';
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('ERROR: Get image fail !');
     }
-    return 'File does not exist';
   }
 }
 
