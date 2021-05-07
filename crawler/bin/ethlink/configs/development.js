@@ -10,7 +10,8 @@ module.exports = {
   contracts: {
     CampaignFactory: {
       CONTRACT_DATA: require('./contracts/CampaignFactory.json'), // CampaignFactory
-      CONTRACT_ADDRESS: '0x578b8067C088cdfE26762193Dc2b7a96a8403923',
+      // CONTRACT_ADDRESS: '0x578b8067C088cdfE26762193Dc2b7a96a8403923',
+      CONTRACT_ADDRESS: '0xAadC3018cE3182254D3AB20e74ec0190ee91a899',
       FIRST_CRAWL_BLOCK: 4550016, // Start Block: 4555016
       BLOCK_NUM_IN_ONE_GO: 40000,
       BREAK_TIME_AFTER_ONE_GO: 1000,
