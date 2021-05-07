@@ -152,7 +152,7 @@ const useStyles = makeStyles((theme: any) => {
       marginTop: 30,
       fontSize: 16,
       color: '#8db4ff',
-      fontFamily: 'Helvetica'
+      fontFamily: 'DM Sans'
     }
   };
 });
