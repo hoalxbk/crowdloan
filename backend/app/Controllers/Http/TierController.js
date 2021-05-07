@@ -9,7 +9,7 @@ const TierService = use('App/Services/TierService')
 const RedisUtils = use('App/Common/RedisUtils');
 
 class TierController {
-  async getTiers({ request, params }) {
+  async getTiers({request, params}) {
     const campaignId = params.campaignId;
     try {
       if (await RedisUtils.checkExistRedisTierList(campaignId)) {
@@ -28,10 +28,10 @@ class TierController {
 
       return HelperUtils.responseSuccess(tiers);
     } catch (e) {
-      console.log(e)
+      console.log(e);
+      return HelperUtils.responseErrorInternal('ERROR: Get tiers fail !');
     }
   }
-
 }
 
 module.exports = TierController;

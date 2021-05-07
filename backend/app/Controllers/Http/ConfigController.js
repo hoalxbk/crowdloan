@@ -8,8 +8,8 @@ class ContractController {
       const countdown = await Congfig.query().where('key', 'countdown').first()
       return HelperUtils.responseSuccess(countdown)
     } catch (e){
-      console.error(e)
-      return HelperUtils.responseErrorInternal(e.message)
+      console.error(e);
+      return HelperUtils.responseErrorInternal('ERROR: Get config fail !');
     }
   }
 

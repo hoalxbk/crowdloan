@@ -38,7 +38,8 @@ import {
   withdrawReducer,
   getUserInfoReducer,
   withdrawFeeReducer,
-  withdrawPercentReducer
+  withdrawPercentReducer,
+  ratesReducer
 } from './sota-tiers'
 import { getAllowanceReducer, approveReducer } from './sota-token';
 
@@ -92,7 +93,8 @@ const rootReducer = combineReducers({
   allowance: getAllowanceReducer,
   approve: approveReducer,
   withdrawFee: withdrawFeeReducer,
-  withdrawPercent: withdrawPercentReducer
+  withdrawPercent: withdrawPercentReducer,
+  rates: ratesReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

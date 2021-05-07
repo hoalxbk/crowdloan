@@ -22,7 +22,12 @@ const useStyles = makeStyles((theme: any) => {
         },
       },
     },
-
+    description: {
+      font: 'normal normal normal 14px/18px Helvetica',
+      color: '#FFF',
+      textAlign: 'center',
+      marginTop: '10px'
+    },
     group: {
       padding: '10px',
       backgroundColor: '#030925',

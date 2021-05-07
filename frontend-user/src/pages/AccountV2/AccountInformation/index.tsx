@@ -24,6 +24,7 @@ const AccountInformation = (props: any) => {
     email,
     setEmail,
     emailVerified,
+    setEmailVeryfied,
     isKYC
   } = props;
 
@@ -92,6 +93,7 @@ const AccountInformation = (props: any) => {
         email={email}
         setEmail={setEmail}
         open={openModalVerifyEmail}
+        setEmailVeryfied={setEmailVeryfied}
       />
     </div>
   );

@@ -27,6 +27,7 @@ const ModalVerifyEmail = (props: any) => {
     setOpenModalVerifyEmail,
     email,
     setEmail,
+    setEmailVeryfied,
     open
   } = props;
   
@@ -54,6 +55,7 @@ const ModalVerifyEmail = (props: any) => {
           setEmail(inputEmail)
           dispatch(alertSuccess(res.data.message));
           setOpenModalVerifyEmail(false);
+          setEmailVeryfied(1)
         } else if(res.data.status == 400) {
           dispatch(alertFailure(res.data.message));
         }

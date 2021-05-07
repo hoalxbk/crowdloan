@@ -1,14 +1,14 @@
-const ErrorFactory = use('App/Common/ErrorFactory');
+'use strict'
+
 const AuthAdminService = use('App/Services/AuthAdminService');
 const AdminService = use('App/Services/AdminService');
 const HelperUtils = use('App/Common/HelperUtils');
 const Const = use('App/Common/Const');
-const Config = use('Config');
 const Web3 = require('web3')
 
 class AuthAdminController {
 
-  async verifyJwtToken({ request, auth }) {
+  async verifyJwtToken({request, auth}) {
     try {
       const isValid = await auth.check();
       const authUser = await auth.jwtPayload.data;
@@ -22,7 +22,7 @@ class AuthAdminController {
       if (dbUser && dbUser.type === Const.USER_TYPE.REGULAR) {
         return HelperUtils.responseSuccess({
           msgCode: 'USER_IS_NOT_IN_WHITELISTED'
-        },'User is not in white list');
+        }, 'User is not in white list');
       }
 
       return HelperUtils.responseSuccess({
@@ -36,7 +36,7 @@ class AuthAdminController {
     }
   }
 
-  async checkWalletAddress({ request, params }) {
+  async checkWalletAddress({request, params}) {
     try {
       const inputs = request.all();
       const walletAddress = HelperUtils.checkSumAddress(inputs.wallet_address || ' ');
@@ -65,7 +65,7 @@ class AuthAdminController {
     }
   }
 
-  async login({ request, auth, params }) {
+  async login({request, auth, params}) {
     const type = params.type;
     if (type !== Const.USER_TYPE_PREFIX.ICO_OWNER && type !== Const.USER_TYPE_PREFIX.PUBLIC_USER) {
       return HelperUtils.responseNotFound('Not valid !');
@@ -84,9 +84,9 @@ class AuthAdminController {
         user,
         token,
       });
-    } catch(e) {
+    } catch (e) {
       console.log('ERROR: ', e);
-      return HelperUtils.responseNotFound(e.message, e.msgCode);
+      return HelperUtils.responseNotFound('ERROR: login fail !');
     }
   }
 

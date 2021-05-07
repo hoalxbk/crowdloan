@@ -1,4 +1,5 @@
-const ErrorFactory = use('App/Common/ErrorFactory');
+'use strict'
+
 const AuthService = use('App/Services/AuthService');
 const UserService = use('App/Services/UserService');
 const HelperUtils = use('App/Common/HelperUtils');
@@ -9,7 +10,7 @@ const UserModel = use('App/Models/User');
 
 class UserAuthController {
 
-  async verifyJwtToken({ request, auth }) {
+  async verifyJwtToken({request, auth}) {
     try {
       const isValid = await auth.check();
       const authUser = await auth.jwtPayload.data;
@@ -23,7 +24,7 @@ class UserAuthController {
       if (dbUser && dbUser.type === Const.USER_TYPE.REGULAR) {
         return HelperUtils.responseSuccess({
           msgCode: 'USER_IS_NOT_IN_WHITELISTED'
-        },'User is not in white list');
+        }, 'User is not in white list');
       }
 
       return HelperUtils.responseSuccess({
@@ -37,7 +38,7 @@ class UserAuthController {
     }
   }
 
-  async checkWalletAddress({ request, params }) {
+  async checkWalletAddress({request, params}) {
     try {
       const inputs = request.all();
       const walletAddress = HelperUtils.checkSumAddress(inputs.wallet_address || ' ');
@@ -66,7 +67,7 @@ class UserAuthController {
     }
   }
 
-  async login({ request, auth, params }) {
+  async login({request, auth, params}) {
     const type = params.type;
     if (type !== Const.USER_TYPE_PREFIX.ICO_OWNER && type !== Const.USER_TYPE_PREFIX.PUBLIC_USER) {
       return HelperUtils.responseNotFound('Not valid !');
@@ -87,13 +88,13 @@ class UserAuthController {
         user,
         token,
       });
-    } catch(e) {
+    } catch (e) {
       console.log('ERROR: ', e);
-      return HelperUtils.responseNotFound(e.message, e.msgCode);
+      return HelperUtils.responseNotFound('ERROR: User login fail !');
     }
   }
 
-  async register({ request, auth, params }) {
+  async register({request, auth, params}) {
     try {
       const param = request.only(['email', 'username', 'signature', 'password', 'wallet_address'])
       const wallet_address = Web3.utils.toChecksumAddress(request.input('wallet_address'));
@@ -102,11 +103,11 @@ class UserAuthController {
       const role = type === Const.USER_TYPE_PREFIX.ICO_OWNER ? Const.USER_ROLE.ICO_OWNER : Const.USER_ROLE.PUBLIC_USER;
 
       const authService = new AuthService();
-      let user = await authService.checkIssetUser({ email: param.email, role });
+      let user = await authService.checkIssetUser({email: param.email, role});
       console.log(user)
-      if(!user) {
+      if (!user) {
         user = await authService.checkWalletUser({wallet_address, role});
-        if(user){
+        if (user) {
           return HelperUtils.responseNotFound('The current ethereum address has been used.');
         }
         user = await authService.createUser({
@@ -114,20 +115,20 @@ class UserAuthController {
           role,
         });
       } else {
-        return HelperUtils.responseNotFound(' Email address has been used.');
+        return HelperUtils.responseNotFound('Email address has been used.');
       }
       user.confirmation_token = await HelperUtils.randomString(50);
       user.save();
-      await authService.sendConfirmEmail({ role, type, user });
+      await authService.sendConfirmEmail({role, type, user});
 
       return HelperUtils.responseSuccess(null, 'Success! Please confirm email to complete.');
-    } catch(e) {
+    } catch (e) {
       console.log('ERROR: ', e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal('ERROR: User register fail !');
     }
   }
 
-  async registerVerifyEmail({ request, params }) {
+  async registerVerifyEmail({request, params}) {
     try {
       const param = request.only(['email', 'signature', 'wallet_address']);
       const email = param.email;
@@ -180,10 +181,9 @@ class UserAuthController {
       return HelperUtils.responseSuccess(null, 'You can start staking now. Please use this same email when doing KYC.');
     } catch(e) {
       console.log('ERROR: ', e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal('ERROR: User verify email fail !');
     }
   }
-
 }
 
 module.exports = UserAuthController;

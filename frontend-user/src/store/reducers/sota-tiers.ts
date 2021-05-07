@@ -245,5 +245,36 @@ export const withdrawPercentReducer = (state: StateType = initialState, action: 
     }
   }
 };
+export const ratesReducer = (state: StateType = initialState, action: AnyAction) => {
+  switch (action.type) {
+
+    case sotaTiersActions.RATES_LOADING: {
+      return {
+        ...state,
+        loading: true
+      }
+    } 
+
+    case sotaTiersActions.RATES_SUCCESS: {
+      return {
+        ...state,
+        data: action.payload,
+        loading: false
+      }
+    }
+
+    case sotaTiersActions.RATES_FAILURE: {
+      return {
+        ...state,
+        error: action.payload,
+        loading: false
+      }
+    }
+
+    default: {
+      return state;
+    }
+  }
+};
 
 
