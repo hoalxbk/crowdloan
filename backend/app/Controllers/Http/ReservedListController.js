@@ -144,7 +144,7 @@ class ReservedListController {
 
       return HelperUtils.responseSuccess(existRecord, 'User exist in Reserve User List');
     } catch (e) {
-      return HelperUtils.responseErrorInternal();
+      return HelperUtils.responseErrorInternal('Check Exist Reserve Error !');
     }
   }
 
