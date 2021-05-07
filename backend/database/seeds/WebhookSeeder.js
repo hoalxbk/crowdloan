@@ -84,6 +84,16 @@ class WebhookSeeder {
         type: 'NewCampaign',
         url: 'webhook/affiliate-campaign',
       },
+      {
+        contract_name: Const.CONTRACTS.MANTRA_STAKE,
+        type: 'Staked',
+        url: 'webhook/mantra-stake/staked',
+      },
+      {
+        contract_name: Const.CONTRACTS.MANTRA_STAKE,
+        type: 'Unstaked',
+        url: 'webhook/mantra-stake/unstaked',
+      },
     ];
 
     for (let i = 0; i < webhooks.length; i++) {

@@ -37,5 +37,13 @@ module.exports = {
       BREAK_TIME_AFTER_ONE_GO: 1000,
       NEED_NOTIFY_BY_WEBHOOK: true
     },
+    MantraStake: {
+      CONTRACT_DATA: require('./contracts/MantraStake.json'), // MantraStake
+      CONTRACT_ADDRESS: '0x0e8D8291E35B890d4887f4eaa6d9F91275e05E6D',
+      FIRST_CRAWL_BLOCK: 4680953,
+      BLOCK_NUM_IN_ONE_GO: 4000,
+      BREAK_TIME_AFTER_ONE_GO: 30000,
+      NEED_NOTIFY_BY_WEBHOOK: true
+    },
   },
 };
