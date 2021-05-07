@@ -375,6 +375,7 @@ class CampaignController {
       const current = Math.floor(Date.now() / 1000);
       // check if current time is free to buy or not
       const isFreeBuyTime = (current >= (Number(camp.start_time) + Number(OFFER_FREE_TIME)));
+      console.log(`isFreeBuyTime ${isFreeBuyTime}`);
       if (isFreeBuyTime) {
         maxBuy = Number(OFFER_FREE_BUY);
       }
