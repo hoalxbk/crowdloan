@@ -397,7 +397,7 @@ class PoolController {
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e)
-      return HelperUtils.responseErrorInternal('Get Pool Fail !!!');
+      return HelperUtils.responseErrorInternal('Get Pools Fail !!!');
     }
   }
 
@@ -440,7 +440,7 @@ class PoolController {
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal('Joined Pool Fail !!!');
+      return HelperUtils.responseErrorInternal('Get Joined Pool Fail !!!');
     }
   }
 
