@@ -41,7 +41,9 @@ const ManageTier = (props: any) => {
   const { 
     classNamePrefix = '',
     emailVerified,
-    listTokenDetails
+    listTokenDetails,
+    totalUnstaked,
+    total
   } = props;
 
   useEffect(() => {
@@ -112,9 +114,14 @@ const ManageTier = (props: any) => {
             {renderToken('PKF', balance?.pkf, userInfo?.pkfStaked)}
             {renderToken(CONVERSION_RATE[0]?.symbol, balance?.uni, userInfo?.uniStaked)}
             {renderToken(CONVERSION_RATE[1]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
+            <div className="group">
+              <span>{CONVERSION_RATE[1]?.symbol} (Cooldown)</span>
+              <span>-</span>
+              {<span>{numberWithCommas(totalUnstaked || 0)}</span>}
+            </div>
           </div>
         </div>
-        <p className={styles.noteStake}>PKF under unstaking on MANTRA DAO will be counted later.</p>
+        <p className={styles.noteStake}>sPKF (Cooldown) is the number of PFK under MANTRA DAO cooldown period after the unstaking request. This amount will be counted to your tier automatically without the need to Stake.</p>
         <div className="button-area">
           <button
             className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
@@ -148,12 +155,14 @@ const ManageTier = (props: any) => {
         setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
         listTokenDetails={listTokenDetails}
         open={openModalDeposit}
+        totalStaked={total}
       />
       <ModalWithdraw
         setOpenModalWithdraw={setOpenModalWithdraw}
         setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
         listTokenDetails={listTokenDetails}
         open={openModalWithdraw}
+        totalStaked={total}
       />
 
       <Dialog

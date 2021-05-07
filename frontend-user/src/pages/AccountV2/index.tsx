@@ -18,6 +18,7 @@ import { CONVERSION_RATE, USER_STATUS } from '../../constants';
 import RedKite from '../../abi/RedKiteTiers.json';
 import { getContractInstance, SmartContractMethod } from '../../services/web3';
 import BigNumber from 'bignumber.js'
+import useUserTier from '../../hooks/useUserTier';
 
 const TOKEN_ADDRESS = process.env.REACT_APP_PKF || '';
 const TOKEN_UNI_ADDRESS = process.env.REACT_APP_UNI_LP || '';
@@ -45,6 +46,7 @@ const AccountV2 = (props: any) => {
   const [listTokenDetails, setListTokenDetails] = useState([]) as any;
   const { data: appChainID } = useSelector((state: any) => state.appNetwork)
   const [rates, setRates] = useState([]) as any;
+  const { currentTier, totalStaked, totalUnstaked, total } = useUserTier(connectedAccount || '', 'eth')
 
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
@@ -106,11 +108,18 @@ const AccountV2 = (props: any) => {
             <Tiers
               showMoreInfomation={false}
               tokenSymbol={tokenPKFDetails?.symbol}
+              userTier={currentTier}
+              total={total}
             />
             <TierInfomation/>
           </div>
           <div className={classes.rightPanel}>
-            <ManageTier listTokenDetails={listTokenDetails} emailVerified={emailVerified}/>
+            <ManageTier
+              listTokenDetails={listTokenDetails}
+              emailVerified={emailVerified}
+              totalUnstaked={totalUnstaked}
+              total={total}
+            />
           </div>
         </div>
       </div>

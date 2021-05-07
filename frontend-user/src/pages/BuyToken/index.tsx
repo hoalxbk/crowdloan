@@ -35,6 +35,7 @@ import { getPoolStatus } from '../../utils/getPoolStatus';
 import { numberWithCommas } from '../../utils/formatNumber';
 
 import { sotaTiersActions } from '../../store/constants/sota-tiers';
+import useUserTier from '../../hooks/useUserTier';
 
 import useStyles from './style';
 
@@ -67,6 +68,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
+  const { currentTier, totalStaked, totalUnstaked, total } = useUserTier(connectedAccount || '', 'eth')
+
   // Fetch token sold, total tokens sold
   const { tokenSold, soldProgress } = useTokenSoldProgress(
       poolDetails?.poolAddress,
@@ -384,6 +387,8 @@ const BuyToken: React.FC<any> = (props: any) => {
                   tiersBuyLimit={poolDetails?.buyLimit || [] }
                   tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
                   verifiedEmail={verifiedEmail}
+                  userTier={currentTier}
+                  total={total}
                 />
                 <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
                 <div className={styles.poolDetailProgress}>

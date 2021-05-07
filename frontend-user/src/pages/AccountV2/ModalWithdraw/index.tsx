@@ -32,7 +32,8 @@ const ModalWithdraw = (props: any) => {
     setOpenModalWithdraw,
     setOpenModalTransactionSubmitting,
     listTokenDetails,
-    open
+    open,
+    totalStaked
   } = props;
   const [currentToken, setCurrentToken] = useState(undefined) as any;
   const [currentStaked, setCurrentStaked] = useState('0');
@@ -132,7 +133,7 @@ const ModalWithdraw = (props: any) => {
       <div className="modal-content">
         <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
           <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
+          <h2 className="title">You have {numberWithCommas(totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">
           {open && <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>

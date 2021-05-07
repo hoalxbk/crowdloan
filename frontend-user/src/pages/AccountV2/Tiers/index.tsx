@@ -19,7 +19,6 @@ const Tiers = (props: any) => {
   const commonStyle = useCommonStyle();
   const dispatch = useDispatch();
 
-  const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
   const { data: tiers = {} } = useSelector((state: any) => state.tiers);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const [loading, setLoading] = useState(true);
@@ -31,6 +30,8 @@ const Tiers = (props: any) => {
     tiersBuyLimit,
     tokenSymbol,
     verifiedEmail,
+    userTier,
+    total
   } = props;
 
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
@@ -67,13 +68,13 @@ const Tiers = (props: any) => {
       setCurrentProcess(0)
       return
     }
-    if(showMoreInfomation && !_.isEmpty(userTier)) {
+    if(showMoreInfomation && userTier) {
       // let process = userTier*100/(tiersBuyLimit.length - 1)
       setCurrentProcess(0);
       return;
     }
-    if(!showMoreInfomation && !_.isEmpty(userInfo) && !_.isEmpty(userTier)) {
-      let process = calculateProcess(tiers, userInfo.totalStaked);
+    if(!showMoreInfomation && total && userTier) {
+      let process = calculateProcess(tiers, total);
       setCurrentProcess(process);
     }
   }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain])
@@ -86,7 +87,8 @@ const Tiers = (props: any) => {
 
   useEffect(() => {
     if(currentProcess != undefined) setLoading(false)
-  }, [currentProcess])
+    console.log('userTier', userTier)
+  }, [currentProcess,userTier])
 
   return (
     <div
@@ -178,16 +180,17 @@ const Tiers = (props: any) => {
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
           <Tooltip placement="top-start" classes={{ tooltip: commonStyle.tooltip }} enterDelay={500} leaveDelay={200} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
-            Equivalent PKF = PKF 
+            Equivalent PKF = PKF
             {rates.data && rates.data.map((rate: any) => {
               return ` + ${rate.symbol}*${rate.rate}`
             })}
+            + sPKF (Cooldown)
           </p>}>
             <img src={noticeIcon}/>
           </Tooltip>
         </h3>
-        <span className="subtitle">{(connectedAccount && isAuth && !wrongChain) ? numberWithCommas(userInfo.totalStaked || 0) : 0} PKF</span>
-        {!_.isEmpty(userTier) && <div className="notice">
+        <span className="subtitle">{(connectedAccount && isAuth && !wrongChain) ? numberWithCommas(total || 0) : 0} PKF</span>
+        {userTier && <div className="notice">
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">
             {(userTier > 0 && connectedAccount) ? <span>You are in Tier {TIERS[userTier].name}</span> : <span>You are not in any tier yet.</span>}

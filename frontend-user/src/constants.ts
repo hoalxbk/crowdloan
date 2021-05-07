@@ -54,7 +54,7 @@ export const CONVERSION_RATE = [
     rate: 1,
     symbol: 'sPKF',
     address: process.env.REACT_APP_MANTRA_LP,
-    key: 'MPKF',
+    key: 'sPKF',
     keyMainnet: 'sPKF'
   },
   // {

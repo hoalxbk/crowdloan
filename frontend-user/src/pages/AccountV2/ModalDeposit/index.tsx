@@ -35,7 +35,8 @@ const ModalDeposit = (props: any) => {
     setOpenModalDeposit,
     setOpenModalTransactionSubmitting,
     listTokenDetails,
-    open
+    open,
+    totalStaked
   } = props;
   const [currentToken, setCurrentToken] = useState(undefined) as any;
   const [currentBalance, setCurrentBalance] = useState('0');
@@ -149,7 +150,7 @@ const ModalDeposit = (props: any) => {
       <div className="modal-content">
         <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
           <img src={closeIcon} className="btn-close" onClick={handleClose}/>
-          <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
+          <h2 className="title">You have {numberWithCommas(totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
           <p className={styles.description}>{currentAllowance == '0' ? 'You need to Approve once (and only once) before you can start staking.'
             : 'You have approved. Click Stake to stake.'}
           </p>
