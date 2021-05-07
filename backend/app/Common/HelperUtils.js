@@ -110,20 +110,29 @@ const getUserTierSmart = async (wallet_address) => {
   const tierSc = getTierSmartContractInstance();
   const mantraSc = getMantraStakeSmartContractInstance();
   const receivedData = await Promise.all([
-    tierSc.methods.getTiers(wallet_address).call(),
+    tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
-    mantraSc.methods.getUnstake(wallet_address)
+    mantraSc.methods.getUnstake(wallet_address).call(),
+    tierSc.methods.externalToken(process.env.MATRA_DAO_SPKF_TOKEN_SMART_CONTRACT).call(),
   ]);
+
+  console.log('receivedData: ', receivedData)
+
+  const sPkfRate = new BigNumber(receivedData[3].rate).dividedBy(Math.pow(10, receivedData[3].decimals));
   // get 4 tiers
   const tiers = receivedData[0].slice(0, 4);
   // calc pfk equal
-  const pkfEq = new BigNumber(receivedData[1]).dividedBy(Math.pow(10, 18)) + new BigNumber(receivedData[2]).dividedBy(Math.pow(10, 18)).multipliedBy(Number(SPKF_RATE));
+  const pkfEq = new BigNumber(receivedData[1]).plus(new BigNumber(receivedData[2].amount).multipliedBy(sPkfRate));
   let userTier = 0;
   tiers.map((pkfRequire, index) => {
-    if (pkfEq >= pkfRequire) {
+    if (pkfEq.gte(pkfRequire)) {
       userTier = index + 1;
     }
   });
+
+  console.log('wallet_address - userTier: ', wallet_address, userTier);
+  console.log('pkfEq', pkfEq.toFixed());
+
   return userTier;
 };
 
