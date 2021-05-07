@@ -504,12 +504,12 @@ class CampaignController {
     const campaignId = request.params.campaignId;
     try {
       // get from redis cached
-      let redisKey = 'counting_' + campaignId;
-      if (await Redis.exists(redisKey)) {
-        console.log(`existed key ${redisKey} on redis`);
-        const cachedWL = await Redis.get(redisKey);
-        return HelperUtils.responseSuccess(JSON.parse(cachedWL));
-      }
+      // let redisKey = 'counting_' + campaignId;
+      // if (await Redis.exists(redisKey)) {
+      //   console.log(`existed key ${redisKey} on redis`);
+      //   const cachedWL = await Redis.get(redisKey);
+      //   return HelperUtils.responseSuccess(JSON.parse(cachedWL));
+      // }
       // if not existed on redis then get from db
       const wlService = new WhitelistService();
       let noOfParticipants = await wlService.countByCampaignId(campaignId);
@@ -517,7 +517,7 @@ class CampaignController {
         noOfParticipants = 0;
       }
       // save to redis
-      await Redis.set(redisKey, JSON.stringify(noOfParticipants));
+      // await Redis.set(redisKey, JSON.stringify(noOfParticipants));
       return HelperUtils.responseSuccess(noOfParticipants);
     } catch (e) {
       console.log(e);

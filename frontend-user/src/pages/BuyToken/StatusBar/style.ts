@@ -7,7 +7,7 @@ const useStyles = makeStyles((theme: any) => {
     },
     statusBarStatus: {
       position: 'relative',
-      width: 80,
+      width: 90,
       display: 'inline-block',
       textAlign: 'center',
       '&:not(:last-child)': {

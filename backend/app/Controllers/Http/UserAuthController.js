@@ -166,10 +166,9 @@ class UserAuthController {
       }
 
       user.email = param.email;
-      user.confirmation_token = await HelperUtils.randomString(50);
-
       // TODO: Remove after
-      user.status = Const.USER_STATUS.ACTIVE; // Not verify email
+      user.status = Const.USER_STATUS.ACTIVE; // Auto active email
+      // user.confirmation_token = await HelperUtils.randomString(50);
 
       await user.save();
 

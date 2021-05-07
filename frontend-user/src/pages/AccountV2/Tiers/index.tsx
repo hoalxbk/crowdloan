@@ -24,12 +24,13 @@ const Tiers = (props: any) => {
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const [loading, setLoading] = useState(true);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
+  const {data: rates} = useSelector((state: any) => state.rates);
 
   const {
     showMoreInfomation = false,
     tiersBuyLimit,
     tokenSymbol,
-    verifiedEmail
+    verifiedEmail,
   } = props;
 
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
@@ -177,7 +178,10 @@ const Tiers = (props: any) => {
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
           <Tooltip placement="top-start" classes={{ tooltip: commonStyle.tooltip }} enterDelay={500} leaveDelay={200} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
-            Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}
+            Equivalent PKF = PKF 
+            {rates.data && rates.data.map((rate: any) => {
+              return ` + ${rate.symbol}*${rate.rate}`
+            })}
           </p>}>
             <img src={noticeIcon}/>
           </Tooltip>

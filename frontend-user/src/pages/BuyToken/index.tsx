@@ -358,7 +358,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                     <div className={styles.btnGroup}>
                       {
                         <Button
-                          text={'Join Pool'}
+                          text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Join Pool': 'Joined'}
                           backgroundColor={'#D01F36'}
                           disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess}
                           loading={poolJoinLoading}
@@ -371,7 +371,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         onClick={() => {
                           poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
                         }}
-                        disabled={true}
+                        disabled={!poolDetails?.poolAddress}
                       />
                     </div>
                   </>
