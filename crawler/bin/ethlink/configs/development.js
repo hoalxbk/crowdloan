@@ -10,7 +10,8 @@ module.exports = {
   contracts: {
     CampaignFactory: {
       CONTRACT_DATA: require('./contracts/CampaignFactory.json'), // CampaignFactory
-      CONTRACT_ADDRESS: '0x578b8067C088cdfE26762193Dc2b7a96a8403923',
+      // CONTRACT_ADDRESS: '0x578b8067C088cdfE26762193Dc2b7a96a8403923',
+      CONTRACT_ADDRESS: '0xAadC3018cE3182254D3AB20e74ec0190ee91a899',
       FIRST_CRAWL_BLOCK: 4550016, // Start Block: 4555016
       BLOCK_NUM_IN_ONE_GO: 40000,
       BREAK_TIME_AFTER_ONE_GO: 1000,
@@ -38,6 +39,14 @@ module.exports = {
       FIRST_CRAWL_BLOCK: 4680953,
       BLOCK_NUM_IN_ONE_GO: 10000,
       BREAK_TIME_AFTER_ONE_GO: 30000,
+      NEED_NOTIFY_BY_WEBHOOK: true
+    },
+    MantraStake: {
+      CONTRACT_DATA: require('./contracts/MantraStake.json'), // MantraStake
+      CONTRACT_ADDRESS: '0x0e8D8291E35B890d4887f4eaa6d9F91275e05E6D',
+      FIRST_CRAWL_BLOCK: 4680953,
+      BLOCK_NUM_IN_ONE_GO: 40000,
+      BREAK_TIME_AFTER_ONE_GO: 1000,
       NEED_NOTIFY_BY_WEBHOOK: true
     },
   },

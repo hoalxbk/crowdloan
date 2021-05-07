@@ -115,7 +115,7 @@ const getUserTierSmart = async (wallet_address) => {
     tierSc.methods.externalToken(process.env.MATRA_DAO_STAKE_SMART_CONTRACT).call(),
   ]);
 
-  console.log('receivedData: ', receivedData)
+  console.log('receivedData: ', receivedData);
 
   const sPkfRate = new BigNumber(receivedData[3].rate).dividedBy(Math.pow(10, receivedData[3].decimals));
   // get 4 tiers
