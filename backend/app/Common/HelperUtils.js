@@ -14,7 +14,6 @@ const { abi: CONTRACT_TIER_ABI } = require('../../blockchain_configs/contracts/N
 const tierSmartContract = process.env.TIER_SMART_CONTRACT;
 const { abi: CONTRACT_STAKE_ABI } = require('../../blockchain_configs/contracts/Normal/MantraStake.json');
 const mantraSmartContract = process.env.MATRA_DAO_STAKE_SMART_CONTRACT;
-const SPKF_RATE = process.env.SPKF_RATE
 /**
  * Generate "random" alpha-numeric string.
  *
@@ -113,7 +112,7 @@ const getUserTierSmart = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
-    tierSc.methods.externalToken(process.env.MATRA_DAO_SPKF_TOKEN_SMART_CONTRACT).call(),
+    tierSc.methods.externalToken(process.env.MATRA_DAO_STAKE_SMART_CONTRACT).call(),
   ]);
 
   console.log('receivedData: ', receivedData)
