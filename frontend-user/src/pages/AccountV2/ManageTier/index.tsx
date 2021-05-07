@@ -50,7 +50,7 @@ const ManageTier = (props: any) => {
 
   useEffect(() => {
     if(depositTransaction?.hash) {
-      setTransactionHashes([...transactionHashes, depositTransaction.hash]);
+      setTransactionHashes([...transactionHashes, {tnx: depositTransaction.hash, isApprove: false}]);
       setOpenModalTransactionSubmitting(false);
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,
@@ -62,7 +62,7 @@ const ManageTier = (props: any) => {
 
   useEffect(() => {
     if(approveTransaction?.hash) {
-      setTransactionHashes([...transactionHashes, approveTransaction.hash]);
+      setTransactionHashes([...transactionHashes, {tnx: approveTransaction.hash, isApprove: true}]);
       setOpenModalTransactionSubmitting(false);
       dispatch({
         type: sotaTokenActions.APPROVE_SUCCESS,
@@ -74,7 +74,7 @@ const ManageTier = (props: any) => {
 
   useEffect(() => {
     if(withdrawTransaction?.hash) {
-      setTransactionHashes([...transactionHashes, withdrawTransaction.hash]);
+      setTransactionHashes([...transactionHashes, {tnx: withdrawTransaction.hash, isApprove: false}]);
       setOpenModalTransactionSubmitting(false);
       dispatch({
         type: sotaTiersActions.WITHDRAW_SUCCESS,
@@ -171,11 +171,11 @@ const ManageTier = (props: any) => {
         </DialogContent>
       </Dialog>
 
-      <ModalTransaction
+      {transactionHashes.length > 0 && <ModalTransaction
         transactionHashes={transactionHashes}
         setTransactionHashes={setTransactionHashes}
         open={transactionHashes.length > 0}
-      />
+      />}
     </div>
   );
 };

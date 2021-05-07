@@ -43,18 +43,19 @@ const ModalTransaction = (props: any) => {
           <div className="input-group">
             <input
               type="text"
-              value={transactionHashes[0]}
+              value={transactionHashes[0].tnx}
               disabled
             />
           </div>
         </DialogContent>
         <DialogActions className="modal-content__foot">
           <a
-            href={`https://etherscan.io/tx/${transactionHashes[0]}`}
+            href={`https://etherscan.io/tx/${transactionHashes[0].tnx}`}
             target="_blank"
             className={commonStyles.nnb1418d}
           >View on Etherscan</a>
         </DialogActions>
+        {transactionHashes[0].isApprove && <p className={styles.notice}>Please be patient and no need to approve again, you can check the transaction status on Etherscan.</p>}
       </div>
     </Dialog>
   );

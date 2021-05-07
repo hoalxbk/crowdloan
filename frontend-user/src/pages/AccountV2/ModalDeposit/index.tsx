@@ -26,7 +26,9 @@ const ModalDeposit = (props: any) => {
   const { data: allowance = 0 } = useSelector((state: any) => state.allowance);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = {} } = useSelector((state: any) => state.balance);
+  const { loading } = useSelector((state: any) => state.approve)
   const { account: connectedAccount, library } = useWeb3React();
+  const { data: appChainID } = useSelector((state: any) => state.appNetwork)
 
   const {
     setOpenModalDeposit,
@@ -37,7 +39,7 @@ const ModalDeposit = (props: any) => {
   const [currentToken, setCurrentToken] = useState(undefined) as any;
   const [currentBalance, setCurrentBalance] = useState('0');
   const [currentStaked, setCurrentStaked] = useState('0');
-  const [currentAllowance, setCurrentAllowance] = useState(0);
+  const [currentAllowance, setCurrentAllowance] = useState('0');
   const [currentRate, setCurrentRate] = useState(0);
 
   const setDefaultToken = () => {
@@ -101,12 +103,16 @@ const ModalDeposit = (props: any) => {
       setCurrentStaked(userInfo.pkfStaked)
       setCurrentAllowance(allowance.pkf)
       setCurrentRate(1)
-    } else if(e.target.value == 'UNI-V2') {
+    } else if(e.target.value == CONVERSION_RATE[0].key && appChainID.appChainID == '5'
+      || e.target.value == CONVERSION_RATE[0].keyMainnet && appChainID.appChainID == '1') 
+    {
       setCurrentBalance(balance.uni)
       setCurrentStaked(userInfo.uniStaked)
       setCurrentAllowance(allowance.uni)
       setCurrentRate(CONVERSION_RATE[0].rate)
-    } else if(e.target.value == 'sPKF') {
+    } else if(e.target.value == CONVERSION_RATE[1].key && appChainID.appChainID == '5'
+      || e.target.value == CONVERSION_RATE[1].keyMainnet && appChainID.appChainID == '1')
+    {
       setCurrentBalance(balance.mantra)
       setCurrentStaked(userInfo.mantraStaked)
       setCurrentAllowance(allowance.mantra)
@@ -133,6 +139,9 @@ const ModalDeposit = (props: any) => {
         <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
           <img src={closeIcon} className="btn-close" onClick={handleClose}/>
           <h2 className="title">You have {numberWithCommas(userInfo.totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
+          <p className={styles.description}>{currentAllowance == '0' ? 'You need to Approve once (and only once) before you can start staking.'
+            : 'You have approved. Click Stake to stake.'}
+          </p>
         </DialogTitle>
         <DialogContent className="modal-content__body">
           {open && <select name="select_token" id="select-token" onChange={(e) => handleSelectToken(e)}>
@@ -149,7 +158,8 @@ const ModalDeposit = (props: any) => {
                 <span>Your wallet balance</span>
                 <span>{ !currentBalance ? 0 : numberWithCommas(currentBalance) } {
                   currentToken?.symbol == 'PKF' ? 'PKF'
-                  : currentToken?.symbol == 'UNI-V2' ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
+                  : (appChainID.appChainID == '5' && currentToken?.symbol == CONVERSION_RATE[0].key ||
+                    appChainID.appChainID == '1' && currentToken?.symbol == CONVERSION_RATE[0].keyMainnet) ? CONVERSION_RATE[0]?.symbol : CONVERSION_RATE[1]?.symbol
                 }</span>
               </div>
             </div>
@@ -180,9 +190,10 @@ const ModalDeposit = (props: any) => {
           </div>
         </DialogContent>
         <DialogActions className="modal-content__foot">
-          {currentAllowance <= 0 ? <button
-            className={"btn-approve"}
+          {currentAllowance=='0' ? <button
+            className={"btn-approve" + (loading ? 'disabled' : '')}
             onClick={onApprove}
+            disabled={loading}
           >Approve</button> : <button
             className={"btn-staking " + (disableDeposit ? 'disabled' : '')}
             onClick={onDeposit}

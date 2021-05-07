@@ -32,7 +32,12 @@ const useStyles = makeStyles((theme: any) => {
         height: '42px',
         width: '100%',
         color: '#FFFFFF'
-      }
+      },
+    },
+    notice: {
+      font: 'normal normal bold 14px/18px DM Sans',
+      color: '#FFF',
+      marginTop: '30px'
     },
     [theme.breakpoints.down('xs')]: {
       modalTransaction: {
