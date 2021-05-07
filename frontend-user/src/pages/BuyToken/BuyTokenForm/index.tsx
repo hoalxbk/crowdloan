@@ -153,6 +153,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       console.log(err.message);
     }
   }
+  
+  // Check if user already buy at least minimum tokens at the first time
   const connectedAccountFirstBuy = 
     connectedAccount 
     ? ( 
@@ -161,15 +163,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     : false;
 
   const availableMaximumBuy = useMemo(() => {
+    // Transform Maximum Buy in USDT tokens to ICO tokens by rate
     const maxBuy = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
 
-    /* if (availableTokensToCurrency.lt(maxBuy)) { */
-    /*   return availableTokensToCurrency.multipliedBy(new BigNumber(1).div(rate)).toFixed(); */
-    /* } */
-    
-    /* if (availableTokensToCurrency.gt(maxBuy)) { */
-    /* } */
-
+    // Check if max buy greater than total ICO coins sold
     if (maxBuy.gt(new BigNumber(tokenBalance))) {
       return new BigNumber(tokenBalance).toFixed();
     }
@@ -228,6 +225,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   let enableApprove = false;
 
+  // Actually I don't know why i'm doing it right here :)))
   if (tokenAllowance != null || tokenAllowance != undefined) {
     if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
     && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH) 
@@ -240,6 +238,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   // Check whether current user's tier is valid or not
   const validTier = new BigNumber(userTier).gte(minTier);
 
+  // Check multiple conditions for purchasing time
   const purchasable = 
      availablePurchase 
      && estimateTokens > 0 
