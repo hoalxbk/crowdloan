@@ -28,7 +28,8 @@ const ModalDeposit = (props: any) => {
   const { data: balance = {} } = useSelector((state: any) => state.balance);
   const { loading } = useSelector((state: any) => state.approve)
   const { account: connectedAccount, library } = useWeb3React();
-  const { data: appChainID } = useSelector((state: any) => state.appNetwork)
+  const { data: appChainID } = useSelector((state: any) => state.appNetwork);
+  const { data: rates } = useSelector((state: any) => state.rates);
 
   const {
     setOpenModalDeposit,
@@ -70,6 +71,19 @@ const ModalDeposit = (props: any) => {
     }
   }, [connectedAccount, balance, depositAmount, currentToken]);
 
+  useEffect(() => {
+    if(listTokenDetails.length == 0 || rates.length == 0 || !currentToken) return
+    if(currentToken?.symbol == listTokenDetails[0]?.symbol) {
+      setCurrentRate(1)
+    } else if(currentToken?.symbol == listTokenDetails[1]?.symbol) 
+    {
+      setCurrentRate(parseFloat(rates?.data[0]?.rate))
+    } else if(currentToken?.symbol == listTokenDetails[2]?.symbol)
+    {
+      setCurrentRate(parseFloat(rates?.data[1]?.rate))
+    }
+  }, [rates, currentToken, listTokenDetails])
+
   const onDeposit = () => {
     if(disableDeposit) return
     dispatch(deposit(connectedAccount, depositAmount, library, currentToken.address));
@@ -102,21 +116,18 @@ const ModalDeposit = (props: any) => {
       setCurrentBalance(balance.pkf)
       setCurrentStaked(userInfo.pkfStaked)
       setCurrentAllowance(allowance.pkf)
-      setCurrentRate(1)
     } else if(e.target.value == CONVERSION_RATE[0].key && appChainID.appChainID == '5'
       || e.target.value == CONVERSION_RATE[0].keyMainnet && appChainID.appChainID == '1') 
     {
       setCurrentBalance(balance.uni)
       setCurrentStaked(userInfo.uniStaked)
       setCurrentAllowance(allowance.uni)
-      setCurrentRate(CONVERSION_RATE[0].rate)
     } else if(e.target.value == CONVERSION_RATE[1].key && appChainID.appChainID == '5'
       || e.target.value == CONVERSION_RATE[1].keyMainnet && appChainID.appChainID == '1')
     {
       setCurrentBalance(balance.mantra)
       setCurrentStaked(userInfo.mantraStaked)
       setCurrentAllowance(allowance.mantra)
-      setCurrentRate(CONVERSION_RATE[1].rate)
     }
   }
   const handleChange = (e: any) => {

@@ -25,7 +25,8 @@ const ModalWithdraw = (props: any) => {
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: withdrawFee = {} } = useSelector((state: any) => state.withdrawFee);
   const { account: connectedAccount, library } = useWeb3React();
-  const { data: appChainID } = useSelector((state: any) => state.appNetwork)
+  const { data: appChainID } = useSelector((state: any) => state.appNetwork);
+  const { data: rates } = useSelector((state: any) => state.rates);
 
   const {
     setOpenModalWithdraw,
@@ -82,6 +83,19 @@ const ModalWithdraw = (props: any) => {
     dispatch(getWithdrawFee(connectedAccount, withdrawAmount === '' ? '0' : withdrawAmount))
   }, [withdrawAmount])
 
+  useEffect(() => {
+    if(listTokenDetails.length == 0 || rates.length == 0 || !currentToken) return
+    if(currentToken?.symbol == listTokenDetails[0]?.symbol) {
+      setCurrentRate(1)
+    } else if(currentToken?.symbol == listTokenDetails[1]?.symbol) 
+    {
+      setCurrentRate(parseFloat(rates?.data[0]?.rate))
+    } else if(currentToken?.symbol == listTokenDetails[2]?.symbol)
+    {
+      setCurrentRate(parseFloat(rates?.data[1]?.rate))
+    }
+  }, [rates, currentToken, listTokenDetails])
+
   const handleSelectToken = (e: any) => {
     const tokens = listTokenDetails.filter((tokenDetails: any) => {
       return tokenDetails.symbol == e.target.value
@@ -89,17 +103,14 @@ const ModalWithdraw = (props: any) => {
     setCurrentToken(tokens[0])
     if(e.target.value == 'PKF') {
       setCurrentStaked(userInfo.pkfStaked)
-      setCurrentRate(1)
     } else if(e.target.value == CONVERSION_RATE[0].key && appChainID.appChainID == '5'
       || e.target.value == CONVERSION_RATE[0].keyMainnet && appChainID.appChainID == '1')
     {
       setCurrentStaked(userInfo.uniStaked)
-      setCurrentRate(CONVERSION_RATE[0].rate)
     } else if(e.target.value == CONVERSION_RATE[1].key && appChainID.appChainID == '5'
       || e.target.value == CONVERSION_RATE[1].keyMainnet && appChainID.appChainID == '1')
     {
       setCurrentStaked(userInfo.mantraStaked)
-      setCurrentRate(CONVERSION_RATE[1].rate)
     }
   }
   const handleChange = (e: any) => {
