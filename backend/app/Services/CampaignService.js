@@ -69,7 +69,6 @@ class CampaignService {
             is_deploy: true,
         });
         return campaign;
-
     }
 
     async editCampaign(receipt, campaign){

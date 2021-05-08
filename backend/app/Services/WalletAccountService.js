@@ -31,14 +31,11 @@ class WalletAccountService {
   async createWalletAddress(campaignId) {
     // Create Web3 Account
     const account = await this.createWalletByWeb3();
-
     const wallet = new WalletAccountModel();
     wallet.wallet_address = account.address;
     wallet.private_key = account.privateKey;
     wallet.campaign_id = campaignId;
-
     await wallet.save();
-    console.log('Created wallet: ', wallet);
 
     return wallet;
   }
