@@ -16,6 +16,7 @@ import usePoolDetails from '../../hooks/usePoolDetails';
 import useTokenSoldProgress from './hooks/useTokenSoldProgress';
 import usePoolJoinAction from './hooks/usePoolJoinAction';
 import useFetch from '../../hooks/useFetch';
+import useUserTier from '../../hooks/useUserTier';
 
 import Tiers from '../AccountV2/Tiers';
 import LotteryWinners from './LotteryWinners';
@@ -67,6 +68,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
+  const { currentTier: accountTier, totalStaked, totalUnstaked, total } = useUserTier(connectedAccount || '', 'eth')
   // Fetch token sold, total tokens sold
   const { tokenSold, soldProgress } = useTokenSoldProgress(
       poolDetails?.poolAddress,
@@ -386,7 +388,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   tiersBuyLimit={poolDetails?.buyLimit || [] }
                   tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
                   verifiedEmail={verifiedEmail}
-                  userTier={currentUserTier?.level || 0}
+                  userTier={accountTier}
                 />
                 <p className={styles.poolDetailMaxBuy}>
                   {/* *Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()} */}
