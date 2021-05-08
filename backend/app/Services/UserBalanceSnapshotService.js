@@ -27,7 +27,7 @@ class UserBalanceSnapshotService {
   }
 
   async sumPKFBalanceByFilters(params) {
-    return await this.buildQueryBuilder(params).sum(params.pkf_balance).fetch();
+    return await this.buildQueryBuilder(params).sum('pkf_balance');
   }
 
   async getAllSnapshotByFilters(params) {
@@ -45,3 +45,5 @@ class UserBalanceSnapshotService {
       .orderByRaw('RAND()').limit(total_winner_ticket).fetch();
   }
 }
+
+module.exports = UserBalanceSnapshotService

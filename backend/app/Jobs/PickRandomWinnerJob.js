@@ -7,12 +7,7 @@ const CampaignModel = use('App/Models/Campaign');
 const WinnerListUserModel = use('App/Models/WinnerListUser');
 const WhitelistService = use('App/Services/WhitelistUserService');
 const UserBalanceSnapshotService = use('App/Services/UserBalanceSnapshotService');
-const {abi: CONTRACT_TIER_ABI} = require('../../blockchain_configs/contracts/Normal/Tier.json');
-const TIER_CONTRACT = process.env.TIER_SMART_CONTRACT
-const CONFIGS_FOLDER = '../../blockchain_configs/';
-const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
-const Web3 = require('web3');
-const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
+const HelperUtils = use('App/Common/HelperUtils');
 const priority = 'critical'; // Priority of job, can be low, normal, medium, high or critical
 const attempts = 5; // Number of times to attempt job if it fails
 const remove = true; // Should jobs be automatically removed on completion
@@ -33,81 +28,27 @@ class PickRandomWinnerJob {
   }
 
   // This is where the work is done.
-  async handle(data) {
+  static async handle(data) {
     console.log('PickRandomWinnerJob-job started', data);
     try {
       // do snapshot balance
-      await this.doSnapshotBalance(data);
+      await PickRandomWinnerJob.doSnapshotBalance(data);
       // pickup random winner after snapshot all whitelist user balance
-      await Promise.all(data.tiers.map(async (tier) => {
-        const filters = {
-          campaign_id: data.campaign_id,
-          level: tier.level
-        };
-        // get all user by campaign and tier level to process
-        const userSnapshotService = new UserBalanceSnapshotService();
-        const userSnapshots = await userSnapshotService.getAllSnapshotByFilters(filters);
-        const count = await userSnapshotService.countByFilters(filters);
-        let winners;
-        switch (tier.level) {
-          case 4:
-            // calc lottery ticket for each user tier 4 Phoenix
-            const totalPkf = await userSnapshotService.sumPKFBalanceByFilters(filters);
-            winners = await Promise.all(userSnapshots.toJSON().map(async (snapshot) => {
-              const winnerModel = new WinnerListUserModel();
-              winnerModel.fill({
-                wallet_address: snapshot.wallet_address,
-                campaign_id: data.campaign_id,
-                level: snapshot.level,
-                lottery_ticket: tier.ticket_allow * snapshot.pkf_balance / totalPkf
-              });
-            }));
-            break;
-          case 3:
-            // calc lottery ticket for tier 3 Eagle
-            if (tier.ticket_allow <= count) {
-              winners = await Promise.all(userSnapshots.toJSON().map(async (snapshot) => {
-                const winnerModel = new WinnerListUserModel();
-                winnerModel.fill({
-                  wallet_address: snapshot.wallet_address,
-                  campaign_id: data.campaign_id,
-                  level: snapshot.level,
-                  lottery_ticket: 1
-                });
-              }));
-            } else {
-              // pickup random winner for remain tickets
-              const extra_tickets = await userSnapshotService.getRandomWinners(tier.ticket_allow - count,tier.level,data.campaign_id);
-
-            }
-            break;
-          default:
-            // pickup random lottery ticket for these tiers 1,2 Dove Hawk
-            const randomSnapshot = await userSnapshotService.getRandomWinners(tier.ticket_allow, tier.level, data.campaign_id);
-            winners = await Promise.all(randomSnapshot.toJSON().map(async (snapshot) => {
-              const winnerModel = new WinnerListUserModel();
-              winnerModel.fill({
-                wallet_address: snapshot.wallet_address,
-                campaign_id: data.campaign_id,
-                level: snapshot.level,
-                lottery_ticket: 1
-              });
-            }));
-        }
-        // save to winner list
-        const campaignUpdated = await CampaignModel.query().where('id', data.campaign_id).first();
-        await campaignUpdated.winners().saveMany(winners);
-      }));
+      await PickRandomWinnerJob.doPickupRandomWinner(data);
     } catch (e) {
       console.log('Pickup random winner has error', e);
       throw e;
     }
   }
 
-  async doSnapshotBalance(data) {
+  static async doSnapshotBalance(data) {
+    // delete all old snapshot
+    const campaignUpdated = await CampaignModel.query().where('id', data.campaign_id).first();
+    await campaignUpdated.userBalanceSnapshots().delete();
     // get list whitelist to snapshot balance
-    let i = 0;
+    let i = 1;
     let whitelist;
+    let isLoopContinue = false;
     do {
       // loop each 10 records to process
       const filterParams = {
@@ -118,16 +59,20 @@ class PickRandomWinnerJob {
       const whitelistService = new WhitelistService();
       whitelist = await whitelistService.findWhitelistUser(filterParams);
       // loop to get balance of each user on white list
-      const userSnapshots = await Promise.all(whitelist.toJSON().map(async (item) => {
-        // call to SC to get balance
-        const wallet = item.wallet_address;
-        const tierContract = new web3.eth.Contract(CONTRACT_TIER_ABI, TIER_CONTRACT);
-        const receivedData = await Promise.all([
-          tierContract.methods.getUserTier(wallet).call(),
-          tierContract.methods.userTotalStaked(wallet).call()
-        ]);
-        const tier = receivedData[0];
+      const whitelistObj = whitelist.toJSON();
+      if (whitelistObj.total > 10 * i) {
+        isLoopContinue = true;
+      } else {
+        isLoopContinue = false;
+      }
+      let userSnapshots = [];
+      for (let i = 0; i < whitelistObj.data.length; i++) {
+        // get user PKF balance and tier from SC
+        const wallet = whitelistObj.data[i].wallet_address;
+        const receivedData = await HelperUtils.getUserTierSmart(wallet);
+        // const tier = receivedData[0];
         // const pkfBalance = receivedData[1];
+        const tier = Math.floor(Math.random() * 5);
         const pkfBalance = Math.floor(Math.random() * (100000 - 500) + 500);
         console.log(`Snapshot user balance with wallet ${wallet} tier ${tier} pkf_balance ${pkfBalance}`);
         // calc lottery_tickets
@@ -150,21 +95,102 @@ class PickRandomWinnerJob {
             console.log('User has no quality tier to get lottery ticket');
         }
         let userSnapShot = new UserBalanceSnapshotModel();
-        userSnapShot = {
+        userSnapShot.fill({
           campaign_id: data.campaign_id,
           wallet_address: wallet,
-          level: Math.floor(Math.random() * 4),
+          level: tier,
           lottery_ticket: tickets,
           pkf_balance: pkfBalance
-        }
-        return userSnapShot;
-      }));
+        });
+        userSnapshots.push(userSnapShot);
+      }
       // save to user_balance_snapshot
-      const campaignUpdated = await CampaignModel.query().where('id', data.campaign_id).first();
       await campaignUpdated.userBalanceSnapshots().saveMany(userSnapshots);
       // increment page
       i++;
-    } while (whitelist && whitelist.length)
+    } while (isLoopContinue)
+  }
+
+  static async doPickupRandomWinner(data) {
+    // delete old winner
+    const campaignUpdated = await CampaignModel.query().where('id', data.campaign_id).first();
+    await campaignUpdated.winners().delete();
+    for (let i = 0; i < data.tiers.length; i++) {
+      const tier = data.tiers[i];
+      const filters = {
+        campaign_id: data.campaign_id,
+        level: tier.level
+      };
+      // get all user by campaign and tier level to process
+      const userSnapshotService = new UserBalanceSnapshotService();
+      const userSnapshots = await userSnapshotService.getAllSnapshotByFilters(filters);
+      const countObj = await userSnapshotService.countByFilters(filters);
+      const count = countObj[0]['count(*)'];
+      let winners;
+      switch (tier.level) {
+        case 4:
+          // calc lottery ticket for each user tier 4 Phoenix
+          const totalPKFObj = await userSnapshotService.sumPKFBalanceByFilters(filters);
+          const totalPKF = totalPKFObj[0]['sum(`pkf_balance`)'];
+          winners = userSnapshots.toJSON().map(snapshot => {
+            const winnerModel = new WinnerListUserModel();
+            winnerModel.fill({
+              wallet_address: snapshot.wallet_address,
+              campaign_id: data.campaign_id,
+              level: snapshot.level,
+              lottery_ticket: tier.ticket_allow * snapshot.pkf_balance / totalPKF
+            });
+            return winnerModel;
+          });
+          break;
+        case 3:
+          // calc lottery ticket for tier 3 Eagle
+          let extra_tickets;
+          if (tier.ticket_allow > count) {
+            // pickup random winner for remain tickets
+            extra_tickets = await userSnapshotService.getRandomWinners(tier.ticket_allow - count, tier.level, data.campaign_id);
+          }
+          winners = userSnapshots.toJSON().map(snapshot => {
+            const winnerModel = new WinnerListUserModel();
+            let ticket = 1;
+            if (extra_tickets && PickRandomWinnerJob.checkContain(extra_tickets.toJSON(),snapshot.wallet_address)){
+              ticket ++;
+            }
+            winnerModel.fill({
+              wallet_address: snapshot.wallet_address,
+              campaign_id: data.campaign_id,
+              level: snapshot.level,
+              lottery_ticket: ticket
+            });
+            return winnerModel;
+          });
+          break;
+        default:
+          // pickup random lottery ticket for these tiers 1,2 Dove Hawk
+          const randomSnapshot = await userSnapshotService.getRandomWinners(tier.ticket_allow, tier.level, data.campaign_id);
+          winners = randomSnapshot.toJSON().map(snapshot => {
+            const winnerModel = new WinnerListUserModel();
+            winnerModel.fill({
+              wallet_address: snapshot.wallet_address,
+              campaign_id: data.campaign_id,
+              level: snapshot.level,
+              lottery_ticket: 1
+            });
+            return winnerModel;
+          });
+      }
+      // save to winner list
+      await campaignUpdated.winners().saveMany(winners);
+    }
+  }
+
+  static async checkContain(users,wallet) {
+    for (let i = 0; i < users.length; i++) {
+      if (users.wallet_address == wallet) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Dispatch

@@ -135,23 +135,26 @@ class WhiteListUserController {
       await campaignUpdated.tiers().delete();
       await campaignUpdated.tiers().saveMany(newTiers);
 
-      const tierData = newTiers.map(item => {
-        // filter tier that allocated
+      // filter tier
+      let tierData = [];
+      for (let i = 0; i < newTiers.length; i++) {
+        const item = newTiers[i];
         if (item.ticket_allow) {
           const tierObj = {
             level: item.level,
             ticket_allow: item.ticket_allow
           };
-          return tierObj;
+          tierData.push(tierObj);
         }
-      });
+      }
+
       const randomData = {
         campaign_id : campaign_id,
         tiers : tierData
       }
 
       // dispatch to job to pick random user
-      PickRandomWinnerJob.doDispatch(randomData);
+      PickRandomWinnerJob.handle(randomData);
       return HelperUtils.responseSuccess(null, "Pickup random winner successful !")
     } catch (e) {
       console.log(e);
