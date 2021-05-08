@@ -20,7 +20,7 @@ class PickRandomWinnerJob {
 
   // This is required. This is a unique key used to identify this job.
   static get key () {
-    return Const.JOB_KEY.SEND_ADMIN_INFO_EMAIL;
+    return Const.JOB_KEY.PICK_RANDOM_WINNER;
   }
 
   // This is where the work is done.

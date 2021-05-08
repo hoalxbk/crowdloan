@@ -8,9 +8,7 @@ class MantraStakeController {
     try {
       const inputParams = request.only(['event', 'params', 'txHash']);
       console.log('[Webhook] - [staked] - request Params: ', request.all(), params);
-
       const stakingLog = (new MantraStakeService).saveRecord(inputParams.event, inputParams.params, inputParams.txHash);
-
       return stakingLog;
     } catch (e) {
       console.log('[Webhook] - [staked] - Error: ', e);
@@ -18,16 +16,14 @@ class MantraStakeController {
     }
   }
 
-  async unstaked({ request }) {
+  async unstaked({ request, params }) {
     try {
       const inputParams = request.only(['event', 'params', 'txHash']);
       console.log('[Webhook] - [unstaked] - request Params: ', request.all(), params);
-
       const stakingLog = (new MantraStakeService).saveRecord(inputParams.event, inputParams.params, inputParams.txHash);
-
       return stakingLog;
     } catch (e) {
-      console.log('[Webhook] - [staked] - Error: ', e);
+      console.log('[Webhook] - [unstaked] - Error: ', e);
       return false;
     }
   }

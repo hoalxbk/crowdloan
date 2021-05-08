@@ -11,8 +11,8 @@ class StakingLogsSchema extends Schema {
       table.string('event', 255).nullable();
       table.string('transaction_hash', 255).nullable();
       table.string('account', 255).nullable();
-      table.string('payer', 255).nullable();
       table.decimal('amount', 40,18).notNullable().default(0);
+      table.text('request_params').nullable();
 
       table.timestamps();
     })
