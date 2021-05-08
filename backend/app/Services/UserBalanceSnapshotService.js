@@ -9,17 +9,33 @@ class UserBalanceSnapshotService {
     if (params.id) {
       builder = builder.where('id', params.id);
     }
-    if (params.email) {
-      builder = builder.where('email', params.email);
-    }
     if (params.wallet_address) {
       builder = builder.where('wallet_address', params.wallet_address);
     }
     if (params.campaign_id) {
       builder = builder.where('campaign_id', params.campaign_id);
     }
+    if (params.level) {
+      builder = builder.where('level', params.level);
+    }
 
     return builder;
+  }
+
+  async findOneByFilters(params) {
+    return await this.buildQueryBuilder(params).first();
+  }
+
+  async sumPKFBalanceByFilters(params) {
+    return await this.buildQueryBuilder(params).sum(params.pkf_balance).fetch();
+  }
+
+  async getAllSnapshotByFilters(params) {
+    return await this.buildQueryBuilder(params).fetch();
+  }
+
+  async countByFilters(params) {
+    return await this.buildQueryBuilder(params).count();
   }
 
   async getRandomWinners(total_winner_ticket, tier, campaign_id) {

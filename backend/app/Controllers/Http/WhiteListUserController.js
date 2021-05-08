@@ -132,11 +132,14 @@ class WhiteListUserController {
       await campaignUpdated.tiers().saveMany(newTiers);
 
       const tierData = newTiers.map(item => {
-        const tierObj = {
-          level: item.level,
-          ticket_allow: item.ticket_allow
-        };
-        return tierObj;
+        // filter tier that allocated
+        if (item.ticket_allow) {
+          const tierObj = {
+            level: item.level,
+            ticket_allow: item.ticket_allow
+          };
+          return tierObj;
+        }
       });
       const randomData = {
         campaign_id : campaign_id,
