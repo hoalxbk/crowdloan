@@ -37,6 +37,10 @@ const Tiers = (props: any) => {
 
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
 
+  useEffect(() => {
+    console.log(userTier, 'userTier')
+  }, [userTier])
+
   const calculateProcess = (ListData: any, current: any) => {
     let tierA = 0;
     let tierB = 0;
