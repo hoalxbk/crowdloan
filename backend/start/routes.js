@@ -32,7 +32,7 @@ Route.group(() => {
   Route.post('token-claimed', 'TransactionController.tokenClaimed')
 
   Route.post('mantra-stake/staked', 'MantraStakeController.staked');
-  Route.post('mantra-stake/unstaked', 'MantraStakeController.unstaked');
+  Route.post('mantra-stake/unstaked', 'MantraStakeController.staked');
 }).prefix('webhook').middleware('checkJwtWebhook');
 
 
