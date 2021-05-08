@@ -8,7 +8,7 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 export type Tier = {
   allocation: string,
   name: string,
-  maxBuy: string,
+  // maxBuy: string,s
   startTime: string,
   endTime: string 
 }
@@ -69,7 +69,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         tiersWithDetails.push({
           allocation: tier.ticket_allow_percent,
           name: tier.name,
-          maxBuy: `${tier.max_buy} ${data.accept_currency.toUpperCase()}`,
+          // maxBuy: `${tier.max_buy} ${data.accept_currency.toUpperCase()}`,
           startTime: tier.start_time,
           endTime: tier.end_time
         })
