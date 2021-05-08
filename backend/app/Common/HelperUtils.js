@@ -115,7 +115,7 @@ const getUserTierSmart = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
-    tierSc.methods.externalToken(process.env.MATRA_DAO_STAKE_SMART_CONTRACT).call(),
+    tierSc.methods.externalToken(mantraSmartContract).call(),
   ]);
 
   console.log('receivedData: ', receivedData);
@@ -135,13 +135,13 @@ const getUserTierSmart = async (wallet_address) => {
   console.log('wallet_address - userTier: ', wallet_address, userTier);
   console.log('pkfEq', pkfEq.toFixed());
 
-  return [userTier, pkfEq];
+  return [userTier, pkfEq.toFixed()];
 };
 
 
 const getExternalTokenSmartContract = async (wallet_address) => {
   const tierSc = getTierSmartContractInstance();
-  const externalTokenMantra = await tierSc.methods.externalToken(process.env.MATRA_DAO_STAKE_SMART_CONTRACT).call()
+  const externalTokenMantra = await tierSc.methods.externalToken(mantraSmartContract).call()
   console.log('[getExternalTokenSmartContract] - externalToken', externalTokenMantra);
   return externalTokenMantra;
 };
@@ -168,7 +168,7 @@ const getTierBalanceInfos = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
-    tierSc.methods.externalToken(process.env.MATRA_DAO_STAKE_SMART_CONTRACT).call(),
+    tierSc.methods.externalToken(mantraSmartContract).call(),
   ]);
   return receivedData;
 };

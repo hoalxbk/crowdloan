@@ -48,7 +48,7 @@ class MantraStakeService {
       const unstakeAmountMantra = await HelperUtils.getUnstakeMantraSmartContract(walletAddress) || {};
       stakingLog.mantra_unstake_amount = new BigNumber(unstakeAmountMantra.amount || 0).dividedBy(Math.pow(10, 18)).toFixed();
 
-      console.log('stakingLog:', stakingLog);
+      console.log('stakingLog:', JSON.stringify(stakingLog));
       await stakingLog.save();
       return stakingLog;
     }
