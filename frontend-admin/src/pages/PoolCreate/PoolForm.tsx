@@ -79,8 +79,8 @@ function PoolForm(props: any) {
         item.minBuy = 0;
       }
 
-      item.startTime = moment_1(moment_1.utc(item.startTime)).unix();
-      item.endTime = moment_1(moment_1.utc(item.endTime)).unix();
+      item.startTime = moment(moment.utc(item.startTime)).unix();
+      item.endTime = moment(moment.utc(item.endTime)).unix();
       return item;
     });
 
