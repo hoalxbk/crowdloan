@@ -309,7 +309,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("You're not valid user to join this campaign !");
       }
       // check user tier
-      const userTier = await HelperUtils.getUserTierSmart(wallet_address)[0];
+      const userTier = (await HelperUtils.getUserTierSmart(wallet_address))[0];
       console.log(`user tier is ${userTier}`);
       // check user tier with min tier of campaign
       if (camp.min_tier > userTier) {

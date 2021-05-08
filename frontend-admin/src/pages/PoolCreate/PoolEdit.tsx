@@ -50,6 +50,7 @@ const PoolEdit: React.FC<RouteComponentProps> = (props: RouteComponentProps) => 
           start_join_pool_time: data?.start_join_pool_time ? moment.unix(data?.start_join_pool_time).format(DATETIME_FORMAT) : null,
           end_join_pool_time: data?.start_join_pool_time ? moment.unix(data?.end_join_pool_time).format(DATETIME_FORMAT) : null,
         };
+
         setPoolDetail(newData);
 
         // if (newData.is_deploy && newData.campaign_hash) {
