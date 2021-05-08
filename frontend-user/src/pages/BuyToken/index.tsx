@@ -63,7 +63,7 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   const { pathname } = useLocation();
   const { id } = useParams() as any;
-  const userTier = useTypedSelector(state => state.userTier).data;
+  /* const userTier = useTypedSelector(state => state.userTier).data; */
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { poolDetails, loading: loadingPoolDetail } = usePoolDetails(id);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
@@ -446,9 +446,10 @@ const BuyToken: React.FC<any> = (props: any) => {
                 <ul className={styles.poolDetailLinks}>
                   {
                     headers.map((header) => {
-                      /* if (header === HeaderType.Main && endBuyTimeInDate && new Date() > endBuyTimeInDate) { */
-                      /*   return; */
-                      /* } */
+                      if (header === HeaderType.Main && endBuyTimeInDate && new Date() > endBuyTimeInDate) {
+                        return;
+                      }
+
                       if (header !== HeaderType.About && header !== HeaderType.MyTier && !poolDetails?.isDeployed) {
                         return;
                       }
@@ -466,7 +467,7 @@ const BuyToken: React.FC<any> = (props: any) => {
               </nav>
               <div className={styles.poolDetailBuyForm}>
                 {
-                  activeNav === HeaderType.Main && (
+                  activeNav === HeaderType.Main && endBuyTimeInDate && new Date() <= endBuyTimeInDate && (
                       <BuyTokenForm
                         tokenDetails={poolDetails?.tokenDetails}
                         rate={poolDetails?.ethRate}
