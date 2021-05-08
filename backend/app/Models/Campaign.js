@@ -26,6 +26,9 @@ class Campaign extends Model {
     return this.hasMany('App/Models/WhitelistUser')
   }
 
+  userBalanceSnapshots() {
+    return this.hasMany('App/Models/UserBalanceSnapshot')
+  }
 }
 
 module.exports = Campaign;

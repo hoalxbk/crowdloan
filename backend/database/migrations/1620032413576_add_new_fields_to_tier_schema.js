@@ -3,7 +3,7 @@
 /** @type {import('@adonisjs/lucid/src/Schema')} */
 const Schema = use('Schema')
 
-class AddFieldIsKycToUserTableSchema extends Schema {
+class AddFieldsToTierTableSchema extends Schema {
   up () {
     this.table('tiers', (table) => {
       // alter table
@@ -18,4 +18,4 @@ class AddFieldIsKycToUserTableSchema extends Schema {
   }
 }
 
-module.exports = AddFieldIsKycToUserTableSchema;
+module.exports = AddFieldsToTierTableSchema;

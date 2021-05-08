@@ -309,7 +309,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("You're not valid user to join this campaign !");
       }
       // check user tier
-      const userTier = await HelperUtils.getUserTierSmart(wallet_address);
+      const userTier = await HelperUtils.getUserTierSmart(wallet_address)[0];
       console.log(`user tier is ${userTier}`);
       // check user tier with min tier of campaign
       if (camp.min_tier > userTier) {
@@ -370,7 +370,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("Do not found campaign");
       }
       let minBuy = 0, maxBuy = 0;
-      let is_reserved = false;
+      let winner;
       const current = Math.floor(Date.now() / 1000);
       // check if current time is free to buy or not
       const isFreeBuyTime = (current >= (Number(camp.start_time) + Number(OFFER_FREE_TIME)));
@@ -386,7 +386,7 @@ class CampaignController {
           'wallet_address': userWalletAddress,
           'campaign_id': campaign_id
         }
-        const winner = await winnerListService.findOneByFilters(winnerParams);
+        winner = await winnerListService.findOneByFilters(winnerParams);
         // if user not in winner list then check on reserved list
         if (!winner) {
           // if user is not in winner list then check with reserved list
@@ -396,7 +396,6 @@ class CampaignController {
             console.log()
             return HelperUtils.responseBadRequest("Sorry, you are not on the list of winners to join this pool.");
           }
-          is_reserved = true;
           // check time start buy for tier
           if (reserved.start_time > current || reserved.end_time < current) {
             console.log(`Reserved ${reserved.start_time} ${reserved.end_time} ${current}`);
@@ -408,19 +407,18 @@ class CampaignController {
         }
       }
       // check user tier if user not in reserved list
-      if (!isFreeBuyTime && !is_reserved) {
-        // check user tier
-        const userTier = await HelperUtils.getUserTierSmart(userWalletAddress);
-        console.log(`user tier is ${userTier}`);
+      if (!isFreeBuyTime && winner) {
+        // get user tier from winner table which snapshot user balance and pickup random winner
+        console.log(`user tier is ${winner.level}`);
         // check user tier with min tier of campaign
-        if (camp.min_tier > userTier) {
+        if (camp.min_tier > winner.level) {
           return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign!");
         }
         // call to db to get tier info
         const tierService = new TierService();
         const tierParams = {
           'campaign_id': params.campaign_id,
-          'level': userTier
+          'level': winner.level
         };
         const tier = await tierService.findByLevelAndCampaign(tierParams);
         if (!tier) {
@@ -432,8 +430,8 @@ class CampaignController {
           return HelperUtils.responseBadRequest("You're early come to join this campaign !");
         }
         // set min, max buy amount of user
-        minBuy = tier.min_buy;
-        maxBuy = tier.max_buy;
+        minBuy = tier.min_buy * winner.lottery_ticket;
+        maxBuy = tier.max_buy * winner.lottery_ticket;
       }
 
       // get private key for campaign from db
