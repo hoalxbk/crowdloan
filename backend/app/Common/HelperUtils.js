@@ -132,7 +132,7 @@ const getUserTierSmart = async (wallet_address) => {
   console.log('wallet_address - userTier: ', wallet_address, userTier);
   console.log('pkfEq', pkfEq.toFixed());
 
-  return userTier;
+  return [userTier, pkfEq];
 };
 
 module.exports = {
