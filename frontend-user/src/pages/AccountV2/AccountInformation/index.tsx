@@ -14,7 +14,6 @@ const AccountInformation = (props: any) => {
   const { classNamePrefix = '', balance = {}, userInfo = {} } = props;
   const [openModalVerifyEmail, setOpenModalVerifyEmail] = useState(false);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
-  const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
 
   const handleKYC = () => {
     window.open('https://docs.google.com/forms/d/1XnPZrW4l21sFjtgkKky4w5eE1zB-1TmdACBSpa9uKO8/viewform', '_blank');
@@ -25,7 +24,8 @@ const AccountInformation = (props: any) => {
     setEmail,
     emailVerified,
     setEmailVeryfied,
-    isKYC
+    isKYC,
+    userTier
   } = props;
 
   return (

@@ -87,12 +87,12 @@ class WebhookSeeder {
       {
         contract_name: Const.CONTRACTS.MANTRA_STAKE,
         type: 'Staked',
-        url: 'webhook/mantra-stake/staked',
+        url: 'webhook/mantra-stake/index-stake-info',
       },
       {
         contract_name: Const.CONTRACTS.MANTRA_STAKE,
         type: 'Unstaked',
-        url: 'webhook/mantra-stake/unstaked',
+        url: 'webhook/mantra-stake/index-stake-info',
       },
     ];
 

@@ -323,6 +323,16 @@ class UserController {
         const userTier = await HelperUtils.getUserTierSmart(walletAddress);
         console.log('[getCurrentTier] - userTier:', userTier);
         const tierDb = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
+        if (!tierDb) {
+          console.log(`[getCurrentTier] - Not exist Tier ${userTier} for campaign ${campaignId}`);
+          return HelperUtils.responseSuccess({
+            min_buy: 0,
+            max_buy: 0,
+            start_time: 0,
+            end_time: 0,
+            level: 0,
+          });
+        }
         // get lottery ticket from winner list
         const winner = await WinnerModel.query().where('campaign_id', campaignId).where('wallet_address', walletAddress).first();
         const tickets = winner ? winner.lottery_ticket : 0;

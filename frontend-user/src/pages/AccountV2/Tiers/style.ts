@@ -283,6 +283,9 @@ const useStyles = makeStyles((theme: any) => {
         flexDirection: 'row',
         width: 'auto',
         height: '25%',
+        '&.hide-statistics > div:before': {
+          top: 0,
+        },
         '&:last-child': {
           height: '0!important',
         },

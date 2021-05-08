@@ -221,6 +221,17 @@ const useStyles = makeStyles((theme) => {
       },
       navbarLink: {
         marginLeft: '12px'
+      },
+      btnChangeAppNetwork: {
+        display: 'block',
+        padding: '7px 15px',
+        margin: '10px auto 0',
+      },
+      loginErrorBanner: {
+        alignItems: 'flex-start',
+        '& > img': {
+          marginTop: '5px'
+        }
       }
     }
   };
