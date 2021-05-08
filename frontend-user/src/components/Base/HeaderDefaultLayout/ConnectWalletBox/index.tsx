@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { AbstractConnector } from '@web3-react/abstract-connector';
+import mobile from 'is-mobile';
 import { settingAppNetwork, NetworkUpdateType } from '../../../../store/actions/appNetwork';
 import { WalletInfo } from '../../../../constants/connectors';
 import { NetworkInfo, APP_NETWORKS_NAME } from '../../../../constants/network';
@@ -50,9 +51,9 @@ const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWal
       return (
         <div 
           className={`${styles.walletBox}`} 
-          onClick={() => 
+          onClick={() => {
             !temporaryDisable && handleNetworkChange(isAppNetwork, id as string, agreedTerms)
-          }
+          }}
           style={pointerStyle}
         >
           <div className={styles.walletBoxIconWrap}>
@@ -79,9 +80,14 @@ const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWal
       return (
         <div 
           className={`${styles.walletBox}`} 
-          onClick={() => 
+          onClick={() => {
+            if (mobile() && wallet?.deepLink) {
+              window.open(wallet.deepLink);
+              return;
+            }
+
             handleNetworkChange(isAppNetwork, name, agreedTerms)
-          }
+          }}
           style={pointerStyle}
         >
           <div className={styles.walletBoxIconWrap}>
