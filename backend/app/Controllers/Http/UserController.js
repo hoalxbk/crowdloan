@@ -320,7 +320,7 @@ class UserController {
         return HelperUtils.responseSuccess(tier);
       } else {
         // Get Tier in smart contract
-        const userTier = await HelperUtils.getUserTierSmart(walletAddress);
+        const userTier = await HelperUtils.getUserTierSmart(walletAddress)[0];
         console.log('[getCurrentTier] - userTier:', userTier);
         const tierDb = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
         if (!tierDb) {

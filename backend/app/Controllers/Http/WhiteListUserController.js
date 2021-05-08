@@ -116,7 +116,7 @@ class WhiteListUserController {
         return HelperUtils.responseBadRequest('Do not found tiers with campaign request');
       }
       // calc number of ticket allowance for each tier then save to db
-      const newTiers = oldTiers.toJSON().map((item, index) => {
+      const newTiers = oldTiers.toJSON().map(item => {
         const tierObj = new TierModel();
         tierObj.fill({
           level: item.level,
@@ -135,15 +135,26 @@ class WhiteListUserController {
       await campaignUpdated.tiers().delete();
       await campaignUpdated.tiers().saveMany(newTiers);
 
-      const randomData = newTiers.map(item => {
-        const tierObj = {
-          level: item.level,
-          ticket_allow: item.ticket_allow
-        };
-        return tierObj;
-      });
+      // filter tier
+      let tierData = [];
+      for (let i = 0; i < newTiers.length; i++) {
+        const item = newTiers[i];
+        if (item.ticket_allow) {
+          const tierObj = {
+            level: item.level,
+            ticket_allow: item.ticket_allow
+          };
+          tierData.push(tierObj);
+        }
+      }
+
+      const randomData = {
+        campaign_id : campaign_id,
+        tiers : tierData
+      }
+
       // dispatch to job to pick random user
-      PickRandomWinnerJob.doDispatch(randomData);
+      PickRandomWinnerJob.handle(randomData);
       return HelperUtils.responseSuccess(null, "Pickup random winner successful !")
     } catch (e) {
       console.log(e);
