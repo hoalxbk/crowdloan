@@ -48,6 +48,7 @@ module.exports = Object.freeze({
     SEND_FORGOT_PASSWORD: 'SendForgotPasswordJob-job',
     SEND_CONFIRMATION_EMAIL: 'SendConfirmationEmailJob-job',
     SEND_ADMIN_INFO_EMAIL: 'SendAdminInfoEmailJob-job',
+    PICK_RANDOM_WINNER: 'PickRandomWinnerJob-job',
   },
   ACTIVE: 0,
   SUSPEND: 1,

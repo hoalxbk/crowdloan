@@ -21,13 +21,19 @@ class MantraStakeService {
     }
 
     async saveRecord(event, params, txHash) {
-
       const stakingLog = new StakingLogModel;
       stakingLog.event = event;
       stakingLog.transaction_hash = txHash;
-      stakingLog.account = params.account;
-      stakingLog.payer = params.payer;
-      stakingLog.amount = new BigNumber(params.stakedAmount || 0).dividedBy(Math.pow(10, 18)).toFixed();
+      stakingLog.request_params = JSON.stringify(params);
+
+      if (event === 'Staked') {
+        stakingLog.account = params.account;
+        stakingLog.amount = new BigNumber(params.stakedAmount || 0).dividedBy(Math.pow(10, 18)).toFixed();
+      } else {
+        console.log('Save Record Unstaked: ===================>', params);
+        stakingLog.account = params.account;
+        stakingLog.amount = new BigNumber(params.unstakedAmount || 0).dividedBy(Math.pow(10, 18)).toFixed();
+      }
       await stakingLog.save();
 
       return stakingLog;
