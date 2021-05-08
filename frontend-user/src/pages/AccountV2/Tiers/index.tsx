@@ -31,7 +31,8 @@ const Tiers = (props: any) => {
     tokenSymbol,
     verifiedEmail,
     userTier = 0,
-    total
+    total,
+    hideStatistics
   } = props;
 
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
@@ -114,7 +115,7 @@ const Tiers = (props: any) => {
         </>
       </div>}
       <ul className={styles.tierList}>
-        <li className={styles.tierInfo + ' active first-tier'}>
+        <li className={`${styles.tierInfo} active first-tier`}>
           {isWidthUp('sm', props.width) && connectedAccount && <span
             className={"progress-bar"}
             style={{
@@ -142,7 +143,7 @@ const Tiers = (props: any) => {
         </li>
         {tiers.length > 0 && tiers.map((tier: any, idx: any) => {
           if(tier != 0) {
-            return <li key={tier} className={styles.tierInfo + (userTier > idx ? ' active ' : ' ') + TIERS[idx + 1].name}>
+            return <li key={tier} className={styles.tierInfo + (userTier > idx ? ' active ' : ' ') + TIERS[idx + 1].name +  (hideStatistics ? ' hide-statistics': '')}>
               {userTier > idx + 1 && connectedAccount && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
@@ -165,14 +166,14 @@ const Tiers = (props: any) => {
                 }}
               ></span>}
               <div>
-                <div className="icon">
+                <div className="icon" style={hideStatistics && { marginTop: -30 }}>
                   <img src={TIERS[idx + 1].bg} alt=""/>
                   <img src={TIERS[idx + 1].icon} />
                 </div>
                 <div className="info">
                   <span className="tier-name">{TIERS[idx + 1].name}</span>
                   { !showMoreInfomation && <span>{numberWithCommas(tier)} {tokenSymbol}</span> }
-                  { showMoreInfomation && <span>{numberWithCommas(tiersBuyLimit[idx + 1])} {tokenSymbol}</span> }
+                  { showMoreInfomation && !hideStatistics && <span>{numberWithCommas(tiersBuyLimit[idx + 1])} {tokenSymbol}</span> }
                 </div>
               </div>
             </li>

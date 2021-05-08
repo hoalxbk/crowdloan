@@ -204,6 +204,15 @@ const useStyles = makeStyles((theme: any) => {
         }
       },
 
+      '&.hide-statistics': {
+        '& > div:before': {
+          top: -8
+        },
+        '& .progress-bar': {
+          top: -8         
+        }
+      },
+
       '& .info': {
         display: 'flex',
         flexDirection: 'column',

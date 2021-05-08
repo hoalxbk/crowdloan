@@ -381,13 +381,17 @@ const BuyToken: React.FC<any> = (props: any) => {
               </div>
               <div className={styles.poolDetailTier}>
                 <Tiers
-                  showMoreInfomation
+                  hideStatistics
+                  showMoreInfomation={true}
                   tiersBuyLimit={poolDetails?.buyLimit || [] }
                   tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
                   verifiedEmail={verifiedEmail}
                   userTier={currentUserTier?.level || 0}
                 />
-                <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
+                <p className={styles.poolDetailMaxBuy}>
+                  {/* *Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()} */}
+                  Determined at whitelist closing
+                </p>
                 <div className={styles.poolDetailProgress}>
                   <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
                   {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
