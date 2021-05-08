@@ -19,7 +19,7 @@ type MyTierProps = {
   tiers: Tier[] | undefined,
 } 
 
-const headers = ['Tier', 'Allocation (%)', 'Max Buy/Ticket', 'Start Buy Time', 'End Buy Time'];
+const headers = ['Tier', 'Allocation (%)', 'Start Buy Time', 'End Buy Time'];
 
 const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
   const styles = useStyles();
@@ -55,9 +55,6 @@ const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {row.allocation}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {row.maxBuy}
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {convertTimeToStringFormat(new Date(row.startTime * 1000))}
