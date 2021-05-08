@@ -70,10 +70,11 @@ class PickRandomWinnerJob {
         // get user PKF balance and tier from SC
         const wallet = whitelistObj.data[i].wallet_address;
         const receivedData = await HelperUtils.getUserTierSmart(wallet);
-        // const tier = receivedData[0];
-        // const pkfBalance = receivedData[1];
-        const tier = Math.floor(Math.random() * 5);
-        const pkfBalance = Math.floor(Math.random() * (100000 - 500) + 500);
+        const tier = receivedData[0];
+        const pkfBalance = receivedData[1];
+        // mock test
+        // const tier = Math.floor(Math.random() * 5);
+        // const pkfBalance = Math.floor(Math.random() * (100000 - 500) + 500);
         console.log(`Snapshot user balance with wallet ${wallet} tier ${tier} pkf_balance ${pkfBalance}`);
         // calc lottery_tickets
         // TODO need get setting from Db
