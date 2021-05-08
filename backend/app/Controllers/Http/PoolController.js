@@ -7,7 +7,6 @@ const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
 const PoolService = use('App/Services/PoolService');
-const Common = use('App/Common/Common');
 const HelperUtils = use('App/Common/HelperUtils');
 const RedisUtils = use('App/Common/RedisUtils');
 
@@ -22,10 +21,8 @@ const { abi: CONTRACT_FACTORY_ABI } = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
 const { abi: CONTRACT_ERC20_ABI } = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
 
 const Web3 = require('web3');
-const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
-const ErrorFactory = use('App/Common/ErrorFactory');
 const moment = require('moment');
 const BigNumber = use('bignumber.js')
 const {pick} = require('lodash');
@@ -117,8 +114,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error')
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -185,7 +182,7 @@ class PoolController {
         campaign_id: claimConfig.campaign_id,
         start_time: inputParams.release_time
       }
-      await CampaignClaimConfigModel.query().where('campaign_id', campaignId).update(claimConfigUpdate);
+      await CampaignClaimConfigModel.query().where('id', claimConfig.id).update(claimConfigUpdate);
 
       if (!campaign.is_deploy) {
         const tiers = (inputParams.tier_configuration || []).map((item, index) => {
@@ -213,8 +210,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error');
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -253,8 +250,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error');
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -279,8 +276,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess();
     } catch (e) {
-      console.log('ERROR', e);
-      return ErrorFactory.internal('error');
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -318,7 +315,7 @@ class PoolController {
       return HelperUtils.responseSuccess(pool);
     } catch (e) {
       console.log(e)
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal();
     }
   }
 
@@ -369,8 +366,8 @@ class PoolController {
 
       return HelperUtils.responseSuccess(publicPool);
     } catch (e) {
-      console.log(e)
-      return HelperUtils.responseErrorInternal(e.message);
+      console.log(e);
+      return HelperUtils.responseErrorInternal('ERROR: Get public pool fail !');
     }
   }
 
@@ -400,7 +397,7 @@ class PoolController {
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e)
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal('Get Pools Fail !!!');
     }
   }
 
@@ -421,7 +418,7 @@ class PoolController {
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal('Get Top Pools Fail !!!');
     }
   }
 
@@ -443,7 +440,7 @@ class PoolController {
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e);
-      return HelperUtils.responseErrorInternal(e.message);
+      return HelperUtils.responseErrorInternal('Get Joined Pool Fail !!!');
     }
   }
 

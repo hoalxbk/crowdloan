@@ -21,34 +21,21 @@ const useStyles = makeStyles((theme: any) => {
       alignItems: 'center',
       marginBottom: '15px',
 
-      '& .email-xs span': {
-        color: '#FFF!important',
-        font: 'normal normal bold 14px/18px DM Sans!important'
-      },
-
-      '& span:first-child': {
+      '& > span:first-child': {
         minWidth: '120px',
         marginRight: '20px',
         font: 'normal normal normal 14px/24px Helvetica',
         color: '#999999',
       },
       '& span:nth-child(2)': {
-        fontFamily: 'DM Sans',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        lineHeight: '18px',
         color: '#FFFFFF',
-        width: 'calc(100% - 125px)',
-        [theme.breakpoints.down('sm')]: {
-          width: '200px',
-          display: '-webkit-box',
-          '-webkit-box-orient': 'vertical',
-          '-webkit-line-clamp': 1,
-          overflow: 'hidden',
-          textOverflow: 'ellipsis',
-          wordBreak: 'break-word'
-        },
+        width: '100%',
+        overflow: 'hidden',
+        font: 'normal normal bold 14px/18px DM Sans!important',
+        display: '-webkit-box',
+        '-webkit-box-orient': 'vertical',
+        '-webkit-line-clamp': 1,
+        wordBreak: 'break-word'
       },
 
       '& span.verify-email': {
@@ -56,7 +43,7 @@ const useStyles = makeStyles((theme: any) => {
         cursor: 'pointer',
         width: 'auto'
       },
-      
+
       '& button': {
         fontFamily: 'DM Sans',
         fontStyle: 'normal',
@@ -121,7 +108,7 @@ const useStyles = makeStyles((theme: any) => {
         fontFamily: 'DM Sans',
         fontStyle: 'normal',
       }
-    }
+    },
   };
 });
 

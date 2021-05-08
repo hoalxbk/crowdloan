@@ -83,6 +83,9 @@ const useStyles = makeStyles((theme: any) => {
       },
       [theme.breakpoints.down('xs')]: {
         height: '700px',
+        '& > div': {
+          top: '40%'
+        },
         overflow: 'hidden',
         '& img': {
           objectFit: 'unset',
@@ -97,7 +100,9 @@ const useStyles = makeStyles((theme: any) => {
         '& .main-content h1': {
           display: 'block',
           width: '100%',
-          margin: '15px auto'
+          margin: '15px auto',
+          fontSize: '46px',
+          lineHeight: '52px',
         },
         '& p': {
           fontSize: '16px'

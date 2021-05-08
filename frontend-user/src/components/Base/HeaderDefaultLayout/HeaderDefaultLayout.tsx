@@ -25,7 +25,7 @@ const BSCIcon = "bsc.svg";
 const logo = "/images/logo-red-kite.svg";
 const iconClose = "/images/icons/close.svg";
 const iconHamburger = "/images/icons/hamburger.svg";
-const iconAccount = "/icons/account.svg";
+const iconAccount = "icons/account.svg";
 
 const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   const styles = useStyles();
@@ -106,7 +106,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
         <div className={styles.navBar}>
           <div>
             <Link to={'/'} className={styles.navbarLink}>
-            <img src={logo} className={styles.navbarLogo}/>
+              <img src={logo} className={styles.navbarLogo}/>
             </Link>
           </div>
           {isWidthDown('xs', props.width) && <img src={iconHamburger} onClick={() => setOpenSideBar(true)}/>}
@@ -115,7 +115,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
                 <>
                   <img src={logo} className={styles.sideBarLogo}/>
                   <img src={iconClose} className={styles.closeBtn} onClick={() => setOpenSideBar(false)}/></>}
-                  <ButtonLink text="Pool" to={'/pools'} icon={BrightStartIcon} className={`${styles.btn} start`} />
+                  <ButtonLink text="Pool" to={'/dashboard'} icon={BrightStartIcon} className={`${styles.btn} start`} />
                   {currentAccount && <ButtonLink text="My Account" to={'/account'} icon={iconAccount} className={`${styles.btn} start my-account`} />}
                   <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => {setSwitchNetworkDialog(true); setOpenSideBar(false);}}>
                     <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />

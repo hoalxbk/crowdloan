@@ -7,6 +7,7 @@ module.exports = Object.freeze({
     CAMPAIGNFACTORY: 'CampaignFactory',
     ETHLINK: 'ETHLink',
     ERC20: 'Erc20',
+    MANTRA_STAKE: 'MantraStake',
   },
   TX_TABLE: {
     CAMPAIGN: 1,

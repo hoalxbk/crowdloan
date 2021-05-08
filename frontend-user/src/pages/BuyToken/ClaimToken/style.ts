@@ -4,7 +4,7 @@ const useStyles = makeStyles((theme: any) => {
   return {
     poolDetailClaim: {
       marginTop: 20,
-      padding: '20px 40px',
+      padding: '60px 40px',
       backgroundColor: 'rgba(255, 255, 255, 0.06)',
       borderRadius: 8,
       width: '50%',

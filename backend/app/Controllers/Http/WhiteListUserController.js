@@ -20,7 +20,7 @@ class WhiteListUserController {
       // get from redis cached
       let redisKey = 'whitelist_' + campaign_id;
       if (page) {
-        redisKey = redisKey.concat('_',page,'_',pageSize);
+        redisKey = redisKey.concat('_', page, '_', pageSize);
       }
       // if (await Redis.exists(redisKey)) {
       //   console.log(`existed key ${redisKey} on redis`);
@@ -55,7 +55,7 @@ class WhiteListUserController {
       // get from redis cached
       let redisKey = 'whitelist_' + campaign_id;
       if (page) {
-        redisKey = redisKey.concat('_',page,'_',pageSize);
+        redisKey = redisKey.concat('_', page, '_', pageSize);
       }
       // if (await Redis.exists(redisKey)) {
       //   console.log(`existed key ${redisKey} on redis`);
@@ -82,20 +82,24 @@ class WhiteListUserController {
   }
 
   async deleteWhiteList({request, params}) {
-    console.log('[deleteWhiteList] - Delete WhiteList with params: ', params, request.params);
+    try {
+      console.log('[deleteWhiteList] - Delete WhiteList with params: ', params, request.params);
 
-    const { campaignId, walletAddress } = params;
-    const whitelistService = new WhitelistService();
-    const existRecord = await whitelistService.buildQueryBuilder({
-      campaign_id: campaignId,
-      wallet_address: walletAddress,
-    }).first();
-    if (existRecord) {
-      await existRecord.delete();
+      const {campaignId, walletAddress} = params;
+      const whitelistService = new WhitelistService();
+      const existRecord = await whitelistService.buildQueryBuilder({
+        campaign_id: campaignId,
+        wallet_address: walletAddress,
+      }).first();
+      if (existRecord) {
+        await existRecord.delete();
+      }
+      console.log('existRecord', existRecord);
+      return HelperUtils.responseSuccess(existRecord);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('ERROR: Delete white list fail !');
     }
-    console.log('existRecord', existRecord);
-
-    return HelperUtils.responseSuccess(existRecord);
   }
 
   async getRandomWinners({request}) {
@@ -122,7 +126,7 @@ class WhiteListUserController {
           min_buy: item.min_buy,
           max_buy: item.max_buy,
           ticket_allow_percent: item.ticket_allow_percent,
-          ticket_allow : Math.floor(total_ticket * item.ticket_allow_percent/100)
+          ticket_allow: Math.floor(total_ticket * item.ticket_allow_percent / 100)
         });
         return tierObj;
       });
@@ -175,25 +179,29 @@ class WhiteListUserController {
   }
 
   async addWhitelistUser({request}) {
-    const inputParams = request.only(['wallet_address', 'email', 'campaign_id']);
-    const params = {
-      wallet_address: inputParams.wallet_address,
-      email: inputParams.email,
-      campaign_id: inputParams.campaign_id,
-    };
-    const whitelistService = new WhitelistService();
-    const user = await whitelistService.buildQueryBuilder({
-      wallet_address: inputParams.wallet_address,
-      campaign_id: inputParams.campaign_id,
-    }).first();
-    console.log('[addWhitelistUser] - user: ', user);
+    try {
+      const inputParams = request.only(['wallet_address', 'email', 'campaign_id']);
+      const params = {
+        wallet_address: inputParams.wallet_address,
+        email: inputParams.email,
+        campaign_id: inputParams.campaign_id,
+      };
+      const whitelistService = new WhitelistService();
+      const user = await whitelistService.buildQueryBuilder({
+        wallet_address: inputParams.wallet_address,
+        campaign_id: inputParams.campaign_id,
+      }).first();
+      console.log('[addWhitelistUser] - user: ', user);
 
-    if (user) {
-      return HelperUtils.responseBadRequest('User Exist !');
+      if (user) {
+        return HelperUtils.responseBadRequest('User Exist !');
+      }
+      const res = await whitelistService.addWhitelistUser(params);
+      return HelperUtils.responseSuccess(res);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('ERROR: Add whitelist fail !');
     }
-    const res = await whitelistService.addWhitelistUser(params);
-
-    return HelperUtils.responseSuccess(res);
   }
 
 }

@@ -30,6 +30,9 @@ Route.group(() => {
   Route.post('transaction-refund', 'TransactionController.transactionRefund')
   Route.post('affiliate-campaign', 'AffiliateCampaignController.affiliateCreate')
   Route.post('token-claimed', 'TransactionController.tokenClaimed')
+
+  Route.post('mantra-stake/staked', 'MantraStakeController.staked');
+  Route.post('mantra-stake/unstaked', 'MantraStakeController.unstaked');
 }).prefix('webhook').middleware('checkJwtWebhook');
 
 
@@ -115,7 +118,7 @@ Route.group(() => {
 
 
 // Investor User
-Route.get('campaign-latest-active', 'CampaignController.campaignLastestActive')
+Route.get('campaign-latest-active', 'CampaignController.campaignLatestActive')
 
 Route.group(() => {
   Route.post('/login', 'UserAuthController.login').validator('Login').middleware('checkSignature');
@@ -127,7 +130,7 @@ Route.group(() => {
   Route.post('check-wallet-address', 'UserAuthController.checkWalletAddress');
   Route.get('check-token/:token', 'UserController.checkToken');
   Route.post('reset-password/:token', 'UserController.resetPassword').validator('ResetPassword').middleware('checkSignature');
-  Route.get('profile', 'UserController.profile');
+  Route.get('profile', 'UserController.profile').middleware(['maskEmailAndWallet']);
   Route.post('check-active', 'UserController.checkUserActive');
 
   Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['checkSignature']);

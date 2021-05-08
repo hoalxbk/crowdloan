@@ -77,7 +77,7 @@ const DialogContent = withStyles((theme: Theme) => ({
 
 const TransactionSubmitModal: React.FC<any> = (props: any) => {
   const styles = useStyles();
-  const { opened, handleClose, transactionHash } = props;
+  const { opened, handleClose, transactionHash, additionalText } = props;
 
   return (
       <Dialog open={opened} onClose={handleClose} className={styles.dialog}>
@@ -98,6 +98,13 @@ const TransactionSubmitModal: React.FC<any> = (props: any) => {
                 >
                   View on Etherscan
                 </a>
+                {
+                  additionalText && (
+                    <p style={{ marginTop: 30, fontWeight: 'bold', lineHeight: '18px', fontSize: 15.5, color: '#8db4ff', fontFamily: 'Helvetica' }}> 
+                      {additionalText}
+                    </p>
+                  )
+                }
                 </>
               ): <ClipLoader color={'white'}/>
             }

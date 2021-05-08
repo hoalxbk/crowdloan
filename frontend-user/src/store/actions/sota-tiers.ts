@@ -5,10 +5,11 @@ import { getContractInstance, convertFromWei, convertToWei, SmartContractMethod 
 import { getContract } from '../../utils/contract';
 import RedKite from '../../abi/RedKiteTiers.json';
 import { getBalance } from './balance';
-import { JsonRpcSigner, Web3Provider } from '@ethersproject/providers'
+import { Web3Provider } from '@ethersproject/providers'
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
+import BigNumber from 'bignumber.js';
 
-import {approve, getAllowance} from './sota-token';
+import {getAllowance} from './sota-token';
 
 export const resetTiers = () => {
   return {
@@ -93,7 +94,7 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
       const { appChainID } = getState().appNetwork.data;
-      const { connector } = getState().connector.data;
+      const connector = undefined;
       const contract = getContractInstance(
         RedKite.abi,
         process.env.REACT_APP_TIERS as string,
@@ -156,7 +157,11 @@ export const deposit = (address: string | null | undefined, amount: string, libr
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
       result = await contract?.depositERC20(tokenAddress, convertToWei(amount))
-      
+
+      dispatch({
+        type: sotaTiersActions.DEPOSIT_SUCCESS,
+        payload: result,
+      });
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
@@ -164,14 +169,10 @@ export const deposit = (address: string | null | undefined, amount: string, libr
         dispatch(getUserTier(address || ''));
         dispatch(getUserInfo(address || ''));
       }
-
-      dispatch({
-        type: sotaTiersActions.DEPOSIT_SUCCESS,
-        payload: result,
-      });
+      dispatch(alertSuccess('You have successfully staked.'));
     } catch (error) {
       console.log(error)
-      dispatch(alertFailure("Transaction submit failure"))
+      dispatch(alertFailure("Transaction submited failure"))
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_FAILURE,
@@ -190,6 +191,12 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
 
       result = await contract?.withdrawERC20(tokenAddress, convertToWei(amount));
+
+      dispatch({
+        type: sotaTiersActions.WITHDRAW_SUCCESS,
+        payload: result,
+      });
+
       await result.wait(1);
       if(result) {
         dispatch(getBalance(address || ''));
@@ -197,11 +204,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
         dispatch(getUserTier(address || ''));
         dispatch(getUserInfo(address || ''));
       }
-
-      dispatch({
-        type: sotaTiersActions.WITHDRAW_SUCCESS,
-        payload: result,
-      });
+      dispatch(alertSuccess('You have successfully unstaked.'));
 
     } catch (error) {
       console.log(error)
@@ -286,6 +289,40 @@ export const getWithdrawPercent = () => {
       console.log(error)
       dispatch({
         type: sotaTiersActions.WITHDRAW_PERCENT_FAILURE,
+        payload: error
+      });
+    }
+  }
+};
+
+export const getRates = (tokens: any) => {
+  return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
+    dispatch({ type: sotaTiersActions.RATES_LOADING });
+    try {
+      const { appChainID } = getState().appNetwork.data;
+      const { connector } = getState().connector.data || "Metamask";
+      const contract = getContractInstance(RedKite.abi, process.env.REACT_APP_TIERS as string, connector, appChainID);
+ 
+      let data = [] as any;
+      for(let i = 0; i < tokens.length; i++) {
+        const token = tokens[i];
+        const result = await contract?.methods.externalToken(token.address).call();
+        const rate = (new BigNumber(result.rate)).div(new BigNumber(10**result.decimals)).toString();
+        data.push({rate, symbol: token.symbol, name: token.name})
+      }
+      const result = {
+        data: data
+      }
+
+      dispatch({
+        type: sotaTiersActions.RATES_SUCCESS,
+        payload: result,
+      });
+
+    } catch (error) {
+      console.log(error)
+      dispatch({
+        type: sotaTiersActions.RATES_FAILURE,
         payload: error
       });
     }

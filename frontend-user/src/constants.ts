@@ -44,12 +44,18 @@ export const CONVERSION_RATE = [
   {
     name: 'PKF-ETH LP',
     rate: 150,
-    symbol: 'LP-PKF'
+    symbol: 'LP-PKF',
+    address: process.env.REACT_APP_UNI_LP,
+    key: 'UPKF',
+    keyMainnet: 'UNI-V2'
   },
   {
     name: 'Staked sPKF',
     rate: 1,
-    symbol: 'sPKF'
+    symbol: 'sPKF',
+    address: process.env.REACT_APP_MANTRA_LP,
+    key: 'sPKF',
+    keyMainnet: 'sPKF'
   },
   // {
   //   name: 'NFT',

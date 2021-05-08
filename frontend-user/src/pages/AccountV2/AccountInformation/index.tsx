@@ -17,19 +17,16 @@ const AccountInformation = (props: any) => {
   const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
 
   const handleKYC = () => {
-    window.open('https://docs.google.com/forms/d/e/1FAIpQLSeV_Sman6oEZ3UzNvgly_I-hxNMyGbS4WFhudCzcbDTc4Gaqg/viewform', '_blank');
+    window.open('https://docs.google.com/forms/d/1XnPZrW4l21sFjtgkKky4w5eE1zB-1TmdACBSpa9uKO8/viewform', '_blank');
   }
 
   const {
     email,
     setEmail,
     emailVerified,
+    setEmailVeryfied,
     isKYC
   } = props;
-
-  useEffect(() => {
-    console.log(connectedAccount, emailVerified, USER_STATUS.UNVERIFIED, email)
-  })
 
   return (
     <div className={`${classNamePrefix}__component`} style={{marginBottom: '65px'}}>
@@ -37,20 +34,12 @@ const AccountInformation = (props: any) => {
       <div className={styles.mainInfomation}>
         <div className={styles.inputGroup}>
           <span>Email</span>
-          {isWidthUp('sm', props.width) && <>
-            {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
-            {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
-              <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
-                Verify Email
-              </button>}
-          </>}
-          {isWidthDown('xs', props.width) && <div className="email-xs">
-            {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
-            {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
-              <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
-                Verify Email
-              </button>}
-          </div>}
+          {email && emailVerified != USER_STATUS.UNVERIFIED && <span>{email}</span>}
+          {emailVerified == USER_STATUS.UNVERIFIED && <span>Not Available</span>}
+          {(emailVerified == USER_STATUS.UNVERIFIED || !email) && connectedAccount &&
+            <button className="verify-email" onClick={() => setOpenModalVerifyEmail(true)}>
+              Verify Email
+            </button>}
         </div>
         <div className={styles.inputGroup}>
           <span>Your Wallet</span>
@@ -62,15 +51,15 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>Your Tier</span>
           <span>
-            {_.isEmpty(userTier) ? TIERS[0].name : TIERS[userTier]?.name}
+            {(userTier > 0 && connectedAccount) ? TIERS[userTier]?.name : TIERS[0].name}
           </span>
         </div>
         <div className={styles.inputGroup}>
-          <span>KYC for Redkite</span>
+          <span>KYC for Red Kite</span>
           {connectedAccount && <>
             <span>{isKYC ? 'Verified' : 'Unverified'}</span>
             {!isKYC && <button className="verify-email" onClick={handleKYC}>
-              Register KYC
+              KYC NOW
             </button>}
           </>}
         </div>
@@ -99,11 +88,13 @@ const AccountInformation = (props: any) => {
           </div> */}
         </div>
       </div>
-      {openModalVerifyEmail && <ModalVerifyEmail
+      <ModalVerifyEmail
         setOpenModalVerifyEmail={setOpenModalVerifyEmail}
         email={email}
         setEmail={setEmail}
-      />}
+        open={openModalVerifyEmail}
+        setEmailVeryfied={setEmailVeryfied}
+      />
     </div>
   );
 };

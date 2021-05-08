@@ -9,6 +9,7 @@ import { TokenType } from '../../../hooks/useTokenDetails';
 import useUserPurchased from '../hooks/useUserPurchased';
 import useTokenClaim from '../hooks/useTokenClaim';
 import { convertTimeToStringFormat } from '../../../utils/convertDate';
+import { numberWithCommas } from '../../../utils/formatNumber';
 
 type ClaimTokenProps = {
   releaseTime: Date | undefined
@@ -17,7 +18,7 @@ type ClaimTokenProps = {
   ableToFetchFromBlockchain: boolean | undefined
   buyTokenSuccess: boolean | undefined
   poolId: number | undefined;
-} 
+}
 
 const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
   const { releaseTime } = props;
@@ -44,7 +45,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
         await retrieveUserPurchased(connectedAccount, poolAddress) as number
       );
     }
-    
+
     (ableToFetchFromBlockchain || buyTokenSuccess) && fetchUserPurchased();
   }, [connectedAccount, poolAddress, ableToFetchFromBlockchain, claimTokenSuccess, buyTokenSuccess]);
 
@@ -62,7 +63,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     } catch (err) {
       setOpenClaimModal(false);
     }
-  } 
+  }
 
 
   return (
@@ -75,19 +76,19 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
       <div className={styles.poolDetailClaimInfo}>
         <div className={styles.poolDetailClaimInfoBlock}>
           <span>You can claim</span>
-          <span>{userPurchased} {tokenDetails?.name}</span>
+          <span>{numberWithCommas(`${userPurchased}`)} {tokenDetails?.symbol}</span>
         </div>
       </div>
-      <Button 
-        text={'Claim'} 
-        backgroundColor={'#3232DC'} 
-        disabled={!availableClaim || userPurchased <= 0} 
-        loading={loading} 
+      <Button
+        text={'Claim'}
+        backgroundColor={'#3232DC'}
+        disabled={!availableClaim || userPurchased <= 0}
+        loading={loading}
         onClick={handleTokenClaim}
       />
-      <TransactionSubmitModal 
-        opened={openClaimModal} 
-        handleClose={() => { setOpenClaimModal(false); setClaimTokenLoading(false)}} 
+      <TransactionSubmitModal
+        opened={openClaimModal}
+        handleClose={() => { setOpenClaimModal(false); setClaimTokenLoading(false)}}
         transactionHash={transactionHash}
       />
     </div>

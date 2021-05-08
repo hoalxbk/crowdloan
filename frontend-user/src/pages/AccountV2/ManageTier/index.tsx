@@ -9,11 +9,14 @@ import ModalDeposit from '../ModalDeposit';
 import ModalWithdraw from '../ModalWithdraw';
 import ModalTransaction from '../ModalTransaction';
 import useAuth from '../../../hooks/useAuth';
+import { sotaTiersActions } from '../../../store/constants/sota-tiers';
+import { sotaTokenActions } from '../../../store/constants/sota-token';
 //@ts-ignore
 import AnimatedNumber from "animated-number-react";
 import { numberWithCommas } from '../../../utils/formatNumber';
 import { timeAgo } from '../../../utils/convertDate';
 import { USER_STATUS, CONVERSION_RATE } from '../../../constants';
+import {Dialog, DialogTitle, DialogContent, DialogActions} from '@material-ui/core';
 
 const iconClose = '/images/icons/close.svg'
 
@@ -38,7 +41,9 @@ const ManageTier = (props: any) => {
   const { 
     classNamePrefix = '',
     emailVerified,
-    listTokenDetails
+    listTokenDetails,
+    totalUnstaked,
+    total
   } = props;
 
   useEffect(() => {
@@ -46,25 +51,37 @@ const ManageTier = (props: any) => {
   }, [])
 
   useEffect(() => {
-    if(depositTransaction.hash) {
-      setTransactionHashes([...transactionHashes, depositTransaction.hash]);
+    if(depositTransaction?.hash) {
+      setTransactionHashes([...transactionHashes, {tnx: depositTransaction.hash, isApprove: false}]);
       setOpenModalTransactionSubmitting(false);
+      dispatch({
+        type: sotaTiersActions.DEPOSIT_SUCCESS,
+        payload: undefined,
+      });
     }
     if(depositError.message) setOpenModalTransactionSubmitting(false);
   }, [depositTransaction, depositError])
 
   useEffect(() => {
-    if(approveTransaction.hash) {
-      setTransactionHashes([...transactionHashes, approveTransaction.hash]);
+    if(approveTransaction?.hash) {
+      setTransactionHashes([...transactionHashes, {tnx: approveTransaction.hash, isApprove: true}]);
       setOpenModalTransactionSubmitting(false);
+      dispatch({
+        type: sotaTokenActions.APPROVE_SUCCESS,
+        payload: undefined,
+      });
     }
     if(approveError.message) setOpenModalTransactionSubmitting(false);
   }, [approveTransaction, approveError])
 
   useEffect(() => {
-    if(withdrawTransaction.hash) {
-      setTransactionHashes([...transactionHashes, withdrawTransaction.hash]);
+    if(withdrawTransaction?.hash) {
+      setTransactionHashes([...transactionHashes, {tnx: withdrawTransaction.hash, isApprove: false}]);
       setOpenModalTransactionSubmitting(false);
+      dispatch({
+        type: sotaTiersActions.WITHDRAW_SUCCESS,
+        payload: undefined,
+      });
     }
     if(withdrawError.message) setOpenModalTransactionSubmitting(false);
   }, [withdrawTransaction, withdrawError])
@@ -73,9 +90,9 @@ const ManageTier = (props: any) => {
     return <div className="group">
       <span>{symbol}</span>
       {(wrongChain || !isAuth) && <span>0</span>}
-      {!wrongChain && isAuth && <span>{numberWithCommas(balance)}</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(balance || 0)}</span>}
       {(wrongChain || !isAuth) && <span>0</span>}
-      {!wrongChain && isAuth && <span>{numberWithCommas(staked)}</span>}
+      {!wrongChain && isAuth && <span>{numberWithCommas(staked || 0)}</span>}
     </div>
   }
 
@@ -90,29 +107,35 @@ const ManageTier = (props: any) => {
             <div className="group">
               <span>Currency</span>
               <span>Available Balance</span>
-              <span>Locked-in</span>
+              <span>Staked</span>
             </div>
           </div>
           <div className={styles.tableBody}>
             {renderToken('PKF', balance?.pkf, userInfo?.pkfStaked)}
             {renderToken(CONVERSION_RATE[0]?.symbol, balance?.uni, userInfo?.uniStaked)}
             {renderToken(CONVERSION_RATE[1]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
+            <div className="group">
+              <span>{CONVERSION_RATE[1]?.symbol} (Cooldown)</span>
+              <span>-</span>
+              {<span>{numberWithCommas(totalUnstaked || 0)}</span>}
+            </div>
           </div>
         </div>
+        <p className={styles.noteStake}>sPKF (Cooldown) is the number of PFK under MANTRA DAO cooldown period after the unstaking request. This amount will be counted to your tier automatically without the need to Stake.</p>
         <div className="button-area">
           <button
             className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalDeposit(true)}}
             disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
-            Lock - in
+            Stake
           </button>
           <button
             className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalWithdraw(true)}}
             disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
           >
-            Unlock
+            Unstake
           </button>
         </div>
         {/* <p className={styles.balance}>
@@ -127,27 +150,40 @@ const ManageTier = (props: any) => {
           &nbsp;{tokenDetails?.symbol}
         </p> */}
       </div>
-      {openModalDeposit && <ModalDeposit
+      <ModalDeposit
         setOpenModalDeposit={setOpenModalDeposit}
         setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
         listTokenDetails={listTokenDetails}
-      />}
-      {openModalWithdraw && <ModalWithdraw
+        open={openModalDeposit}
+        totalStaked={total}
+      />
+      <ModalWithdraw
         setOpenModalWithdraw={setOpenModalWithdraw}
         setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
         listTokenDetails={listTokenDetails}
-      />}
-      {openModalTransactionSubmitting && <div className={commonStyles.loadingTransaction}>
-        <div className="content">
+        open={openModalWithdraw}
+        totalStaked={total}
+      />
+
+      <Dialog
+        open={openModalTransactionSubmitting}
+        keepMounted
+        onClose={() => setOpenModalTransactionSubmitting(false)}
+        aria-labelledby="alert-dialog-slide-title"
+        aria-describedby="alert-dialog-slide-description"
+        className={commonStyles.loadingTransaction}
+      >
+        <DialogContent className="content">
           <img src={iconClose} onClick={() => setOpenModalTransactionSubmitting(false)}/>
           <span className={commonStyles.nnb1824d}>Transaction Submitting</span>
           <CircularProgress color="primary" />
-        </div>
-      </div>}
+        </DialogContent>
+      </Dialog>
 
       {transactionHashes.length > 0 && <ModalTransaction
         transactionHashes={transactionHashes}
         setTransactionHashes={setTransactionHashes}
+        open={transactionHashes.length > 0}
       />}
     </div>
   );

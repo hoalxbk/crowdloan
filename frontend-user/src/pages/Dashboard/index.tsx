@@ -4,7 +4,6 @@ import { withRouter, Link } from 'react-router-dom';
 import _ from 'lodash';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
-import BackgroundComponent from './BackgroundComponent';
 import Card from './Card';
 import usePools from '../../hooks/usePools';
 import { POOL_STATUS, POOL_TYPE, BUY_TYPE } from '../../constants';
@@ -12,14 +11,13 @@ import POOL_ABI from '../../abi/Pool.json';
 import { getContractInstance, convertFromWei, convertToWei } from '../../services/web3';
 import moment from 'moment';
 
-const cardImage = '/images/icons/card-image.jpg';
 const arrowRightIcon = '/images/icons/arrow-right.svg';
 const background = '/images/icons/background2.svg';
 
 const Dashboard = (props: any) => {
   const styles = useStyles();
   const dispatch = useDispatch();
-  const { pools = [], pagination, loading } = usePools();
+  let { pools = [], pagination, loading } = usePools();
   const [upcommingPools, setUpcommingPools] = useState([]);
   const [featurePools, setFeaturePools] = useState([]);
   const { data: appChain } = useSelector((state: any) => state.appNetwork);
@@ -103,9 +101,9 @@ const Dashboard = (props: any) => {
   }, [pools]);
 
   useEffect(() => {
-    if(!appChain || !connector) return
+    if(!appChain) return
     pools.forEach(async (pool: any) => {
-    if(pool.is_deploy === 0) return
+      if(pool.is_deploy === 0) return
       const tokenSold = await getTokenSold(pool)
       pool.tokenSold = tokenSold
     })
@@ -121,7 +119,7 @@ const Dashboard = (props: any) => {
             return index < 4 && <Card pool={pool} key={pool.id}/>
           })}
         </div>
-        <button className="btn">
+        <button className="btn" onClick={() => window.open('https://t.me/PolkaFoundryANN', '_blank')}>
           Get Notified&nbsp;
           <img src={arrowRightIcon}/>
         </button>
@@ -137,10 +135,10 @@ const Dashboard = (props: any) => {
           View all Pools&nbsp;
           <img src={arrowRightIcon}/>
         </button> */}
-        <Link to="pools" className="btn" style={{width: '170px'}}>
+        <a href="https://t.me/PolkaFoundryANN" target="_blank" className="btn" style={{width: '170px'}}>
           View all Pools&nbsp;
           <img src={arrowRightIcon}/>
-        </Link>
+        </a>
         {/* <a href="/pools" className="btn" style={{width: '170px'}}>
           View all Pools&nbsp;
           <img src={arrowRightIcon}/>
@@ -151,7 +149,7 @@ const Dashboard = (props: any) => {
         <div className="content">
           <h2>Get Alerts For New Pools</h2>
           <p>Subscribe to get notified about new pools and other relevant events.</p>
-          <button className="btn">
+          <button className="btn" onClick={() => window.open('https://t.me/PolkaFoundryANN', '_blank')}>
             Subscribe to upcoming pools&nbsp;
             <img src={arrowRightIcon}/>
           </button>

@@ -18,24 +18,6 @@ const useStyles = makeStyles((theme: any) => {
         padding: '0',
       }
     },
-    customWidth: {
-      maxWidth: 500,
-      backgroundColor: '#030925',
-      boxShadow: '0px 12px 20px rgba(0, 0, 0, 0.07)',
-      borderRadius: '4px',
-      padding: '7px 10px',
-      '&:before': {
-        content: '""',
-        width: '10px',
-        height: '10px',
-        display: 'block',
-        backgroundColor: '#030925',
-        transform: 'rotate(-45deg)',
-        position: 'absolute',
-        left: '5px',
-        bottom: '10px'
-      }
-    },
     tierNote: {
       display: 'flex',
       flexDirection: 'column',
@@ -338,7 +320,7 @@ const useStyles = makeStyles((theme: any) => {
         },
 
         '&:last-child .info': {
-          alignItems: 'flex-start',
+          alignItems: 'flex-start!important',
         },
 
         '& > div': {

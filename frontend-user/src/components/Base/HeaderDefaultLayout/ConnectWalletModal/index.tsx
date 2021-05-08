@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 import { useSelector } from 'react-redux';
 import { withStyles, Theme, createStyles, WithStyles } from '@material-ui/core/styles';
+import { Link } from 'react-router-dom';
+import withWidth, { isWidthDown } from '@material-ui/core/withWidth';
 import Checkbox from '@material-ui/core/Checkbox';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -50,6 +52,7 @@ export interface DialogTitleProps extends WithStyles<typeof styles> {
 export interface ComponentProps {
   opened: boolean,
   handleClose: () => void;
+  width: any;
 }
 
 const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
@@ -108,10 +111,9 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
             className={styles.dialogCheckbox}
           />
           <span className={styles.dialogPrivacyText}>
-            I read and accept 
-            <strong className={styles.dialogPrivacyHighlight}> Terms of Service</strong> ,
-            <strong className={styles.dialogPrivacyHighlight}>Legal Disclosure</strong> and 
-            <strong className={styles.dialogPrivacyHighlight}> Privacy Policy</strong>
+            I read and accept the
+            <Link className={styles.dialogPrivacyHighlight} to="/terms" target="_blank"> Terms of Service</Link> and&nbsp;
+            <Link className={styles.dialogPrivacyHighlight} to="/privacy" target="_blank"> Privacy Policy</Link>
           </span>
         </div>
         <Typography gutterBottom className={styles.dialogContentTypo} >
@@ -132,14 +134,16 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
           {
             Object.keys(connectorsByNetwork).map((key: string) => {
               const network = connectorsByNetwork[key];
-              return <ConnectWalletBox 
-                      key={key}
-                      wallet={network} 
-                      isAppNetwork={false} 
-                      handleProviderChosen={handleProviderChosen} 
-                      connectWalletLoading={connectWalletLoading}
-                      walletName={walletName}
-                    />
+              const isMobile = isWidthDown('xs', props.width);
+              const showConnectorInMobile = isMobile ? network.mobile: true;
+              return showConnectorInMobile && <ConnectWalletBox 
+                  key={key}
+                  wallet={network} 
+                  isAppNetwork={false} 
+                  handleProviderChosen={handleProviderChosen} 
+                  connectWalletLoading={connectWalletLoading}
+                  walletName={walletName}
+                />
             })
           }
         </div>
@@ -149,4 +153,4 @@ const ConnectWalletModal: React.FC<ComponentProps> = (props: ComponentProps) => 
 
 }
 
-export default ConnectWalletModal;
+export default withWidth()(ConnectWalletModal);

@@ -85,7 +85,8 @@ const useStyles = makeStyles((theme: any) => {
 
       '& > img': {
         width: '100%',
-        objectFit: 'cover'
+        objectFit: 'cover',
+        minHeight: '250px'
       },
 
       '& .content': {

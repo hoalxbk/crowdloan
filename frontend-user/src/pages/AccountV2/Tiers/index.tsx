@@ -4,10 +4,11 @@ import { Link } from 'react-router-dom';
 import _ from 'lodash';
 import { CONVERSION_RATE, TIERS } from '../../../constants';
 import useStyles from './style';
+import useCommonStyle from '../../../styles/CommonStyle';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import useAuth from '../../../hooks/useAuth';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
-import { getTiers, getUserInfo } from '../../../store/actions/sota-tiers';
+import { getTiers, getUserInfo, getUserTier } from '../../../store/actions/sota-tiers';
 import Tooltip from '@material-ui/core/Tooltip';
 import { numberWithCommas } from '../../../utils/formatNumber';
 
@@ -15,21 +16,29 @@ const noticeIcon = '/images/icons/notice.svg';
 
 const Tiers = (props: any) => {
   const styles = useStyles();
+  const commonStyle = useCommonStyle();
   const dispatch = useDispatch();
 
-  const { data: userTier = '0' } = useSelector((state: any) => state.userTier);
   const { data: tiers = {} } = useSelector((state: any) => state.tiers);
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const [loading, setLoading] = useState(true);
   const { isAuth, connectedAccount, wrongChain } = useAuth();
+  const {data: rates} = useSelector((state: any) => state.rates);
 
   const {
     showMoreInfomation = false,
     tiersBuyLimit,
     tokenSymbol,
+    verifiedEmail,
+    userTier = 0,
+    total
   } = props;
 
   const [currentProcess, setCurrentProcess] = useState(undefined) as any;
+
+  useEffect(() => {
+    console.log(userTier, 'userTier')
+  }, [userTier])
 
   const calculateProcess = (ListData: any, current: any) => {
     let tierA = 0;
@@ -63,25 +72,27 @@ const Tiers = (props: any) => {
       setCurrentProcess(0)
       return
     }
-    if(showMoreInfomation && !_.isEmpty(userTier)) {
+    if(showMoreInfomation && userTier) {
       // let process = userTier*100/(tiersBuyLimit.length - 1)
-      setCurrentProcess(100);
+      setCurrentProcess(0);
       return;
     }
-    if(!showMoreInfomation && !_.isEmpty(userInfo) && !_.isEmpty(userTier)) {
-      let process = calculateProcess(tiers, userInfo.totalStaked);
+    if(!showMoreInfomation && total) {
+      let process = calculateProcess(tiers, total);
       setCurrentProcess(process);
     }
   }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain])
 
   useEffect(() => {
     dispatch(getTiers());
-    dispatch(getUserInfo(connectedAccount || ''));
+    connectedAccount != '' && connectedAccount != undefined && dispatch(getUserInfo(connectedAccount));
+    connectedAccount != '' && connectedAccount != undefined && dispatch(getUserTier(connectedAccount));
   }, [isAuth, wrongChain, connectedAccount])
 
   useEffect(() => {
     if(currentProcess != undefined) setLoading(false)
-  }, [currentProcess])
+    console.log('userTier', userTier)
+  }, [currentProcess,userTier])
 
   return (
     <div
@@ -89,23 +100,29 @@ const Tiers = (props: any) => {
     >
       {showMoreInfomation && <div className={styles.title}>
         <>
-          <p>
-            You are in tier {userTier >= 0 && getUserTierAlias(userTier as number).text}.&nbsp; 
-            To upgrade your tier, please click&nbsp;
-            <Link to="/account" className={styles.tierLinkToAccount}>here</Link> !
-          </p> 
+          {
+            (verifiedEmail && connectedAccount) ?  (
+              <p>
+              {userTier > 0 ? `You are in tier ${getUserTierAlias(userTier as number).text}`: 'You are not in any tier yet'}. To upgrade your tier, please click <Link to="/account" className={styles.tierLinkToAccount}>here</Link>.
+              </p> 
+            ): (
+              <p>
+                You are not in any tier yet.
+              </p> 
+            )
+          }
         </>
       </div>}
       <ul className={styles.tierList}>
         <li className={styles.tierInfo + ' active first-tier'}>
-          {isWidthUp('sm', props.width) && <span
+          {isWidthUp('sm', props.width) && connectedAccount && <span
             className={"progress-bar"}
             style={{
               backgroundColor: TIERS[0].bgColor,
               width: userTier > 0 ?  'calc(100% - 1px)' : `${currentProcess || 0}%`
             }}
           ></span>}
-          {isWidthDown('xs', props.width) && <span
+          {isWidthDown('xs', props.width) && connectedAccount && <span
             className={"progress-bar" + (loading ? ' inactive' : ' active')}
             style={{
               backgroundColor: TIERS[0].bgColor,
@@ -126,21 +143,21 @@ const Tiers = (props: any) => {
         {tiers.length > 0 && tiers.map((tier: any, idx: any) => {
           if(tier != 0) {
             return <li key={tier} className={styles.tierInfo + (userTier > idx ? ' active ' : ' ') + TIERS[idx + 1].name}>
-              {userTier > idx + 1 && <span
+              {userTier > idx + 1 && connectedAccount && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
                   transition: `all 1s ease ${idx + 1}s`
                 }}
               ></span>}
-              {userTier == idx + 1 && isWidthUp('sm', props.width) && <span
+              {userTier == idx + 1 && connectedAccount && !showMoreInfomation && isWidthUp('sm', props.width) && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
                   width: `${currentProcess}%`
                 }}
               ></span>}
-              {userTier == idx + 1 && isWidthDown('xs', props.width) && <span
+              {userTier == idx + 1 && connectedAccount && !showMoreInfomation && isWidthDown('xs', props.width) && <span
                 className={"progress-bar" + (loading ? ' inactive' : ' active')}
                 style={{
                   backgroundColor: TIERS[idx + 1].bgColor,
@@ -166,20 +183,24 @@ const Tiers = (props: any) => {
       {!showMoreInfomation && <div className={styles.tierNote}>
         <h3 className="title">
           Equivalent PKF&nbsp;&nbsp;
-          <Tooltip placement="top-start" classes={{ tooltip: styles.customWidth }} enterDelay={500} leaveDelay={200} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
-            Equivalent PKF = PKF + {CONVERSION_RATE[0].symbol}*150 + {CONVERSION_RATE[1].symbol}
+          <Tooltip placement="top-start" classes={{ tooltip: commonStyle.tooltip }} enterDelay={500} leaveDelay={200} title={<p style={{ font: 'normal normal normal 12px/18px Helvetica' }}>
+            Equivalent PKF = PKF
+            {rates.data && rates.data.map((rate: any) => {
+              return ` + ${rate.symbol}*${rate.rate}`
+            })}
+            + sPKF (Cooldown)
           </p>}>
             <img src={noticeIcon}/>
           </Tooltip>
         </h3>
-        <span className="subtitle">{(connectedAccount && isAuth && !wrongChain) ? numberWithCommas(userInfo.totalStaked || 0) : 0} PKF</span>
-        {!_.isEmpty(userTier) && <div className="notice">
+        <span className="subtitle">{(connectedAccount && isAuth && !wrongChain) ? numberWithCommas(total || 0) : 0} PKF</span>
+        <div className="notice">
           <img src={TIERS[userTier].icon}/>
           <div className="notice-content">
-            <span>You are in Tier {TIERS[userTier].name}</span>
-            <span>Please hold tokens in your wallet balance to maintain your tier!</span>
+            {(userTier > 0 && connectedAccount) ? <span>You are in Tier {TIERS[userTier].name}</span> : <span>You are not in any tier yet.</span>}
+            <span>Please stake tokens in your wallet balance to maintain your tier!</span>
           </div>
-        </div>}
+        </div>
       </div>}
     </div>
   );

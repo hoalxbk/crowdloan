@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _ from 'lodash';
 import { getBalance } from '../../store/actions/balance';
-import { getTiers, getUserTier, getUserInfo } from '../../store/actions/sota-tiers';
+import { getTiers, getUserTier, getUserInfo, getRates } from '../../store/actions/sota-tiers';
 import { getAllowance } from '../../store/actions/sota-token';
 import Tiers from './Tiers';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
@@ -14,7 +14,11 @@ import useAuth from '../../hooks/useAuth';
 import useTokenDetails from '../../hooks/useTokenDetails';
 import useFetch from '../../hooks/useFetch';
 import TierInfomation from './TierInfomation';
-import { USER_STATUS } from '../../constants';
+import { CONVERSION_RATE, USER_STATUS } from '../../constants';
+import RedKite from '../../abi/RedKiteTiers.json';
+import { getContractInstance, SmartContractMethod } from '../../services/web3';
+import BigNumber from 'bignumber.js'
+import useUserTier from '../../hooks/useUserTier';
 
 const TOKEN_ADDRESS = process.env.REACT_APP_PKF || '';
 const TOKEN_UNI_ADDRESS = process.env.REACT_APP_UNI_LP || '';
@@ -40,7 +44,10 @@ const AccountV2 = (props: any) => {
   const [isKYC, setIsKYC] = useState(false);
   const [showAlertVerifyEmail, setShowAlertVerifyEmail] = useState(true);
   const [listTokenDetails, setListTokenDetails] = useState([]) as any;
-  
+  const { data: appChainID } = useSelector((state: any) => state.appNetwork)
+  const [rates, setRates] = useState([]) as any;
+  const { currentTier, totalStaked, totalUnstaked, total } = useUserTier(connectedAccount || '', 'eth')
+
   useEffect(() => {
     if (isAuth && connectedAccount && !wrongChain) { 
       dispatch(getBalance(connectedAccount));
@@ -71,6 +78,10 @@ const AccountV2 = (props: any) => {
     }
   }, [data]);
 
+  useEffect(() => {
+    dispatch(getRates(CONVERSION_RATE));
+  }, [appChainID])
+
   return (
     <DefaultLayout>
       {emailVerified == USER_STATUS.UNVERIFIED && !loading && showAlertVerifyEmail && connectedAccount && <div className={classes.alertVerifyEmail}>
@@ -91,16 +102,24 @@ const AccountV2 = (props: any) => {
               email={email}
               emailVerified={emailVerified}
               setEmail={setEmail}
+              setEmailVeryfied={setEmailVeryfied}
               isKYC={isKYC}
             ></AccountInformation>
             <Tiers
               showMoreInfomation={false}
               tokenSymbol={tokenPKFDetails?.symbol}
+              userTier={currentTier}
+              total={total}
             />
             <TierInfomation/>
           </div>
           <div className={classes.rightPanel}>
-            <ManageTier listTokenDetails={listTokenDetails} emailVerified={emailVerified}/>
+            <ManageTier
+              listTokenDetails={listTokenDetails}
+              emailVerified={emailVerified}
+              totalUnstaked={totalUnstaked}
+              total={total}
+            />
           </div>
         </div>
       </div>

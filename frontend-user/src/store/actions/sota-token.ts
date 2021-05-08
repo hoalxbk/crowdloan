@@ -49,15 +49,14 @@ export const approve = (address: string | null | undefined, library: Web3Provide
 
       const contract = getContract(tokenAddress, erc20ABI, library, address || '');
       result = await contract?.approve(process.env.REACT_APP_TIERS, MAX_INT);
-      await result.wait(1);
-      if(result) {
-        dispatch(getAllowance(address || ''));
-      }
-
       dispatch({
         type: sotaTokenActions.APPROVE_SUCCESS,
         payload: result,
       });
+      await result.wait(1);
+      if(result) {
+        dispatch(getAllowance(address || ''));
+      }
 
     } catch (error) {
       console.log(error)
