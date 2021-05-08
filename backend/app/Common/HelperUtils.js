@@ -95,6 +95,9 @@ const paginationArray = (array, page_number, page_size) => {
   };
 };
 
+/**
+ * Smart Contract Utils
+ */
 const getTierSmartContractInstance = () => {
   const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
   return tierSc;
@@ -135,6 +138,41 @@ const getUserTierSmart = async (wallet_address) => {
   return userTier;
 };
 
+
+const getExternalTokenSmartContract = async (wallet_address) => {
+  const tierSc = getTierSmartContractInstance();
+  const externalTokenMantra = await tierSc.methods.externalToken(process.env.MATRA_DAO_STAKE_SMART_CONTRACT).call()
+  console.log('[getExternalTokenSmartContract] - externalToken', externalTokenMantra);
+  return externalTokenMantra;
+};
+
+
+const getUserTotalStakeSmartContract = async (wallet_address) => {
+  const tierSc = getTierSmartContractInstance();
+  const totalStaked = await tierSc.methods.userTotalStaked(wallet_address).call();
+  console.log('[getUserTotalStakeSmartContract] - totalStaked', totalStaked);
+  return totalStaked;
+};
+
+const getUnstakeMantraSmartContract = async (wallet_address) => {
+  const mantraSc = getMantraStakeSmartContractInstance();
+  const unstakeAmountMantra = await mantraSc.methods.getUnstake(wallet_address).call();
+  console.log('[getUnstakeMantraSmartContract] - unstakeAmountMantra', unstakeAmountMantra);
+  return unstakeAmountMantra;
+};
+
+const getTierBalanceInfos = async (wallet_address) => {
+  const tierSc = getTierSmartContractInstance();
+  const mantraSc = getMantraStakeSmartContractInstance();
+  const receivedData = await Promise.all([
+    tierSc.methods.getTiers().call(),
+    tierSc.methods.userTotalStaked(wallet_address).call(),
+    mantraSc.methods.getUnstake(wallet_address).call(),
+    tierSc.methods.externalToken(process.env.MATRA_DAO_STAKE_SMART_CONTRACT).call(),
+  ]);
+  return receivedData;
+};
+
 module.exports = {
   randomString,
   responseSuccess,
@@ -144,5 +182,10 @@ module.exports = {
   checkSumAddress,
   paginationArray,
   getTierSmartContractInstance,
+  getMantraStakeSmartContractInstance,
+  getTierBalanceInfos,
+  getUserTotalStakeSmartContract,
+  getUnstakeMantraSmartContract,
+  getExternalTokenSmartContract,
   getUserTierSmart,
 };

@@ -31,8 +31,7 @@ Route.group(() => {
   Route.post('affiliate-campaign', 'AffiliateCampaignController.affiliateCreate')
   Route.post('token-claimed', 'TransactionController.tokenClaimed')
 
-  Route.post('mantra-stake/staked', 'MantraStakeController.staked');
-  Route.post('mantra-stake/unstaked', 'MantraStakeController.unstaked');
+  Route.post('mantra-stake/index-stake-info', 'MantraStakeController.indexStakeInfo');
 }).prefix('webhook').middleware('checkJwtWebhook');
 
 
