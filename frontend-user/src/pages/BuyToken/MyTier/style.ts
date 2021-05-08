@@ -25,7 +25,6 @@ const useStyles = makeStyles((theme: any) => {
       lineHeight: '24px'
     },
     MyTierRulesHeader: {
-      marginTop: 15,
       fontFamily: 'Helvetica',
       fontSize: 15,
       fontWeight: 'normal'
