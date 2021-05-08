@@ -6,7 +6,7 @@ import TransactionSubmitModal from '../../../components/Base/TransactionSubmitMo
 import useStyles from './style';
 
 import { TokenType } from '../../../hooks/useTokenDetails';
-import useUserPurchased from '../hooks/useUserPurchased';
+import useUserRemainTokensClaim from '../hooks/useUserRemainTokensClaim';
 import useTokenClaim from '../hooks/useTokenClaim';
 import { convertTimeToStringFormat } from '../../../utils/convertDate';
 import { numberWithCommas } from '../../../utils/formatNumber';
@@ -36,13 +36,13 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
   } = props;
 
   const { claimToken, setClaimTokenLoading, transactionHash, claimTokenSuccess, loading, error } = useTokenClaim(poolAddress, poolId);
-  const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
+  const { retrieveClaimableTokens } = useUserRemainTokensClaim(tokenDetails, poolAddress, ableToFetchFromBlockchain);
   const availableClaim = releaseTime ? new Date() >= releaseTime: false;
 
   useEffect(() => {
     const fetchUserPurchased  = async () => {
       connectedAccount && poolAddress && setUserPurchased(
-        await retrieveUserPurchased(connectedAccount, poolAddress) as number
+        await retrieveClaimableTokens(connectedAccount, poolAddress) as number
       );
     }
 
