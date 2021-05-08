@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useEffect, useRef, useState, useCallback, useMemo } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState, useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import BigNumber from 'bignumber.js';
 import NumberFormat from 'react-number-format';
@@ -76,7 +76,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     poolId,
     availablePurchase,
     ableToFetchFromBlockchain,
-    minTier,
+    /* minTier, */
     isDeployed,
     minimumBuy,
     poolAmount,
@@ -87,7 +87,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
-  const userTier = useTypedSelector(state => state.userTier).data;
+  /* const userTier = useTypedSelector(state => state.userTier).data; */
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
   const connector = useTypedSelector(state => state.connector).data;
 
@@ -192,12 +192,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       };
     }
 
-    if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !connectedAccountFirstBuy && new Date() > startBuyTimeInDate) {
-      return { 
-        message: `The minimum amount you must trade is ${new BigNumber(minimumBuy).toFixed(2)} ${purchasableCurrency}.`,
-        type: MessageType.error
-      }
-    }
+    /* if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !connectedAccountFirstBuy && new Date() > startBuyTimeInDate) { */
+    /*   return { */ 
+    /*     message: `The minimum amount you must trade is ${new BigNumber(minimumBuy).toFixed(2)} ${purchasableCurrency}.`, */
+    /*     type: MessageType.error */
+    /*   } */
+    /* } */
 
     if (
       input && 
@@ -236,19 +236,19 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   }
 
   // Check whether current user's tier is valid or not
-  const validTier = new BigNumber(userTier).gte(minTier);
+  /* const validTier = new BigNumber(userTier).gte(minTier); */
 
   // Check multiple conditions for purchasing time
   const purchasable = 
      availablePurchase 
      && estimateTokens > 0 
-     && (purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(input).lte(new BigNumber(maximumBuy)): new BigNumber(input).lte(tokenBalance))
+     /* && (purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(input).lte(new BigNumber(maximumBuy)): new BigNumber(input).lte(tokenBalance)) */
      && !poolErrorBeforeBuy
-     && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)))
+     /* && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate))) */
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
      && new BigNumber(tokenBalance).gte(new BigNumber(input))
      && !wrongChain
-     && validTier    
+     /* && validTier */    
      && ((purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(tokenAllowance || 0).gt(0): true));
 
   // Fetch User balance

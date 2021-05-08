@@ -478,7 +478,6 @@ class CampaignController {
       const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenAmount, minTokenAmount);
       console.log(`message hash ${messageHash}`);
       const privateKey = wallet.private_key;
-      console.log(`private key ${privateKey}`)
       // create signature
       const account = web3.eth.accounts.privateKeyToAccount(privateKey);
       const accAddress = account.address;
@@ -596,7 +595,6 @@ class CampaignController {
         return HelperUtils.responseBadRequest("Do not found wallet for campaign");
       }
       const privateKey = wallet.private_key;
-      console.log(`private key ${privateKey}`)
       // create signature
       const account = web3.eth.accounts.privateKeyToAccount(privateKey);
       const accAddress = account.address;

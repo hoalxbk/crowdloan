@@ -7,6 +7,8 @@ import {ETH_CHAIN_ID} from './network';
 
 import {FORMATIC_KEY, NETWORK_URL, APP_NETWORKS_NAME } from './network';
 
+const METAMASK_DEEPLINK = process.env.REACT_APP_METAMASK_DEEPLINK;
+
 export const bscConnector = new BscConnector({}) as any;
 export const injected = new InjectedConnector({});
 
@@ -49,7 +51,8 @@ export interface WalletInfo {
   mobile?: true
   mobileOnly?: true,
   disableIcon: string;
-  icon: string 
+  icon: string ;
+  deepLink?: string;
 }
 
 export enum ConnectorNames {
@@ -69,6 +72,8 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     disableIcon: '/images/metamask-disabled.svg',
     description: 'Easy-to-use browser extension.',
     href: null,
+    mobile: true,
+    deepLink: METAMASK_DEEPLINK
   },
   WALLET_CONNECT: {
     connector: walletConnect,

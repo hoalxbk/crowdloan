@@ -110,7 +110,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const endJoinTimeInDate = poolDetails?.endJoinTime ? new Date(Number(poolDetails?.endJoinTime) * 1000): undefined;
   const startBuyTimeInDate = poolDetails?.startBuyTime ? new Date(Number(poolDetails?.startBuyTime) * 1000): undefined;
   const endBuyTimeInDate = poolDetails?.endBuyTime ? new Date(Number(poolDetails?.endBuyTime) * 1000): undefined;
-  const tierStartBuyInDate = new Date(Number(currentUserTier?.start_time) * 1000);
+  /* const tierStartBuyInDate = new Date(Number(currentUserTier?.start_time) * 1000); */
   const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000);
   const releaseTimeInDate = poolDetails?.releaseTime ? new Date(Number(poolDetails?.releaseTime) * 1000): undefined;
 
@@ -130,11 +130,11 @@ const BuyToken: React.FC<any> = (props: any) => {
   const availablePurchase = startBuyTimeInDate && endBuyTimeInDate &&
     today >= startBuyTimeInDate &&
     today <= endBuyTimeInDate &&
-    today >= tierStartBuyInDate &&
-    today <= tierEndBuyInDate &&
+    /* today >= tierStartBuyInDate && */
+    /* today <= tierEndBuyInDate && */
     poolDetails?.isDeployed &&
-    verifiedEmail &&
-    (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true);
+    verifiedEmail;
+    /* (poolDetails?.method === 'whitelist' ? alreadyJoinPool: true); */
 
   // Get Pool Status
   const poolStatus = getPoolStatus(
@@ -381,13 +381,17 @@ const BuyToken: React.FC<any> = (props: any) => {
               </div>
               <div className={styles.poolDetailTier}>
                 <Tiers
-                  showMoreInfomation
+                  hideStatistics
+                  showMoreInfomation={true}
                   tiersBuyLimit={poolDetails?.buyLimit || [] }
                   tokenSymbol={`${poolDetails?.purchasableCurrency?.toUpperCase()}`}
                   verifiedEmail={verifiedEmail}
                   userTier={currentUserTier?.level || 0}
                 />
-                <p className={styles.poolDetailMaxBuy}>*Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()}</p>
+                <p className={styles.poolDetailMaxBuy}>
+                  {/* *Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()} */}
+                  Determined at whitelist closing
+                </p>
                 <div className={styles.poolDetailProgress}>
                   <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
                   {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
@@ -442,10 +446,9 @@ const BuyToken: React.FC<any> = (props: any) => {
                 <ul className={styles.poolDetailLinks}>
                   {
                     headers.map((header) => {
-                      if (header === HeaderType.Main && endBuyTimeInDate && new Date() > endBuyTimeInDate) {
-                        return;
-                      }
-
+                      /* if (header === HeaderType.Main && endBuyTimeInDate && new Date() > endBuyTimeInDate) { */
+                      /*   return; */
+                      /* } */
                       if (header !== HeaderType.About && header !== HeaderType.MyTier && !poolDetails?.isDeployed) {
                         return;
                       }
@@ -463,7 +466,7 @@ const BuyToken: React.FC<any> = (props: any) => {
               </nav>
               <div className={styles.poolDetailBuyForm}>
                 {
-                  activeNav === HeaderType.Main && endBuyTimeInDate && new Date() <= endBuyTimeInDate && (
+                  activeNav === HeaderType.Main && (
                       <BuyTokenForm
                         tokenDetails={poolDetails?.tokenDetails}
                         rate={poolDetails?.ethRate}

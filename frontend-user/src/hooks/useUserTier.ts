@@ -32,7 +32,7 @@ const useUserTier = (address: string, networkAvailable: string): UserTier => {
     let currentTier = 0;
     for(let i = 0; i < tiers.length; i++) {
       const tier = new BigNumber(tiers[i])
-      if(tier.lt(totalStaked)) {
+      if(tier.lte(totalStaked)) {
         currentTier = i + 1
       }
     }
