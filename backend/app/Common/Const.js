@@ -115,5 +115,10 @@ module.exports = Object.freeze({
   POOL_DISPLAY: {
     DISPLAY: 1,
     HIDDEN: 0,
+  },
+  KYC_STATUS: {
+    NOT_VERIFIED: 0,
+    VERIFIED: 1,
+    VERIFY_FAIL: 2,
   }
 });
