@@ -166,7 +166,7 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   const userTiersAnnotationText = useMemo(() => {
     if (existedWinner && poolDetails) {
-      return `*Max bought: ${numberWithCommas(userBuyLimit.toString())} ${poolDetails?.purchasableCurrency?.toUpperCase()}`
+      return `*Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${poolDetails?.purchasableCurrency?.toUpperCase()}`
     }
 
     return 'Determined at whitelist closing';

@@ -38,6 +38,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   const [searchedWinners, setSearchedWinners] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
+  const [totalWinners, setTotalWinners] = useState(0);
   const { data: totalParticipants } = useFetch<number>(poolId ? `/user/counting/${poolId}`: undefined);
   const { data: winnersList } = useFetch<any>(
     `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&${input ? `search=${input}`: ''}`,
@@ -49,6 +50,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
     if (winnersList) {
       setTotalPage(winnersList.lastPage);
       setCurrentPage(winnersList.page);
+      setTotalWinners(winnersList.total);
       setSearchedWinners(winnersList.data);
     }
   };
@@ -63,6 +65,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   return (
     <div className={styles.LotteryWinners}>
       <p className={styles.LotteryWinnersDesc}>There are {totalParticipants ? numberWithCommas(totalParticipants.toString()): 0} people joining this pool right now.</p>
+      <p className={styles.LotteryWinnersMessage}>There are {totalWinners} winners. Please check your individual caps to see how much you can buy.</p>
       {
         searchedWinners.length > 0 && verifiedEmail && ( 
           userWinLottery ? (
