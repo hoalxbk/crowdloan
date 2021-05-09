@@ -26,6 +26,8 @@ class MaskEmailAndWallet {
   }
 
   maskWallet(wallet) {
+    if (!wallet) return wallet;
+
     console.log(`Wallet before mask is ${wallet}`);
     const preWalletLength = wallet.length;
     console.log('preWalletLength', preWalletLength);
@@ -43,6 +45,8 @@ class MaskEmailAndWallet {
   }
 
   maskEmail(email) {
+    if (!email) return email;
+
     console.log(`Email before mask is ${email}`);
     const preEmailLength = email.split("@")[0].length;
     // get number of word to hide, half of preEmail
