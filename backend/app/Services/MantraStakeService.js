@@ -39,7 +39,8 @@ class MantraStakeService {
       stakingLog.current_tier = (await HelperUtils.getUserTierSmart(walletAddress))[0];
 
       const tierAmount = await HelperUtils.getUserTotalStakeSmartContract(walletAddress);
-      const decimals = (await HelperUtils.getExternalTokenSmartContract(walletAddress) || {}).decimals || 0;
+      // const decimals = (await HelperUtils.getExternalTokenSmartContract(walletAddress) || {}).decimals || 18;
+      const decimals = 18;
       stakingLog.tier_staked_amount = new BigNumber(tierAmount).dividedBy(Math.pow(10, decimals)).toFixed();
 
       const userStaking = await this.findUserStaking(walletAddress);

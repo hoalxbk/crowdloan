@@ -1,7 +1,7 @@
 module.exports = {
   // WEB3_API_URL: 'https://rinkeby-rpc.sotatek.com',
-  WEB3_API_URL: 'https://goerli.infura.io/v3/c745d07314904c539668b553dbd6b670',
-  // WEB3_API_URL: 'https://goerli.infura.io/v3/cc59d48c26f54ab58d831f545eda2bb7',
+  // WEB3_API_URL: 'https://goerli.infura.io/v3/c745d07314904c539668b553dbd6b670',
+  WEB3_API_URL: 'https://goerli.infura.io/v3/cc59d48c26f54ab58d831f545eda2bb7',
   // WEB3_API_URL: 'https://goerli.infura.io/v3/3a18fd787c2342c4915364de4955bcf5',
 
   AVERAGE_BLOCK_TIME: 15000,
@@ -45,8 +45,8 @@ module.exports = {
       CONTRACT_DATA: require('./contracts/MantraStake.json'), // MantraStake
       CONTRACT_ADDRESS: '0x0e8D8291E35B890d4887f4eaa6d9F91275e05E6D',
       FIRST_CRAWL_BLOCK: 4680953,
-      BLOCK_NUM_IN_ONE_GO: 40000,
-      BREAK_TIME_AFTER_ONE_GO: 1000,
+      BLOCK_NUM_IN_ONE_GO: 1000,
+      BREAK_TIME_AFTER_ONE_GO: 10000,
       NEED_NOTIFY_BY_WEBHOOK: true
     },
   },

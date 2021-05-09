@@ -11,9 +11,9 @@ const BigNumber = use('bignumber.js');
 
 // Tier Smart contract
 const { abi: CONTRACT_TIER_ABI } = require('../../blockchain_configs/contracts/Normal/Tier.json');
-const tierSmartContract = process.env.TIER_SMART_CONTRACT;
+const TIER_SMART_CONTRACT = process.env.TIER_SMART_CONTRACT;
 const { abi: CONTRACT_STAKE_ABI } = require('../../blockchain_configs/contracts/Normal/MantraStake.json');
-const mantraSmartContract = process.env.MATRA_DAO_STAKE_SMART_CONTRACT;
+const MANTRA_DAO_STAKE_SMART_CONTRACT = process.env.MATRA_DAO_STAKE_SMART_CONTRACT;
 /**
  * Generate "random" alpha-numeric string.
  *
@@ -36,6 +36,48 @@ const randomString = async (length = 40) => {
   }
 
   return string
+};
+
+const doMask = (obj, fields) => {
+  for(const prop in obj) {
+    if(!obj.hasOwnProperty(prop)) continue;
+    if(fields.indexOf(prop)!=-1) {
+      obj[prop] = this.maskEmail(obj[prop]);
+    } else if(typeof obj[prop]==='object') {
+      this.doMask(obj[prop], fields);
+    }
+  }
+};
+
+const maskEmail = async (email) => {
+  console.log(`Email before mask is ${email}`);
+  const preEmailLength = email.split("@")[0].length;
+  // get number of word to hide, half of preEmail
+  const hideLength = ~~(preEmailLength / 2);
+  console.log(hideLength);
+  // create regex pattern
+  const r = new RegExp(".{"+hideLength+"}@", "g")
+  // replace hide with ***
+  email = email.replace(r, "***@");
+  console.log(`Email after mask is ${email}`);
+  return email;
+};
+
+const maskWalletAddress = async (wallet) => {
+  console.log(`Wallet before mask is ${wallet}`);
+  const preWalletLength = wallet.length;
+  console.log('preWalletLength', preWalletLength);
+
+  // get number of word to hide, 1/3 of preWallet
+  const hideLength = Math.floor(preWalletLength / 3);
+  console.log('hideLength', hideLength);
+
+  // replace hide with ***
+  let r = wallet.substr(hideLength, hideLength);
+  wallet = wallet.replace(r, "*************");
+
+  console.log(`Wallet after mask is ${wallet}`);
+  return wallet;
 };
 
 const checkRole = (params, extraData) => {
@@ -99,12 +141,12 @@ const paginationArray = (array, page_number, page_size) => {
  * Smart Contract Utils
  */
 const getTierSmartContractInstance = () => {
-  const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
+  const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, TIER_SMART_CONTRACT);
   return tierSc;
 };
 
 const getMantraStakeSmartContractInstance = () => {
-  const mantraSc = new web3.eth.Contract(CONTRACT_STAKE_ABI, mantraSmartContract);
+  const mantraSc = new web3.eth.Contract(CONTRACT_STAKE_ABI, MANTRA_DAO_STAKE_SMART_CONTRACT);
   return mantraSc;
 };
 
@@ -115,7 +157,7 @@ const getUserTierSmart = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
-    tierSc.methods.externalToken(mantraSmartContract).call(),
+    tierSc.methods.externalToken(MANTRA_DAO_STAKE_SMART_CONTRACT).call(),
   ]);
 
   console.log('receivedData: ', receivedData);
@@ -141,7 +183,7 @@ const getUserTierSmart = async (wallet_address) => {
 
 const getExternalTokenSmartContract = async (wallet_address) => {
   const tierSc = getTierSmartContractInstance();
-  const externalTokenMantra = await tierSc.methods.externalToken(mantraSmartContract).call()
+  const externalTokenMantra = await tierSc.methods.externalToken(MANTRA_DAO_STAKE_SMART_CONTRACT).call();
   console.log('[getExternalTokenSmartContract] - externalToken', externalTokenMantra);
   return externalTokenMantra;
 };
@@ -168,13 +210,16 @@ const getTierBalanceInfos = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
-    tierSc.methods.externalToken(mantraSmartContract).call(),
+    tierSc.methods.externalToken(MANTRA_DAO_STAKE_SMART_CONTRACT).call(),
   ]);
   return receivedData;
 };
 
 module.exports = {
   randomString,
+  doMask,
+  maskEmail,
+  maskWalletAddress,
   responseSuccess,
   responseNotFound,
   responseErrorInternal,

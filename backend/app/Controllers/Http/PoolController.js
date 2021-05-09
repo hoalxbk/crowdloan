@@ -196,7 +196,6 @@ class PoolController {
             name: item.name,
             // start_time: moment.utc(item.startTime).unix(),
             // end_time: moment.utc(item.endTime).unix(),
-
             start_time: item.startTime,
             end_time: item.endTime,
 

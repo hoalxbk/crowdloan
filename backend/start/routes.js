@@ -138,7 +138,7 @@ Route.group(() => {
   Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList');
   Route.get('whitelist-search/:campaignId', 'WhiteListUserController.search');
   Route.get('winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners');
-  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList');
+  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware(['maskEmailAndWallet']);
   Route.get('winner-search/:campaignId', 'WinnerListUserController.search');
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');
