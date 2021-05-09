@@ -75,7 +75,7 @@ class WinnerListUserController {
     const searchParams = {
       'campaign_id': request.params.campaignId,
       'email': request.input('email'),
-      'wallet_address': request.input('wallet_address'),
+      'search': request.input('search'),
       'page': request.input('page'),
       'pageSize': request.input('limit') ? request.input('limit') : 10
     }

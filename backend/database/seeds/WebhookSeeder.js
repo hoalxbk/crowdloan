@@ -85,13 +85,13 @@ class WebhookSeeder {
         url: 'webhook/affiliate-campaign',
       },
       {
-        contract_name: Const.CONTRACTS.MANTRA_STAKE,
-        type: 'Staked',
+        contract_name: Const.CONTRACTS.TIER,
+        type: 'StakedERC20',
         url: 'webhook/mantra-stake/index-stake-info',
       },
       {
-        contract_name: Const.CONTRACTS.MANTRA_STAKE,
-        type: 'Unstaked',
+        contract_name: Const.CONTRACTS.TIER,
+        type: 'WithdrawnERC20',
         url: 'webhook/mantra-stake/index-stake-info',
       },
     ];

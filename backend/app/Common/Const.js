@@ -7,6 +7,7 @@ module.exports = Object.freeze({
     CAMPAIGNFACTORY: 'CampaignFactory',
     ETHLINK: 'ETHLink',
     ERC20: 'Erc20',
+    TIER: 'Tier',
     MANTRA_STAKE: 'MantraStake',
   },
   TX_TABLE: {
@@ -114,5 +115,10 @@ module.exports = Object.freeze({
   POOL_DISPLAY: {
     DISPLAY: 1,
     HIDDEN: 0,
+  },
+  KYC_STATUS: {
+    NOT_VERIFIED: 0,
+    VERIFIED: 1,
+    VERIFY_FAIL: 2,
   }
 });

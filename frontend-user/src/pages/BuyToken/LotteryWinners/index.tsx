@@ -16,7 +16,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import useStyles from './style';
 
-const headers = ['Ticket Number', 'Address'];
+const headers = ['No.', 'Address'];
 
 type LotteryWinnersProps = {
   poolId: number | undefined;

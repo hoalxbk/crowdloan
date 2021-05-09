@@ -366,7 +366,7 @@ class UserController {
         return HelperUtils.responseNotFound('User Not found');
       }
       if (!userFound.is_kyc) {
-        const user = await userService.buildQueryBuilder({id: userFound.id}).update({is_kyc: true});
+        const user = await userService.buildQueryBuilder({id: userFound.id}).update({is_kyc: Const.KYC_STATUS.VERIFIED});
         console.log('[activeKyc] - User: ', JSON.stringify(user));
       }
 

@@ -38,6 +38,7 @@ class MantraStakeService {
       stakingLog.wallet_address = walletAddress;
       stakingLog.current_tier = (await HelperUtils.getUserTierSmart(walletAddress))[0];
 
+      // Get User Id exist
       const userStaking = await this.findUserStaking(walletAddress);
       stakingLog.user_id = userStaking ? userStaking.id : null;
 
