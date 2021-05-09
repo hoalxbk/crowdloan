@@ -10,6 +10,7 @@ class UserBalanceSnapshotSchema extends Schema {
       table.integer('campaign_id').unsigned().notNullable();
       table.string('wallet_address').notNullable();
       table.integer('lottery_ticket').unsigned().notNullable().default(0);
+      table.integer('winner_ticket').unsigned().nullable().default(0);
       table.integer('level').unsigned().nullable();
       table.decimal('pkf_balance', 20, 4).nullable();
       table.decimal('uni_lp_balance', 20, 4).nullable();

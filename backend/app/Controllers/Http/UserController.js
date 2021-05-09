@@ -338,10 +338,7 @@ class UserController {
         const tickets = winner ? winner.lottery_ticket : 0;
         const tier = {
           min_buy: tierDb.min_buy,
-
-          // TODO: Uncomment to Fix with lotter ticket
-          max_buy: tierDb.max_buy,// * tickets,
-
+          max_buy: tierDb.max_buy * tickets,
           start_time: tierDb.start_time,
           end_time: tierDb.end_time,
           level: tierDb.level
