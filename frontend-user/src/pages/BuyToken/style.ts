@@ -40,8 +40,8 @@ const useStyles = makeStyles((theme: any) => {
       },
 
       [theme.breakpoints.down('xs')]: {
-        flexDirection: 'row',
-        alignItems: 'flex-start'
+        flexDirection: 'column',
+        alignItems: 'center'
       }
     },
     poolHeaderImage: {
