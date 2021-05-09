@@ -36,7 +36,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   const [totalPage, setTotalPage] = useState(1);
   const { data: totalParticipants } = useFetch<number>(poolId ? `/user/counting/${poolId}`: undefined);
   const { data: winnersList } = useFetch<any>(
-    `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&${input ? `wallet_address=${input}`: ''}`,
+    `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&${input ? `search=${input}`: ''}`,
     false,
     {},
   );
@@ -88,7 +88,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
               {searchedWinners && searchedWinners.length> 0 && searchedWinners.map((row: any, index) => (
               <TableRow key={index}>
                 <TableCell component="th" scope="row">
-                  {row.id}
+                  {index + 1}
                 </TableCell>
                 <TableCell component="th" scope="row">
                   {isWidthDown('sm', props.width) ? 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { HashLoader } from "react-spinners";
 import { useParams, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -92,7 +92,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     id && connectedAccount ?
     `pool/${id}/user/${connectedAccount}/current-tier`
     : undefined,
-  )
+  );
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
 
@@ -163,6 +163,14 @@ const BuyToken: React.FC<any> = (props: any) => {
   const shortenAddress = (address: string, digits: number = 4) => {
     return `${address.substring(0, digits + 2)}...${address.substring(42 - digits)}`
   }
+
+  const userTiersAnnotationText = useMemo(() => {
+    if (existedWinner && poolDetails) {
+      return `*Max bought: ${numberWithCommas(userBuyLimit.toString())} ${poolDetails?.purchasableCurrency?.toUpperCase()}`
+    }
+
+    return 'Determined at whitelist closing';
+  }, [existedWinner, userBuyLimit, poolDetails]);
 
   useEffect(() => {
     if (!poolDetails?.isDeployed) setActiveNav(HeaderType.About);
@@ -254,7 +262,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {existedWinner && startBuyTimeInDate && endBuyTimeInDate && new Date() > startBuyTimeInDate && new Date() < endBuyTimeInDate && ableToFetchFromBlockchain &&
+            {existedWinner && ableToFetchFromBlockchain &&
               <p className={styles.poolTicketWinner}>
                 <div>
                   {
@@ -390,7 +398,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 />
                 <p className={styles.poolDetailMaxBuy}>
                   {/* *Max bought: {numberWithCommas(userBuyLimit.toString())} {poolDetails?.purchasableCurrency?.toUpperCase()} */}
-                  Determined at whitelist closing
+                  {userTiersAnnotationText}
                 </p>
                 <div className={styles.poolDetailProgress}>
                   <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
@@ -450,7 +458,12 @@ const BuyToken: React.FC<any> = (props: any) => {
                         return;
                       }
 
-                      if (header !== HeaderType.About && header !== HeaderType.MyTier && !poolDetails?.isDeployed) {
+                      if (
+                        header !== HeaderType.About && 
+                        header !== HeaderType.MyTier && 
+                        header !== HeaderType.Participants &&
+                        !poolDetails?.isDeployed
+                      ) {
                         return;
                       }
 
