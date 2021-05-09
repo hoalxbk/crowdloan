@@ -32,11 +32,9 @@ class WinnerListUserService {
 
   buildSearchQuery(params) {
     let builder = WinnerListModel.query();
-    if (params.email) {
-      builder = builder.where('email', 'like', '%' + params.email + '%');
-    }
-    if (params.wallet_address) {
-      builder = builder.where('wallet_address', 'like', '%' + params.wallet_address + '%')
+    if (params.search) {
+      builder = builder.where('email', 'like', '%' + params.search + '%')
+        .orWhere('wallet_address', 'like', '%' + params.search + '%');
     }
     if (params.campaign_id) {
       builder = builder.where('campaign_id', params.campaign_id);
