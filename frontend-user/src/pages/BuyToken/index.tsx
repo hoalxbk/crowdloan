@@ -514,7 +514,15 @@ const BuyToken: React.FC<any> = (props: any) => {
                   )
                 }
                 {
-                  activeNav === HeaderType.Participants && <LotteryWinners poolId={poolDetails?.id} />
+                  activeNav === HeaderType.Participants && ( 
+                    <LotteryWinners 
+                      poolId={poolDetails?.id} 
+                      userWinLottery={existedWinner ? true: false} 
+                      maximumBuy={userBuyLimit}
+                      purchasableCurrency={poolDetails?.purchasableCurrency.toUpperCase()}
+                      verifiedEmail={verifiedEmail ? true: false}
+                    /> 
+                   )
                 }
                 {
                   activeNav === HeaderType.MyTier && <MyTier tiers={poolDetails?.tiersWithDetails} />

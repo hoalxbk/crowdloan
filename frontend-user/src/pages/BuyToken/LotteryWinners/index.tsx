@@ -21,6 +21,10 @@ const headers = ['No.', 'Address'];
 type LotteryWinnersProps = {
   poolId: number | undefined;
   width: any;
+  userWinLottery: boolean | undefined;
+  maximumBuy: number | undefined;
+  purchasableCurrency: string | undefined;
+  verifiedEmail: boolean | undefined
 }
 
 const shortenAddress = (address: string, digits: number = 4) => {
@@ -29,7 +33,7 @@ const shortenAddress = (address: string, digits: number = 4) => {
 
 const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProps) => {
   const styles = useStyles();
-  const { poolId } = props;
+  const { poolId, userWinLottery, maximumBuy, purchasableCurrency, verifiedEmail } = props;
   const [input, setInput] = useState("");
   const [searchedWinners, setSearchedWinners] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -58,7 +62,15 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
 
   return (
     <div className={styles.LotteryWinners}>
-      <p className={styles.LotteryWinnersDesc}>There are {totalParticipants ? numberWithCommas(totalParticipants.toString()): 0} people joining this pool right now</p>
+      <p className={styles.LotteryWinnersDesc}>There are {totalParticipants ? numberWithCommas(totalParticipants.toString()): 0} people joining this pool right now.</p>
+      {
+        searchedWinners.length > 0 && verifiedEmail && ( 
+          userWinLottery ? (
+            <p className={styles.LotteryWinnersMessage}> You have won a ticket to buy at this pool. You can buy up to {numberWithCommas(`${maximumBuy}`)} {purchasableCurrency}.</p> 
+          ): (
+            <p className={styles.LotteryWinnersMessage}>Unfortunately, you did not win a ticket to buy this time! See you next time.</p> 
+          )
+        )}
       <div className={styles.tableSearchWrapper}>
         <input 
           type="text" 
