@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import useFetch from '../../../hooks/useFetch';
 import { numberWithCommas } from '../../../utils/formatNumber';
 import { debounce } from 'lodash';
@@ -39,12 +40,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [totalWinners, setTotalWinners] = useState(0);
-  const { data: totalParticipants } = useFetch<number>(poolId ? `/user/counting/${poolId}`: undefined);
-  const { data: winnersList } = useFetch<any>(
-    `/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&${input ? `search=${input}`: ''}`,
-    false,
-    {},
-  );
+  const { data: winnersList } = useFetch<any>(`/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=4&${input ? `search=${input}`: ''}`);
 
   const searchDebounce = () => {
     if (winnersList) {
@@ -55,11 +51,13 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
     }
   };
 
-  useEffect(searchDebounce, [winnersList])
+  useEffect(searchDebounce, [winnersList]);
 
   const handleInputChange = debounce((e: any) => {
-    setInput(e.target.value);
-    setCurrentPage(1);
+    ReactDOM.unstable_batchedUpdates(() => {
+      setCurrentPage(1);
+      setInput(e.target.value);
+    });
   }, 500);
 
   return (
