@@ -95,8 +95,12 @@ class PoolController {
         tierObj.fill({
           level: index,
           name: item.name,
-          start_time: moment(item.startTime).unix(),
-          end_time: moment(item.endTime).unix(),
+
+          // start_time: moment.utc(item.startTime).unix(),
+          // end_time: moment.utc(item.endTime).unix(),
+          start_time: item.startTime,
+          end_time: item.endTime,
+
           min_buy: new BigNumber(item.minBuy || 0).toFixed(),
           max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
           ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
@@ -190,8 +194,11 @@ class PoolController {
           tierObj.fill({
             level: index,
             name: item.name,
-            start_time: moment(item.startTime).unix(),
-            end_time: moment(item.endTime).unix(),
+            // start_time: moment.utc(item.startTime).unix(),
+            // end_time: moment.utc(item.endTime).unix(),
+            start_time: item.startTime,
+            end_time: item.endTime,
+
             min_buy: new BigNumber(item.minBuy || 0).toFixed(),
             max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
             ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),

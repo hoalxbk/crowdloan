@@ -54,14 +54,15 @@ function TierTable(props: any) {
       const dataFormatted = poolDetail.tiers.map((item: any, index: any) => {
         return createData(
           TIERS[index],
-          moment.unix(item.start_time).format(DATETIME_FORMAT),
-          moment.unix(item.end_time).format(DATETIME_FORMAT),
+          moment(moment.utc(item.start_time * 1000)).format(DATETIME_FORMAT),
+          moment(moment.utc(item.end_time * 1000)).format(DATETIME_FORMAT),
           (new BigNumber(item.min_buy)).toNumber(),
           (new BigNumber(item.max_buy)).toNumber(),
           false,
           item.ticket_allow_percent || 0,
         );
       });
+
       setRows(dataFormatted);
     }
   }, [poolDetail]);

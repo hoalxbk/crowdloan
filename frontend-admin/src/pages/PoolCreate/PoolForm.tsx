@@ -33,6 +33,7 @@ import PoolHash from "./Components/PoolHash";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
 import PoolWebsite from "./Components/PoolWebsite";
+import moment from "moment";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -77,6 +78,9 @@ function PoolForm(props: any) {
         item.maxBuy = 0;
         item.minBuy = 0;
       }
+
+      item.startTime = moment(moment.utc(item.startTime)).unix();
+      item.endTime = moment(moment.utc(item.endTime)).unix();
       return item;
     });
 

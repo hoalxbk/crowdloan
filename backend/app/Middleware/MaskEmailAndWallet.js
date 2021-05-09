@@ -5,18 +5,41 @@ class MaskEmailAndWallet {
     await next();
     // get response data
     const data = response._lazyBody.content.data;
-    this.doMask(data,['email','wallet']);
+    this.doMask(data,['email', 'wallet', 'wallet_address']);
   }
 
   doMask(obj, fields) {
     for(const prop in obj) {
       if(!obj.hasOwnProperty(prop)) continue;
       if(fields.indexOf(prop)!=-1) {
-        obj[prop] = this.maskEmail(obj[prop]);
+        if (prop === 'wallet_address') {
+          obj[prop] = this.maskWallet(obj[prop]);
+        } else if (prop === 'email') {
+          obj[prop] = this.maskEmail(obj[prop]);
+        } else {
+          obj[prop] = this.maskWallet(obj[prop]);
+        }
       } else if(typeof obj[prop]==='object') {
         this.doMask(obj[prop], fields);
       }
     }
+  }
+
+  maskWallet(wallet) {
+    console.log(`Wallet before mask is ${wallet}`);
+    const preWalletLength = wallet.length;
+    console.log('preWalletLength', preWalletLength);
+
+    // get number of word to hide, 1/3 of preWallet
+    const hideLength = Math.floor(preWalletLength / 3);
+    console.log('hideLength', hideLength);
+
+    // replace hide with ***
+    let r = wallet.substr(hideLength, hideLength);
+    wallet = wallet.replace(r, "*************");
+
+    console.log(`Wallet after mask is ${wallet}`);
+    return wallet;
   }
 
   maskEmail(email) {

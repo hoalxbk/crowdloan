@@ -7,7 +7,7 @@ class AddFieldsToWinnerTableSchema extends Schema {
   up () {
     this.table('winner_list', (table) => {
       // alter table
-      table.integer('lottery_ticket').unsigned().nullable().default(0);
+      table.decimal('lottery_ticket', 8, 3).nullable().default(0);
       table.integer('level').unsigned().notNullable().default(0);
     })
   }

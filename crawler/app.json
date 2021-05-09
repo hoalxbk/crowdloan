@@ -29,6 +29,6 @@
       "script": "bin/ethlink/WebhookWorker.js",
       "cwd": "dist",
       "watch": false
-    }
+    },
   ]
 }
