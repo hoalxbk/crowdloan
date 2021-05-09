@@ -38,6 +38,48 @@ const randomString = async (length = 40) => {
   return string
 };
 
+const doMask = (obj, fields) => {
+  for(const prop in obj) {
+    if(!obj.hasOwnProperty(prop)) continue;
+    if(fields.indexOf(prop)!=-1) {
+      obj[prop] = this.maskEmail(obj[prop]);
+    } else if(typeof obj[prop]==='object') {
+      this.doMask(obj[prop], fields);
+    }
+  }
+};
+
+const maskEmail = async (email) => {
+  console.log(`Email before mask is ${email}`);
+  const preEmailLength = email.split("@")[0].length;
+  // get number of word to hide, half of preEmail
+  const hideLength = ~~(preEmailLength / 2);
+  console.log(hideLength);
+  // create regex pattern
+  const r = new RegExp(".{"+hideLength+"}@", "g")
+  // replace hide with ***
+  email = email.replace(r, "***@");
+  console.log(`Email after mask is ${email}`);
+  return email;
+};
+
+const maskWalletAddress = async (wallet) => {
+  console.log(`Wallet before mask is ${wallet}`);
+  const preWalletLength = wallet.length;
+  console.log('preWalletLength', preWalletLength);
+
+  // get number of word to hide, 1/3 of preWallet
+  const hideLength = Math.floor(preWalletLength / 3);
+  console.log('hideLength', hideLength);
+
+  // replace hide with ***
+  let r = wallet.substr(hideLength, hideLength);
+  wallet = wallet.replace(r, "*************");
+
+  console.log(`Wallet after mask is ${wallet}`);
+  return wallet;
+};
+
 const checkRole = (params, extraData) => {
   return {
     ...params,
@@ -175,6 +217,9 @@ const getTierBalanceInfos = async (wallet_address) => {
 
 module.exports = {
   randomString,
+  doMask,
+  maskEmail,
+  maskWalletAddress,
   responseSuccess,
   responseNotFound,
   responseErrorInternal,
