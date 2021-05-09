@@ -69,7 +69,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
       {
         searchedWinners.length > 0 && verifiedEmail && ( 
           userWinLottery ? (
-            <p className={styles.LotteryWinnersMessage}> You won lottery tickets at this pool! You can buy up to {numberWithCommas(`${maximumBuy}`)} {purchasableCurrency}.</p> 
+            <p className={styles.LotteryWinnersMessage}> You have won the lottery! You can buy up to {numberWithCommas(`${maximumBuy}`)} {purchasableCurrency}.</p> 
           ): (
             <p className={styles.LotteryWinnersMessage}>Unfortunately, you did not win a ticket to buy this time! See you next time.</p> 
           )
