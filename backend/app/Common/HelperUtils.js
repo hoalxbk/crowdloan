@@ -11,9 +11,9 @@ const BigNumber = use('bignumber.js');
 
 // Tier Smart contract
 const { abi: CONTRACT_TIER_ABI } = require('../../blockchain_configs/contracts/Normal/Tier.json');
-const tierSmartContract = process.env.TIER_SMART_CONTRACT;
+const TIER_SMART_CONTRACT = process.env.TIER_SMART_CONTRACT;
 const { abi: CONTRACT_STAKE_ABI } = require('../../blockchain_configs/contracts/Normal/MantraStake.json');
-const mantraSmartContract = process.env.MATRA_DAO_STAKE_SMART_CONTRACT;
+const MANTRA_DAO_STAKE_SMART_CONTRACT = process.env.MATRA_DAO_STAKE_SMART_CONTRACT;
 /**
  * Generate "random" alpha-numeric string.
  *
@@ -141,12 +141,12 @@ const paginationArray = (array, page_number, page_size) => {
  * Smart Contract Utils
  */
 const getTierSmartContractInstance = () => {
-  const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, tierSmartContract);
+  const tierSc = new web3.eth.Contract(CONTRACT_TIER_ABI, TIER_SMART_CONTRACT);
   return tierSc;
 };
 
 const getMantraStakeSmartContractInstance = () => {
-  const mantraSc = new web3.eth.Contract(CONTRACT_STAKE_ABI, mantraSmartContract);
+  const mantraSc = new web3.eth.Contract(CONTRACT_STAKE_ABI, MANTRA_DAO_STAKE_SMART_CONTRACT);
   return mantraSc;
 };
 
@@ -157,7 +157,7 @@ const getUserTierSmart = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
-    tierSc.methods.externalToken(mantraSmartContract).call(),
+    tierSc.methods.externalToken(MANTRA_DAO_STAKE_SMART_CONTRACT).call(),
   ]);
 
   console.log('receivedData: ', receivedData);
@@ -183,7 +183,7 @@ const getUserTierSmart = async (wallet_address) => {
 
 const getExternalTokenSmartContract = async (wallet_address) => {
   const tierSc = getTierSmartContractInstance();
-  const externalTokenMantra = await tierSc.methods.externalToken(mantraSmartContract).call()
+  const externalTokenMantra = await tierSc.methods.externalToken(MANTRA_DAO_STAKE_SMART_CONTRACT).call();
   console.log('[getExternalTokenSmartContract] - externalToken', externalTokenMantra);
   return externalTokenMantra;
 };
@@ -210,7 +210,7 @@ const getTierBalanceInfos = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
-    tierSc.methods.externalToken(mantraSmartContract).call(),
+    tierSc.methods.externalToken(MANTRA_DAO_STAKE_SMART_CONTRACT).call(),
   ]);
   return receivedData;
 };
