@@ -40,7 +40,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [totalWinners, setTotalWinners] = useState(0);
-  const { data: winnersList } = useFetch<any>(`/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=4&${input ? `search=${input}`: ''}`);
+  const { data: winnersList } = useFetch<any>(`/user/winner-${!input ? 'list': 'search'}/${poolId}?page=${currentPage}&limit=10&${input ? `search=${input}`: ''}`);
 
   const searchDebounce = () => {
     if (winnersList) {
