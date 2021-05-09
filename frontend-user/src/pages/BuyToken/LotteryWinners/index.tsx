@@ -44,7 +44,6 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
     false,
     {},
   );
-  console.log(searchedWinners.length > 0 && verifiedEmail && userWinLottery);
 
   const searchDebounce = () => {
     if (winnersList) {
