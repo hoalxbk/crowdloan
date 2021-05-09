@@ -10,18 +10,20 @@ const { exit } = require('process');
 
 class AutoJoinUser extends Command {
   static get signature () {
-    return 'auto:join:user'
+    return 'auto:join:user {campaign: Campaign ID}'
   }
 
   static get description () {
-    return 'Tell something helpful about this command'
+    return 'Command to join user by Campaign Id'
   }
 
   async handle (args, options) {
     this.info('Dummy implementation for auto:join:user command');
 
     const whitelistService = new WhitelistService();
-    const campaignId = 22;
+    const campaignId = args.campaign;
+    console.log('Process Campaign:', campaignId);
+
     const campaign = await CampaignModel.query().where('id', campaignId).first();
     if (!campaign) {
       console.log('Campaign is not exist');
@@ -33,7 +35,6 @@ class AutoJoinUser extends Command {
     users = JSON.parse(JSON.stringify(users));
 
     let countUser = 0;
-
     await Promise.all(users.map(async (user, index) => {
       console.log(JSON.stringify(user));
       const walletAddress = user.wallet_address;
