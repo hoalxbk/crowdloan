@@ -1,0 +1,67 @@
+'use strict'
+
+const { Command } = require('@adonisjs/ace');
+const UserModel = use('App/Models/User');
+const WhitelistUserModel = use('App/Models/WhitelistUser');
+const HelperUtils = use('App/Common/HelperUtils');
+const WhitelistService = use('App/Services/WhitelistUserService');
+const CampaignModel = use('App/Models/Campaign');
+
+class AutoJoinUser extends Command {
+  static get signature () {
+    return 'auto:join:user'
+  }
+
+  static get description () {
+    return 'Tell something helpful about this command'
+  }
+
+  async handle (args, options) {
+    this.info('Dummy implementation for auto:join:user command');
+
+    const whitelistService = new WhitelistService();
+    const campaignId = 22;
+    const campaign = await CampaignModel.query().where('id', campaignId).first();
+    if (!campaign) {
+      console.log('Campaign is not exist');
+      return false;
+    }
+
+    let users = await UserModel.query().fetch();
+    users = JSON.parse(JSON.stringify(users));
+
+    await Promise.all(users.map(async (user, index) => {
+      // const user = users[i];
+      console.log(JSON.stringify(user));
+
+      const walletAddress = user.wallet_address;
+      const filterParams = {
+        'campaign_id': campaignId,
+        'wallet_address': walletAddress,
+      };
+
+      // Check user joined
+      let whitelist = await whitelistService.buildQueryBuilder(filterParams).first();
+      whitelist = JSON.parse(JSON.stringify(whitelist));
+      console.log('whitelist', whitelist);
+      if (whitelist) {
+        return;
+      }
+
+      const tier = (await HelperUtils.getUserTierSmart(walletAddress))[0];
+      console.log('Wallet Address', walletAddress);
+      console.log('Tier', tier);
+      if (campaign.min_tier <= tier) {
+        const newWhitelist = new WhitelistUserModel();
+        newWhitelist.wallet_address = user.wallet_address;
+        newWhitelist.campaign_id = campaign.id;
+        newWhitelist.email = user.email;
+        newWhitelist.save();
+        console.log('Save user', JSON.stringify(newWhitelist));
+      }
+    }));
+
+  }
+}
+
+module.exports = AutoJoinUser;
