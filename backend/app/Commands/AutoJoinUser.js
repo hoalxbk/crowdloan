@@ -6,6 +6,7 @@ const WhitelistUserModel = use('App/Models/WhitelistUser');
 const HelperUtils = use('App/Common/HelperUtils');
 const WhitelistService = use('App/Services/WhitelistUserService');
 const CampaignModel = use('App/Models/Campaign');
+const { exit } = require('process');
 
 class AutoJoinUser extends Command {
   static get signature () {
@@ -24,16 +25,17 @@ class AutoJoinUser extends Command {
     const campaign = await CampaignModel.query().where('id', campaignId).first();
     if (!campaign) {
       console.log('Campaign is not exist');
+      process.exit(0);
       return false;
     }
 
     let users = await UserModel.query().fetch();
     users = JSON.parse(JSON.stringify(users));
 
-    await Promise.all(users.map(async (user, index) => {
-      // const user = users[i];
-      console.log(JSON.stringify(user));
+    let countUser = 0;
 
+    await Promise.all(users.map(async (user, index) => {
+      console.log(JSON.stringify(user));
       const walletAddress = user.wallet_address;
       const filterParams = {
         'campaign_id': campaignId,
@@ -58,9 +60,12 @@ class AutoJoinUser extends Command {
         newWhitelist.email = user.email;
         newWhitelist.save();
         console.log('Save user', JSON.stringify(newWhitelist));
+        countUser++;
       }
     }));
 
+    console.log('Total User Inserted: ', countUser);
+    process.exit(0);
   }
 }
 
