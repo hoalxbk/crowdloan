@@ -19,6 +19,12 @@ const useStyles = makeStyles((theme: any) => {
       marginBottom: 16,
       font: 'normal normal normal 14px/24px Helvetica'
     },
+    LotteryWinnersMessage: {
+      marginBottom: 16,
+      font: 'normal normal normal 14px/24px Helvetica',
+      fontWeight: 'bold',
+      fontSize: 15,
+    },
     table: {
       '& .MuiTableBody-root td': {
         font: 'normal normal normal 14px/24px Helvetica'
