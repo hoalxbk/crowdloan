@@ -36,7 +36,7 @@ class MantraStakeService {
 
       let stakingLog = walletExist || new StakingLogModel;
       stakingLog.wallet_address = walletAddress;
-      stakingLog.current_tier = await HelperUtils.getUserTierSmart(walletAddress)[0];
+      stakingLog.current_tier = (await HelperUtils.getUserTierSmart(walletAddress))[0];
 
       const tierAmount = await HelperUtils.getUserTotalStakeSmartContract(walletAddress);
       const decimals = (await HelperUtils.getExternalTokenSmartContract(walletAddress) || {}).decimals || 0;
