@@ -104,6 +104,7 @@ const AccountV2 = (props: any) => {
               setEmail={setEmail}
               setEmailVeryfied={setEmailVeryfied}
               isKYC={isKYC}
+              kycStatus={data?.user?.is_kyc}
               userTier={currentTier}
             ></AccountInformation>
             <Tiers

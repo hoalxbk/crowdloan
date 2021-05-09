@@ -18,6 +18,9 @@ const AccountInformation = (props: any) => {
   const handleKYC = () => {
     window.open('https://docs.google.com/forms/d/1XnPZrW4l21sFjtgkKky4w5eE1zB-1TmdACBSpa9uKO8/viewform', '_blank');
   }
+  const handleRejectKYC = () => {
+    window.open(process.env.REACT_APP_KYC_RESUBMIT_LINK, '_blank');
+  }
 
   const {
     email,
@@ -25,6 +28,7 @@ const AccountInformation = (props: any) => {
     emailVerified,
     setEmailVeryfied,
     isKYC,
+    kycStatus,
     userTier
   } = props;
 
@@ -57,10 +61,18 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>KYC for Red Kite</span>
           {connectedAccount && <>
-            <span>{isKYC ? 'Verified' : 'Unverified'}</span>
-            {!isKYC && <button className="verify-email" onClick={handleKYC}>
-              KYC NOW
-            </button>}
+            {kycStatus == 0 && <span>Unverified</span>}
+            {kycStatus == 0 && <button className="verify-email" onClick={handleKYC}>KYC NOW</button>}
+
+            {kycStatus == 1 && <span>Verified</span>}
+
+            {kycStatus == 2 && <span style={{color: 'red'}}>Rejected</span>}
+            {kycStatus == 2 && <button style={{color: 'red', borderColor: 'red'}} className="verify-email" onClick={handleRejectKYC}>Re-submit KYC</button>}
+
+            {/*<span>{isKYC ? 'Verified' : 'Unverified'}</span>*/}
+            {/*{!isKYC && <button className="verify-email" onClick={handleKYC}>*/}
+            {/*  KYC NOW*/}
+            {/*</button>}*/}
           </>}
         </div>
         <div className={styles.redKiteInfo}>
