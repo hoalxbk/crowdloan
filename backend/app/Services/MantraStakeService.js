@@ -31,7 +31,7 @@ class MantraStakeService {
     }
 
     async getInfoStaking(event, params, txHash) {
-      const walletAddress = HelperUtils.checkSumAddress(params.account);
+      const walletAddress = HelperUtils.checkSumAddress(params.user);
       const walletExist = await StakingLogModel.query().where('wallet_address', walletAddress).first();
 
       let stakingLog = walletExist || new StakingLogModel;
