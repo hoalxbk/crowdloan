@@ -272,7 +272,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   }
                 </div>
                 <span style={{ marginLeft: 14 }}>
-                  Congratulations on your purchase of the lottery ticket at this pool !
+                  Congratulations! You have won the lottery!
                 </span>
               </p>
             }

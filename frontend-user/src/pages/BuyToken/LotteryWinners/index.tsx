@@ -24,7 +24,7 @@ type LotteryWinnersProps = {
   userWinLottery: boolean | undefined;
   maximumBuy: number | undefined;
   purchasableCurrency: string | undefined;
-  verifiedEmail: boolean | undefined
+  verifiedEmail: boolean | undefined;
 }
 
 const shortenAddress = (address: string, digits: number = 4) => {
@@ -64,21 +64,20 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
 
   return (
     <div className={styles.LotteryWinners}>
-      {/*<p className={styles.LotteryWinnersDesc}>There are {totalParticipants ? numberWithCommas(totalParticipants.toString()): 0} people joining this pool right now.</p>*/}
-      <p className={styles.LotteryWinnersMessage}>There are {totalWinners} winners. Please check your individual caps to see how much you can buy.</p>
+      <p className={styles.LotteryWinnersMessage} style={{ marginTop: 15 }}>There are {totalWinners} winners. Please check your individual caps to see how much you can buy.</p>
       {
-        searchedWinners.length > 0 && verifiedEmail && ( 
+        searchedWinners.length > 0 && verifiedEmail && (
           userWinLottery ? (
-            <p className={styles.LotteryWinnersMessage}> You have won a ticket to buy at this pool. You can buy up to {numberWithCommas(`${maximumBuy}`)} {purchasableCurrency}.</p> 
+            <p className={styles.LotteryWinnersMessage}> You have won the lottery! You can buy up to {numberWithCommas(`${maximumBuy}`)} {purchasableCurrency}.</p>
           ): (
-            <p className={styles.LotteryWinnersMessage}>Unfortunately, you did not win a ticket to buy this time! See you next time.</p> 
+            <p className={styles.LotteryWinnersMessage}>Unfortunately, you did not win a ticket to buy this time! See you next time.</p>
           )
         )}
       <div className={styles.tableSearchWrapper}>
-        <input 
-          type="text" 
-          name="lottery-search" 
-          className={styles.tableSearch} 
+        <input
+          type="text"
+          name="lottery-search"
+          className={styles.tableSearch}
           placeholder="Search for Wallet Address"
           onChange={handleInputChange}
         />
@@ -106,7 +105,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
                   {index + 1}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {isWidthDown('sm', props.width) ? 
+                  {isWidthDown('sm', props.width) ?
                     <Tooltip title={<p>{row.wallet_address}</p>}>
                       <>
                         {shortenAddress(row.wallet_address)}
@@ -122,10 +121,10 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
         </TableContainer>
       {
         searchedWinners && searchedWinners.length> 0 && (
-          <Pagination 
-            count={totalPage} 
-            color="primary" 
-            style={{ marginTop: 30 }} className={styles.pagination} 
+          <Pagination
+            count={totalPage}
+            color="primary"
+            style={{ marginTop: 30 }} className={styles.pagination}
             onChange={(e: any, value: any) => setCurrentPage(value)}
             page={currentPage}
           />
