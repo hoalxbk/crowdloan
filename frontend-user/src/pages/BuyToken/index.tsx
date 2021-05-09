@@ -272,7 +272,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   }
                 </div>
                 <span style={{ marginLeft: 14 }}>
-                  Congratulations! You won {numberWithCommas((existedWinner as any).lottery_ticket)} lottery ticket(s) at this pool!
+                  Congratulations! You have won the lottery!
                 </span>
               </p>
             }

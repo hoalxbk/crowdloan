@@ -24,7 +24,7 @@ type LotteryWinnersProps = {
   userWinLottery: boolean | undefined;
   maximumBuy: number | undefined;
   purchasableCurrency: string | undefined;
-  verifiedEmail: boolean | undefined
+  verifiedEmail: boolean | undefined;
 }
 
 const shortenAddress = (address: string, digits: number = 4) => {
@@ -64,12 +64,12 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
 
   return (
     <div className={styles.LotteryWinners}>
-      <p className={styles.LotteryWinnersDesc}>There are {totalParticipants ? numberWithCommas(totalParticipants.toString()): 0} people joining this pool right now.</p>
-      <p className={styles.LotteryWinnersMessage}>There are {totalWinners} winners. Please check your individual caps to see how much you can buy.</p>
+      {/* <p className={styles.LotteryWinnersDesc}>There are {totalParticipants ? numberWithCommas(totalParticipants.toString()): 0} people joining this pool right now.</p> */}
+      <p className={styles.LotteryWinnersMessage} style={{ marginTop: 15 }}>There are {totalWinners} winners. Please check your individual caps to see how much you can buy.</p>
       {
         searchedWinners.length > 0 && verifiedEmail && ( 
           userWinLottery ? (
-            <p className={styles.LotteryWinnersMessage}> You have won a ticket to buy at this pool. You can buy up to {numberWithCommas(`${maximumBuy}`)} {purchasableCurrency}.</p> 
+            <p className={styles.LotteryWinnersMessage}> You have won the lottery! You can buy up to {numberWithCommas(`${maximumBuy}`)} {purchasableCurrency}.</p> 
           ): (
             <p className={styles.LotteryWinnersMessage}>Unfortunately, you did not win a ticket to buy this time! See you next time.</p> 
           )
