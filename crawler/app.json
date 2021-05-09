@@ -25,10 +25,16 @@
       "watch": false
     },
     {
+      "name": "SotatekStarterMantraStakeIndex",
+      "script": "bin/ethlink/MantraStakeLogCrawler.js",
+      "cwd": "dist",
+      "watch": false
+    },
+    {
       "name": "SotatekStarterWebhook",
       "script": "bin/ethlink/WebhookWorker.js",
       "cwd": "dist",
       "watch": false
-    }
+    },
   ]
 }
