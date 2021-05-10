@@ -403,9 +403,12 @@ class CampaignController {
             return HelperUtils.responseBadRequest("Sorry, you are not on the list of winners to join this pool.");
           }
           // check time start buy for tier
-          if (reserved.start_time > current || reserved.end_time < current) {
-            console.log(`Reserved ${reserved.start_time} ${reserved.end_time} ${current}`);
-            return HelperUtils.responseBadRequest("You're early come to buy this campaign !");
+          console.log(`Reserved ${reserved.start_time} ${reserved.end_time} ${current}`);
+          if (reserved.start_time > current) {
+            return HelperUtils.responseBadRequest('It is not yet time for your tier to start buying!');
+          }
+          if (reserved.end_time < current) {
+            return HelperUtils.responseBadRequest("Time out of your tier you can buy!");
           }
           // set min, max buy amount of user
           minBuy = reserved.min_buy;
@@ -438,9 +441,12 @@ class CampaignController {
           return HelperUtils.responseBadRequest("You're not tier qualified for buy this campaign !");
         }
         // check time start buy for tier
-        if (tier.start_time > current || tier.end_time < current) {
-          console.log(`${tier.start_time} ${tier.end_time} ${current}`);
-          return HelperUtils.responseBadRequest("You're early come to buy this campaign !");
+        console.log(`${tier.start_time} ${tier.end_time} ${current}`);
+        if (tier.start_time > current) {
+          return HelperUtils.responseBadRequest('It is not yet time for your tier to start buying!');
+        }
+        if (tier.end_time < current) {
+          return HelperUtils.responseBadRequest("Time out of your tier you can buy!");
         }
         // set min, max buy amount of user
         minBuy = tier.min_buy * winner.lottery_ticket;
