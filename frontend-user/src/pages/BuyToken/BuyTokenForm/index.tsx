@@ -192,12 +192,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       };
     }
 
-    /* if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !connectedAccountFirstBuy && new Date() > startBuyTimeInDate) { */
-    /*   return { */ 
-    /*     message: `The minimum amount you must trade is ${new BigNumber(minimumBuy).toFixed(2)} ${purchasableCurrency}.`, */
-    /*     type: MessageType.error */
-    /*   } */
-    /* } */
+    if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !connectedAccountFirstBuy && new Date() > startBuyTimeInDate) {
+      return { 
+        message: `The minimum amount you must trade is ${new BigNumber(minimumBuy).toFixed(2)} ${purchasableCurrency}.`,
+        type: MessageType.error
+      }
+    }
 
     if (
       input && 
@@ -242,9 +242,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const purchasable = 
      availablePurchase 
      && estimateTokens > 0 
-     /* && (purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(input).lte(new BigNumber(maximumBuy)): new BigNumber(input).lte(tokenBalance)) */
+     && new BigNumber(input).lte(new BigNumber(maximumBuy))
      && !poolErrorBeforeBuy
-     /* && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate))) */
+     && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)))
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
      && new BigNumber(tokenBalance).gte(new BigNumber(input))
      && !wrongChain
