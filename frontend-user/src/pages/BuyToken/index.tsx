@@ -282,7 +282,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 <div>
                   {
                     [...Array(3)].map((num, index) => (
-                      <img style={{ paddingLeft: 5 }} src="/images/red-warning.svg" alt="file-cracker" key={index} />
+                      <img style={{ paddingLeft: 5 }} src="/images/icons/warning.svg" alt="file-cracker" key={index} />
                     ))
                   }
                 </div>
