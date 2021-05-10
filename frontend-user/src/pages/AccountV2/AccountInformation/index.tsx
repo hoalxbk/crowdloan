@@ -66,16 +66,7 @@ const AccountInformation = (props: any) => {
 
             {kycStatus == KYC_STATUS.VERIFIED && <span>Verified</span>}
 
-            {kycStatus == KYC_STATUS.VERIFY_FAIL &&
-              <>
-                <span style={{
-                  color: 'red',
-                  overflow: 'unset',
-                }}>
-                  Rejected
-                </span>
-              </>
-            }
+            {kycStatus == KYC_STATUS.VERIFY_FAIL && <span style={{ color: 'red', overflow: 'unset' }}>Rejected</span>}
             {/*{kycStatus == KYC_STATUS.VERIFY_FAIL && <button style={{color: 'red', borderColor: 'red'}} className="verify-email" onClick={handleRejectKYC}>Re-submit KYC</button>}*/}
 
             {/*<span>{isKYC ? 'Verified' : 'Unverified'}</span>*/}
@@ -87,11 +78,8 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup} style={{ marginBottom: 5 }}>
           <span></span>
           {connectedAccount && <>
-            <span style={{
-              color: 'red',
-              display: 'inline-block',
-            }}>
-              Please send information to support@polkafoundry.com to resubmit KYC.
+            <span style={{ color: 'red', display: 'inline-block' }}>
+            {kycStatus == KYC_STATUS.VERIFY_FAIL && 'Please send information to support@polkafoundry.com to resubmit KYC.'}
             </span>
           </>}
 
