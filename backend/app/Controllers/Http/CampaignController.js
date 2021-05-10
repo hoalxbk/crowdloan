@@ -357,7 +357,11 @@ class CampaignController {
       const user = await userService.findUser(userParams);
       if (!user || user.email === '') {
         console.log(`User ${user}`);
-        return HelperUtils.responseBadRequest("You're not valid user to join this campaign !");
+        return HelperUtils.responseBadRequest("You're not valid user to buy this campaign !");
+      }
+      if (!user.is_kyc) {
+        console.log('User does not KYC yet !');
+        return HelperUtils.responseBadRequest("You must register for KYC successfully to be allowed to purchase !");
       }
       // check campaign info
       const filterParams = {
@@ -401,7 +405,7 @@ class CampaignController {
           // check time start buy for tier
           if (reserved.start_time > current || reserved.end_time < current) {
             console.log(`Reserved ${reserved.start_time} ${reserved.end_time} ${current}`);
-            return HelperUtils.responseBadRequest("You're early come to join this campaign !");
+            return HelperUtils.responseBadRequest("You're early come to buy this campaign !");
           }
           // set min, max buy amount of user
           minBuy = reserved.min_buy;
@@ -414,7 +418,7 @@ class CampaignController {
         console.log(`user tier is ${winner.level}`);
         // check user tier with min tier of campaign
         if (camp.min_tier > winner.level) {
-          return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign!");
+          return HelperUtils.responseBadRequest("You're not tier qualified for buy this campaign!");
         }
         // call to db to get tier info
         const tierService = new TierService();
@@ -424,12 +428,12 @@ class CampaignController {
         };
         const tier = await tierService.findByLevelAndCampaign(tierParams);
         if (!tier) {
-          return HelperUtils.responseBadRequest("You're not tier qualified for join this campaign !");
+          return HelperUtils.responseBadRequest("You're not tier qualified for buy this campaign !");
         }
         // check time start buy for tier
         if (tier.start_time > current || tier.end_time < current) {
           console.log(`${tier.start_time} ${tier.end_time} ${current}`);
-          return HelperUtils.responseBadRequest("You're early come to join this campaign !");
+          return HelperUtils.responseBadRequest("You're early come to buy this campaign !");
         }
         // set min, max buy amount of user
         minBuy = tier.min_buy * winner.lottery_ticket;
