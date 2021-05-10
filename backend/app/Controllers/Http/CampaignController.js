@@ -418,7 +418,7 @@ class CampaignController {
       // check user tier if user not in reserved list
       if (!isFreeBuyTime && winner) {
         // get realtime tier from SC
-        const currentTier = await HelperUtils.getUserTierSmart(userWalletAddress)[0];
+        const currentTier = (await HelperUtils.getUserTierSmart(userWalletAddress))[0];
         // if user decrement their tier then they can not buy token
         if (currentTier < winner.level) {
           console.log(`Current tier ${currentTier} and snapshot tier ${winner.level}`);
