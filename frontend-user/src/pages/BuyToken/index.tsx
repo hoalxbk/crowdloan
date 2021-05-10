@@ -93,6 +93,8 @@ const BuyToken: React.FC<any> = (props: any) => {
     `pool/${id}/user/${connectedAccount}/current-tier`
     : undefined,
   );
+  const { data: winnersList } = useFetch<any>(`/user/winner-list/${id}?page=1&limit=10&`);
+
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
 
@@ -266,7 +268,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {ableToFetchFromBlockchain &&
+            {ableToFetchFromBlockchain && (winnersList && winnersList.total > 0) && verifiedEmail &&
               <p className={styles.poolTicketWinner}>
                 {existedWinner &&
                 <div>
@@ -281,7 +283,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {/*Congratulations! You have won the lottery!*/}
                   {existedWinner &&
                     <p className={styles.LotteryWinnersMessage}>
-                      Congratulations! You can buy up to {numberWithCommas(`${userBuyLimit}`)} {poolDetails?.purchasableCurrency.toUpperCase()}.
+                      Congratulations! You have won the lottery. You can buy up to {numberWithCommas(`${userBuyLimit}`)} {poolDetails?.purchasableCurrency.toUpperCase()}.
                     </p>
                   }
                   {!existedWinner &&
