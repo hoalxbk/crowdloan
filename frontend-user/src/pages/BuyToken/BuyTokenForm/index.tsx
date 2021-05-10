@@ -280,13 +280,15 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
 
   useEffect(() => {
-    const remainingAmount = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
-    remainingAmount.gt(0) && setInput(remainingAmount.toFixed());
+    if (maximumBuy && userPurchased && rate) {
+      const remainingAmount = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
+      remainingAmount.gt(0) && setInput(remainingAmount.toFixed());
+    }
 
     return () => {
       setInput("");
     }
-  }, [maximumBuy]);
+  }, [maximumBuy, userPurchased, rate]);
 
   useEffect(() => {
     const fetchPoolDetailsBlockchain = async () => {
