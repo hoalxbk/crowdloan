@@ -280,6 +280,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
 
   useEffect(() => {
+    new BigNumber(maximumBuy).gt(0) && setInput(maximumBuy);
+
+    return () => {
+      setInput("");
+    }
+  }, [maximumBuy]);
+
+  useEffect(() => {
     const fetchPoolDetailsBlockchain = async () => {
       await fetchPoolDetails();
       setLoadingPoolInfo(false);
@@ -413,6 +421,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             onChange={handleInputChange} 
             decimalScale={6}
             value={input} 
+            defaultValue={maximumBuy || 0}
             max={tokenBalance}
             min={0}
             maxLength={255}
@@ -444,7 +453,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       }
       <div className={styles.btnGroup}>
         <Button 
-        text={'Approve'} 
+        text={new BigNumber(tokenAllowance || 0).gt(0) ? 'Approved': 'Approve'} 
         backgroundColor={'#29C08A'} 
         disabled={!enableApprove} 
         onClick={handleTokenApprove} 
