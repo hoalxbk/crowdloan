@@ -11,6 +11,7 @@ const CampaignClaimConfigService = use('App/Services/CampaignClaimConfigService'
 const UserService = use('App/Services/UserService');
 const Const = use('App/Common/Const');
 const HelperUtils = use('App/Common/HelperUtils');
+const ConvertDateUtils = use('App/Common/ConvertDateUtils');
 const Redis = use('Redis');
 const BigNumber = use('bignumber.js')
 BigNumber.config({EXPONENTIAL_AT: 50});
@@ -291,7 +292,7 @@ class CampaignController {
         console.log(`Campaign with id ${campaign_id}`)
         return HelperUtils.responseBadRequest(`Bad request with campaignId ${campaign_id}`)
       }
-      const currentDate = Math.floor(Date.now() / 1000);
+      const currentDate = ConvertDateUtils.getDatetimeNowUTC();
       console.log(`Join with date ${currentDate}`);
       // check time to join campaign
       if (camp.start_join_pool_time > currentDate || camp.end_join_pool_time < currentDate) {
@@ -371,7 +372,8 @@ class CampaignController {
       }
       let minBuy = 0, maxBuy = 0;
       let winner;
-      const current = Math.floor(Date.now() / 1000);
+      const current = ConvertDateUtils.getDatetimeNowUTC();
+      console.log(`Current time is ${current}`);
       // check if current time is free to buy or not
       const isFreeBuyTime = (current >= (Number(camp.start_time) + Number(OFFER_FREE_TIME)));
       console.log(`isFreeBuyTime ${isFreeBuyTime}`);
