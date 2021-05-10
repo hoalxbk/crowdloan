@@ -6,7 +6,7 @@ import useAuth from '../../../hooks/useAuth';
 import ModalVerifyEmail from '../ModalVerifyEmail';
 import {isWidthDown, isWidthUp, withWidth} from '@material-ui/core';
 import { trimMiddlePartAddress } from '../../../utils/accountAddress';
-import { USER_STATUS } from '../../../constants';
+import { USER_STATUS, KYC_STATUS } from '../../../constants';
 import { TIERS } from '../../../constants';
 
 const AccountInformation = (props: any) => {
@@ -61,13 +61,13 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup}>
           <span>KYC for Red Kite</span>
           {connectedAccount && <>
-            {kycStatus == 0 && <span>Unverified</span>}
-            {kycStatus == 0 && <button className="verify-email" onClick={handleKYC}>KYC NOW</button>}
+            {kycStatus == KYC_STATUS.NOT_VERIFIED && <span>Unverified</span>}
+            {kycStatus == KYC_STATUS.NOT_VERIFIED && <button className="verify-email" onClick={handleKYC}>KYC NOW</button>}
 
-            {kycStatus == 1 && <span>Verified</span>}
+            {kycStatus == KYC_STATUS.VERIFIED && <span>Verified</span>}
 
-            {kycStatus == 2 && <span style={{color: 'red'}}>Rejected</span>}
-            {kycStatus == 2 && <button style={{color: 'red', borderColor: 'red'}} className="verify-email" onClick={handleRejectKYC}>Re-submit KYC</button>}
+            {kycStatus == KYC_STATUS.VERIFY_FAIL && <span style={{color: 'red'}}>Rejected. Please send information to support@polkafoundry.com to resubmit KYC.</span>}
+            {/*{kycStatus == KYC_STATUS.VERIFY_FAIL && <button style={{color: 'red', borderColor: 'red'}} className="verify-email" onClick={handleRejectKYC}>Re-submit KYC</button>}*/}
 
             {/*<span>{isKYC ? 'Verified' : 'Unverified'}</span>*/}
             {/*{!isKYC && <button className="verify-email" onClick={handleKYC}>*/}

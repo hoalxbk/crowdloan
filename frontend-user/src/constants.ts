@@ -95,3 +95,9 @@ export const TIERS = [
     icon: '/images/icons/diamond.svg'
   }
 ]
+
+export const KYC_STATUS = {
+  NOT_VERIFIED: 0,
+  VERIFIED: 1,
+  VERIFY_FAIL: 2,
+};
