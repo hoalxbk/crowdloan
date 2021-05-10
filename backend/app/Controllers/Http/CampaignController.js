@@ -65,8 +65,8 @@ class CampaignController {
         listData = listData.where('finish_time', '<=', param.finish_time)
       }
       if (param.finish_time && param.start_time) {
-        listData = listData.whereRaw('finish_time <=' + param.finish_time)
-          .whereRaw('start_time >=' + param.start_time)
+        listData = listData.where('finish_time', '<=', param.finish_time)
+          .where('start_time', '>=', param.start_time)
       }
       if (param.registed_by) {
         listData = listData.where('registed_by', '=', param.registed_by)

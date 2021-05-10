@@ -278,6 +278,15 @@ const BuyToken: React.FC<any> = (props: any) => {
                   }
                 </div>
                 }
+                {!existedWinner &&
+                <div>
+                  {
+                    [...Array(3)].map((num, index) => (
+                      <img style={{ paddingLeft: 5 }} src="/images/icons/warning.svg" alt="file-cracker" key={index} />
+                    ))
+                  }
+                </div>
+                }
                 <span style={{ marginLeft: 14 }}>
                   {/*Congratulations! You have won the lottery!*/}
                   {existedWinner &&
