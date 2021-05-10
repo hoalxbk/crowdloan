@@ -347,7 +347,7 @@ class UserController {
             max_buy: tier.max_buy * winner.lottery_ticket,
             start_time: tier.start_time,
             end_time: tier.end_time,
-            level: tier.level
+            level: userTier
           });
         }
         // user not winner
@@ -356,7 +356,7 @@ class UserController {
           max_buy: 0,
           start_time: tierDb.start_time,
           end_time: tierDb.end_time,
-          level: tierDb.level
+          level: userTier
         }
         console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
         return HelperUtils.responseSuccess(tier);
