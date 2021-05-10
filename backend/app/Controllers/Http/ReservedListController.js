@@ -159,7 +159,6 @@ class ReservedListController {
         end_time: inputParams.endTime,
         start_time_unix: moment(inputParams.startTime).unix(),
         end_time_unix: moment(inputParams.endTime).unix(),
-
       };
 
       const configReserve = await ConfigModel.query().where('key', 'reserve_setting').first();
