@@ -141,32 +141,39 @@ class WinnerListUserController {
       console.log('[addParticipantsToWinner] - Add participants to Winner with params: ', params, request.params);
       const {campaignId} = params;
       const winners = request.input('winners') || [];
-      console.log('campaignIdcampaignIdcampaignId==> ', campaignId, params, request.all());
+      console.log('[addParticipantsToWinner] - campaignId: ', campaignId, params, request.all());
 
       const resExist = await WhitelistModel.query()
         .whereIn('wallet_address', winners)
         .where('campaign_id', campaignId)
         .fetch();
-
       console.log('resExist', resExist);
 
-      const data = resExist.rows.map(async item => {
-        const isExist = await WinnerListModel.query()
-          .where('wallet_address', item.wallet_address)
-          .where('campaign_id', item.campaign_id)
-          .first();
+      const data = await resExist.rows.map(async item => {
+        try {
+          const isExist = await WinnerListModel.query()
+            .where('wallet_address', item.wallet_address)
+            .where('campaign_id', item.campaign_id)
+            .first();
+          if (isExist) {
+            return item;
+          }
 
-        if (isExist) return item;
+          console.log('[addParticipantsToWinner] - User Not Exist in Winner:', item);
+          const walletAddress = await HelperUtils.checkSumAddress(item.wallet_address);
 
-        console.log('Not Exist=========>', item);
+          let model = new WinnerListModel;
+          model.email = item.email;
+          model.wallet_address = item.wallet_address;
+          model.campaign_id = item.campaign_id;
+          model.lottery_ticket = 1;
+          model.level = (await HelperUtils.getUserTierSmart(walletAddress))[0];
+          await model.save();
 
-        let model = new WinnerListModel;
-        model.email = item.email;
-        model.wallet_address = item.wallet_address;
-        model.campaign_id = item.campaign_id;
-        model.save();
-
-        return model;
+          return model;
+        } catch (e) {
+          throw e;
+        }
       });
 
       return HelperUtils.responseSuccess(data);

@@ -81,9 +81,6 @@ function PoolForm(props: any) {
 
       item.startTime = moment(item.startTime).unix();
       item.endTime = moment(item.endTime).unix();
-
-      // item.startTime = moment(moment.utc(item.startTime)).unix();
-      // item.endTime = moment(moment.utc(item.endTime)).unix();
       return item;
     });
 
