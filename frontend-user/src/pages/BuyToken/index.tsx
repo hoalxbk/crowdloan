@@ -95,7 +95,6 @@ const BuyToken: React.FC<any> = (props: any) => {
   );
   const poolDetailsMapping = usePoolDetailsMapping(poolDetails);
 
-
   // Use for check whether pool exist in selected network or not
   const networkAvailable = poolDetails?.networkAvailable === 'eth'? NETWORK_ETH_NAME: NETWORK_BSC_NAME;
   const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
