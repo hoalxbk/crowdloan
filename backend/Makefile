@@ -4,6 +4,7 @@ deploy-v2:
 				--exclude .git \
 				--exclude .env \
 				--exclude dist \
+				--exclude tmp \
 				--exclude node_modules \
 				--exclude workers \
 				--filter=":- .gitignore" \
