@@ -165,12 +165,16 @@ const BuyToken: React.FC<any> = (props: any) => {
   }
 
   const userTiersAnnotationText = useMemo(() => {
+    if (!verifiedEmail) {
+      return 'Determined at whitelist closing';
+    }
+
     if (existedWinner && poolDetails) {
       return `*Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${poolDetails?.purchasableCurrency?.toUpperCase()}`
     }
 
     return 'Determined at whitelist closing';
-  }, [existedWinner, userBuyLimit, poolDetails]);
+  }, [existedWinner, userBuyLimit, poolDetails, verifiedEmail]);
 
   useEffect(() => {
     if (!poolDetails?.isDeployed) setActiveNav(HeaderType.About);
@@ -262,8 +266,9 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {poolStatus}
               </span>
             </div>
-            {existedWinner && ableToFetchFromBlockchain &&
+            {ableToFetchFromBlockchain &&
               <p className={styles.poolTicketWinner}>
+                {existedWinner &&
                 <div>
                   {
                     [...Array(3)].map((num, index) => (
@@ -271,8 +276,19 @@ const BuyToken: React.FC<any> = (props: any) => {
                     ))
                   }
                 </div>
+                }
                 <span style={{ marginLeft: 14 }}>
-                  Congratulations! You have won the lottery!
+                  {/*Congratulations! You have won the lottery!*/}
+                  {existedWinner &&
+                    <p className={styles.LotteryWinnersMessage}>
+                      Congratulations! You can buy up to {numberWithCommas(`${userBuyLimit}`)} {poolDetails?.purchasableCurrency.toUpperCase()}.
+                    </p>
+                  }
+                  {!existedWinner &&
+                    <p className={styles.LotteryWinnersMessage}>
+                      Unfortunately, you did not win a ticket to buy this time! See you next time.
+                    </p>
+                  }
                 </span>
               </p>
             }
