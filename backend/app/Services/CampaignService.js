@@ -227,8 +227,8 @@ class CampaignService {
         listData =  listData.where('title', 'like', '%'+ param.title +'%')
       }
       if(status && status === 1){
-        listData = listData.whereRaw('finish_time >=' + dateNow)
-          .whereRaw('start_time <=' + daowteNow)
+        listData = listData.where('finish_time', '>=', dateNow)
+          .where('start_time', '<=', dateNow)
       }
       if(status && status === 2){
         listData = listData.where('start_time', '>=', dateNow)

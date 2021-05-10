@@ -12,7 +12,7 @@ class ContractController {
       const page = param.page ? param.page : Config.get('const.page_default')
       let dataList = ContractLogModel.query().where('contract_name', '=', 'campaign')
       if (param.from) {
-        dataList = dataList.whereRaw('from', 'like', '%' + param.from + '%')
+        dataList = dataList.where('from', 'like', '%' + param.from + '%')
       }
       if (param.to) {
         dataList = dataList.where('to', 'like', '%' + param.to + '%')

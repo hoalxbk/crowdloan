@@ -48,8 +48,8 @@ class PoolService {
       builder = builder.where('finish_time', '<=', params.finish_time)
     }
     if(params.finish_time && params.start_time ) {
-      builder = builder.whereRaw('finish_time <=' + params.finish_time)
-        .whereRaw('start_time >=' + params.start_time)
+      builder = builder.where('finish_time', '<=', params.finish_time)
+        .where('start_time', '>=', params.start_time)
     }
     if(params.registed_by){
       builder = builder.where('registed_by', '=', params.registed_by)
