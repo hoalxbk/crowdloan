@@ -54,8 +54,10 @@ function TierTable(props: any) {
       const dataFormatted = poolDetail.tiers.map((item: any, index: any) => {
         return createData(
           TIERS[index],
-          moment(moment.utc(item.start_time * 1000)).format(DATETIME_FORMAT),
-          moment(moment.utc(item.end_time * 1000)).format(DATETIME_FORMAT),
+          // moment(moment.utc(item.start_time * 1000)).format(DATETIME_FORMAT),
+          // moment(moment.utc(item.end_time * 1000)).format(DATETIME_FORMAT),
+          moment(item.start_time * 1000).format(DATETIME_FORMAT),
+          moment(item.end_time * 1000).format(DATETIME_FORMAT),
           (new BigNumber(item.min_buy)).toNumber(),
           (new BigNumber(item.max_buy)).toNumber(),
           false,
