@@ -161,7 +161,6 @@ class WinnerListUserController {
 
           console.log('[addParticipantsToWinner] - User Not Exist in Winner:', item);
           const walletAddress = await HelperUtils.checkSumAddress(item.wallet_address);
-
           let model = new WinnerListModel;
           model.email = item.email;
           model.wallet_address = item.wallet_address;
