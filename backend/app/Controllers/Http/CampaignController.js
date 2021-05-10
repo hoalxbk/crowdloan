@@ -359,7 +359,7 @@ class CampaignController {
         console.log(`User ${user}`);
         return HelperUtils.responseBadRequest("You're not valid user to buy this campaign !");
       }
-      if (!user.is_kyc) {
+      if (user.is_kyc != Const.KYC_STATUS.VERIFIED) {
         console.log('User does not KYC yet !');
         return HelperUtils.responseBadRequest("You must register for KYC successfully to be allowed to purchase !");
       }
@@ -418,7 +418,7 @@ class CampaignController {
       // check user tier if user not in reserved list
       if (!isFreeBuyTime && winner) {
         // get realtime tier from SC
-        const currentTier = await HelperUtils.getUserTierSmart(userWalletAddress)[0];
+        const currentTier = (await HelperUtils.getUserTierSmart(userWalletAddress))[0];
         // if user decrement their tier then they can not buy token
         if (currentTier < winner.level) {
           console.log(`Current tier ${currentTier} and snapshot tier ${winner.level}`);
