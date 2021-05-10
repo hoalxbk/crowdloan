@@ -57,10 +57,12 @@ const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
                   {row.allocation}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {convertTimeToStringFormat(new Date(row.startTime * 1000))}
+                  {!row.startTime && '--'}
+                  {row.startTime &&convertTimeToStringFormat(new Date(row.startTime * 1000))}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  {convertTimeToStringFormat(new Date(row.endTime * 1000))}
+                  {!row.endTime && '--'}
+                  {row.endTime && convertTimeToStringFormat(new Date(row.endTime * 1000))}
                 </TableCell>
                 </TableRow>
             ))}

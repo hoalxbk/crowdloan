@@ -58,20 +58,15 @@ const AccountInformation = (props: any) => {
             {(userTier > 0 && connectedAccount) ? TIERS[userTier]?.name : TIERS[0].name}
           </span>
         </div>
-        <div className={styles.inputGroup}>
-          <span>KYC for Red Kite</span>
+        <div className={styles.inputGroup} style={{ marginBottom: 3 }}>
+          <span style={{ display: 'inline-block' }}>KYC for Red Kite</span>
           {connectedAccount && <>
             {kycStatus == KYC_STATUS.NOT_VERIFIED && <span>Unverified</span>}
             {kycStatus == KYC_STATUS.NOT_VERIFIED && <button className="verify-email" onClick={handleKYC}>KYC NOW</button>}
 
             {kycStatus == KYC_STATUS.VERIFIED && <span>Verified</span>}
 
-            {kycStatus == KYC_STATUS.VERIFY_FAIL &&
-              <span style={{
-                color: 'red',
-                overflow: 'unset',
-              }}>Rejected. Please send information to support@polkafoundry.com to resubmit KYC.</span>
-            }
+            {kycStatus == KYC_STATUS.VERIFY_FAIL && <span style={{ color: 'red', overflow: 'unset' }}>Rejected</span>}
             {/*{kycStatus == KYC_STATUS.VERIFY_FAIL && <button style={{color: 'red', borderColor: 'red'}} className="verify-email" onClick={handleRejectKYC}>Re-submit KYC</button>}*/}
 
             {/*<span>{isKYC ? 'Verified' : 'Unverified'}</span>*/}
@@ -80,6 +75,16 @@ const AccountInformation = (props: any) => {
             {/*</button>}*/}
           </>}
         </div>
+        <div className={styles.inputGroup} style={{ marginBottom: 5 }}>
+          <span></span>
+          {connectedAccount && <>
+            <span style={{ color: 'red', display: 'inline-block' }}>
+            {kycStatus == KYC_STATUS.VERIFY_FAIL && 'Please send information to support@polkafoundry.com to resubmit KYC.'}
+            </span>
+          </>}
+
+        </div>
+
         <div className={styles.redKiteInfo}>
           {/* <div className={styles.walletInfo}>
             <p>Wallet balance</p>

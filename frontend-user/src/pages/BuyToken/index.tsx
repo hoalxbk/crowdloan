@@ -123,7 +123,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       /* today <= tierEndBuyInDate && */
       connectedAccount &&
       !wrongChain &&
-      new BigNumber(currentUserTier.level).gte(poolDetails?.minTier) 
+      new BigNumber(currentUserTier?.level || 0).gte(poolDetails?.minTier)
       && verifiedEmail
     )
     : false;
