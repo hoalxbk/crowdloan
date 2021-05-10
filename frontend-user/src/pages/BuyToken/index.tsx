@@ -120,6 +120,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     ? (
       today >= joinTimeInDate &&
       today <= endJoinTimeInDate &&
+      currentUserTier &&
       /* today <= tierEndBuyInDate && */
       connectedAccount &&
       !wrongChain &&

@@ -280,7 +280,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   }, [tokenDetails, connectedAccount, tokenToApprove, poolAddress]);
 
   useEffect(() => {
-    new BigNumber(maximumBuy).gt(0) && setInput(maximumBuy);
+    const remainingAmount = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
+    remainingAmount.gt(0) && setInput(remainingAmount.toFixed());
 
     return () => {
       setInput("");
@@ -379,7 +380,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     try {
       setApproveModal(true);
       await approveToken();
-      setInput("");
 
       if (tokenDetails && poolAddress && connectedAccount && tokenToApprove) {
         setTokenAllowance(await retrieveTokenAllowance(tokenToApprove, connectedAccount, poolAddress) as number);
