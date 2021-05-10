@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import _, { divide } from 'lodash';
@@ -52,7 +53,10 @@ const Pools = (props: any) => {
   );
 
   const handleInputChange = debounce((e: any) => {
-    setInput(e.target.value); setCurrentPage(1)
+    ReactDOM.unstable_batchedUpdates(() => {
+      setInput(e.target.value); 
+      setCurrentPage(1)
+    });
   }, 500);
 
   const getTokenSold = async (pool: any) => {
