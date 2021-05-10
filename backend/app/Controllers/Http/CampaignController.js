@@ -414,6 +414,13 @@ class CampaignController {
       }
       // check user tier if user not in reserved list
       if (!isFreeBuyTime && winner) {
+        // get realtime tier from SC
+        const currentTier = await HelperUtils.getUserTierSmart(userWalletAddress)[0];
+        // if user decrement their tier then they can not buy token
+        if (currentTier < winner.level) {
+          console.log(`Current tier ${currentTier} and snapshot tier ${winner.level}`);
+          return HelperUtils.responseBadRequest('You have already decreased your tier so you can no longer buy tokens in this pool!');
+        }
         // get user tier from winner table which snapshot user balance and pickup random winner
         console.log(`user tier is ${winner.level}`);
         // check user tier with min tier of campaign
