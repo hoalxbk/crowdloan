@@ -112,7 +112,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const startBuyTimeInDate = poolDetails?.startBuyTime ? new Date(Number(poolDetails?.startBuyTime) * 1000): undefined;
   const endBuyTimeInDate = poolDetails?.endBuyTime ? new Date(Number(poolDetails?.endBuyTime) * 1000): undefined;
   /* const tierStartBuyInDate = new Date(Number(currentUserTier?.start_time) * 1000); */
-  const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000);
+  /* const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000); */
   const releaseTimeInDate = poolDetails?.releaseTime ? new Date(Number(poolDetails?.releaseTime) * 1000): undefined;
 
   const today = new Date();
@@ -120,7 +120,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     ? (
       today >= joinTimeInDate &&
       today <= endJoinTimeInDate &&
-      today <= tierEndBuyInDate &&
+      /* today <= tierEndBuyInDate && */
       connectedAccount &&
       !wrongChain &&
       new BigNumber(currentUserTier.level).gte(poolDetails?.minTier) 
