@@ -21,13 +21,13 @@ const useStylesTable = makeStyles({
   },
 });
 
-const createData = (name: string, startTime: string, endTime: string, minBuy: number, maxBuy: number, isEdit: boolean, ticket_allow_percent = 0) => {
+const createData = (name: string, startTime: any, endTime: any, minBuy: number, maxBuy: number, isEdit: boolean, ticket_allow_percent = 0) => {
   return { name, startTime, endTime, minBuy, maxBuy, isEdit, ticket_allow_percent };
 };
 
 const createDefaultTiers = () => {
   return [
-    createData('-', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 1000, false),
+    createData('-', null, null, 0, 1000, false),
     createData('Dove', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 2000, false),
     createData('Hawk', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 3000, false),
     createData('Eagle', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 4000, false),
