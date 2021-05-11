@@ -18,7 +18,7 @@ const Dashboard = (props: any) => {
   const styles = useStyles();
   const dispatch = useDispatch();
   let { pools = [], pagination, loading } = usePools();
-  const [upcommingPools, setUpcommingPools] = useState([]);
+  const [upcomingPools, setUpcomingPools] = useState([]);
   const [featurePools, setFeaturePools] = useState([]);
   const { data: appChain } = useSelector((state: any) => state.appNetwork);
   const { data: connector } = useSelector((state: any) => state.connector);
@@ -70,10 +70,10 @@ const Dashboard = (props: any) => {
       if(pool.buy_type == BUY_TYPE.FCFS && currentTime < startTime
         || pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime))
       {
-        pool.status = POOL_STATUS.UPCOMMING
+        pool.status = POOL_STATUS.UPCOMING
       } else if(startJoinPoolTime <= currentTime
         && currentTime <= endJoinPoolTime
-        ) 
+        )
       {
         pool.status = POOL_STATUS.JOINING
       } else if(currentTime >= startTime && currentTime <= finishTime) {
@@ -84,13 +84,13 @@ const Dashboard = (props: any) => {
         }
       } else if(releaseTime && currentTime >= releaseTime && isClaimable) {
         pool.status = POOL_STATUS.CLAIMABLE
-      } 
+      }
       else {
         pool.status = POOL_STATUS.CLOSED
       }
     })
 
-    setUpcommingPools(pools.filter((pool: any) => pool?.status != POOL_STATUS.CLAIMABLE && pool?.status != POOL_STATUS.CLOSED && pool?.is_display == 1))
+    setUpcomingPools(pools.filter((pool: any) => pool?.status != POOL_STATUS.CLAIMABLE && pool?.status != POOL_STATUS.CLOSED && pool?.is_display == 1))
     setFeaturePools(pools.filter((pool: any) => (pool?.status == POOL_STATUS.CLAIMABLE || pool?.status == POOL_STATUS.CLOSED) && pool?.is_display == 1))
   }
 
@@ -115,7 +115,7 @@ const Dashboard = (props: any) => {
       <div className={styles.listPools}>
         <h2>Upcoming Pools</h2>
         <div className="pools">
-          {upcommingPools.map((pool: any, index) => {
+          {upcomingPools.map((pool: any, index) => {
             return index < 4 && <Card pool={pool} key={pool.id}/>
           })}
         </div>

@@ -335,13 +335,28 @@ class UserController {
         }
         // get lottery ticket from winner list
         const winner = await WinnerModel.query().where('campaign_id', campaignId).where('wallet_address', walletAddress).first();
-        const tickets = winner ? winner.lottery_ticket : 0;
+        if (winner) {
+          console.log(`User has win with level ${winner.level} and win ticket ${winner.lottery_ticket}`);
+          const tier = await TierModel.query().where('campaign_id', campaignId).where('level', winner.level).first();
+          if (!tier) {
+            console.log(`Do not found tier of winner ${winner.level}`)
+            return HelperUtils.responseBadRequest();
+          }
+          return HelperUtils.responseSuccess({
+            min_buy: tier.min_buy,
+            max_buy: tier.max_buy * winner.lottery_ticket,
+            start_time: tier.start_time,
+            end_time: tier.end_time,
+            level: userTier
+          });
+        }
+        // user not winner
         const tier = {
-          min_buy: tierDb.min_buy,
-          max_buy: tierDb.max_buy * tickets,
+          min_buy: 0,
+          max_buy: 0,
           start_time: tierDb.start_time,
           end_time: tierDb.end_time,
-          level: tierDb.level
+          level: userTier
         }
         console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
         return HelperUtils.responseSuccess(tier);

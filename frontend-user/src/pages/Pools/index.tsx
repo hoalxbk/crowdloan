@@ -54,7 +54,7 @@ const Pools = (props: any) => {
 
   const handleInputChange = debounce((e: any) => {
     ReactDOM.unstable_batchedUpdates(() => {
-      setInput(e.target.value); 
+      setInput(e.target.value);
       setCurrentPage(1)
     });
   }, 500);
@@ -87,8 +87,8 @@ const Pools = (props: any) => {
         const startTime = parseInt(pool.start_time);
         const finishTime = parseInt(pool.finish_time);
         if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
-          pool.status = POOL_STATUS.UPCOMMING
-        } else if(startJoinPoolTime <= currentTime && currentTime <= endJoinPoolTime) 
+          pool.status = POOL_STATUS.UPCOMING
+        } else if(startJoinPoolTime <= currentTime && currentTime <= endJoinPoolTime)
          {
            pool.status = POOL_STATUS.JOINING
          } else if(currentTime >= startTime && currentTime <= finishTime) {
@@ -174,10 +174,10 @@ const Pools = (props: any) => {
           </table>
           <div className={styles.pagination}>
             {
-              totalPage > 1 && <Pagination 
-                count={totalPage} 
-                color="primary" 
-                style={{ marginTop: 30 }} className={styles.pagination} 
+              totalPage > 1 && <Pagination
+                count={totalPage}
+                color="primary"
+                style={{ marginTop: 30 }} className={styles.pagination}
                 onChange={(e: any, value: any) => setCurrentPage(value)}
                 page={currentPage}
               />

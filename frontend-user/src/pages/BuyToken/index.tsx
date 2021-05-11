@@ -179,7 +179,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   }, [existedWinner, userBuyLimit, poolDetails, verifiedEmail]);
 
   useEffect(() => {
-    if (!poolDetails?.isDeployed) setActiveNav(HeaderType.About);
+    if (!poolDetails?.isDeployed) setActiveNav(HeaderType.Main);
     if (availablePurchase) setActiveNav(HeaderType.Main);
   }, [availablePurchase, poolDetails]);
 
@@ -190,7 +190,10 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   // Hide main tab after end buy time
   useEffect(() => {
-    if (endBuyTimeInDate && endBuyTimeInDate < new Date() && activeNav === HeaderType.Main) setActiveNav(HeaderType.About);
+    // if (
+    //   endBuyTimeInDate && endBuyTimeInDate < new Date() &&
+    //   activeNav === HeaderType.Main
+    // ) setActiveNav(HeaderType.About);
   }, [endBuyTimeInDate]);
 
   useEffect(() => {
@@ -199,7 +202,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       payload: currentUserTier.level
     })
   }, [currentUserTier]);
-  
+
   const render = () => {
     if (loadingPoolDetail)  {
       return (
@@ -407,7 +410,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         onClick={() => {
                           poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
                         }}
-                        disabled={true}
+                        disabled={!poolDetails?.tokenDetails?.address}
                       />
                     </div>
                   </>
@@ -481,13 +484,21 @@ const BuyToken: React.FC<any> = (props: any) => {
                 <ul className={styles.poolDetailLinks}>
                   {
                     headers.map((header) => {
-                      if (header === HeaderType.Main && endBuyTimeInDate && new Date() > endBuyTimeInDate) {
-                        return;
+                      if (header === HeaderType.Main
+                      // && endBuyTimeInDate && new Date() > endBuyTimeInDate
+                      ) {
+                        return <li
+                          className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`}
+                          onClick={() => setActiveNav(header)}
+                          key={header}
+                        >
+                          {header}
+                        </li>
                       }
 
                       if (
-                        header !== HeaderType.About && 
-                        header !== HeaderType.MyTier && 
+                        header !== HeaderType.About &&
+                        header !== HeaderType.MyTier &&
                         header !== HeaderType.Participants &&
                         !poolDetails?.isDeployed
                       ) {
@@ -507,7 +518,9 @@ const BuyToken: React.FC<any> = (props: any) => {
               </nav>
               <div className={styles.poolDetailBuyForm}>
                 {
-                  activeNav === HeaderType.Main && endBuyTimeInDate && new Date() <= endBuyTimeInDate && (
+                  activeNav === HeaderType.Main
+                  // && endBuyTimeInDate && new Date() <= endBuyTimeInDate
+                  && (
                       <BuyTokenForm
                         tokenDetails={poolDetails?.tokenDetails}
                         rate={poolDetails?.ethRate}
@@ -529,6 +542,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         tokenSold={tokenSold}
                         setBuyTokenSuccess={setBuyTokenSuccess}
                         isClaimable={poolDetails?.type === 'claimable'}
+                        currentUserTier={currentUserTier}
                       />
                    )
                 }
@@ -542,14 +556,14 @@ const BuyToken: React.FC<any> = (props: any) => {
                   )
                 }
                 {
-                  activeNav === HeaderType.Participants && ( 
-                    <LotteryWinners 
-                      poolId={poolDetails?.id} 
-                      userWinLottery={existedWinner ? true: false} 
+                  activeNav === HeaderType.Participants && (
+                    <LotteryWinners
+                      poolId={poolDetails?.id}
+                      userWinLottery={existedWinner ? true: false}
                       maximumBuy={userBuyLimit}
                       purchasableCurrency={poolDetails?.purchasableCurrency.toUpperCase()}
                       verifiedEmail={verifiedEmail ? true: false}
-                    /> 
+                    />
                    )
                 }
                 {

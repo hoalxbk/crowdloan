@@ -1,15 +1,9 @@
 import React, {useState} from 'react';
-import {Button, makeStyles} from "@material-ui/core";
+import {Button} from "@material-ui/core";
 import {useCommonStyle} from "../../../../styles";
 import {pickerRandomWinner} from "../../../../request/participants";
 import {useDispatch} from "react-redux";
 import {alertFailure, alertSuccess} from "../../../../store/actions/alert";
-
-const useStylesTable = makeStyles({
-  table: {
-    minWidth: 650,
-  },
-});
 
 function UserPickerToWinner(props: any) {
   const commonStyle = useCommonStyle();

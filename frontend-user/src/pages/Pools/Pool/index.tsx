@@ -59,7 +59,7 @@ const Pool = (props: any): JSX.Element => {
       case POOL_STATUS.JOINING:
         return <div className="joining"><span>Joining</span></div>
       default:
-        return <div className="up-comming"><span>Upcomming</span></div>
+        return <div className="up-comming"><span>Upcoming</span></div>
     }
   }
 

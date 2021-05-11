@@ -22,6 +22,7 @@ import { TokenType } from '../../utils/token';
 import {adminRoute} from "../../utils";
 import {updateDeploySuccess} from "../../request/pool";
 import {ACCEPT_CURRENCY, POOL_TYPE, NETWORK_AVAILABLE} from "../../constants";
+import {alertFailure} from "./alert";
 const queryString = require('query-string');
 const ETH_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_ETHLINK_ADDRESS || "";
 const USDT_LINK_DEFAULT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS || "";

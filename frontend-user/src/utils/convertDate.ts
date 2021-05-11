@@ -11,8 +11,14 @@ export const convertTimeToStringFormatWithoutGMT = (date: Date) => {
   return timezone.format("h:mm A, DD MMMM YYYY");
 }
 
-export const convertUnixTimeToDateTime = (time: number) => {
-  return moment.unix(time).format("hh:mm:ss A MM/DD/yyyy [GMT]ZZ");
+export const convertUnixTimeToDateTime = (time: number, formatType = 2) => {
+  let type;
+  if (formatType == 1) {
+    type = "h:mm A, DD MMMM YYYY ([GMT]Z)";
+  } else if (formatType == 2) {
+    type = "hh:mm:ss A MM/DD/yyyy [GMT]ZZ";
+  }
+  return moment.unix(time).format(type);
 }
 
 export const convertDateTimeToUnix = (time: any): string => {

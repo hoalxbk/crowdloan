@@ -112,10 +112,6 @@ Route.group(() => {
 
 
 
-
-
-
-
 // Investor User
 Route.get('campaign-latest-active', 'CampaignController.campaignLatestActive')
 
@@ -135,7 +131,6 @@ Route.group(() => {
   Route.post('join-campaign', 'CampaignController.joinCampaign').middleware(['checkSignature']);
   Route.post('deposit', 'CampaignController.deposit').middleware(['checkSignature']);
   Route.post('claim', 'CampaignController.claim').middleware(['checkSignature']);
-  Route.get('whitelist/:campaignId', 'WhiteListUserController.getWhiteList');
   Route.get('whitelist-search/:campaignId', 'WhiteListUserController.search');
   Route.get('winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners');
   Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware(['maskEmailAndWallet']);
@@ -147,21 +142,6 @@ Route.group(() => {
 
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
   .middleware(['checkPrefix', 'auth', 'checkJwtSecret']);
-
-// Route.group(() => {
-//   Route.post('jwt/verify', 'UserAuthController.verifyJwtToken').middleware(['auth']);
-//   Route.get('profile', 'UserController.profile').middleware(['checkRole']);
-//   Route.post('change-password', 'UserController.changePassword').middleware(['checkSignature', 'auth', 'checkRole']);
-//   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
-// }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser', 'checkPrefix', 'checkJwtSecret']); //user/public
-
-// Route.group(() => {
-//   Route.get('profile', 'UserController.profile').middleware(['auth', 'checkRole']);
-//   // Route.post('update-profile', 'UserController.updateProfile').middleware(['auth', 'checkRole']).validator('UpdateProfile');
-//   Route.post('transaction-create', 'TransactionController.transactionAdd').middleware(['auth']);
-// }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['checkPrefix', 'checkJwtSecret']); //user/public
-
-
 
 // Public API:
 Route.get('pools', 'PoolController.getPoolList');
@@ -185,13 +165,13 @@ Route.get('pool/:campaignId/check-exist-winner', 'WinnerListUserController.check
 
 
 // API V2
-Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
+// Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
 
-Route.get('latest-transaction', 'TransactionController.latestTransaction')
-Route.get('public-campaign', 'CampaignController.myCampaign')
-Route.get('public-campaign/:status', 'CampaignController.myCampaign').middleware('checkPublicStatus')
-Route.post('user/change-type', 'UserController.changeType').validator('ChangeUserType')
-Route.post('user/buy', 'UserBuyCampaignController.getUserBuy').validator('CheckUserBought')
-Route.get('coming-soon', 'ConfigController.getConfig')
+// Route.get('latest-transaction', 'TransactionController.latestTransaction')
+// Route.get('public-campaign', 'CampaignController.myCampaign')
+// Route.get('public-campaign/:status', 'CampaignController.myCampaign').middleware('checkPublicStatus')
+// Route.post('user/change-type', 'UserController.changeType').validator('ChangeUserType')
+// Route.post('user/buy', 'UserBuyCampaignController.getUserBuy').validator('CheckUserBought')
+// Route.get('coming-soon', 'ConfigController.getConfig')
 
 
