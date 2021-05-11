@@ -22,14 +22,8 @@ const SendForgotPasswordJob = use('App/Jobs/SendForgotPasswordJob');
 class UserController {
   async profile({request}) {
     try {
-      const userService = new UserService();
       const params = request.all();
-      const userAuthInfo = {
-        wallet_address: params.wallet_address,
-      };
-
       const findedUser = await UserModel.query().where('wallet_address', params.wallet_address).first();
-      console.log('[profile] - findedUser', findedUser);
       if (!findedUser) {
         return HelperUtils.responseNotFound();
       }
