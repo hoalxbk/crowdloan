@@ -18,7 +18,6 @@ export const convertUnixTimeToDateTime = (time: number, formatType = 2) => {
   } else if (formatType == 2) {
     type = "hh:mm:ss A MM/DD/yyyy [GMT]ZZ";
   }
-
   return moment.unix(time).format(type);
 }
 

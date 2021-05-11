@@ -213,7 +213,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
     ) {
       return {
-        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} RED HOA .`,
+        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
         type: MessageType.error
       }
     }
@@ -411,8 +411,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             The remaining amount is {numberWithCommas(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed())} {purchasableCurrency}.
           </p>
           {currentUserTier && currentUserTier.start_time && currentUserTier.end_time && (
-
-            <p className={styles.buyTokenFormTitle}>You can buy from {' '}
+            <p className={styles.buyTokenFormTitle}>
+              You can buy from {' '}
               { convertUnixTimeToDateTime(currentUserTier.start_time, 1) }
               {' '} to {' '}
               { convertUnixTimeToDateTime(currentUserTier.end_time, 1) }
