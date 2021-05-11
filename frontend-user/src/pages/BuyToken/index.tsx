@@ -486,8 +486,8 @@ const BuyToken: React.FC<any> = (props: any) => {
                       }
 
                       if (
-                        header !== HeaderType.About && 
-                        header !== HeaderType.MyTier && 
+                        header !== HeaderType.About &&
+                        header !== HeaderType.MyTier &&
                         header !== HeaderType.Participants &&
                         !poolDetails?.isDeployed
                       ) {
@@ -528,6 +528,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         endJoinTimeInDate={endJoinTimeInDate}
                         tokenSold={tokenSold}
                         setBuyTokenSuccess={setBuyTokenSuccess}
+                        currentUserTier={currentUserTier}
                       />
                    )
                 }
@@ -541,14 +542,14 @@ const BuyToken: React.FC<any> = (props: any) => {
                   )
                 }
                 {
-                  activeNav === HeaderType.Participants && ( 
-                    <LotteryWinners 
-                      poolId={poolDetails?.id} 
-                      userWinLottery={existedWinner ? true: false} 
+                  activeNav === HeaderType.Participants && (
+                    <LotteryWinners
+                      poolId={poolDetails?.id}
+                      userWinLottery={existedWinner ? true: false}
                       maximumBuy={userBuyLimit}
                       purchasableCurrency={poolDetails?.purchasableCurrency.toUpperCase()}
                       verifiedEmail={verifiedEmail ? true: false}
-                    /> 
+                    />
                    )
                 }
                 {

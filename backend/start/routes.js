@@ -112,10 +112,6 @@ Route.group(() => {
 
 
 
-
-
-
-
 // Investor User
 Route.get('campaign-latest-active', 'CampaignController.campaignLatestActive')
 
@@ -169,13 +165,13 @@ Route.get('pool/:campaignId/check-exist-winner', 'WinnerListUserController.check
 
 
 // API V2
-Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
+// Route.get('dashboard/graph/:campaign', 'RevenueController.getRevenue').middleware(['checkIcoOwner', 'checkJwtSecret', 'auth']);
 
-Route.get('latest-transaction', 'TransactionController.latestTransaction')
-Route.get('public-campaign', 'CampaignController.myCampaign')
-Route.get('public-campaign/:status', 'CampaignController.myCampaign').middleware('checkPublicStatus')
-Route.post('user/change-type', 'UserController.changeType').validator('ChangeUserType')
-Route.post('user/buy', 'UserBuyCampaignController.getUserBuy').validator('CheckUserBought')
-Route.get('coming-soon', 'ConfigController.getConfig')
+// Route.get('latest-transaction', 'TransactionController.latestTransaction')
+// Route.get('public-campaign', 'CampaignController.myCampaign')
+// Route.get('public-campaign/:status', 'CampaignController.myCampaign').middleware('checkPublicStatus')
+// Route.post('user/change-type', 'UserController.changeType').validator('ChangeUserType')
+// Route.post('user/buy', 'UserBuyCampaignController.getUserBuy').validator('CheckUserBought')
+// Route.get('coming-soon', 'ConfigController.getConfig')
 
 

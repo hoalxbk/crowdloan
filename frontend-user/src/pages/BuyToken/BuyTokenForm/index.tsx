@@ -22,6 +22,12 @@ import usePoolDepositAction from '../hooks/usePoolDepositAction';
 import useTokenApprove from '../../../hooks/useTokenApprove';
 import useAuth from '../../../hooks/useAuth';
 import { withWidth, isWidthDown, isWidthUp } from '@material-ui/core';
+import moment from "moment";
+import {
+  convertTimeToStringFormat,
+  convertTimeToStringFormatWithoutGMT,
+  convertUnixTimeToDateTime
+} from "../../../utils/convertDate";
 
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
 
@@ -44,8 +50,9 @@ type BuyTokenFormProps = {
   startBuyTimeInDate: Date | undefined
   endJoinTimeInDate: Date | undefined
   tokenSold: string | undefined
-  setBuyTokenSuccess: Dispatch<SetStateAction<boolean>> 
-}  
+  setBuyTokenSuccess: Dispatch<SetStateAction<boolean>>
+  currentUserTier: any,
+}
 
 enum MessageType {
   error = 'error',
@@ -67,11 +74,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const [poolBalance, setPoolBalance] = useState<number>(0);
   const [loadingPoolInfo, setLoadingPoolInfo] = useState<boolean>(false);
 
-  const { 
-    tokenDetails, 
-    rate, 
-    poolAddress, 
-    maximumBuy, 
+  const {
+    tokenDetails,
+    rate,
+    poolAddress,
+    maximumBuy,
     purchasableCurrency,
     poolId,
     availablePurchase,
@@ -81,9 +88,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     minimumBuy,
     poolAmount,
     startBuyTimeInDate,
+    endBuyTimeInDate,
     endJoinTimeInDate,
     tokenSold,
-    setBuyTokenSuccess
+    setBuyTokenSuccess,
+    currentUserTier,
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -91,9 +100,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
   const connector = useTypedSelector(state => state.connector).data;
 
-  const { 
-    deposit, 
-    tokenDepositLoading, 
+  const {
+    deposit,
+    tokenDepositLoading,
     tokenDepositTransaction,
     depositError,
     tokenDepositSuccess
@@ -108,7 +117,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         address: getUSDTAddress(appChainID),
         name: "USDT",
         symbol: "USDT",
-        decimals: 6 
+        decimals: 6
       };
     }
 
@@ -117,7 +126,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         address: getUSDCAddress(appChainID),
         name: "USDC",
         symbol: "USDC",
-        decimals: 6 
+        decimals: 6
       };
     }
 
@@ -131,16 +140,16 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     }
   }, [purchasableCurrency, appChainID])
 
-  const tokenToApprove = getApproveToken(appChainID); 
+  const tokenToApprove = getApproveToken(appChainID);
 
   const { approveToken, tokenApproveLoading, transactionHash } = useTokenApprove(
     tokenToApprove,
-    connectedAccount, 
+    connectedAccount,
     poolAddress,
     false
   );
 
-  const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount); 
+  const { retrieveTokenBalance } = useTokenBalance(tokenToApprove, connectedAccount);
 
   // Check if user already buy ICO token at the first time or not ?
   const firstBuy = localStorage.getItem('firstBuy') || undefined;
@@ -153,12 +162,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       console.log(err.message);
     }
   }
-  
+
   // Check if user already buy at least minimum tokens at the first time
-  const connectedAccountFirstBuy = 
-    connectedAccount 
-    ? ( 
-       parsedFirstBuy[poolAddress] ? parsedFirstBuy[poolAddress][connectedAccount]: false 
+  const connectedAccountFirstBuy =
+    connectedAccount
+    ? (
+       parsedFirstBuy[poolAddress] ? parsedFirstBuy[poolAddress][connectedAccount]: false
     )
     : false;
 
@@ -178,48 +187,48 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     const timeToShowMsg = new Date() > endJoinTimeInDate && new Date() < startBuyTimeInDate;
 
     if (
-      poolBalance 
-      && poolAmount 
-      && startBuyTimeInDate 
-      && endJoinTimeInDate && 
+      poolBalance
+      && poolAmount
+      && startBuyTimeInDate
+      && endJoinTimeInDate &&
       new BigNumber(poolAmount).gt(0) &&
-      new BigNumber(poolBalance).lt(new BigNumber(poolAmount)) && 
+      new BigNumber(poolBalance).lt(new BigNumber(poolAmount)) &&
       timeToShowMsg
     ) {
-      return { 
+      return {
         message: `This pool is not ready to buy, please contact the administrator for more information.`,
         type: MessageType.warning
       };
     }
 
     if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !connectedAccountFirstBuy && new Date() > startBuyTimeInDate) {
-      return { 
+      return {
         message: `The minimum amount you must trade is ${new BigNumber(minimumBuy).toFixed(2)} ${purchasableCurrency}.`,
         type: MessageType.error
       }
     }
 
     if (
-      input && 
-      new BigNumber(estimateTokens).gt(new BigNumber(poolAmount)) 
+      input &&
+      new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
     ) {
       return {
-        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} RED HOA .`,
+        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
         type: MessageType.error
       }
     }
 
     return;
   }, [
-    minimumBuy, 
+    minimumBuy,
     estimateTokens,
-    poolBalance, 
-    poolAmount, 
+    poolBalance,
+    poolAmount,
     userPurchased,
-    purchasableCurrency, 
-    input, 
-    startBuyTimeInDate, 
-    endJoinTimeInDate, 
+    purchasableCurrency,
+    input,
+    startBuyTimeInDate,
+    endJoinTimeInDate,
     connectedAccountFirstBuy
   ]);
 
@@ -227,8 +236,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   // Actually I don't know why i'm doing it right here :)))
   if (tokenAllowance != null || tokenAllowance != undefined) {
-    if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))  
-    && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH) 
+    if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))
+    && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH)
     && !wrongChain && ableToFetchFromBlockchain && isDeployed
     )  {
       enableApprove = true;
@@ -239,16 +248,16 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   /* const validTier = new BigNumber(userTier).gte(minTier); */
 
   // Check multiple conditions for purchasing time
-  const purchasable = 
-     availablePurchase 
-     && estimateTokens > 0 
+  const purchasable =
+     availablePurchase
+     && estimateTokens > 0
      && new BigNumber(input).lte(new BigNumber(maximumBuy))
      && !poolErrorBeforeBuy
      && new BigNumber(input).lte(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)))
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
      && new BigNumber(tokenBalance).gte(new BigNumber(input))
      && !wrongChain
-     /* && validTier */    
+     /* && validTier */
      && ((purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(tokenAllowance || 0).gt(0): true));
 
   // Fetch User balance
@@ -258,10 +267,10 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
         dispatch(
           connectWalletSuccess(
-            connector, 
-            [connectedAccount], 
-            { 
-              [connectedAccount]: new BigNumber(accountBalance._hex).div(new BigNumber(10).pow(18)).toFixed(5) 
+            connector,
+            [connectedAccount],
+            {
+              [connectedAccount]: new BigNumber(accountBalance._hex).div(new BigNumber(10).pow(18)).toFixed(5)
             }
           )
         )
@@ -304,9 +313,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     const fetchTokenPoolAllowance = async () => {
       try {
         setLoadingPoolInfo(true);
-      } catch (err) { 
+      } catch (err) {
         setLoadingPoolInfo(false);
-      }    
+      }
     }
 
     ableToFetchFromBlockchain && connectedAccount && fetchTokenPoolAllowance();
@@ -396,11 +405,21 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     <div className={styles.buyTokenForm}>
       {
         appChainID !== BSC_CHAIN_ID && (
+        <>
           <p className={styles.buyTokenFormTitle}>
-            You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {purchasableCurrency} BOUGHT from {numberWithCommas(maximumBuy)} {purchasableCurrency} available for your TIER. 
+            You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {purchasableCurrency} BOUGHT from {numberWithCommas(maximumBuy)} {purchasableCurrency} available for your TIER.
             The remaining amount is {numberWithCommas(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed())} {purchasableCurrency}.
           </p>
-        ) 
+          {currentUserTier && currentUserTier.start_time && currentUserTier.end_time && (
+            <p className={styles.buyTokenFormTitle}>
+              You can buy from {' '}
+              { convertUnixTimeToDateTime(currentUserTier.start_time, 1) }
+              {' '} to {' '}
+              { convertUnixTimeToDateTime(currentUserTier.end_time, 1) }
+            </p>
+          )}
+        </>
+        )
       }
       <div className={styles.buyTokenInputForm}>
         <p className={styles.buyTokenInputLabel}>
@@ -416,13 +435,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         </p>
         <div className={styles.buyTokenInputWrapper}>
 
-          <NumberFormat 
-            className={styles.buyTokenInput} 
-            placeholder={'0'} 
-            thousandSeparator={true}  
-            onChange={handleInputChange} 
+          <NumberFormat
+            className={styles.buyTokenInput}
+            placeholder={'0'}
+            thousandSeparator={true}
+            onChange={handleInputChange}
             decimalScale={6}
-            value={input} 
+            value={input}
             defaultValue={maximumBuy || 0}
             max={tokenBalance}
             min={0}
@@ -430,8 +449,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             disabled={wrongChain}
           />
           <span className={styles.purchasableCurrency}>
-            <button 
-              className={styles.purchasableCurrencyMax} 
+            <button
+              className={styles.purchasableCurrencyMax}
               onClick={() => setInput(availableMaximumBuy)}
             >
               Max
@@ -450,35 +469,35 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       </div>
       {
         <p className={`${poolErrorBeforeBuy?.type === MessageType.error ? `${styles.poolErrorBuy}`: `${styles.poolErrorBuyWarning}`}`}>
-          {poolErrorBeforeBuy && poolErrorBeforeBuy.message}          
+          {poolErrorBeforeBuy && poolErrorBeforeBuy.message}
         </p>
       }
       <div className={styles.btnGroup}>
-        <Button 
-        text={new BigNumber(tokenAllowance || 0).gt(0) ? 'Approved': 'Approve'} 
-        backgroundColor={'#29C08A'} 
-        disabled={!enableApprove} 
-        onClick={handleTokenApprove} 
-        loading={tokenApproveLoading} 
+        <Button
+        text={new BigNumber(tokenAllowance || 0).gt(0) ? 'Approved': 'Approve'}
+        backgroundColor={'#29C08A'}
+        disabled={!enableApprove}
+        onClick={handleTokenApprove}
+        loading={tokenApproveLoading}
         />
-        <Button 
-          text={'Buy'} 
-          backgroundColor={'#3232DC'} 
+        <Button
+          text={'Buy'}
+          backgroundColor={'#3232DC'}
           disabled={!purchasable}
           onClick={handleTokenDeposit}
-          loading={tokenDepositLoading} 
+          loading={tokenDepositLoading}
         />
       </div>
       <p className={styles.approveWarning}>{`You need to Approve once (and only once) before you can start purchasing.`}</p>
-      <TransactionSubmitModal 
-        opened={openSubmitModal} 
-        handleClose={() => { setOpenSubmitModal(false); }} 
+      <TransactionSubmitModal
+        opened={openSubmitModal}
+        handleClose={() => { setOpenSubmitModal(false); }}
         transactionHash={tokenDepositTransaction}
       />
-      <TransactionSubmitModal 
+      <TransactionSubmitModal
         additionalText={`Please be patient and no need to approve again, you can check the transaction status on Etherscan.`}
-        opened={openApproveModal} 
-        handleClose={() => { setApproveModal(false); }} 
+        opened={openApproveModal}
+        handleClose={() => { setApproveModal(false); }}
         transactionHash={transactionHash}
       />
     </div>
