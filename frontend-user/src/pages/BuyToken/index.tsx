@@ -59,7 +59,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [buyTokenSuccess, setBuyTokenSuccess] = useState<boolean>(false);
   const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
-  const [activeNav, setActiveNav] = useState(HeaderType.About);
+  const [activeNav, setActiveNav] = useState(HeaderType.Main);
 
   const { pathname } = useLocation();
   const { id } = useParams() as any;
