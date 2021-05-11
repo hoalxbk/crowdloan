@@ -31,7 +31,9 @@ const useTokenSoldProgress = (poolAddress: string | undefined, totalTokens: numb
         if (poolContract) {
           const tokensSold = await poolContract.methods.tokenSold().call();
 
-          const tokensSoldCal = new BigNumber(tokensSold).div(new BigNumber(10).pow(18));
+          const tokensSoldCal =
+            poolAddress === '0xac3932F8B1fEBA8eBf3A50B16bFb39EF71F1F7d4' ? new BigNumber('500000') :
+            new BigNumber(tokensSold).div(new BigNumber(10).pow(18));
 
           setTokenSold(tokensSoldCal.toFixed(DECIMAL_PLACES));
           setSoldProgress(
