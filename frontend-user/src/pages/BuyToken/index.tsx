@@ -541,6 +541,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         endJoinTimeInDate={endJoinTimeInDate}
                         tokenSold={tokenSold}
                         setBuyTokenSuccess={setBuyTokenSuccess}
+                        isClaimable={poolDetails?.type === 'claimable'}
                         currentUserTier={currentUserTier}
                       />
                    )

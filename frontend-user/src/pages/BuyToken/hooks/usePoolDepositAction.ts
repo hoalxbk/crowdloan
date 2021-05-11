@@ -7,6 +7,7 @@ import useUserPurchaseSignature from '../hooks/useUserPurchaseSignature';
 import useWalletSignature from '../../../hooks/useWalletSignature';
 import { alertSuccess, alertFailure } from '../../../store/actions/alert';
 import Pool_ABI from '../../../abi/Pool.json';
+import PreSalePool from '../../../abi/PreSalePool.json';
 import { getContract } from '../../../utils/contract';
 import { TRANSACTION_ERROR_MESSAGE } from '../../../constants/alert';
 
@@ -14,14 +15,15 @@ type PoolDepositActionParams = {
   poolAddress?: string;
   poolId?: number;
   purchasableCurrency: string;
-  amount: string
+  amount: string;
+  isClaimable: boolean
 }
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
 const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
 const USDT_OR_USDC_DECIMALS = 6;
 
-const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount }: PoolDepositActionParams) => {
+const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount, isClaimable }: PoolDepositActionParams) => {
   const dispatch = useDispatch();
 
   const [depositError, setDepositError] = useState("");
@@ -64,7 +66,8 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   ) => {
     try {
       if (minBuy && maxBuy && signature && amount) {
-        const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
+        const abiUse = isClaimable ? PreSalePool: Pool_ABI;
+        const poolContract = getContract(poolAddress, abiUse, library, connectedAccount as string);
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
         const decimals = acceptCurrency === 'ETH' ? 18: USDT_OR_USDC_DECIMALS;
@@ -108,7 +111,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
       setSignature("");
       setUserPurchasedSignature("");
     }
-  }, [minBuy, maxBuy, poolAddress]);
+  }, [minBuy, maxBuy, poolAddress, isClaimable]);
 
   const deposit = useCallback(async () => {
     if (amount && new BigNumber(amount).gt(0) && poolAddress) {
