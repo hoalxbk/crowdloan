@@ -45,6 +45,7 @@ type BuyTokenFormProps = {
   endJoinTimeInDate: Date | undefined
   tokenSold: string | undefined
   setBuyTokenSuccess: Dispatch<SetStateAction<boolean>> 
+  isClaimable: boolean | undefined
 }  
 
 enum MessageType {
@@ -83,7 +84,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     startBuyTimeInDate,
     endJoinTimeInDate,
     tokenSold,
-    setBuyTokenSuccess
+    setBuyTokenSuccess,
+    isClaimable
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -97,7 +99,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     tokenDepositTransaction,
     depositError,
     tokenDepositSuccess
-  } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input });
+  } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input, isClaimable });
 
   const { retrieveTokenAllowance } = useTokenAllowance();
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
