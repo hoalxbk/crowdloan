@@ -112,10 +112,6 @@ Route.group(() => {
 
 
 
-
-
-
-
 // Investor User
 Route.get('campaign-latest-active', 'CampaignController.campaignLatestActive')
 

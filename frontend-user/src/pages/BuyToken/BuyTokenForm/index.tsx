@@ -22,6 +22,7 @@ import usePoolDepositAction from '../hooks/usePoolDepositAction';
 import useTokenApprove from '../../../hooks/useTokenApprove';
 import useAuth from '../../../hooks/useAuth';
 import { withWidth, isWidthDown, isWidthUp } from '@material-ui/core';
+import {convertTimeToStringFormat, convertTimeToStringFormatWithoutGMT} from "../../../utils/convertDate";
 
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
 
@@ -81,6 +82,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     minimumBuy,
     poolAmount,
     startBuyTimeInDate,
+    endBuyTimeInDate,
     endJoinTimeInDate,
     tokenSold,
     setBuyTokenSuccess
@@ -396,11 +398,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     <div className={styles.buyTokenForm}>
       {
         appChainID !== BSC_CHAIN_ID && (
+        <>
           <p className={styles.buyTokenFormTitle}>
-            You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {purchasableCurrency} BOUGHT from {numberWithCommas(maximumBuy)} {purchasableCurrency} available for your TIER. 
+            You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {purchasableCurrency} BOUGHT from {numberWithCommas(maximumBuy)} {purchasableCurrency} available for your TIER.
             The remaining amount is {numberWithCommas(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed())} {purchasableCurrency}.
           </p>
-        ) 
+          <p className={styles.buyTokenFormTitle}>You can buy from { convertTimeToStringFormat(startBuyTimeInDate) } to {convertTimeToStringFormat(endBuyTimeInDate)}</p>
+        </>
+        )
       }
       <div className={styles.buyTokenInputForm}>
         <p className={styles.buyTokenInputLabel}>
