@@ -121,7 +121,7 @@ const ManageTier = (props: any) => {
             </div>
           </div>
         </div>
-        <p className={styles.noteStake}>sPKF (Cooldown) is the number of PFK under MANTRA DAO cooldown period after the unstaking request. This amount will be counted to your tier automatically without the need to Stake.</p>
+        <p className={styles.noteStake}>sPKF (Cooldown) is the number of PKF under MANTRA DAO cooldown period after the unstaking request. This amount will be counted to your tier automatically without the need to Stake.</p>
         <div className="button-area">
           <button
             className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
