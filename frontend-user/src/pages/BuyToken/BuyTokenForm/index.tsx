@@ -91,7 +91,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     endBuyTimeInDate,
     endJoinTimeInDate,
     tokenSold,
-    setBuyTokenSuccess
+    setBuyTokenSuccess,
+    currentUserTier,
   } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -409,7 +410,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {purchasableCurrency} BOUGHT from {numberWithCommas(maximumBuy)} {purchasableCurrency} available for your TIER.
             The remaining amount is {numberWithCommas(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed())} {purchasableCurrency}.
           </p>
-          <p className={styles.buyTokenFormTitle}>You can buy from { convertTimeToStringFormat(startBuyTimeInDate) } to {convertTimeToStringFormat(endBuyTimeInDate)}</p>
+          {currentUserTier && currentUserTier.start_time && currentUserTier.end_time && (
+
+            <p className={styles.buyTokenFormTitle}>You can buy from {' '}
+              { convertUnixTimeToDateTime(currentUserTier.start_time, 1) }
+              {' '} to {' '}
+              { convertUnixTimeToDateTime(currentUserTier.end_time, 1) }
+            </p>
+          )}
         </>
         )
       }
