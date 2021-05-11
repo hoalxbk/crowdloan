@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme: any) => {
         '&.claimable': {
           backgroundColor: '#FF9330'
         },
-        '&.upcomming': {
+        '&.upcoming': {
           backgroundColor: '#6398FF'
         },
         '&.tba': {

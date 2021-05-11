@@ -12,7 +12,7 @@ class StakingLogsSchema extends Schema {
       table.integer('user_id').unsigned().nullable();
       table.decimal('tier_staked_amount', 40,18).notNullable().default(0);
       table.decimal('mantra_unstake_amount', 40,18).notNullable().default(0);
-      table.integer('current_tier').unsigned().notNullable().default(0); // Get by getUserTierSmart
+      table.integer('current_tier').unsigned().notNullable().default(0);
 
       table.timestamps();
     })

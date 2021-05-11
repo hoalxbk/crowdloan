@@ -36,7 +36,7 @@ const Card = (props: any): JSX.Element => {
   //   } else if(pool.start_time > currentTime) {
   //     diffTime = parseInt(pool.start_time) - currentTime;
   //   }
-    
+
   //   let intervalCount: any;
   //   if (diffTime > 0) {
   //     let timeLeftToStart = diffTime * 1000
@@ -81,8 +81,8 @@ const Card = (props: any): JSX.Element => {
           {pool.status == POOL_STATUS.CLAIMABLE && <div className="time claimable">
             <span>Claimable</span>
           </div>}
-          {pool.status == POOL_STATUS.UPCOMMING && <div className="time upcomming">
-            <span>Upcomming</span>
+          {pool.status == POOL_STATUS.UPCOMING && <div className="time upcoming">
+            <span>Upcoming</span>
           </div>}
         </div>
         <div className={styles.cardBody}>
@@ -117,7 +117,7 @@ const Card = (props: any): JSX.Element => {
             </li>
           </ul>
 
-          {/* {pool.status == POOL_STATUS.UPCOMMING && <div className="token-area">
+          {/* {pool.status == POOL_STATUS.UPCOMING && <div className="token-area">
             {pool.network_available === NETWORK.ETHEREUM && <div>
               <img src={EthereumIcon} />
               <span>Ethereum</span>

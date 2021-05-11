@@ -4,7 +4,7 @@ export const ADMIN_URL_PREFIX = 'dashboard';
 export const MAX_BUY_CAMPAIGN = 1000;
 export const POOL_STATUS = {
   TBA: 0,
-  UPCOMMING: 1,
+  UPCOMING: 1,
   JOINING: 2,
   IN_PROGRESS: 3,
   FILLED: 4,
