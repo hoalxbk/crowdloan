@@ -478,7 +478,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         <Button
         text={new BigNumber(tokenAllowance || 0).gt(0) ? 'Approved': 'Approve'}
         backgroundColor={'#29C08A'}
-        disabled={!enableApprove}
+        /* disabled={!enableApprove} */
+        disabled={true} 
         onClick={handleTokenApprove}
         loading={tokenApproveLoading}
         />
