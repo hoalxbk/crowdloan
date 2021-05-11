@@ -50,7 +50,8 @@ type BuyTokenFormProps = {
   startBuyTimeInDate: Date | undefined
   endJoinTimeInDate: Date | undefined
   tokenSold: string | undefined
-  setBuyTokenSuccess: Dispatch<SetStateAction<boolean>>
+  setBuyTokenSuccess: Dispatch<SetStateAction<boolean>> 
+  isClaimable: boolean | undefined
   currentUserTier: any,
 }
 
@@ -92,8 +93,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     endJoinTimeInDate,
     tokenSold,
     setBuyTokenSuccess,
-    currentUserTier,
-  } = props;
+    isClaimable,
+    currentUserTier
+} = props;
 
   const { connectedAccount, wrongChain } = useAuth();
   /* const userTier = useTypedSelector(state => state.userTier).data; */
@@ -106,7 +108,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     tokenDepositTransaction,
     depositError,
     tokenDepositSuccess
-  } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input });
+  } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input, isClaimable });
 
   const { retrieveTokenAllowance } = useTokenAllowance();
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
@@ -476,7 +478,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         <Button
         text={new BigNumber(tokenAllowance || 0).gt(0) ? 'Approved': 'Approve'}
         backgroundColor={'#29C08A'}
-        disabled={!enableApprove}
+        /* disabled={!enableApprove} */
+        disabled={true} 
         onClick={handleTokenApprove}
         loading={tokenApproveLoading}
         />
