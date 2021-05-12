@@ -28,9 +28,9 @@ const useTokenAllowance = (
       setTransactionHash("");
 
       try {
-        if (token && spender && owner   
-            && ethers.utils.isAddress(owner) 
-            && ethers.utils.isAddress(spender) 
+        if (token && spender && owner
+            && ethers.utils.isAddress(owner)
+            && ethers.utils.isAddress(spender)
             && ethers.utils.isAddress(token.address)
            ) {
              setTokenApproveLoading(true);
@@ -51,6 +51,7 @@ const useTokenAllowance = (
              }
            }
       } catch (err) {
+        console.log('[ERROR] - useTokenAllowance:', err);
         dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
         setTokenApproveLoading(false);
         throw new Error(err.message);

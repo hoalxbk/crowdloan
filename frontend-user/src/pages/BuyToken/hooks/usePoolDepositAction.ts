@@ -37,8 +37,8 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   const { signature, minBuy, maxBuy, error: buyError, setSignature: setUserPurchasedSignature } = useUserPurchaseSignature(connectedAccount, poolId, authSignature);
 
   useEffect(() => {
-    poolAddress && 
-    purchasableCurrency && 
+    poolAddress &&
+    purchasableCurrency &&
     signature &&
     minBuy &&
     maxBuy &&
@@ -58,9 +58,9 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   }, [error, buyError]);
 
   const depositWithSignature = useCallback(async (
-    poolAddress: string, 
-    acceptCurrency: string, 
-    amount: string, 
+    poolAddress: string,
+    acceptCurrency: string,
+    amount: string,
     signature: string,
     minBuy: string,
     maxBuy: string
@@ -73,7 +73,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
         const decimals = acceptCurrency === 'ETH' ? 18: USDT_OR_USDC_DECIMALS;
 
-        const params = acceptCurrency === 'ETH' ? [ 
+        const params = acceptCurrency === 'ETH' ? [
           connectedAccount,
           connectedAccount,
           maxBuy,
@@ -107,6 +107,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
       }
     } catch (err) {
+      console.log('[ERROR] - depositWithSignature:', err);
       dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
       setDepositError(TRANSACTION_ERROR_MESSAGE);
       setTokenDepositLoading(false);
@@ -125,6 +126,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
 
         await signMessage();
       } catch (err) {
+        console.log('[ERROR] - deposit:', err);
         dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
         setDepositError(TRANSACTION_ERROR_MESSAGE);
         setSignature("");
@@ -142,7 +144,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
   //       const poolContract = getContract(poolAddress, Pool_ABI, library, connectedAccount as string);
   //       const gasPriceCal = new BigNumber(gasPrice._hex).div(new BigNumber(10).pow(18));
 
-  //       const params = acceptCurrency === 'ETH' ? [ 
+  //       const params = acceptCurrency === 'ETH' ? [
   //         connectedAccount,
   //         connectedAccount,
   //         "100000000000",

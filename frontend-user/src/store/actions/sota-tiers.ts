@@ -28,7 +28,7 @@ export const getTiers = (forceUsingEther?: string) => {
       const contract = getContractInstance(
         RedKite.abi,
         process.env.REACT_APP_TIERS as string,
-        connector, 
+        connector,
         appChainID,
         SmartContractMethod.Read,
         forceUsingEther === 'eth'
@@ -65,9 +65,9 @@ export const getUserTier = (address: string, forceUsingEther?: string) => {
       let result = {};
 
       const contract = getContractInstance(
-        RedKite.abi, 
-        process.env.REACT_APP_TIERS as string, 
-        connector, 
+        RedKite.abi,
+        process.env.REACT_APP_TIERS as string,
+        connector,
         appChainID,
         SmartContractMethod.Read,
         forceUsingEther === 'eth'
@@ -134,7 +134,7 @@ export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddr
         ...result,
         totalStaked: totalStaked
       }
-      
+
       dispatch({
         type: sotaTiersActions.USER_INFO_SUCCESS,
         payload: result,
@@ -157,7 +157,7 @@ export const deposit = (address: string | null | undefined, amount: string, libr
       let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
-      const overrides = { gasLimit: GAS_LIMIT_CONFIGS.DEPOSIT_SOTA_TIERS };
+      const overrides = { gasLimit: GAS_LIMIT_CONFIGS.STAKE_SOTA_TIERS };
       result = await contract?.depositERC20(tokenAddress, convertToWei(amount), overrides);
 
       dispatch({
@@ -191,7 +191,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
       let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
-      const overrides = { gasLimit: GAS_LIMIT_CONFIGS.WITHDRAW_SOTA_TIERS };
+      const overrides = { gasLimit: GAS_LIMIT_CONFIGS.UNSTAKE_SOTA_TIERS };
       result = await contract?.withdrawERC20(tokenAddress, convertToWei(amount), overrides);
 
       dispatch({
@@ -229,7 +229,7 @@ export const getWithdrawFee = (address: string | null | undefined, amount: strin
       const contract = getContractInstance(RedKite.abi, process.env.REACT_APP_TIERS as string, connector, appChainID);
 
       data = await contract?.methods.calculateWithdrawFee(address, process.env.REACT_APP_PKF, convertToWei(amount)).call();
-      
+
       const fee = convertFromWei(data);
       const feePercent = parseFloat(fee || '0')*100/parseFloat(amount || '0')
 
@@ -263,7 +263,7 @@ export const getWithdrawPercent = () => {
       let result = {};
       let data = [];
       const contract = getContractInstance(RedKite.abi, process.env.REACT_APP_TIERS as string, connector, appChainID);
- 
+
      result = await contract?.methods.withdrawFeePercent(0).call();
       data.push(result)
       result = await contract?.methods.withdrawFeePercent(1).call();
@@ -304,7 +304,7 @@ export const getRates = (tokens: any) => {
       const { appChainID } = getState().appNetwork.data;
       const { connector } = getState().connector.data || "Metamask";
       const contract = getContractInstance(RedKite.abi, process.env.REACT_APP_TIERS as string, connector, appChainID);
- 
+
       let data = [] as any;
       for(let i = 0; i < tokens.length; i++) {
         const token = tokens[i];
