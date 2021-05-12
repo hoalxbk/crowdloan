@@ -173,9 +173,11 @@ describe('Tier', function () {
     await tier.connect(user1).depositERC20(PKF.address, utils.parseUnits("10400", 18));
     await tier.connect(user1).depositERC20(sPKF.address, utils.parseUnits("5800", 18));
 
-    const user1Info = await tier.userInfo(user1.address, sPKF.address);
+    const user1sPKFInfo = await tier.userInfo(user1.address, sPKF.address);
+    const user1PKFInfo = await tier.userInfo(user1.address, PKF.address);
 
-    expect(user1Info.staked).to.equal(utils.parseUnits("9800", 18));
+    expect(user1sPKFInfo.staked).to.equal(utils.parseUnits("9800", 18));
+    expect(user1PKFInfo.staked).to.equal(utils.parseUnits("10400", 18));
     expect(await tier.userExternalStaked(user1.address)).to.equal(utils.parseUnits("9916", 18));
     expect(await tier.userTotalStaked(user1.address)).to.equal(utils.parseUnits("20316", 18));
 

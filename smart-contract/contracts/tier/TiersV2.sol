@@ -159,6 +159,10 @@ contract TiersV2 is IERC721Receiver, Ownable, ReentrancyGuard {
             externalToken[_token].canStake == true,
             "TIER::TOKEN_NOT_ACCEPTED"
         );
+        require(
+            externalToken[_token].isERC721 == true,
+            "TIER::INVALID_TOKEN_TYPE"
+        );
         IERC721(_token).safeTransferFrom(msg.sender, address(this), _tokenId);
 
         userInfo[msg.sender][_token].staked = userInfo[msg.sender][_token]
@@ -176,6 +180,10 @@ contract TiersV2 is IERC721Receiver, Ownable, ReentrancyGuard {
         require(
             externalToken[_token].canStake == true,
             "TIER::TOKEN_NOT_ACCEPTED"
+        );
+        require(
+            externalToken[_token].isERC721 == true,
+            "TIER::INVALID_TOKEN_TYPE"
         );
         _batchSafeTransferFrom(_token, msg.sender, address(this), _tokenIds);
 
@@ -216,6 +224,11 @@ contract TiersV2 is IERC721Receiver, Ownable, ReentrancyGuard {
         external
         nonReentrant()
     {
+        require(
+            externalToken[_token].isERC721 == true,
+            "TIER::INVALID_TOKEN_TYPE"
+        );
+
         UserInfo storage user = userInfo[msg.sender][_token];
         require(user.staked >= 1, "not enough amount to withdraw");
 
@@ -234,6 +247,11 @@ contract TiersV2 is IERC721Receiver, Ownable, ReentrancyGuard {
         external
         nonReentrant()
     {
+        require(
+            externalToken[_token].isERC721 == true,
+            "TIER::INVALID_TOKEN_TYPE"
+        );
+        
         UserInfo storage user = userInfo[msg.sender][_token];
         uint256 amount = _tokenIds.length;
         require(user.staked >= amount, "not enough amount to withdraw");
