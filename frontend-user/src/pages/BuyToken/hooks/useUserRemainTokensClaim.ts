@@ -8,7 +8,7 @@ import{ getContractInstance, SmartContractMethod } from '../../../services/web3'
 import Pool_ABI from '../../../abi/PreSalePool.json';
 
 const useUserRemainTokensClaim = (
-  tokenDetails: TokenType | undefined, 
+  tokenDetails: TokenType | undefined,
   poolAddress: string | undefined,
   ableToFetchFromBlockchain: boolean | undefined
 ) => {
@@ -19,13 +19,13 @@ const useUserRemainTokensClaim = (
 
   const retrieveClaimableTokens = useCallback(async (userAddress: string, poolAddress: string) => {
     try {
-      if (userAddress && poolAddress && tokenDetails && ableToFetchFromBlockchain 
-          && ethers.utils.isAddress(userAddress) 
-          && ethers.utils.isAddress(poolAddress) 
+      if (userAddress && poolAddress && tokenDetails && ableToFetchFromBlockchain
+          && ethers.utils.isAddress(userAddress)
+          && ethers.utils.isAddress(poolAddress)
          ) {
            setUserPurchasedLoading(true);
 
-           const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read); 
+           const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read);
 
            if (contract) {
              const userPurchased = await contract.methods.userPurchased(userAddress).call();
@@ -38,7 +38,7 @@ const useUserRemainTokensClaim = (
            return 0;
          }
     } catch (err) {
-      console.log(err.message);
+      console.log(err);
     }
   }, [appChainID, connector, poolAddress, ableToFetchFromBlockchain]);
 

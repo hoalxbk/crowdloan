@@ -94,10 +94,19 @@ export const TIERS = [
     bgColor: '',
     icon: '/images/icons/diamond.svg'
   }
-]
+];
 
 export const KYC_STATUS = {
   NOT_VERIFIED: 0,
   VERIFIED: 1,
   VERIFY_FAIL: 2,
+};
+
+export const GAS_LIMIT_CONFIGS = {
+  APPROVE: '200000',
+  DEPOSIT: '200000',
+  CLAIM: '200000',
+  APPROVE_SOTA_TOKEN: '200000',
+  STAKE_SOTA_TIERS: '200000',
+  UNSTAKE_SOTA_TIERS: '200000',
 };

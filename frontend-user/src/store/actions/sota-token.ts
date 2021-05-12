@@ -7,6 +7,7 @@ import { MAX_INT } from './../../services/web3';
 import { Web3Provider } from '@ethersproject/providers'
 import { getContract } from '../../utils/contract';
 import { alertFailure, alertSuccess } from '../../store/actions/alert';
+import {GAS_LIMIT_CONFIGS} from "../../constants";
 
 export const getAllowance = (owner: string) => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>) => {
@@ -48,7 +49,8 @@ export const approve = (address: string | null | undefined, library: Web3Provide
       let result = {} as any;
 
       const contract = getContract(tokenAddress, erc20ABI, library, address || '');
-      result = await contract?.approve(process.env.REACT_APP_TIERS, MAX_INT);
+      const overrides = { gasLimit: GAS_LIMIT_CONFIGS.APPROVE_SOTA_TOKEN };
+      result = await contract?.approve(process.env.REACT_APP_TIERS, MAX_INT, overrides);
       dispatch({
         type: sotaTokenActions.APPROVE_SUCCESS,
         payload: result,

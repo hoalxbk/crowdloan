@@ -77,6 +77,7 @@ const useWalletSignature = () => {
         }
       }
     } catch(err) {
+      console.log('[ERROR] - signMessage:', err);
       dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
       setError(err.message);
     }

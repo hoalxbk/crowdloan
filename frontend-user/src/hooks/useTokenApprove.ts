@@ -10,10 +10,11 @@ import { getContract } from '../utils/contract';
 import { TokenType } from '../hooks/useTokenDetails';
 
 import ERC20_ABI from '../abi/Erc20.json';
+import {GAS_LIMIT_CONFIGS} from "../constants";
 
 const useTokenAllowance = (
-  token: TokenType | undefined, 
-  owner: string | null | undefined, 
+  token: TokenType | undefined,
+  owner: string | null | undefined,
   spender: string | null | undefined,
   sotaABI: false
 ) => {
@@ -27,9 +28,9 @@ const useTokenAllowance = (
       setTransactionHash("");
 
       try {
-        if (token && spender && owner   
-            && ethers.utils.isAddress(owner) 
-            && ethers.utils.isAddress(spender) 
+        if (token && spender && owner
+            && ethers.utils.isAddress(owner)
+            && ethers.utils.isAddress(spender)
             && ethers.utils.isAddress(token.address)
            ) {
              setTokenApproveLoading(true);
@@ -37,7 +38,8 @@ const useTokenAllowance = (
              const contract = getContract(token.address, ERC20_ABI, library, account as string);
 
              if (contract) {
-               const transaction = await contract.approve(spender, MAX_INT);
+               const overrides = { gasLimit: GAS_LIMIT_CONFIGS.APPROVE };
+               const transaction = await contract.approve(spender, MAX_INT, overrides);
                console.log('Approve Token', transaction);
 
               setTransactionHash(transaction.hash);
@@ -49,6 +51,7 @@ const useTokenAllowance = (
              }
            }
       } catch (err) {
+        console.log('[ERROR] - useTokenAllowance:', err);
         dispatch(alertFailure(TRANSACTION_ERROR_MESSAGE));
         setTokenApproveLoading(false);
         throw new Error(err.message);

@@ -31,6 +31,7 @@ export const getSettingDetail = () => {
       }
 
     } catch (error) {
+      console.log('[ERROR] - ', error);
       dispatch({
         type: settingDetailActions.SETTING_DETAIL_FAILURE,
         payload: error
