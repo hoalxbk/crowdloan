@@ -7,6 +7,7 @@ import useWalletSignature from '../../../hooks/useWalletSignature';
 import PreSale_ABI from '../../../abi/PreSalePool.json';
 import { getContract } from '../../../utils/contract';
 import { alertSuccess, alertFailure } from '../../../store/actions/alert';
+import {GAS_LIMIT_CONFIGS} from "../../../constants";
 
 const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefined) => {
   const { library, account } = useWeb3React();
@@ -45,7 +46,8 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
          const contract = getContract(poolAddress, PreSale_ABI, library, account as string);
 
          if (contract) {
-           const transaction = await contract.claimTokens(account, amount, signature);
+           const overrides = { gasLimit: GAS_LIMIT_CONFIGS.CLAIM };
+           const transaction = await contract.claimTokens(account, amount, signature, overrides);
 
            setSignature("");
            setUserClaimSignature("");
