@@ -28,35 +28,30 @@ class MaskEmailAndWallet {
   maskWallet(wallet) {
     if (!wallet) return wallet;
 
-    console.log(`Wallet before mask is ${wallet}`);
     const preWalletLength = wallet.length;
-    console.log('preWalletLength', preWalletLength);
-
     // get number of word to hide, 1/3 of preWallet
     const hideLength = Math.floor(preWalletLength / 3);
-    console.log('hideLength', hideLength);
 
     // replace hide with ***
     let r = wallet.substr(hideLength, hideLength);
     wallet = wallet.replace(r, "*************");
 
-    console.log(`Wallet after mask is ${wallet}`);
     return wallet;
   }
 
   maskEmail(email) {
     if (!email) return email;
 
-    console.log(`Email before mask is ${email}`);
+    // console.log(`Email before mask is ${email}`);
     const preEmailLength = email.split("@")[0].length;
     // get number of word to hide, half of preEmail
     const hideLength = ~~(preEmailLength / 2);
-    console.log(hideLength);
+    // console.log(hideLength);
     // create regex pattern
     const r = new RegExp(".{"+hideLength+"}@", "g")
     // replace hide with ***
     email = email.replace(r, "***@");
-    console.log(`Email after mask is ${email}`);
+    // console.log(`Email after mask is ${email}`);
     return email;
   }
 }
