@@ -52,8 +52,8 @@ const usePools = (): PoolsReturnType => {
         
         return {
           ...p,
-          token_images: `${BASE_URL}/image/${p.token_images}`,
-          banner: `${BASE_URL}/image/${p.banner}`,
+          // token_images: `${BASE_URL}/image/${p.token_images}`,
+          // banner: `${BASE_URL}/image/${p.banner}`,
           decimals: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 18 : p.decimals,
           campaign_hash: (p.campaign_hash == null || p.campaign_hash == '' || p.campaign_hash == 'TBD') ? 'Token contract not available yet.' : p.campaign_hash
         }
