@@ -26,7 +26,6 @@ const useGetList = (props: any) => {
         search_term: query,
         page: currentPage,
         limit: DEFAULT_LIMIT,
-        // limit: 1,
       };
       handleSearchFunction &&
       handleSearchFunction(poolDetail.id, searchParams)

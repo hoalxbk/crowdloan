@@ -47,7 +47,7 @@ function UserWinner(props: any) {
         <img src="/images/icon-search.svg" alt="" style={{ marginLeft: -30 }} />
       </div>
 
-      <TableContainer component={Paper} className={commonStyle.tableScroll}>
+      <TableContainer component={Paper} className={`${commonStyle.tableScroll} ${classesTable.tableUserJoin}`}>
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
             <TableRow>

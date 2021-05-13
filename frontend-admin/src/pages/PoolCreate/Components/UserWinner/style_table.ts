@@ -4,6 +4,9 @@ const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
+  tableUserJoin: {
+    minHeight: 300,
+  },
   middleColumn: {
     width: 60,
   },

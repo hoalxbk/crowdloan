@@ -72,6 +72,10 @@ function UserReverseSetting(props: any) {
   };
 
   const onConfirm = () => {
+    // eslint-disable-next-line no-restricted-globals
+    if (!confirm('Do you want save setting ?')) {
+      return true;
+    }
     setConfirmLoading(true);
     return handleSubmit(submitData)()
       .then((res) => {
@@ -94,8 +98,8 @@ function UserReverseSetting(props: any) {
       return true;
     }
 
-    setValue('startTime', moment.unix(initTier.start_time));
-    setValue('endTime', moment.unix(initTier.end_time));
+    setValue('startTime', moment(initTier.start_time));
+    setValue('endTime', moment(initTier.end_time));
     setShowNumberInput(false);
     setTimeout(() => {
       setValue('minBuy', initTier.min_buy);

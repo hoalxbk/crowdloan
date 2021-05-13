@@ -32,7 +32,12 @@ import Link from "@material-ui/core/Link";
 import BigNumber from "bignumber.js";
 import UserReverseSetting from "./UserReverseSetting";
 import Grid from "@material-ui/core/Grid";
+import { Collapse } from 'antd';
+const { Panel } = Collapse;
 
+function callback(key: any) {
+  console.log(key);
+}
 
 function UserReverse(props: any) {
   const commonStyle = useCommonStyle();
@@ -112,22 +117,22 @@ function UserReverse(props: any) {
 
   return (
     <>
-      <Grid container spacing={3}>
-        <Grid item xs={8}>
-          <div className={commonStyle.boxSearch}
-            style={{
-              marginBottom: 25,
-            }}
-          >
-            {initTier &&
-              <UserReverseSetting
-                poolDetail={poolDetail}
-                initTier={initTier}
-              />
-            }
-          </div>
-        </Grid>
-      </Grid>
+      <div className={commonStyle.boxSearch} style={{ marginBottom: 25 }}>
+        <Collapse onChange={callback}>
+          <Panel header="Config Settings" key="1">
+            <Grid container spacing={3}>
+              <Grid item xs={8}>
+                {initTier &&
+                <UserReverseSetting
+                  poolDetail={poolDetail}
+                  initTier={initTier}
+                />
+                }
+              </Grid>
+            </Grid>
+          </Panel>
+        </Collapse>
+      </div>
 
       <div className={commonStyle.boxSearch}>
         <input className={commonStyle.inputSearch} onChange={searchDelay} placeholder="Search reserve users" />
@@ -154,7 +159,7 @@ function UserReverse(props: any) {
         </div>
       </div>
 
-      <TableContainer component={Paper} className={commonStyle.tableScroll}>
+      <TableContainer component={Paper} className={`${commonStyle.tableScroll} ${classesTable.tableUserJoin}`}>
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
             <TableRow>
