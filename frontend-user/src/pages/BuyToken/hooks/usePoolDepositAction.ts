@@ -10,7 +10,6 @@ import Pool_ABI from '../../../abi/Pool.json';
 import PreSalePool from '../../../abi/PreSalePool.json';
 import { getContract } from '../../../utils/contract';
 import { TRANSACTION_ERROR_MESSAGE } from '../../../constants/alert';
-import {GAS_LIMIT_CONFIGS} from "../../../constants";
 
 type PoolDepositActionParams = {
   poolAddress?: string;
@@ -92,8 +91,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
           signature
         ];
 
-        const overrides = { gasLimit: GAS_LIMIT_CONFIGS.DEPOSIT };
-        const transaction = await poolContract[method](...params, overrides);
+        const transaction = await poolContract[method](...params);
 
         setUserPurchasedSignature("");
         setSignature("");
