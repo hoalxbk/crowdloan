@@ -170,6 +170,13 @@ class ReservedListController {
       }
       await ConfigModel.query().where('key', 'reserve_setting').update({ value: JSON.stringify(updateData) });
 
+      await ReservedListModel.query().update({
+        start_time: updateData.start_time,
+        end_time: updateData.end_time,
+        max_buy: updateData.max_buy,
+        min_buy: updateData.min_buy,
+      });
+
       console.log('[updateReserveSetting] - response: ', JSON.stringify(updateData));
       return HelperUtils.responseSuccess();
     } catch (e) {

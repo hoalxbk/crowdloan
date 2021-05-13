@@ -60,6 +60,7 @@ Route.group(() => {
 }).middleware(['typeAdmin', 'auth:admin', 'checkAdminJwtSecret']);
 
 Route.group(() => {
+  // Auth
   Route.post('/login', 'AuthAdminController.login').validator('Login').middleware('checkSignature');
   Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignature');
   Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
@@ -70,6 +71,10 @@ Route.group(() => {
   Route.post('reset-password/:token', 'AdminController.resetPassword').validator('ResetPassword').middleware('checkSignature');
   Route.post('upload-avatar', 'FileController.uploadAvatar');
 
+  // KYC
+  Route.put('active-kyc', 'UserController.activeKyc');
+
+  // Pool
   Route.post('pool/create', 'PoolController.createPool');
   Route.post('pool/:campaignId/update', 'PoolController.updatePool');
   Route.get('pool/:campaignId', 'PoolController.getPoolAdmin');
@@ -92,8 +97,6 @@ Route.group(() => {
   Route.delete('pool/:campaignId/reserves/:walletAddress/delete', 'ReservedListController.deleteReserve');
   Route.post('pool/reserves/update-setting', 'ReservedListController.updateReserveSetting');
   Route.get('pool/reserves/setting', 'ReservedListController.reserveSetting');
-
-  Route.put('active-kyc', 'UserController.activeKyc');//.middleware(['formatEmailAndWallet']);
 
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'formatEmailAndWallet']);
 
