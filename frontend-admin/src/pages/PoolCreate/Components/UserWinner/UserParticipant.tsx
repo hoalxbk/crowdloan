@@ -56,7 +56,7 @@ function UserParticipant(props: any) {
       participantsUsers.data.data = users;
       return participantsUsers;
     } catch (e) {
-      dispatch(alertFailure('ERROR: Fail fill Tiers in Participants List. \nSome address is invalid !!!'));
+      // dispatch(alertFailure('ERROR: Fail fill Tiers in Participants List. \nSome address is invalid !!!'));
       console.log('ERROR: Fail fill Tiers!!!');
       console.log(e);
     }
@@ -173,8 +173,7 @@ function UserParticipant(props: any) {
 
       </div>
 
-
-      <TableContainer component={Paper} className={commonStyle.tableScroll}>
+      <TableContainer component={Paper} className={`${commonStyle.tableScroll} ${classesTable.tableUserJoin}`}>
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
             <TableRow>
