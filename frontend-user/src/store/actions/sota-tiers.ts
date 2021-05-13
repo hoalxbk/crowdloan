@@ -10,7 +10,6 @@ import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import BigNumber from 'bignumber.js';
 
 import {getAllowance} from './sota-token';
-import {GAS_LIMIT_CONFIGS} from "../../constants";
 
 export const resetTiers = () => {
   return {
@@ -157,8 +156,7 @@ export const deposit = (address: string | null | undefined, amount: string, libr
       let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
-      const overrides = { gasLimit: GAS_LIMIT_CONFIGS.STAKE_SOTA_TIERS };
-      result = await contract?.depositERC20(tokenAddress, convertToWei(amount), overrides);
+      result = await contract?.depositERC20(tokenAddress, convertToWei(amount));
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,
@@ -191,8 +189,7 @@ export const withdraw = (address: string | null | undefined, amount: string, lib
       let result = {} as any;
 
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
-      const overrides = { gasLimit: GAS_LIMIT_CONFIGS.UNSTAKE_SOTA_TIERS };
-      result = await contract?.withdrawERC20(tokenAddress, convertToWei(amount), overrides);
+      result = await contract?.withdrawERC20(tokenAddress, convertToWei(amount));
 
       dispatch({
         type: sotaTiersActions.WITHDRAW_SUCCESS,
