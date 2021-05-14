@@ -1,9 +1,18 @@
 export const TRANSACTION_ERROR = 'Transaction failed. Please check blockchain to know more error.';
+export const DEFAULT_LIMIT = 10;
 export const API_URL_PREFIX = 'admin';
 export const ADMIN_URL_PREFIX = 'dashboard';
 export const IMAGE_URL_PREFIX = 'image';
 export const MAX_BUY_CAMPAIGN = 1000;
 export const DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+export const TIERS = [
+  '-',
+  'Dove',
+  'Hawk',
+  'Eagle',
+  'Phoenix',
+];
+
 export const ACCEPT_CURRENCY = {
   ETH: 'eth',
   USDT: 'usdt',
@@ -21,16 +30,6 @@ export const NETWORK_AVAILABLE = {
   ETH: 'eth',
   BSC: 'bsc',
 };
-export const TIERS = [
-  '-',
-  'Dove',
-  'Hawk',
-  'Eagle',
-  'Phoenix',
-];
-
-export const DEFAULT_LIMIT = 10;
-
 export const ETH_CHAIN_ID = process.env.REACT_APP_NETWORK_ID as string;
 export const BSC_CHAIN_ID = process.env.REACT_APP_BSC_NETWORK_ID as string;
 export const NETWORK_ETH_NAME = process.env.REACT_APP_NETWORK_NAME;
@@ -59,6 +58,17 @@ export const CHAIN_ID_NAME_MAPPING: any = {
   '4': 'Rinkeby',
   '5': 'Goerli',
   '42': 'Kovan',
+  '97': 'BSC Testnet',
+  '56': 'BSC Mainnet',
+};
+export const ETH_NETWORK_ACCEPT_CHAINS: any = {
+  '1': 'Mainnet',
+  '3': 'Ropsten',
+  '4': 'Rinkeby',
+  '5': 'Goerli',
+  '42': 'Kovan',
+};
+export const BSC_NETWORK_ACCEPT_CHAINS: any = {
   '97': 'BSC Testnet',
   '56': 'BSC Mainnet',
 };

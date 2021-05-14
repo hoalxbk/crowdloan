@@ -329,7 +329,7 @@ function PoolForm(props: any) {
   };
 
   const watchBuyType = watch('buyType');
-  console.log('errors==========>', errors);
+  // console.log('errors==========>', errors);
 
   return (
   <>
@@ -436,7 +436,9 @@ function PoolForm(props: any) {
               token={token}
               setToken={setToken}
               setValue={setValue}
+              getValues={getValues}
               errors={errors}
+              watch={watch}
             />
 
             <AddressReceiveMoney
