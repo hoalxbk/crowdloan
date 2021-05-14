@@ -28,7 +28,7 @@ const userReducer = (state: StateType = initialState, action: AnyAction) => {
         loading: true,
         error: ''
       }
-    } 
+    }
 
     case userActions.USER_LOGIN_SUCCESS: {
       return {
@@ -84,7 +84,7 @@ export const investorReducer = (state: StateType = { data: '', loading: false, e
         loading: true,
         error: ''
       }
-    } 
+    }
 
     case userActions.INVESTOR_LOGIN_SUCCESS: {
       return {
@@ -124,7 +124,7 @@ export const userConnectReducer = (state: StateType = { data: '', loading: false
         ...state,
         loading: true
       }
-    } 
+    }
 
     case userActions.USER_CONNECT_WALLET_SUCCESS: {
       return {
@@ -156,6 +156,23 @@ export const userConnectReducer = (state: StateType = { data: '', loading: false
   }
 }
 
+export const userCurrentNetwork = (state: any = { currentNetworkId: '' }, action: AnyAction) => {
+  switch (action.type) {
+    case userActions.USER_WALLET_CHANGED: {
+      const newState = {
+        ...state,
+        currentNetworkId: action.payload
+      };
+      console.log('New State: ', state, newState);
+      return newState;
+    }
+
+    default: {
+      return state;
+    }
+  }
+}
+
 export const investorRegisterReducer = (state = { data: undefined, loading: false, error: '' }, action: AnyAction) => {
   switch (action.type) {
     case userActions.INVESTOR_REGISTER_LOADING: {
@@ -179,7 +196,7 @@ export const investorRegisterReducer = (state = { data: undefined, loading: fals
         loading: false,
         error: action.payload,
         data: undefined
-      } 
+      }
     }
 
     default: {
@@ -219,7 +236,7 @@ export const userRegisterReducer = (state = { data: undefined, loading: false, e
         loading: false,
         error: action.payload,
         data: undefined
-      } 
+      }
     }
 
     default: {
@@ -251,7 +268,7 @@ export const userProfileReducer = (state = { data: undefined, loading: false, er
         loading: false,
         error: action.payload,
         data: undefined
-      } 
+      }
     }
 
     default: {
@@ -290,7 +307,7 @@ export const userProfileUpdateReducer = (state = { data: undefined, loading: fal
         ...state,
         error: action.payload,
         loading: false
-      } 
+      }
     }
 
     default: {
