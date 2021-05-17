@@ -8,92 +8,6 @@
     "anonymous": false,
     "inputs": [
       {
-        "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "rate",
-        "type": "uint256"
-      }
-    ],
-    "name": "AllowTokenToTradeWithRate",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
-        "indexed": false,
-        "internalType": "string",
-        "name": "name",
-        "type": "string"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "openTime",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "closeTime",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "releaseTime",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "ethRate",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "uint256",
-        "name": "ethRateDecimals",
-        "type": "uint256"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "wallet",
-        "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "CampaignCreated",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [],
-    "name": "CampaignStatsChanged",
-    "type": "event"
-  },
-  {
-    "anonymous": false,
-    "inputs": [
-      {
         "indexed": true,
         "internalType": "address",
         "name": "previousOwner",
@@ -117,6 +31,67 @@
   },
   {
     "anonymous": false,
+    "inputs": [],
+    "name": "PoolStatsChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "token",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "openTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "closeTime",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "offeredCurrency",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "offeredCurrencyDecimals",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "offeredCurrencyRate",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "wallet",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "owner",
+        "type": "address"
+      }
+    ],
+    "name": "PresalePoolCreated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
     "inputs": [
       {
         "indexed": false,
@@ -131,7 +106,7 @@
         "type": "uint256"
       }
     ],
-    "name": "RefundedTokenForIcoWhenEndIco",
+    "name": "RefundedIcoToken",
     "type": "event"
   },
   {
@@ -140,7 +115,7 @@
       {
         "indexed": false,
         "internalType": "address",
-        "name": "wallet",
+        "name": "user",
         "type": "address"
       },
       {
@@ -237,9 +212,29 @@
         "internalType": "address",
         "name": "_beneficiary",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_candidate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_minAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_signature",
+        "type": "bytes"
       }
     ],
-    "name": "buyTokenByEther",
+    "name": "buyTokenByEtherWithPermission",
     "outputs": [],
     "stateMutability": "payable",
     "type": "function"
@@ -252,7 +247,7 @@
         "type": "address"
       },
       {
-        "internalType": "contract IERC20",
+        "internalType": "address",
         "name": "_token",
         "type": "address"
       },
@@ -260,15 +255,51 @@
         "internalType": "uint256",
         "name": "_amount",
         "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "_candidate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_minAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_signature",
+        "type": "bytes"
       }
     ],
-    "name": "buyTokenByToken",
+    "name": "buyTokenByTokenWithPermission",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
-    "inputs": [],
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_candidate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "_signature",
+        "type": "bytes"
+      }
+    ],
     "name": "claimTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -315,11 +346,11 @@
   },
   {
     "inputs": [],
-    "name": "getAvailableTokens",
+    "name": "getAvailableTokensForSale",
     "outputs": [
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "availableTokens",
         "type": "uint256"
       }
     ],
@@ -330,88 +361,83 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_address",
+        "name": "_candidate",
         "type": "address"
-      }
-    ],
-    "name": "getBuyableTokens",
-    "outputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_amount",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "name": "getClaimMessageHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_messageHash",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getEthSignedMessageHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
     "inputs": [
       {
         "internalType": "address",
-        "name": "_address",
+        "name": "_candidate",
         "type": "address"
-      }
-    ],
-    "name": "getClaimableTokens",
-    "outputs": [
+      },
       {
         "internalType": "uint256",
-        "name": "",
+        "name": "_maxAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_minAmount",
         "type": "uint256"
       }
     ],
-    "stateMutability": "view",
+    "name": "getMessageHash",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "",
+        "type": "bytes32"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
     "inputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "address",
         "name": "_token",
         "type": "address"
       }
     ],
-    "name": "getErc20TokenConversionRate",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getEtherConversionRate",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getEtherConversionRateDecimals",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "getLatestEthPrice",
+    "name": "getOfferedCurrencyDecimals",
     "outputs": [
       {
         "internalType": "uint256",
@@ -425,12 +451,50 @@
   {
     "inputs": [
       {
-        "internalType": "string",
-        "name": "_name",
-        "type": "string"
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      }
+    ],
+    "name": "getOfferedCurrencyRate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "_messageHash",
+        "type": "bytes32"
       },
       {
-        "internalType": "contract IERC20",
+        "internalType": "bytes",
+        "name": "_signature",
+        "type": "bytes"
+      }
+    ],
+    "name": "getSignerAddress",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "signer",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_token",
         "type": "address"
       },
@@ -445,23 +509,28 @@
         "type": "uint256"
       },
       {
+        "internalType": "address",
+        "name": "_offeredCurrency",
+        "type": "address"
+      },
+      {
         "internalType": "uint256",
-        "name": "_releaseTime",
+        "name": "_offeredRate",
         "type": "uint256"
       },
       {
         "internalType": "uint256",
-        "name": "_ethRate",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_ethRateDecimals",
+        "name": "_offeredCurrencyDecimals",
         "type": "uint256"
       },
       {
         "internalType": "address",
         "name": "_wallet",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_signer",
         "type": "address"
       }
     ],
@@ -471,13 +540,24 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "isClaimable",
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "investedAmountOf",
     "outputs": [
       {
-        "internalType": "bool",
+        "internalType": "uint256",
         "name": "",
-        "type": "bool"
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -497,26 +577,24 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "isOpen",
-    "outputs": [
+    "inputs": [
       {
-        "internalType": "bool",
+        "internalType": "address",
         "name": "",
-        "type": "bool"
+        "type": "address"
       }
     ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "name",
+    "name": "offeredCurrencies",
     "outputs": [
       {
-        "internalType": "string",
-        "name": "",
-        "type": "string"
+        "internalType": "uint256",
+        "name": "decimals",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "rate",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -576,33 +654,7 @@
         "type": "address"
       }
     ],
-    "name": "refundTokenForIcoOwner",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "releaseTime",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract AggregatorV3Interface",
-        "name": "_chainlinkContract",
-        "type": "address"
-      }
-    ],
-    "name": "setChainlinkContract",
+    "name": "refundRemainingTokens",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -623,7 +675,38 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "address",
+        "name": "_newSigner",
+        "type": "address"
+      }
+    ],
+    "name": "setNewSigner",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_decimals",
+        "type": "uint256"
+      }
+    ],
+    "name": "setOfferedCurrencyDecimals",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
         "name": "_token",
         "type": "address"
       },
@@ -633,7 +716,7 @@
         "type": "uint256"
       }
     ],
-    "name": "setErc20TokenConversionRate",
+    "name": "setOfferedCurrencyRate",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -641,18 +724,10 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_rate",
-        "type": "uint256"
-      }
-    ],
-    "name": "setEtherConversionRate",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
+        "internalType": "address",
+        "name": "_token",
+        "type": "address"
+      },
       {
         "internalType": "uint256",
         "name": "_rate",
@@ -660,24 +735,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "_rateDecimals",
+        "name": "_decimals",
         "type": "uint256"
       }
     ],
-    "name": "setEtherConversionRateAndDecimals",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "uint256",
-        "name": "_rateDecimals",
-        "type": "uint256"
-      }
-    ],
-    "name": "setEtherConversionRateDecimals",
+    "name": "setOfferedCurrencyRateAndDecimals",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -698,14 +760,56 @@
   {
     "inputs": [
       {
-        "internalType": "uint256",
-        "name": "_releaseTime",
-        "type": "uint256"
+        "internalType": "bool",
+        "name": "_whitelist",
+        "type": "bool"
       }
     ],
-    "name": "setReleaseTime",
+    "name": "setPoolExtentions",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "signer",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "_signature",
+        "type": "bytes"
+      }
+    ],
+    "name": "splitSignature",
+    "outputs": [
+      {
+        "internalType": "bytes32",
+        "name": "r",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "s",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint8",
+        "name": "v",
+        "type": "uint8"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
@@ -716,19 +820,6 @@
         "internalType": "contract IERC20",
         "name": "",
         "type": "address"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "tokenClaimed",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -749,7 +840,7 @@
   },
   {
     "inputs": [],
-    "name": "totalRaisedTokens",
+    "name": "totalUnclaimed",
     "outputs": [
       {
         "internalType": "uint256",
@@ -778,6 +869,130 @@
     "name": "unpause",
     "outputs": [],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "useWhitelist",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "userClaimed",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "userPurchased",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_signer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_candidate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_maxAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_minAmount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "signature",
+        "type": "bytes"
+      }
+    ],
+    "name": "verify",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_signer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_candidate",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "signature",
+        "type": "bytes"
+      }
+    ],
+    "name": "verifyClaimToken",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "pure",
     "type": "function"
   },
   {
