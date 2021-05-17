@@ -1,4 +1,5 @@
 import Web3 from 'web3';
+import WalletLink from "walletlink";
 import { connectorNames, ConnectorNames, connectorsByName } from '../constants/connectors';
 import { ETH_CHAIN_ID } from '../constants/network';
 

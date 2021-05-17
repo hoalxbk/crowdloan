@@ -32,7 +32,7 @@ build-all:
 	make build-frontend-user && make build-frontend-admin && make build-backend && make build-crawler
 
 build-frontend-user:
-	make cd-server-sotatek-starter && cd ./frontend-user && cp .env.sotatek.example .env && yarn && yarn build && pm2 restart SotatekStarterFrontEndUser
+	make cd-server-sotatek-starter && cd ./frontend-user && cp .env.sotatek.example .env && yarn && npx patch-package @web3-react/walletlink-connector && yarn build && pm2 restart SotatekStarterFrontEndUser
 
 build-frontend-admin:
 	make cd-server-sotatek-starter && cd ./frontend-admin && cp .env.sotatek.example .env && yarn && yarn build && pm2 restart SotatekStarterFrontEndAdmin

@@ -1,5 +1,6 @@
 import {BscConnector} from '@binance-chain/bsc-connector'
 import {WalletConnectConnector} from '@web3-react/walletconnect-connector'
+import {WalletLinkConnector} from '@web3-react/walletlink-connector'
 import {InjectedConnector} from '@web3-react/injected-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import {FortmaticConnector} from '../connectors/Fortmatic';
@@ -24,7 +25,16 @@ bscConnector.handleChainChanged = (chainId: string) => {
   }
   //@ts-ignore
   originalChainIdChangeHandler(chainId)
-}
+};
+
+// mainnet only
+export const walletLinkConnect = new WalletLinkConnector({
+  url: 'https://goerli.infura.io/v3/e267dd5ef60949ba9bb3195ccacde657',
+  appName: 'Red Kite',
+  appLogoUrl: 'https://redkite.polkafoundry.com/images/logo-red-kite.svg',
+  darkMode: true,
+  // supportedChainIds: [1,4,5],
+});
 
 // mainnet only
 export const walletConnect = new WalletConnectConnector({
@@ -59,6 +69,7 @@ export enum ConnectorNames {
   MetaMask = "MetaMask",
   BSC = "BSC Wallet",
   WalletConnect = "WalletConnect",
+  WalletLinkConnect = "Coin Base",
   Fortmatic = 'Fortmatic'
 }
 
@@ -92,6 +103,14 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     disableIcon: '/images/injected-binance-disabled.svg',
     href: null,
   },
+  WALLET_LINK: {
+    connector: walletLinkConnect,
+    name: ConnectorNames.WalletLinkConnect,
+    icon: '/images/wallet-link/wallet-link.svg',
+    description: 'Connect to Coin Base Wallet and more...',
+    disableIcon: '/images/wallet-link/wallet-link-disabled.svg',
+    href: null,
+  },
   // FORTMATIC: {
   //   connector: fortmatic,
   //   name: ConnectorNames.Fortmatic,
@@ -108,7 +127,8 @@ export const connectorsByName: { [key in ConnectorNames]: AbstractConnector } = 
   [ConnectorNames.MetaMask]: injected,
   [ConnectorNames.BSC]: bscConnector,
   [ConnectorNames.Fortmatic]: fortmatic,
-  [ConnectorNames.WalletConnect]: walletConnect
+  [ConnectorNames.WalletConnect]: walletConnect,
+  [ConnectorNames.WalletLinkConnect]: walletLinkConnect,
 }
 
 export const connectorsSupportByNetwork: {[key: string]: { [key:string]: WalletInfo }  } = {
