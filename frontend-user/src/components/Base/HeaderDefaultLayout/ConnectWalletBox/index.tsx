@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import mobile from 'is-mobile';
 import { settingAppNetwork, NetworkUpdateType } from '../../../../store/actions/appNetwork';
-import { WalletInfo } from '../../../../constants/connectors';
+import {ConnectorNames, WalletInfo} from '../../../../constants/connectors';
 import { NetworkInfo, APP_NETWORKS_NAME } from '../../../../constants/network';
 import { HeaderContext, HeaderContextType } from '../context/HeaderContext';
 import useStyles from './style';
