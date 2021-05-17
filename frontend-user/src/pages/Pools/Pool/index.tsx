@@ -68,7 +68,7 @@ const Pool = (props: any): JSX.Element => {
       <Link to={`/buy-token/${pool.id}`} className={styles.link}>
         <div className={styles.row}>
           <div className={styles.name}>
-            <img src={`${BASE_URL}/image/${pool.token_images}`} />
+            <img src={pool.token_images} />
             <span className={commonStyle.nnb1418d}>{pool.title}</span>
           </div>
           <div className={styles.ratio + ' ' + commonStyle.nnn1424h}>
