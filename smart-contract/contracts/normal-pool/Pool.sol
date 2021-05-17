@@ -48,7 +48,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     mapping(address => OfferedCurrency) public offeredCurrencies;
 
     // Pool extensions
-    bool public useWhitelist;
+    bool public useWhitelist = true;
 
     // -----------------------------------------
     // Lauchpad Starter's event
