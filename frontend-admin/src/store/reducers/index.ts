@@ -17,7 +17,15 @@ import { transactionCampaignReducer } from './transaction'
 import { affiliateCampaignReducer, affiliateLinkGenerateReducer } from './affiliate'
 import { getTokensReducer, createTokenReducer } from './token'
 import { alertReducer } from './alert'
-import userReducer, { userConnectReducer, userRegisterReducer, investorReducer, investorRegisterReducer, userProfileReducer, userProfileUpdateReducer } from './user';
+import userReducer, {
+  userConnectReducer,
+  userRegisterReducer,
+  investorReducer,
+  investorRegisterReducer,
+  userProfileReducer,
+  userProfileUpdateReducer,
+  userCurrentNetwork
+} from './user';
 import { buyTokenReducer, buyTokenPurchasableReducer } from './buy-token';
 import {claimTokenReducer,claimTokenClaimableReducer, stakedTokensClaimReducer } from "./claim-token"
 import { usdtAllowanceReducer } from './usdt-allowance';
@@ -35,6 +43,7 @@ const rootReducer = combineReducers({
   investor: investorReducer,
   investorRegister: investorRegisterReducer,
   userConnect: userConnectReducer,
+  userCurrentNetwork: userCurrentNetwork,
   userRegister: userRegisterReducer,
   userProfile: userProfileReducer,
   userProfileUpdate: userProfileUpdateReducer,

@@ -6,6 +6,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Controller } from "react-hook-form";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import {NETWORK_AVAILABLE} from "../../../constants";
 
 function NetworkAvailable(props: any) {
   const classes = useStyles();
@@ -36,12 +37,12 @@ function NetworkAvailable(props: any) {
             as={
               <RadioGroup row>
                 <FormControlLabel
-                  value="eth" control={<Radio />}
+                  value={NETWORK_AVAILABLE.ETH} control={<Radio />}
                   label="Ether"
                   disabled={isDeployed}
                 />
                 <FormControlLabel
-                  value="bsc" control={<Radio />}
+                  value={NETWORK_AVAILABLE.BSC} control={<Radio />}
                   label="BSC"
                   disabled={isDeployed}
                 />
