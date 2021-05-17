@@ -22,10 +22,14 @@ type WalletState =  {
   walletConnect: boolean
 }
 
-const wallets = { 
+const wallets = {
   [ConnectorNames.WalletConnect]: {
     title: "WalletConnect",
     typeId: "WalletConnect"
+  },
+  [ConnectorNames.WalletLinkConnect]: {
+    title: "WalletLinkConnect",
+    typeId: "wallet-coinbase-icon"
   },
   [ConnectorNames.BSC]: {
     title: "Binance Chain Wallet",
