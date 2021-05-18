@@ -179,7 +179,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   }, [existedWinner, userBuyLimit, poolDetails, verifiedEmail]);
 
   useEffect(() => {
-    if (!poolDetails?.isDeployed) setActiveNav(HeaderType.Main);
+    if (!poolDetails?.isDeployed) setActiveNav(HeaderType.About);
     if (availablePurchase) setActiveNav(HeaderType.Main);
   }, [availablePurchase, poolDetails]);
 
@@ -190,10 +190,10 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   // Hide main tab after end buy time
   useEffect(() => {
-    // if (
-    //   endBuyTimeInDate && endBuyTimeInDate < new Date() &&
-    //   activeNav === HeaderType.Main
-    // ) setActiveNav(HeaderType.About);
+    if (
+      endBuyTimeInDate && endBuyTimeInDate < new Date() &&
+      activeNav === HeaderType.Main
+    ) setActiveNav(HeaderType.About);
   }, [endBuyTimeInDate]);
 
   useEffect(() => {
@@ -485,22 +485,16 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {
                     headers.map((header) => {
                       if (header === HeaderType.Main
-                      // && endBuyTimeInDate && new Date() > endBuyTimeInDate
+                        && endBuyTimeInDate && new Date() > endBuyTimeInDate
                       ) {
-                        return <li
-                          className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`}
-                          onClick={() => setActiveNav(header)}
-                          key={header}
-                        >
-                          {header}
-                        </li>
+                        return;
                       }
 
                       if (
                         header !== HeaderType.About &&
                         header !== HeaderType.MyTier &&
                         header !== HeaderType.Participants &&
-                        !poolDetails?.isDeployed
+                        (!poolDetails?.isDeployed || endBuyTimeInDate && endBuyTimeInDate < new Date())
                       ) {
                         return;
                       }
@@ -519,7 +513,7 @@ const BuyToken: React.FC<any> = (props: any) => {
               <div className={styles.poolDetailBuyForm}>
                 {
                   activeNav === HeaderType.Main
-                  // && endBuyTimeInDate && new Date() <= endBuyTimeInDate
+                  && endBuyTimeInDate && new Date() <= endBuyTimeInDate
                   && (
                       <BuyTokenForm
                         tokenDetails={poolDetails?.tokenDetails}
