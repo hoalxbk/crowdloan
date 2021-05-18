@@ -82,7 +82,7 @@ const Tiers = (props: any) => {
       let process = calculateProcess(tiers, total);
       setCurrentProcess(process);
     }
-  }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain])
+  }, [tiers, userTier, userInfo, tiersBuyLimit, showMoreInfomation, tokenSymbol, connectedAccount, isAuth, wrongChain, total])
 
   useEffect(() => {
     dispatch(getTiers());
