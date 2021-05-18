@@ -300,7 +300,13 @@ export const getRates = (tokens: any) => {
     try {
       const { appChainID } = getState().appNetwork.data;
       const { connector } = getState().connector.data || "Metamask";
-      const contract = getContractInstance(RedKite.abi, process.env.REACT_APP_TIERS as string, connector, appChainID);
+      const contract = getContractInstance(
+        RedKite.abi,
+        process.env.REACT_APP_TIERS as string,
+        connector,
+        appChainID,
+        SmartContractMethod.Read,
+        true);
 
       let data = [] as any;
       for(let i = 0; i < tokens.length; i++) {
