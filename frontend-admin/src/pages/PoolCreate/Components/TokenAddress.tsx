@@ -106,7 +106,7 @@ function TokenAddress(props: any) {
           }
         </p>
 
-        {!!renderError(errors, 'token') &&
+        {errors?.token?.type &&
           <>
             <p className={`${classes.formErrorMessage}`}>
               You should check corresponding token with network.
