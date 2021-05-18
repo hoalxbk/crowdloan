@@ -24,6 +24,10 @@ export const getParamsWithConnector = (connectedAccount: string) => ({
     method: 'eth_sign',
     params: [connectedAccount, MESSAGE_INVESTOR_SIGNATURE]
   },
+  [ConnectorNames.WalletLinkConnect]: {
+    method: 'eth_sign',
+    params: [connectedAccount, MESSAGE_INVESTOR_SIGNATURE]
+  },
   [ConnectorNames.Fortmatic]: {
     method: 'personal_sign',
     params: [MESSAGE_INVESTOR_SIGNATURE, connectedAccount]
@@ -32,10 +36,6 @@ export const getParamsWithConnector = (connectedAccount: string) => ({
     method: 'personal_sign',
     params: [MESSAGE_INVESTOR_SIGNATURE, connectedAccount]
   },
-  [ConnectorNames.WalletLinkConnect]: {
-    method: 'eth_sign',
-    params: [connectedAccount, MESSAGE_INVESTOR_SIGNATURE]
-  }
 })
 
 const useWalletSignature = () => {

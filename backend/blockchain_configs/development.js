@@ -22,7 +22,7 @@ module.exports = {
     Campaign: {
       CONTRACT_DATA: require('./contracts/Normal/Campaign.json'),
       CONTRACT_CLAIMABLE: require('./contracts/Claim/Campaign.json'),
-      CONTRACT_ADDRESS: '0x6f4d398eb1db901a38e213aed6d2e42e38e1c19a',
+      CONTRACT_ADDRESS: '0xc498d7c54514B00F69e636be7826406dE4e31Fe0',
       FIRST_CRAWL_BLOCK: 4550016,
       BLOCK_NUM_IN_ONE_GO: 500,
       BREAK_TIME_AFTER_ONE_GO: 15000,
