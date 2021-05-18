@@ -516,6 +516,8 @@ const BuyToken: React.FC<any> = (props: any) => {
                   && endBuyTimeInDate && new Date() <= endBuyTimeInDate
                   && (
                       <BuyTokenForm
+                        alreadyJoinPool={alreadyJoinPool}
+                        joinPoolSuccess={joinPoolSuccess}
                         tokenDetails={poolDetails?.tokenDetails}
                         rate={poolDetails?.ethRate}
                         poolAddress={poolDetails?.poolAddress}

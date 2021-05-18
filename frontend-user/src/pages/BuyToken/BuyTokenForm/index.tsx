@@ -53,6 +53,8 @@ type BuyTokenFormProps = {
   setBuyTokenSuccess: Dispatch<SetStateAction<boolean>> 
   isClaimable: boolean | undefined
   currentUserTier: any,
+  alreadyJoinPool: any,
+  joinPoolSuccess: boolean
 }
 
 enum MessageType {
@@ -94,7 +96,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     tokenSold,
     setBuyTokenSuccess,
     isClaimable,
-    currentUserTier
+    currentUserTier,
+    joinPoolSuccess,
+    alreadyJoinPool
 } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -240,7 +244,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   if (tokenAllowance != null || tokenAllowance != undefined) {
     if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))
     && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH)
-    && !wrongChain && ableToFetchFromBlockchain && isDeployed
+    && !wrongChain && ableToFetchFromBlockchain && isDeployed && alreadyJoinPool && joinPoolSuccess
     )  {
       enableApprove = true;
     }
