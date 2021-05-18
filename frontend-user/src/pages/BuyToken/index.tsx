@@ -179,6 +179,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   }, [existedWinner, userBuyLimit, poolDetails, verifiedEmail]);
 
   useEffect(() => {
+    setActiveNav(HeaderType.Main);
     if (!poolDetails?.isDeployed) setActiveNav(HeaderType.About);
     if (availablePurchase) setActiveNav(HeaderType.Main);
   }, [availablePurchase, poolDetails]);
@@ -202,6 +203,10 @@ const BuyToken: React.FC<any> = (props: any) => {
       payload: currentUserTier.level
     })
   }, [currentUserTier]);
+
+  useEffect(() => {
+    
+  }, [appChainID])
 
   const render = () => {
     if (loadingPoolDetail)  {
@@ -516,6 +521,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   && endBuyTimeInDate && new Date() <= endBuyTimeInDate
                   && (
                       <BuyTokenForm
+                        existedWinner={existedWinner}
                         alreadyJoinPool={alreadyJoinPool}
                         joinPoolSuccess={joinPoolSuccess}
                         tokenDetails={poolDetails?.tokenDetails}
