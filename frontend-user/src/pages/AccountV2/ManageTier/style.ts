@@ -72,6 +72,11 @@ const useStyles = makeStyles((theme: any) => {
         }
       },
     },
+    noteNetwork: {
+      font: 'normal normal bold 14px/18px DM Sans',
+      color: '#D01F36',
+      marginTop: '15px',
+    },
     manageTier: {
       display: 'flex',
       flexDirection: 'row',
