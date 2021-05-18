@@ -17,6 +17,7 @@ import { numberWithCommas } from '../../../utils/formatNumber';
 import { timeAgo } from '../../../utils/convertDate';
 import { USER_STATUS, CONVERSION_RATE } from '../../../constants';
 import {Dialog, DialogTitle, DialogContent, DialogActions} from '@material-ui/core';
+import { ETH_CHAIN_ID } from '../../../constants/network';
 
 const iconClose = '/images/icons/close.svg'
 
@@ -37,6 +38,7 @@ const ManageTier = (props: any) => {
   const { data: userInfo = {} } = useSelector((state: any) => state.userInfo);
   const { data: balance = {} } = useSelector((state: any) => state.balance);
   const { connectedAccount, isAuth, wrongChain } = useAuth();
+  const { appChainID } = useSelector((state: any) => state.appNetwork).data
 
   const { 
     classNamePrefix = '',
@@ -124,20 +126,21 @@ const ManageTier = (props: any) => {
         <p className={styles.noteStake}>sPKF (Cooldown) is the number of PKF under MANTRA DAO cooldown period after the unstaking request. This amount will be counted to your tier automatically without the need to Stake.</p>
         <div className="button-area">
           <button
-            className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
+            className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth || ETH_CHAIN_ID !== appChainID) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalDeposit(true)}}
-            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth || ETH_CHAIN_ID !== appChainID}
           >
             Stake
           </button>
           <button
-            className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth) ? 'disabled' : ''}`}
+            className={`btn btn-unlock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth || ETH_CHAIN_ID !== appChainID) ? 'disabled' : ''}`}
             onClick={() => {setOpenModalWithdraw(true)}}
-            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth}
+            disabled={emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth || ETH_CHAIN_ID !== appChainID}
           >
             Unstake
           </button>
         </div>
+        {ETH_CHAIN_ID !== appChainID && <p className={styles.noteNetwork}>Note: To change tier, please switch to ETH network to do Stake/Unstake</p>}
         {/* <p className={styles.balance}>
           {(wrongChain || !isAuth) && <AnimatedNumber
             value={0}

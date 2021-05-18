@@ -4,13 +4,16 @@ import { ThunkDispatch } from 'redux-thunk';
 import { convertFromWei, getContractInstance, getWeb3Instance } from '../../services/web3';
 import erc20ABI from '../../abi/Erc20.json';
 import BigNumber from "bignumber.js";
+import { SmartContractMethod } from '../../services/web3';
 
 const balanceOf = async (tokenAddress: string | undefined, appChainID: any, connector: any, loginUser: string) => {
   const tokenContract = getContractInstance(
     erc20ABI,
     tokenAddress as string,
     connector,
-    appChainID
+    appChainID,
+    SmartContractMethod.Read,
+    true
   );
   if (tokenContract) {
     const tokenDecimals = await tokenContract.methods.decimals().call();
