@@ -55,7 +55,8 @@ type BuyTokenFormProps = {
   currentUserTier: any,
   alreadyJoinPool: any,
   joinPoolSuccess: boolean,
-  existedWinner: any
+  existedWinner: any,
+  disableAllButton: boolean
 }
 
 enum MessageType {
@@ -100,7 +101,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     currentUserTier,
     joinPoolSuccess,
     alreadyJoinPool,
-    existedWinner
+    existedWinner,
+    disableAllButton
 } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -246,7 +248,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   if (tokenAllowance != null || tokenAllowance != undefined) {
     if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))
     && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH)
-    && !wrongChain && ableToFetchFromBlockchain && isDeployed && (alreadyJoinPool || joinPoolSuccess) && existedWinner
+    && !wrongChain && ableToFetchFromBlockchain && isDeployed && (alreadyJoinPool || joinPoolSuccess) && existedWinner && !disableAllButton
     )  {
       enableApprove = true;
     }
@@ -265,6 +267,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
      && new BigNumber(tokenBalance).gte(new BigNumber(input))
      && !wrongChain
+     && !disableAllButton
      /* && validTier */
      && ((purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(tokenAllowance || 0).gt(0): true));
 

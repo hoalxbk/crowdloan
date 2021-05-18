@@ -60,6 +60,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.About);
+  const [disableAllButton, setDisableAllButton] = useState<boolean>(false);
 
   const { pathname } = useLocation();
   const { id } = useParams() as any;
@@ -205,7 +206,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   }, [currentUserTier]);
 
   useEffect(() => {
-    
+    const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
+    setDisableAllButton(appNetwork !== poolDetails?.networkAvailable);
   }, [appChainID])
 
   const render = () => {
@@ -404,7 +406,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         <Button
                           text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Join Pool': 'Joined'}
                           backgroundColor={'#D01F36'}
-                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess}
+                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess || disableAllButton}
                           loading={poolJoinLoading}
                           onClick={joinPool}
                         />
@@ -521,6 +523,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   && endBuyTimeInDate && new Date() <= endBuyTimeInDate
                   && (
                       <BuyTokenForm
+                        disableAllButton={disableAllButton}
                         existedWinner={existedWinner}
                         alreadyJoinPool={alreadyJoinPool}
                         joinPoolSuccess={joinPoolSuccess}
@@ -580,6 +583,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       tokenDetails={poolDetails?.tokenDetails}
                       buyTokenSuccess={buyTokenSuccess}
                       poolId={poolDetails?.id}
+                      disableAllButton={disableAllButton}
                     />
                  )
                 }
