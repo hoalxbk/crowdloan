@@ -403,6 +403,7 @@ function PoolForm(props: any) {
                 setValue={setValue}
                 errors={errors}
                 control={control}
+                needValidate={needValidate}
               />
 
               <AcceptCurrency

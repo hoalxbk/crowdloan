@@ -83,6 +83,9 @@ export const renderErrorCreatePool = (errors: any, prop: string) => {
       case 'tokenAlreadyUsed': {
         return 'Token address is already in use.';
       }
+      case 'networkNotMatch': {
+        return 'Your selected network can\'t deploy. Please switch network in MetaMask or change this option';
+      }
     };
   }
 

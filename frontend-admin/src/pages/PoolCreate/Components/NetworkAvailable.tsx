@@ -6,15 +6,22 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import { Controller } from "react-hook-form";
 import {renderErrorCreatePool} from "../../../utils/validate";
-import {NETWORK_AVAILABLE} from "../../../constants";
+import {
+  BSC_NETWORK_ACCEPT_CHAINS,
+  CHAIN_ID_NAME_MAPPING,
+  ETH_NETWORK_ACCEPT_CHAINS,
+  NETWORK_AVAILABLE
+} from "../../../constants";
+import {useSelector} from "react-redux";
 
 function NetworkAvailable(props: any) {
   const classes = useStyles();
   const {
     setValue, errors, control,
-    poolDetail
+    poolDetail, needValidate,
   } = props;
   const renderError = renderErrorCreatePool;
+  const { currentNetworkId } = useSelector((state: any) => state).userCurrentNetwork;
 
   useEffect(() => {
     if (poolDetail && poolDetail.network_available) {
@@ -30,7 +37,27 @@ function NetworkAvailable(props: any) {
           <label className={classes.formControlLabel}>Network Available</label>
 
           <Controller
-            rules={{ required: true }}
+            rules={{
+              required: true,
+              validate: {
+                networkNotMatch: value => {
+                  // Validate Only click Deploy button
+                  if (!needValidate) return true;
+                  let acceptNet = '';
+                  if (value === 'eth') {
+                    acceptNet = ETH_NETWORK_ACCEPT_CHAINS[currentNetworkId];
+                  } else {
+                    acceptNet = BSC_NETWORK_ACCEPT_CHAINS[currentNetworkId];
+                  }
+                  console.log('acceptNet', acceptNet);
+                  if (!acceptNet) {
+                    console.log('Network Deploy not match!!!');
+                    return false;
+                  }
+                  return true;
+                }
+              }
+            }}
             control={control}
             defaultValue="eth"
             name="networkAvailable"
@@ -52,6 +79,9 @@ function NetworkAvailable(props: any) {
           <p className={classes.formErrorMessage}>
             {
               renderError(errors, 'networkAvailable')
+            }
+            {
+              renderError(errors, 'networkNotMatch')
             }
           </p>
         </FormControl>
