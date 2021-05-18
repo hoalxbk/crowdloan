@@ -17,7 +17,7 @@ export const resetTiers = () => {
   }
 }
 
-export const getTiers = (forceUsingEther?: string) => {
+export const getTiers = (forceUsingEther: string = 'eth') => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.TIERS_LOADING });
     try {
@@ -55,7 +55,7 @@ export const getTiers = (forceUsingEther?: string) => {
   }
 };
 
-export const getUserTier = (address: string, forceUsingEther?: string) => {
+export const getUserTier = (address: string, forceUsingEther: string = 'eth') => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.USER_TIER_LOADING });
     try {
@@ -89,7 +89,7 @@ export const getUserTier = (address: string, forceUsingEther?: string) => {
   }
 };
 
-export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddress: string = '') => {
+export const getUserInfo = (address: string, forceUsingEther: string = 'eth', tokenAddress: string = '') => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
