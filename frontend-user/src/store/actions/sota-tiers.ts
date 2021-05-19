@@ -159,8 +159,8 @@ export const deposit = (address: string | null | undefined, amount: string, libr
 
       // Fake Gas Limit for Wallet Link
       let overrides = {};
-      const provider = (library.provider as any);
-      if (provider.isWalletLink) {
+      const provider = (library?.provider as any);
+      if (provider?.isWalletLink) {
         overrides = fixGasLimit('deposit');
         console.log('Provider is WalletLink:', provider);
         console.log('Gas Limit: ', overrides);

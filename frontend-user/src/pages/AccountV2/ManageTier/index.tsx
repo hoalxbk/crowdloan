@@ -40,7 +40,7 @@ const ManageTier = (props: any) => {
   const { connectedAccount, isAuth, wrongChain } = useAuth();
   const { appChainID } = useSelector((state: any) => state.appNetwork).data
 
-  const { 
+  const {
     classNamePrefix = '',
     emailVerified,
     listTokenDetails,
