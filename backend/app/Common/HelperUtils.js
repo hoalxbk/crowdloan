@@ -5,8 +5,11 @@ const Const = use('App/Common/Const');
 
 const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
+const CONTRACT_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGN];
+const {abi: CONTRACT_ABI} = CONTRACT_CONFIGS.CONTRACT_DATA;
 const Web3 = require('web3');
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
+const web3Bsc = new Web3(NETWORK_CONFIGS.WEB3_BSC_API_URL);
 const BigNumber = use('bignumber.js');
 
 // Tier Smart contract
@@ -215,6 +218,14 @@ const getTierBalanceInfos = async (wallet_address) => {
   return receivedData;
 };
 
+const getWeb3Instance = async (camp) => {
+  if (camp.network_available == Const.NETWORK_AVAILABLE.ETH) {
+    return new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
+  } else {
+    return new web3Bsc.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
+  }
+}
+
 module.exports = {
   randomString,
   doMask,
@@ -233,4 +244,5 @@ module.exports = {
   getUnstakeMantraSmartContract,
   getExternalTokenSmartContract,
   getUserTierSmart,
+  getWeb3Instance
 };
