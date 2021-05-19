@@ -187,8 +187,8 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
             </div>
           )
         }
-        {/* {
-          !loginError && message != '' && <div className={styles.loginErrorBanner}>
+        {
+          (window.location.href.indexOf('buy-token') > -1) && !loginError && message != '' && <div className={styles.loginErrorBanner}>
           <img src="/images/red-warning.svg" alt="red-warning icon" />
           <span className={styles.loginErrorBannerText}>
             {message}&nbsp;&nbsp;
@@ -200,7 +200,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
             </button>
           </span>
         </div>
-        } */}
+        }
       </div>
     </>
   );
