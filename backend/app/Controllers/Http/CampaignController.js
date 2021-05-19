@@ -22,9 +22,6 @@ const CONTRACT_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGN];
 const CONTRACT_FACTORY_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGNFACTORY];
 
 const {abi: CONTRACT_ABI} = CONTRACT_CONFIGS.CONTRACT_DATA;
-const {abi: CONTRACT_FACTORY_NORMAL_ABI} = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
-const {abi: CONTRACT_CLAIM_ABI} = CONTRACT_CONFIGS.CONTRACT_CLAIMABLE;
-const {abi: CONTRACT_FACTORY_CLAIM_ABI} = CONTRACT_FACTORY_CONFIGS.CONTRACT_CLAIMABLE;
 const {abi: CONTRACT_ERC20_ABI} = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
 
 const Web3 = require('web3');
@@ -459,7 +456,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("Do not found wallet for campaign");
       }
       // init pool contract
-      const poolContract = await HelperUtils.getWeb3Instance(camp);
+      const poolContract = await HelperUtils.getContractInstance(camp);
       // get convert rate token erc20 -> our token
       let scCurrency, unit;
       switch (camp.accept_currency) {
@@ -595,7 +592,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("You can not claim token at current time !");
       }
       // call to SC to get amount token purchased of user
-      const campaignClaimSC = new web3.eth.Contract(CONTRACT_CLAIM_ABI, camp.campaign_hash);
+      const campaignClaimSC = await HelperUtils.getContractClaimInstance(camp);
       const tokenPurchased = await campaignClaimSC.methods.userPurchased(userWalletAddress).call();
       // calc max token that user can claimable
       const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased);
