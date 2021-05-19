@@ -123,7 +123,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         ];
 
         let overrides = fixGasLimitWithProvider(library, 'buy');
-        const transaction = await poolContract[method](...params, overrides);
+        const transaction = await poolContract[method](...params);
 
         setUserPurchasedSignature("");
         setSignature("");
