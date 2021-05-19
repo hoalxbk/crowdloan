@@ -29,6 +29,7 @@ bscConnector.handleChainChanged = (chainId: string) => {
 
 // mainnet only
 export const walletLinkConnect = new WalletLinkConnector({
+  // TODO: Move link to .env file
   url: 'https://goerli.infura.io/v3/e267dd5ef60949ba9bb3195ccacde657',
   appName: 'Red Kite',
   appLogoUrl: 'https://redkite.polkafoundry.com/images/logo-red-kite.svg',
