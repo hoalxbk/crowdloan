@@ -1,7 +1,8 @@
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
-import {ADMIN_URL_PREFIX, API_URL_PREFIX, IMAGE_URL_PREFIX} from "../constants";
+import {ADMIN_URL_PREFIX, API_URL_PREFIX, ETHERSCAN_BASE_URL, IMAGE_URL_PREFIX, NETWORK_AVAILABLE} from "../constants";
 import axios from "axios";
+
 
 export function formatPrecisionAmount(amount: any, precision: number = 18): string {
   const rawValue = new BigNumber(`${amount}`).toFixed(precision);
@@ -49,6 +50,31 @@ export const imageRoute = (url = '') => {
   return resUrl;
 };
 
+export const etherscanRoute = (address = '', poolDetail: any = null) => {
+  let network = '';
+  if (poolDetail) {
+    if (poolDetail.network_available === NETWORK_AVAILABLE.BSC) {
+      network = process.env.REACT_APP_BSC_NETWORK_ID + '';
+    } else {
+      network = process.env.REACT_APP_NETWORK_ID + '';
+    }
+  }
+
+  const networkId = network || localStorage.getItem('NETWORK_ID') || process.env.REACT_APP_NETWORK_ID || '1';
+  const baseUrl = ETHERSCAN_BASE_URL[networkId];
+  const truncateUrl = _.trim(address, '/');
+  const resUrl = `${baseUrl}/${truncateUrl}`;
+  return resUrl;
+};
+
+export const etherscanAddressRoute = (address = '', poolDetail: any = null) => {
+  return etherscanRoute(`address/${address}`, poolDetail);
+};
+
+export const etherscanTransactionRoute = (address = '', poolDetail: any = null) => {
+  return etherscanRoute(`tx/${address}`, poolDetail);
+};
+
 export const getTransactionRowType = (transaction: any) => {
   if (transaction?.type === 'Refund') {
     return 'Refund';
@@ -88,4 +114,4 @@ export const fixGasLimit = (type = 'deposit') => {
   }
 
   return overrides;
-}
+};

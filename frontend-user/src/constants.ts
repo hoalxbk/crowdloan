@@ -111,3 +111,14 @@ export const GAS_LIMIT_CONFIGS = {
   STAKE_SOTA_TIERS: '120000', // 79021
   UNSTAKE_SOTA_TIERS: '100000', // 72527
 };
+export const NETWORK_AVAILABLE = {
+  ETH: 'eth',
+  BSC: 'bsc',
+};
+
+export const ETHERSCAN_BASE_URL: any = {
+  '1': 'https://etherscan.io',
+  '4': 'https://rinkeby.etherscan.io',
+  '5': 'https://goerli.etherscan.io',
+  '97': 'https://testnet.bscscan.com',
+};

@@ -72,3 +72,10 @@ export const BSC_NETWORK_ACCEPT_CHAINS: any = {
   '97': 'BSC Testnet',
   '56': 'BSC Mainnet',
 };
+
+export const ETHERSCAN_BASE_URL: any = {
+  '1': 'https://etherscan.io/address',
+  '4': 'https://rinkeby.etherscan.io/address',
+  '5': 'https://goerli.etherscan.io/address',
+  '97': 'https://testnet.bscscan.com/address',
+};
