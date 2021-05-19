@@ -57,6 +57,14 @@ export const imageRoute = (url = '') => {
   return resUrl;
 };
 
+// export const etherscanAddressRoute = (address = '', poolDetail: any = null) => {
+//   return etherscanRoute(`address/${address}`, poolDetail);
+// };
+//
+// export const etherscanTransactionRoute = (address = '', poolDetail: any = null) => {
+//   return etherscanRoute(`tx/${address}`, poolDetail);
+// };
+
 export const etherscanRoute = (address = '', poolDetail: any = null) => {
   let network = '';
   if (poolDetail) {

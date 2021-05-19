@@ -67,6 +67,14 @@ export const etherscanRoute = (address = '', poolDetail: any = null) => {
   return resUrl;
 };
 
+export const etherscanAddressRoute = (address = '', poolDetail: any = null) => {
+  return etherscanRoute(`address/${address}`, poolDetail);
+};
+
+export const etherscanTransactionRoute = (address = '', poolDetail: any = null) => {
+  return etherscanRoute(`tx/${address}`, poolDetail);
+};
+
 export const getTransactionRowType = (transaction: any) => {
   if (transaction?.type === 'Refund') {
     return 'Refund';
@@ -106,4 +114,4 @@ export const fixGasLimit = (type = 'deposit') => {
   }
 
   return overrides;
-}
+};

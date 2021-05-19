@@ -76,7 +76,7 @@ const ModalDeposit = (props: any) => {
     if(listTokenDetails.length == 0 || rates.length == 0 || !currentToken) return
     if(currentToken?.symbol == listTokenDetails[0]?.symbol) {
       setCurrentRate(1)
-    } else if(currentToken?.symbol == listTokenDetails[1]?.symbol) 
+    } else if(currentToken?.symbol == listTokenDetails[1]?.symbol)
     {
       setCurrentRate(parseFloat(rates?.data[0]?.rate))
     } else if(currentToken?.symbol == listTokenDetails[2]?.symbol)
@@ -118,7 +118,7 @@ const ModalDeposit = (props: any) => {
       setCurrentStaked(userInfo.pkfStaked)
       setCurrentAllowance(allowance.pkf)
     } else if(e.target.value == CONVERSION_RATE[0].key && appChainID.appChainID == '5'
-      || e.target.value == CONVERSION_RATE[0].keyMainnet && appChainID.appChainID == '1') 
+      || e.target.value == CONVERSION_RATE[0].keyMainnet && appChainID.appChainID == '1')
     {
       setCurrentBalance(balance.uni)
       setCurrentStaked(userInfo.uniStaked)
@@ -179,11 +179,11 @@ const ModalDeposit = (props: any) => {
               <span>Input</span>
             </div>
             <div className="input-group">
-              <NumberFormat 
+              <NumberFormat
                 type="text"
-                placeholder={'0'} 
-                thousandSeparator={true}  
-                onChange={e => handleChange(e)} 
+                placeholder={'0'}
+                thousandSeparator={true}
+                onChange={e => handleChange(e)}
                 decimalScale={6}
                 value={depositAmount}
                 min={0}

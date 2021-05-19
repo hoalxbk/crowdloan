@@ -117,8 +117,8 @@ export const NETWORK_AVAILABLE = {
 };
 
 export const ETHERSCAN_BASE_URL: any = {
-  '1': 'https://etherscan.io/address',
-  '4': 'https://rinkeby.etherscan.io/address',
-  '5': 'https://goerli.etherscan.io/address',
-  '97': 'https://testnet.bscscan.com/address',
+  '1': 'https://etherscan.io',
+  '4': 'https://rinkeby.etherscan.io',
+  '5': 'https://goerli.etherscan.io',
+  '97': 'https://testnet.bscscan.com',
 };

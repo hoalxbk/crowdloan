@@ -53,7 +53,30 @@ const useWalletSignature = () => {
 
         setError("");
 
-        if (connector !== ConnectorNames.WalletConnect) {
+        if (connector === ConnectorNames.WalletConnect) {
+          const params = [
+            connectedAccount,
+            messageHash
+          ]
+          await (library as any).provider.enable();
+
+          var signature = await (library as any).provider.wc.signMessage(params);
+          signature && setSignature(signature);
+          console.log(signature);
+        } else if (connector === ConnectorNames.WalletLinkConnect) {
+          console.log('WalletLinkConnect Provider===========>', provider, ConnectorNames);
+          const params = [
+            MESSAGE_INVESTOR_SIGNATURE,
+            connectedAccount,
+          ]
+          await (library as any).provider.enable();
+          const wlProvider = (library as any).provider;
+          console.log('wlProvider', wlProvider);
+
+          const signature = await wlProvider._personal_sign(params);
+          console.log('signature', signature);
+          signature && signature.result && setSignature(signature.result);
+        } else {
           await (provider as any).sendAsync({
             method: paramsWithConnector.method,
             params: paramsWithConnector.params
@@ -68,16 +91,6 @@ const useWalletSignature = () => {
               result.result && setSignature(result.result);
             }
           })
-        } else {
-          const params = [
-            connectedAccount,
-            messageHash
-          ]
-          await (library as any).provider.enable();
-
-          var signature = await (library as any).provider.wc.signMessage(params);
-          signature && setSignature(signature);
-          console.log(signature);
         }
       }
     } catch(err) {
