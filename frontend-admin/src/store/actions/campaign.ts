@@ -631,8 +631,11 @@ export const deployPool = (campaign: any, history: any) => {
       }
 
       if (accept_currency !== ACCEPT_CURRENCY.ETH) {
-        tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
-
+        if (network_available == NETWORK_AVAILABLE.ETH) {
+          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+        } else {
+          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 18)).toFixed();
+        }
       } else {
         tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
       }
