@@ -105,8 +105,10 @@ module.exports = Object.freeze({
   },
   ACCEPT_CURRENCY: {
     ETH: 'eth',
+    BNB: 'bnb',
     USDT: 'usdt',
     USDC: 'usdc',
+    BUSD: 'busd'
   },
   POOL_TYPE: {
     SWAP: 'swap',

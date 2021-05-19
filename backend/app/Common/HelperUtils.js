@@ -2,6 +2,7 @@
 
 const crypto = use('crypto');
 const Const = use('App/Common/Const');
+const ErrorFactory = use('App/Common/ErrorFactory');
 
 const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -18,6 +19,10 @@ const { abi: CONTRACT_TIER_ABI } = require('../../blockchain_configs/contracts/N
 const TIER_SMART_CONTRACT = process.env.TIER_SMART_CONTRACT;
 const { abi: CONTRACT_STAKE_ABI } = require('../../blockchain_configs/contracts/Normal/MantraStake.json');
 const MANTRA_DAO_STAKE_SMART_CONTRACT = process.env.MATRA_DAO_STAKE_SMART_CONTRACT;
+const ETH_SMART_CONTRACT_USDT_ADDRESS = process.env.ETH_SMART_CONTRACT_USDT_ADDRESS;
+const ETH_SMART_CONTRACT_USDC_ADDRESS = process.env.ETH_SMART_CONTRACT_USDC_ADDRESS;
+const BSC_SMART_CONTRACT_USDT_ADDRESS = process.env.BSC_SMART_CONTRACT_USDT_ADDRESS;
+const BSC_SMART_CONTRACT_USDC_ADDRESS = process.env.BSC_SMART_CONTRACT_USDC_ADDRESS;
 /**
  * Generate "random" alpha-numeric string.
  *
@@ -235,6 +240,45 @@ const getContractClaimInstance = async (camp) => {
   }
 }
 
+const getOfferCurrencyInfo = async (camp) => {
+  // init pool contract
+  const poolContract = await getContractInstance(camp);
+  const isEthChain = (camp.network_available == Const.NETWORK_AVAILABLE.ETH) ? true : false;
+  // get convert rate token erc20 -> our token
+  let scCurrency, unit;
+  switch (camp.accept_currency) {
+    case Const.ACCEPT_CURRENCY.USDT:
+      scCurrency = isEthChain ? ETH_SMART_CONTRACT_USDT_ADDRESS : BSC_SMART_CONTRACT_USDT_ADDRESS;
+      unit = 6;
+      break;
+    case Const.ACCEPT_CURRENCY.USDC:
+      scCurrency = isEthChain ? ETH_SMART_CONTRACT_USDC_ADDRESS : BSC_SMART_CONTRACT_USDC_ADDRESS;
+      unit = isEthChain ? 6 : 18;
+      break;
+    case Const.ACCEPT_CURRENCY.BUSD:
+      scCurrency = isEthChain ? ETH_SMART_CONTRACT_USDC_ADDRESS : BSC_SMART_CONTRACT_USDC_ADDRESS;
+      unit = 18;
+      break;
+    case Const.ACCEPT_CURRENCY.ETH:
+    case Const.ACCEPT_CURRENCY.BNB:
+      scCurrency = '0x0000000000000000000000000000000000000000';
+      unit = 18;
+      break;
+    default:
+      console.log(`Do not found currency support ${camp.accept_currency} of campaignId ${camp.id}`);
+      return ErrorFactory.responseErrorInternal();
+  }
+  // call to SC to get rate
+  const receipt = await Promise.all([
+    poolContract.methods.getOfferedCurrencyRate(scCurrency).call(),
+    poolContract.methods.getOfferedCurrencyDecimals(scCurrency).call()
+  ]);
+
+  const rate = receipt[0];
+  const decimal = receipt[1];
+  return [rate, decimal, unit];
+}
+
 module.exports = {
   randomString,
   doMask,
@@ -254,5 +298,6 @@ module.exports = {
   getExternalTokenSmartContract,
   getUserTierSmart,
   getContractInstance,
-  getContractClaimInstance
+  getContractClaimInstance,
+  getOfferCurrencyInfo
 };
