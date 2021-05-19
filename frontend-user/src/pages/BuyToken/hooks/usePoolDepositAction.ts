@@ -80,7 +80,7 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
           } else if (acceptCurrency == 'USDT') {
             decimals = 18;
           } else if (acceptCurrency == 'USDC') {
-            decimals = 6;
+            decimals = 18;
           }
         } else {
           if (acceptCurrency == 'ETH') {
