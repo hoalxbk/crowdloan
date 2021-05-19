@@ -34,6 +34,8 @@ Route.group(() => {
   Route.post('mantra-stake/index-stake-info', 'MantraStakeController.indexStakeInfo');
 }).prefix('webhook').middleware('checkJwtWebhook');
 
+Route.post('block-pass/receive', 'UserController.kycUpdateStatus');
+
 
 
 

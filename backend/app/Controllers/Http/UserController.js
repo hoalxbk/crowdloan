@@ -1,7 +1,6 @@
 'use strict'
 
-const Config = use('Config');
-const Helpers = use('Helpers');
+const requests = require("request");
 const Const = use('App/Common/Const');
 const Env = use('Env');
 const Hash = use('Hash');
@@ -14,6 +13,7 @@ const UserModel = use('App/Models/User');
 const TierModel = use('App/Models/Tier');
 const WinnerModel = use('App/Models/WinnerListUser');
 const PasswordResetModel = use('App/Models/PasswordReset');
+const BlockPassModel = use('App/Models/BlockPass');
 const HelperUtils = use('App/Common/HelperUtils');
 const randomString = use('random-string');
 
@@ -386,6 +386,63 @@ class UserController {
     } catch (e) {
       console.log('[activeKyc] - Error: ', e);
       return HelperUtils.responseErrorInternal('Error: Can not active KYC');
+    }
+  }
+
+  async kycUpdateStatus({request}) {
+    const params = request.only(['guid', 'status', 'event', 'recordId', 'refId', 'submitCount',
+      'blockPassID', 'inreviewDate', 'waitingDate', 'approvedDate', 'env']);
+    console.log(`KYC update with info ${params}`);
+    try {
+      // call to api to get user info
+      const url = process.env.BLOCK_PASS_API_URL.replace('CLIENT_ID',process.env.BLOCK_PASS_CLIENT_ID)
+                                                .replace('RECORDID', params.recordId);
+      console.log(url);
+      const options = {
+        url: url,
+        method: 'GET',
+        headers: {
+          'Authorization': process.env.BLOCK_PASS_API_KEY
+        }
+      }
+
+      const response = await  new Promise((resolve, reject) => {
+        requests(options, function (error, response, body) {
+          if(error) reject(error)
+          else resolve(response)
+        })
+      })
+
+      if(!response || response.statusCode !== 200) {
+        console.log();
+        return
+      }
+      // get user info
+      const email = JSON.parse(response.body).data.identities.email.value;
+      const wallet = JSON.parse(response.body).data.identities.crypto_address_eth.value;
+
+      const user = await UserModel.query().where('email', email).where('wallet_address', wallet).first();
+      if(!user) {
+        return
+      }
+
+
+
+
+
+
+
+
+
+      // save to db
+      const blockPassObj = new BlockPassModel();
+      blockPassObj.fill({
+        ...params
+      });
+      blockPassObj.save();
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('KYC update status failed !');
     }
   }
 }

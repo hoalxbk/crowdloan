@@ -1,10 +1,11 @@
 'use strict'
 
-const TierModel = use('App/Models/Tier');
 
-class TierService {
+const BlockPassModel = use('App/Models/BlockPass');
+
+class BlockPassService {
   buildQueryBuilder(params) {
-    let builder = TierModel.query();
+    let builder = BlockPassModel.query();
     if (params.id) {
       builder = builder.where('id', params.id);
     }
@@ -14,16 +15,7 @@ class TierService {
     if (params.campaign_id) {
       builder = builder.where('campaign_id', params.campaign_id);
     }
-    if(params.current_time) {
-      builder = builder.where('start_time', '<=', params.current_time)
-        .where('end_time', '>=', params.current_time)
-    }
     return builder;
-  }
-
-  async findByLevelAndCampaign(params) {
-    let builder = this.buildQueryBuilder(params);
-    return await builder.first();
   }
 
   async findOneByFilter(filterParams) {
@@ -35,4 +27,4 @@ class TierService {
   }
 }
 
-module.exports = TierService
+module.exports = BlockPassService
