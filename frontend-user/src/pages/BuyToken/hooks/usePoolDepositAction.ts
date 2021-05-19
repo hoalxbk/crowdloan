@@ -17,14 +17,15 @@ type PoolDepositActionParams = {
   poolId?: number;
   purchasableCurrency: string;
   amount: string;
-  isClaimable: boolean
+  isClaimable: boolean;
+  networkAvailable: string;
 }
 
 const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
 const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
 const USDT_OR_USDC_DECIMALS = 6;
 
-const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount, isClaimable }: PoolDepositActionParams) => {
+const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount, isClaimable, networkAvailable }: PoolDepositActionParams) => {
   const dispatch = useDispatch();
 
   const [depositError, setDepositError] = useState("");
@@ -71,7 +72,35 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         const poolContract = getContract(poolAddress, abiUse, library, connectedAccount as string);
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
-        const decimals = acceptCurrency === 'ETH' ? 18: USDT_OR_USDC_DECIMALS;
+        let decimals = 6
+        if (networkAvailable == 'bsc') {
+          if (acceptCurrency == 'ETH') {
+            decimals = 18;
+          }
+        } else {
+          if (acceptCurrency == 'ETH') {
+            decimals = 18;
+          } else if (acceptCurrency == 'USDT') {
+            decimals = 18;
+          } else if (acceptCurrency == 'USDC') {
+            decimals = 6;
+          }
+        }
+
+        let buyCurr = 'ETH';
+        if (networkAvailable == 'bsc') {
+          if (acceptCurrency === "USDT") {
+            buyCurr = process.env.REACT_APP_USDT_BSC_SMART_CONTRACT || '';
+          } else if (acceptCurrency === "USDC") {
+            buyCurr = process.env.REACT_APP_USDC_BSC_SMART_CONTRACT || '';
+          }
+        } else {
+          if (acceptCurrency === "USDT") {
+            buyCurr = process.env.REACT_APP_USDT_SMART_CONTRACT || '';
+          } else if (acceptCurrency === "USDC") {
+            buyCurr = process.env.REACT_APP_USDC_SMART_CONTRACT || '';
+          }
+        }
 
         const params = acceptCurrency === 'ETH' ? [
           connectedAccount,
@@ -84,7 +113,8 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
           }
         ]: [
           connectedAccount,
-          acceptCurrency ===  "USDT" ? USDT_ADDRESS: USDC_ADDRESS,
+          // acceptCurrency === "USDT" ? USDT_ADDRESS: USDC_ADDRESS,
+          buyCurr,
           new BigNumber(amount).multipliedBy(10 ** decimals).toFixed(),
           connectedAccount,
           maxBuy,

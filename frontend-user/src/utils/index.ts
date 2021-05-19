@@ -114,8 +114,8 @@ export const fixGasLimit = (type = 'deposit') => {
       };
     } else if (type == 'approve') {
       overrides = {
-        // gasLimit: 500000,
-        gasPrice: 10000000000,
+        gasLimit: 500000,
+        gasPrice: 50000000000,
       };
     } else if (type == 'claim') {
       overrides = {
@@ -124,7 +124,7 @@ export const fixGasLimit = (type = 'deposit') => {
       };
     } else if (type == 'buy') {
       overrides = {
-        gasLimit: 200000,
+        gasLimit: 500000,
         gasPrice: 10000000000,
       };
     }
