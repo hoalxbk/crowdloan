@@ -60,6 +60,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.About);
+  const [disableAllButton, setDisableAllButton] = useState<boolean>(false);
 
   const { pathname } = useLocation();
   const { id } = useParams() as any;
@@ -179,6 +180,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   }, [existedWinner, userBuyLimit, poolDetails, verifiedEmail]);
 
   useEffect(() => {
+    setActiveNav(HeaderType.Main);
     if (!poolDetails?.isDeployed) setActiveNav(HeaderType.About);
     if (availablePurchase) setActiveNav(HeaderType.Main);
   }, [availablePurchase, poolDetails]);
@@ -202,6 +204,11 @@ const BuyToken: React.FC<any> = (props: any) => {
       payload: currentUserTier.level
     })
   }, [currentUserTier]);
+
+  useEffect(() => {
+    const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
+    setDisableAllButton(appNetwork !== poolDetails?.networkAvailable);
+  }, [appChainID])
 
   const render = () => {
     if (loadingPoolDetail)  {
@@ -399,7 +406,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         <Button
                           text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Join Pool': 'Joined'}
                           backgroundColor={'#D01F36'}
-                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess}
+                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess || disableAllButton}
                           loading={poolJoinLoading}
                           onClick={joinPool}
                         />
@@ -516,6 +523,8 @@ const BuyToken: React.FC<any> = (props: any) => {
                   && endBuyTimeInDate && new Date() <= endBuyTimeInDate
                   && (
                       <BuyTokenForm
+                        disableAllButton={disableAllButton}
+                        existedWinner={existedWinner}
                         alreadyJoinPool={alreadyJoinPool}
                         joinPoolSuccess={joinPoolSuccess}
                         tokenDetails={poolDetails?.tokenDetails}
@@ -574,6 +583,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       tokenDetails={poolDetails?.tokenDetails}
                       buyTokenSuccess={buyTokenSuccess}
                       poolId={poolDetails?.id}
+                      disableAllButton={disableAllButton}
                     />
                  )
                 }

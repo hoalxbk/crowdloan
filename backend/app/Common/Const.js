@@ -124,5 +124,9 @@ module.exports = Object.freeze({
     NOT_VERIFIED: 0,
     VERIFIED: 1,
     VERIFY_FAIL: 2,
+  },
+  NETWORK_AVAILABLE: {
+    ETH: 'eth',
+    BSC: 'bsc',
   }
 });
