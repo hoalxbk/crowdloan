@@ -116,6 +116,10 @@ module.exports = Object.freeze({
     DISPLAY: 1,
     HIDDEN: 0,
   },
+  NETWORK_AVAILABLE: {
+    ETH: 'eth',
+    BSC: 'bsc',
+  },
   KYC_STATUS: {
     NOT_VERIFIED: 0,
     VERIFIED: 1,
