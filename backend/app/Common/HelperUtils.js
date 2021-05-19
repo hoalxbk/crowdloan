@@ -23,6 +23,7 @@ const ETH_SMART_CONTRACT_USDT_ADDRESS = process.env.ETH_SMART_CONTRACT_USDT_ADDR
 const ETH_SMART_CONTRACT_USDC_ADDRESS = process.env.ETH_SMART_CONTRACT_USDC_ADDRESS;
 const BSC_SMART_CONTRACT_USDT_ADDRESS = process.env.BSC_SMART_CONTRACT_USDT_ADDRESS;
 const BSC_SMART_CONTRACT_USDC_ADDRESS = process.env.BSC_SMART_CONTRACT_USDC_ADDRESS;
+const BSC_SMART_CONTRACT_BUSD_ADDRESS = process.env.BSC_SMART_CONTRACT_BUSD_ADDRESS;
 /**
  * Generate "random" alpha-numeric string.
  *
@@ -256,7 +257,7 @@ const getOfferCurrencyInfo = async (camp) => {
       unit = isEthChain ? 6 : 18;
       break;
     case Const.ACCEPT_CURRENCY.BUSD:
-      scCurrency = isEthChain ? ETH_SMART_CONTRACT_USDC_ADDRESS : BSC_SMART_CONTRACT_USDC_ADDRESS;
+      scCurrency = BSC_SMART_CONTRACT_BUSD_ADDRESS;
       unit = 18;
       break;
     case Const.ACCEPT_CURRENCY.ETH:
