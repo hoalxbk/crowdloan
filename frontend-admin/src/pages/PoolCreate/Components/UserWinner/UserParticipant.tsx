@@ -41,6 +41,8 @@ function UserParticipant(props: any) {
         return participantsUsers;
       }
 
+      return participantsUsers;
+
       // Call Multi get Tiers
       let users = participantsUsers?.data?.data || [];
       const campaignContract = getContractInstance(tierABI, REACT_APP_SOTATIER);

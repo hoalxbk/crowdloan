@@ -77,3 +77,15 @@ export const getETHPrices = async () => {
       console.log(error);
     });
 };
+
+export const fixGasLimit = (type = 'deposit') => {
+  let overrides = {};
+  if (type == 'deposit') {
+    overrides = {
+      gasLimit: 200000,
+      gasPrice: 10000000000,
+    };
+  }
+
+  return overrides;
+}

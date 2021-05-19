@@ -36,6 +36,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
   const walletsInfo = useSelector((state: any) => state.wallet).entities;
   const [openSideBar, setOpenSideBar] = useState(false);
+  const { data: message = '' } = useSelector((state: any) => state.messages);
 
   const {
     handleProviderChosen,
@@ -186,6 +187,20 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
             </div>
           )
         }
+        {/* {
+          !loginError && message != '' && <div className={styles.loginErrorBanner}>
+          <img src="/images/red-warning.svg" alt="red-warning icon" />
+          <span className={styles.loginErrorBannerText}>
+            {message}&nbsp;&nbsp;
+            <button
+              className={styles.btnChangeAppNetwork}
+              onClick={() => {setOpenSideBar(false); setSwitchNetworkDialog(true);}}
+            >
+              Change App Network
+            </button>
+          </span>
+        </div>
+        } */}
       </div>
     </>
   );

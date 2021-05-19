@@ -37,9 +37,11 @@ import { numberWithCommas } from '../../utils/formatNumber';
 import { sotaTiersActions } from '../../store/constants/sota-tiers';
 
 import useStyles from './style';
+import { pushMessage } from '../../store/actions/message';
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
+const iconClose = "/images/icons/close.svg";
 
 enum HeaderType {
   Main = "Main",
@@ -208,7 +210,12 @@ const BuyToken: React.FC<any> = (props: any) => {
   useEffect(() => {
     const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
     setDisableAllButton(appNetwork !== poolDetails?.networkAvailable);
-  }, [appChainID])
+    if(appNetwork !== poolDetails?.networkAvailable && poolDetails) {
+      dispatch(pushMessage(`Please switch to ${poolDetails?.networkAvailable.toLocaleUpperCase()} network to do Join pool, Approve/Buy tokens.`))
+    } else {
+      dispatch(pushMessage(''));
+    }
+  }, [appChainID, poolDetails])
 
   const render = () => {
     if (loadingPoolDetail)  {
