@@ -10,6 +10,7 @@ import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import BigNumber from 'bignumber.js';
 
 import {getAllowance} from './sota-token';
+import {fixGasLimit} from "../../utils";
 
 export const resetTiers = () => {
   return {
@@ -154,9 +155,18 @@ export const deposit = (address: string | null | undefined, amount: string, libr
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
       let result = {} as any;
-
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
-      result = await contract?.depositERC20(tokenAddress, convertToWei(amount));
+
+      // Fake Gas Limit for Wallet Link
+      let overrides = {};
+      const provider = (library.provider as any);
+      if (provider.isWalletLink) {
+        overrides = fixGasLimit('deposit');
+        console.log('Provider is WalletLink:', provider);
+        console.log('Gas Limit: ', overrides);
+      }
+
+      result = await contract?.depositERC20(tokenAddress, convertToWei(amount), overrides);
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,
