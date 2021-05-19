@@ -1,14 +1,14 @@
 import BigNumber from 'bignumber.js';
 import _ from 'lodash';
-import {ADMIN_URL_PREFIX, API_URL_PREFIX, IMAGE_URL_PREFIX, NETWORK_AVAILABLE} from "../constants";
+import {ADMIN_URL_PREFIX, API_URL_PREFIX, ETHERSCAN_BASE_URL, IMAGE_URL_PREFIX, NETWORK_AVAILABLE} from "../constants";
 import axios from "axios";
 
-const ETHERSCAN_BASE_URL: any = {
-  '1': 'https://etherscan.io/address',
-  '4': 'https://rinkeby.etherscan.io/address',
-  '5': 'https://goerli.etherscan.io/address',
-  '97': 'https://testnet.bscscan.com/address',
-};
+// const ETHERSCAN_BASE_URL: any = {
+//   '1': 'https://etherscan.io/address',
+//   '4': 'https://rinkeby.etherscan.io/address',
+//   '5': 'https://goerli.etherscan.io/address',
+//   '97': 'https://testnet.bscscan.com/address',
+// };
 
 export function formatPrecisionAmount(amount: any, precision: number = 18): string {
   const rawValue = new BigNumber(`${amount}`).toFixed(precision);
