@@ -72,12 +72,9 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
         const poolContract = getContract(poolAddress, abiUse, library, connectedAccount as string);
 
         const method = acceptCurrency === 'ETH' ? 'buyTokenByEtherWithPermission': 'buyTokenByTokenWithPermission';
-        let decimals = 6
-        if (networkAvailable == 'bsc') {
-          if (acceptCurrency == 'ETH') {
-            decimals = 18;
-          }
-        } else {
+        let decimals = 6;
+        const isBSC = networkAvailable == 'bsc';
+        if (isBSC) {
           if (acceptCurrency == 'ETH') {
             decimals = 18;
           } else if (acceptCurrency == 'USDT') {
@@ -85,10 +82,18 @@ const usePoolDepositAction = ({ poolAddress, poolId, purchasableCurrency, amount
           } else if (acceptCurrency == 'USDC') {
             decimals = 6;
           }
+        } else {
+          if (acceptCurrency == 'ETH') {
+            decimals = 18;
+          } else if (acceptCurrency == 'USDT') {
+            decimals = 6;
+          } else if (acceptCurrency == 'USDC') {
+            decimals = 6;
+          }
         }
 
         let buyCurr = 'ETH';
-        if (networkAvailable == 'bsc') {
+        if (isBSC) {
           if (acceptCurrency === "USDT") {
             buyCurr = process.env.REACT_APP_USDT_BSC_SMART_CONTRACT || '';
           } else if (acceptCurrency === "USDC") {
