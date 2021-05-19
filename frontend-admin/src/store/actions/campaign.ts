@@ -607,13 +607,16 @@ export const deployPool = (campaign: any, history: any) => {
       let paidTokenAddress = '0x0000000000000000000000000000000000000000';
 
       if (accept_currency === ACCEPT_CURRENCY.USDC) {
-        paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS as string;
+        paidTokenAddress = network_available == NETWORK_AVAILABLE.ETH ?
+          process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS as string :
+          process.env.REACT_APP_SMART_CONTRACT_BSC_USDC_ADDRESS as string;
       }
 
       if (accept_currency === ACCEPT_CURRENCY.USDT) {
-        paidTokenAddress = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS as string;
+        paidTokenAddress = paidTokenAddress = network_available == NETWORK_AVAILABLE.ETH ?
+          process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS as string :
+          process.env.REACT_APP_SMART_CONTRACT_BSC_USDT_ADDRESS as string;
       }
-
 
       let tokenByEthDecimals = 0;
       let tokenByETHActualRate: any;
