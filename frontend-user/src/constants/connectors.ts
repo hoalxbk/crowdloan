@@ -111,6 +111,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     description: 'Connect to Coin Base Wallet and more...',
     disableIcon: '/images/wallet-link/wallet-link-disabled.svg',
     href: null,
+    mobile: true,
   },
   // FORTMATIC: {
   //   connector: fortmatic,
