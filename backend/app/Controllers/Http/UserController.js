@@ -1,7 +1,5 @@
 'use strict'
 
-import {KYC_STATUS} from "../../../../frontend-user/src/constants";
-
 const requests = require("request");
 const Const = use('App/Common/Const');
 const Env = use('Env');
@@ -394,7 +392,7 @@ class UserController {
   async kycUpdateStatus({request}) {
     const params = request.only(['guid', 'status', 'event', 'recordId', 'refId', 'submitCount',
       'blockPassID', 'inreviewDate', 'waitingDate', 'approvedDate', 'env']);
-    console.log(`KYC update with info ${params}`);
+    console.log(`KYC update with info ${JSON.stringify(params)}`);
     try {
       // save to db to log
       const blockPassObj = new BlockPassModel();
@@ -404,8 +402,8 @@ class UserController {
       blockPassObj.save();
 
       // call to api to get user info
-      const url = process.env.BLOCK_PASS_API_URL.replace('CLIENT_ID',process.env.BLOCK_PASS_CLIENT_ID)
-                                                .replace('RECORDID', params.recordId);
+      const url = process.env.BLOCK_PASS_API_URL.replace('CLIENT_ID', process.env.BLOCK_PASS_CLIENT_ID)
+        .replace('RECORDID', params.recordId);
       console.log(url);
       const options = {
         url: url,
@@ -414,34 +412,35 @@ class UserController {
           'Authorization': process.env.BLOCK_PASS_API_KEY
         }
       }
-      const response = await  new Promise((resolve, reject) => {
+      const response = await new Promise((resolve, reject) => {
         requests(options, function (error, response, body) {
-          if(error) reject(error)
+          if (error) reject(error)
           else resolve(response)
         })
       })
 
-      if(!response || response.statusCode !== 200) {
+      if (!response || response.statusCode !== 200) {
         console.log(`Failed when call block pass api with refID ${params.refId} and ${params.recordId}`);
-        return;
+        return HelperUtils.responseBadRequest();
       }
       // get user info
       const email = JSON.parse(response.body).data.identities.email.value;
       const wallet = JSON.parse(response.body).data.identities.crypto_address_eth.value;
-      const kycStatus = JSON.parse(response.body).data.status.value;
+      const kycStatus = JSON.parse(response.body).data.status;
 
       const user = await UserModel.query().where('email', email).where('wallet_address', wallet).first();
-      if(!user) {
+      if (!user) {
         console.log(`Do not found user with email ${email} and wallet ${wallet}`);
-        return;
+        return HelperUtils.responseBadRequest();
       }
       // update user KYC status
       const userModel = new UserModel();
       userModel.fill({
-        ...JSON.stringify(user),
+        ...JSON.parse(JSON.stringify(user)),
         is_kyc: Const.KYC_STATUS[kycStatus.toString().toUpperCase()]
       });
-      userModel.save();
+      await UserModel.query().where('id', user.id).update(userModel);
+      return HelperUtils.responseSuccess();
     } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal('KYC update status failed !');
