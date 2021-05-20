@@ -10,6 +10,7 @@ import { getContract } from '../utils/contract';
 import { TokenType } from '../hooks/useTokenDetails';
 
 import ERC20_ABI from '../abi/Erc20.json';
+import {fixGasLimitWithProvider} from "../utils";
 
 const useTokenAllowance = (
   token: TokenType | undefined,
@@ -37,7 +38,8 @@ const useTokenAllowance = (
              const contract = getContract(token.address, ERC20_ABI, library, account as string);
 
              if (contract) {
-               const transaction = await contract.approve(spender, MAX_INT);
+               let overrides = fixGasLimitWithProvider(library, 'approve');
+               const transaction = await contract.approve(spender, MAX_INT, overrides);
                console.log('Approve Token', transaction);
 
               setTransactionHash(transaction.hash);

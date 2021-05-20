@@ -7,14 +7,17 @@ import FormControl from '@material-ui/core/FormControl';
 import {Controller} from "react-hook-form";
 import {getTiers} from "../../../request/tier";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import {useSelector} from "react-redux";
+import {BSC_NETWORK_ACCEPT_CHAINS, ETH_NETWORK_ACCEPT_CHAINS, NETWORK_AVAILABLE} from "../../../constants";
 
 function AcceptCurrency(props: any) {
   const classes = useStyles();
   const {
-    setValue, errors, control,
+    setValue, errors, control, watch,
     poolDetail
   } = props;
   const renderError = renderErrorCreatePool;
+  const { userCurrentNetwork } = useSelector((state: any) => state);
 
   useEffect(() => {
     if (poolDetail && poolDetail.accept_currency) {
@@ -29,7 +32,16 @@ function AcceptCurrency(props: any) {
         });
     }
   }, [poolDetail]);
+
   const isDeployed = !!poolDetail?.is_deploy;
+  const networkAvailable = watch('networkAvailable');
+  let isBscNetworks = networkAvailable === NETWORK_AVAILABLE.BSC;
+  console.log('userCurrentNetwork',
+    // userCurrentNetwork?.currentNetworkId,
+    // BSC_NETWORK_ACCEPT_CHAINS,
+    // BSC_NETWORK_ACCEPT_CHAINS[(userCurrentNetwork?.currentNetworkId || '') + ''],
+    isBscNetworks,
+  );
 
   return (
     <>
@@ -46,7 +58,7 @@ function AcceptCurrency(props: any) {
               <RadioGroup row>
                 <FormControlLabel
                   value="usdt" control={<Radio />}
-                  label="USDT"
+                  label={isBscNetworks ? 'BUSD' : 'USDT'}
                   disabled={isDeployed}
                 />
                 <FormControlLabel
@@ -56,7 +68,7 @@ function AcceptCurrency(props: any) {
                 />
                 <FormControlLabel
                   value="eth" control={<Radio />}
-                  label="Ether"
+                  label={isBscNetworks ? 'BNB' : 'ETH'}
                   disabled={isDeployed}
                 />
               </RadioGroup>

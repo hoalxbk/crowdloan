@@ -535,6 +535,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         alreadyJoinPool={alreadyJoinPool}
                         joinPoolSuccess={joinPoolSuccess}
                         tokenDetails={poolDetails?.tokenDetails}
+                        networkAvailable={poolDetails?.networkAvailable || ''}
                         rate={poolDetails?.ethRate}
                         poolAddress={poolDetails?.poolAddress}
                         maximumBuy={userBuyLimit}

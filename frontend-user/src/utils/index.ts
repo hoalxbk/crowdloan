@@ -106,11 +106,40 @@ export const getETHPrices = async () => {
 
 export const fixGasLimit = (type = 'deposit') => {
   let overrides = {};
-  if (type == 'deposit') {
-    overrides = {
-      gasLimit: 200000,
-      gasPrice: 10000000000,
-    };
+  if (process.env.NODE_ENV !== 'production') {
+    if (type == 'deposit') {
+      overrides = {
+        gasLimit: 200000,
+        gasPrice: 10000000000,
+      };
+    } else if (type == 'approve') {
+      overrides = {
+        gasLimit: 500000,
+        gasPrice: 50000000000,
+      };
+    } else if (type == 'claim') {
+      overrides = {
+        gasLimit: 200000,
+        gasPrice: 10000000000,
+      };
+    } else if (type == 'buy') {
+      overrides = {
+        gasLimit: 500000,
+        gasPrice: 10000000000,
+      };
+    }
+  }
+
+  return overrides;
+};
+
+export const fixGasLimitWithProvider = (library: any, type = 'deposit') => {
+  let overrides = {};
+  const provider = (library?.provider as any);
+  if (provider?.isWalletLink) {
+    overrides = fixGasLimit(type);
+    console.log('Provider is WalletLink:', provider);
+    console.log('Gas Limit: ', overrides);
   }
 
   return overrides;

@@ -10,7 +10,7 @@ import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import BigNumber from 'bignumber.js';
 
 import {getAllowance} from './sota-token';
-import {fixGasLimit} from "../../utils";
+import {fixGasLimit, fixGasLimitWithProvider} from "../../utils";
 
 export const resetTiers = () => {
   return {
@@ -158,13 +158,15 @@ export const deposit = (address: string | null | undefined, amount: string, libr
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
 
       // Fake Gas Limit for Wallet Link
-      let overrides = {};
-      const provider = (library?.provider as any);
-      if (provider?.isWalletLink) {
-        overrides = fixGasLimit('deposit');
-        console.log('Provider is WalletLink:', provider);
-        console.log('Gas Limit: ', overrides);
-      }
+      // let overrides = {};
+      // const provider = (library?.provider as any);
+      // if (provider?.isWalletLink) {
+      //   overrides = fixGasLimit('deposit');
+      //   console.log('Provider is WalletLink:', provider);
+      //   console.log('Gas Limit: ', overrides);
+      // }
+
+      let overrides = fixGasLimitWithProvider(library, 'deposit');
 
       result = await contract?.depositERC20(tokenAddress, convertToWei(amount), overrides);
 

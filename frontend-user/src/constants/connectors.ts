@@ -30,7 +30,7 @@ bscConnector.handleChainChanged = (chainId: string) => {
 // mainnet only
 export const walletLinkConnect = new WalletLinkConnector({
   // TODO: Move link to .env file
-  url: 'https://goerli.infura.io/v3/e267dd5ef60949ba9bb3195ccacde657',
+  url: process.env.REACT_APP_NETWORK_URL || '',
   appName: 'Red Kite',
   appLogoUrl: 'https://redkite.polkafoundry.com/images/logo-red-kite.svg',
   darkMode: true,
@@ -111,6 +111,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     description: 'Connect to Coin Base Wallet and more...',
     disableIcon: '/images/wallet-link/wallet-link-disabled.svg',
     href: null,
+    mobile: true,
   },
   // FORTMATIC: {
   //   connector: fortmatic,
