@@ -250,7 +250,7 @@ const getOfferCurrencyInfo = async (camp) => {
   switch (camp.accept_currency) {
     case Const.ACCEPT_CURRENCY.USDT:
       scCurrency = isEthChain ? ETH_SMART_CONTRACT_USDT_ADDRESS : BSC_SMART_CONTRACT_USDT_ADDRESS;
-      unit = 6;
+      unit = isEthChain ? 6 : 18;
       break;
     case Const.ACCEPT_CURRENCY.USDC:
       scCurrency = isEthChain ? ETH_SMART_CONTRACT_USDC_ADDRESS : BSC_SMART_CONTRACT_USDC_ADDRESS;
