@@ -37,9 +37,11 @@ import { numberWithCommas } from '../../utils/formatNumber';
 import { sotaTiersActions } from '../../store/constants/sota-tiers';
 
 import useStyles from './style';
+import { pushMessage } from '../../store/actions/message';
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
+const iconClose = "/images/icons/close.svg";
 
 enum HeaderType {
   Main = "Main",
@@ -60,6 +62,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.About);
+  const [disableAllButton, setDisableAllButton] = useState<boolean>(false);
 
   const { pathname } = useLocation();
   const { id } = useParams() as any;
@@ -179,7 +182,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   }, [existedWinner, userBuyLimit, poolDetails, verifiedEmail]);
 
   useEffect(() => {
-    if (!poolDetails?.isDeployed) setActiveNav(HeaderType.Main);
+    setActiveNav(HeaderType.Main);
+    if (!poolDetails?.isDeployed) setActiveNav(HeaderType.About);
     if (availablePurchase) setActiveNav(HeaderType.Main);
   }, [availablePurchase, poolDetails]);
 
@@ -190,10 +194,10 @@ const BuyToken: React.FC<any> = (props: any) => {
 
   // Hide main tab after end buy time
   useEffect(() => {
-    // if (
-    //   endBuyTimeInDate && endBuyTimeInDate < new Date() &&
-    //   activeNav === HeaderType.Main
-    // ) setActiveNav(HeaderType.About);
+    if (
+      endBuyTimeInDate && endBuyTimeInDate < new Date() &&
+      activeNav === HeaderType.Main
+    ) setActiveNav(HeaderType.About);
   }, [endBuyTimeInDate]);
 
   useEffect(() => {
@@ -202,6 +206,16 @@ const BuyToken: React.FC<any> = (props: any) => {
       payload: currentUserTier.level
     })
   }, [currentUserTier]);
+
+  useEffect(() => {
+    const appNetwork = appChainID === ETH_CHAIN_ID ? 'eth': 'bsc';
+    setDisableAllButton(appNetwork !== poolDetails?.networkAvailable);
+    if(appNetwork !== poolDetails?.networkAvailable && poolDetails) {
+      dispatch(pushMessage(`Please switch to ${poolDetails?.networkAvailable.toLocaleUpperCase()} network to do Join pool, Approve/Buy tokens.`))
+    } else {
+      dispatch(pushMessage(''));
+    }
+  }, [appChainID, poolDetails])
 
   const render = () => {
     if (loadingPoolDetail)  {
@@ -399,7 +413,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         <Button
                           text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Join Pool': 'Joined'}
                           backgroundColor={'#D01F36'}
-                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess}
+                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess || disableAllButton}
                           loading={poolJoinLoading}
                           onClick={joinPool}
                         />
@@ -485,22 +499,16 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {
                     headers.map((header) => {
                       if (header === HeaderType.Main
-                      // && endBuyTimeInDate && new Date() > endBuyTimeInDate
+                        && endBuyTimeInDate && new Date() > endBuyTimeInDate
                       ) {
-                        return <li
-                          className={`${styles.poolDetailLink} ${activeNav === header ? `${styles.poolDetailLinkActive}`: ''}`}
-                          onClick={() => setActiveNav(header)}
-                          key={header}
-                        >
-                          {header}
-                        </li>
+                        return;
                       }
 
                       if (
                         header !== HeaderType.About &&
                         header !== HeaderType.MyTier &&
                         header !== HeaderType.Participants &&
-                        !poolDetails?.isDeployed
+                        (!poolDetails?.isDeployed || endBuyTimeInDate && endBuyTimeInDate < new Date())
                       ) {
                         return;
                       }
@@ -519,9 +527,13 @@ const BuyToken: React.FC<any> = (props: any) => {
               <div className={styles.poolDetailBuyForm}>
                 {
                   activeNav === HeaderType.Main
-                  // && endBuyTimeInDate && new Date() <= endBuyTimeInDate
+                  && endBuyTimeInDate && new Date() <= endBuyTimeInDate
                   && (
                       <BuyTokenForm
+                        disableAllButton={disableAllButton}
+                        existedWinner={existedWinner}
+                        alreadyJoinPool={alreadyJoinPool}
+                        joinPoolSuccess={joinPoolSuccess}
                         tokenDetails={poolDetails?.tokenDetails}
                         rate={poolDetails?.ethRate}
                         poolAddress={poolDetails?.poolAddress}
@@ -578,6 +590,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       tokenDetails={poolDetails?.tokenDetails}
                       buyTokenSuccess={buyTokenSuccess}
                       poolId={poolDetails?.id}
+                      disableAllButton={disableAllButton}
                     />
                  )
                 }

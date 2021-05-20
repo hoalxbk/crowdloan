@@ -10,6 +10,7 @@ import { alertFailure, alertSuccess } from '../../store/actions/alert';
 import BigNumber from 'bignumber.js';
 
 import {getAllowance} from './sota-token';
+import {fixGasLimit} from "../../utils";
 
 export const resetTiers = () => {
   return {
@@ -17,7 +18,7 @@ export const resetTiers = () => {
   }
 }
 
-export const getTiers = (forceUsingEther?: string) => {
+export const getTiers = (forceUsingEther: string = 'eth') => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.TIERS_LOADING });
     try {
@@ -55,7 +56,7 @@ export const getTiers = (forceUsingEther?: string) => {
   }
 };
 
-export const getUserTier = (address: string, forceUsingEther?: string) => {
+export const getUserTier = (address: string, forceUsingEther: string = 'eth') => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.USER_TIER_LOADING });
     try {
@@ -89,7 +90,7 @@ export const getUserTier = (address: string, forceUsingEther?: string) => {
   }
 };
 
-export const getUserInfo = (address: string, forceUsingEther?: string, tokenAddress: string = '') => {
+export const getUserInfo = (address: string, forceUsingEther: string = 'eth', tokenAddress: string = '') => {
   return async (dispatch: ThunkDispatch<{}, {}, AnyAction>, getState: () => any) => {
     dispatch({ type: sotaTiersActions.USER_INFO_LOADING });
     try {
@@ -154,9 +155,18 @@ export const deposit = (address: string | null | undefined, amount: string, libr
     dispatch({ type: sotaTiersActions.DEPOSIT_LOADING });
     try {
       let result = {} as any;
-
       const contract = getContract(process.env.REACT_APP_TIERS as string, RedKite.abi, library, address || '');
-      result = await contract?.depositERC20(tokenAddress, convertToWei(amount));
+
+      // Fake Gas Limit for Wallet Link
+      let overrides = {};
+      const provider = (library?.provider as any);
+      if (provider?.isWalletLink) {
+        overrides = fixGasLimit('deposit');
+        console.log('Provider is WalletLink:', provider);
+        console.log('Gas Limit: ', overrides);
+      }
+
+      result = await contract?.depositERC20(tokenAddress, convertToWei(amount), overrides);
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,
@@ -300,7 +310,13 @@ export const getRates = (tokens: any) => {
     try {
       const { appChainID } = getState().appNetwork.data;
       const { connector } = getState().connector.data || "Metamask";
-      const contract = getContractInstance(RedKite.abi, process.env.REACT_APP_TIERS as string, connector, appChainID);
+      const contract = getContractInstance(
+        RedKite.abi,
+        process.env.REACT_APP_TIERS as string,
+        connector,
+        appChainID,
+        SmartContractMethod.Read,
+        true);
 
       let data = [] as any;
       for(let i = 0; i < tokens.length; i++) {

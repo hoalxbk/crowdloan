@@ -4,24 +4,40 @@ import {CircularProgress, Tooltip} from "@material-ui/core";
 import useStyles from "../style";
 import {debounce} from "lodash";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import {useSelector} from "react-redux";
+import {CHAIN_ID_NAME_MAPPING} from "../../../constants";
 
 function TokenAddress(props: any) {
   const classes = useStyles();
+  const { currentNetworkId } = useSelector((state: any) => state).userCurrentNetwork;
   const [loadingToken, setLoadingToken] = useState(false);
-
   const {
-    register, setValue, errors,
+    register, setValue, errors, watch, getValues,
     poolDetail,
     token, setToken,
   } = props;
   const renderError = renderErrorCreatePool;
+  const networkAvailable = watch('networkAvailable');
+  const isDeployed = !!poolDetail?.is_deploy;
 
   useEffect(() => {
     if (poolDetail && poolDetail.token) {
+      // First load when poolDetail change
       setValue('token', poolDetail.token, { shouldValidate: true });
       loadingTokenData(poolDetail.token);
     }
   }, [poolDetail]);
+
+  useEffect(() => {
+    if (poolDetail && networkAvailable) {
+      // Auto load token when:
+      // 1. Change network in Metamask
+      // 2. Change select Network Available (Pool)
+      const tokenAddressInputed = getValues('token');
+      setValue('token', tokenAddressInputed, { shouldValidate: true });
+      loadingTokenData(tokenAddressInputed);
+    }
+  }, [networkAvailable, currentNetworkId]);
 
   const loadingTokenData = async (tokenValue: string) => {
     try {
@@ -48,8 +64,6 @@ function TokenAddress(props: any) {
   const handleTokenGetInfo = debounce(async (e: any) => {
     await loadingTokenData(e.target.value);
   }, 500);
-
-  const isDeployed = !!poolDetail?.is_deploy;
 
   return (
     <>
@@ -91,6 +105,20 @@ function TokenAddress(props: any) {
             renderError(errors, 'token')
           }
         </p>
+
+        {errors?.token?.type &&
+          <>
+            <p className={`${classes.formErrorMessage}`}>
+              You should check corresponding token with network.
+            </p>
+            <p className={`${classes.formErrorMessage}`}>
+              Network Available Selected: <span style={{textTransform: 'uppercase'}}>{networkAvailable}</span>
+            </p>
+            <p className={`${classes.formErrorMessage}`}>
+              Metamask User Network: <span>{CHAIN_ID_NAME_MAPPING[currentNetworkId]} ({currentNetworkId})</span>
+            </p>
+          </>
+        }
       </div>
       {
         token && (

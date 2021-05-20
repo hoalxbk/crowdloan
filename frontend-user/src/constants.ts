@@ -1,6 +1,7 @@
 export const TRANSACTION_ERROR = 'Transaction failed. Please check blockchain to know more error.';
 export const API_URL_PREFIX = 'user';
 export const ADMIN_URL_PREFIX = 'dashboard';
+export const IMAGE_URL_PREFIX = 'image';
 export const MAX_BUY_CAMPAIGN = 1000;
 export const POOL_STATUS = {
   TBA: 0,
@@ -109,4 +110,15 @@ export const GAS_LIMIT_CONFIGS = {
   APPROVE_SOTA_TOKEN: '200000',
   STAKE_SOTA_TIERS: '120000', // 79021
   UNSTAKE_SOTA_TIERS: '100000', // 72527
+};
+export const NETWORK_AVAILABLE = {
+  ETH: 'eth',
+  BSC: 'bsc',
+};
+
+export const ETHERSCAN_BASE_URL: any = {
+  '1': 'https://etherscan.io',
+  '4': 'https://rinkeby.etherscan.io',
+  '5': 'https://goerli.etherscan.io',
+  '97': 'https://testnet.bscscan.com',
 };

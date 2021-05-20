@@ -8,6 +8,24 @@ const useStyles = makeStyles((theme: any) => {
         padding: '40px 20px 80px 20px',
       }
     },
+    // networkError: {
+    //   font: 'normal normal normal 14px/24px Helvetica',
+    //   color: '#fff',
+    //   backgroundColor: '#5b0712fa',
+    //   textAlign: 'center',
+    //   height: '40px',
+    //   position: 'relative',
+    //   display: 'flex',
+    //   alignItems: 'center',
+    //   justifyContent: 'center',
+
+    //   '& img': {
+    //     position: 'absolute',
+    //     transform: 'translateY(-50%)',
+    //     right: '10px',
+    //     top: '50%'
+    //   }
+    // },
     poolDetailHeader: {
       paddingBottom: 20,
       borderBottom: '1px solid rgba(255, 255, 255, 0.1)'

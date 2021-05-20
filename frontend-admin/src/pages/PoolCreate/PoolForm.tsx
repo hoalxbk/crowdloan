@@ -85,6 +85,12 @@ function PoolForm(props: any) {
     });
 
     const tokenInfo = await getTokenInforDetail(data.token);
+    if (!tokenInfo?.symbol) {
+      throw Error('Token Information has not been loaded !!!');
+      dispatch(alertFailure('Token Information has not been loaded !!!'))
+      return false;
+    }
+
     const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
     const submitData = {
       registed_by: loginUser?.wallet_address,
@@ -207,7 +213,7 @@ function PoolForm(props: any) {
   };
 
   // Create / Update Pool (Before Deploy)
-  const handleCampaignCreate = () => {
+  const handleCampaignCreateUpdate = () => {
     setNeedValidate(false);
     setTimeout(() => {
       if (poolDetail?.is_deploy) {
@@ -220,7 +226,7 @@ function PoolForm(props: any) {
 
   const getTokenInforDetail = async (token: string) => {
     const erc20Token = await getTokenInfo(token);
-    let tokenInfo = {};
+    let tokenInfo: any = {};
     if (erc20Token) {
       const { name, symbol, decimals, address } = erc20Token;
       tokenInfo = { name, symbol, decimals, address };
@@ -329,7 +335,7 @@ function PoolForm(props: any) {
   };
 
   const watchBuyType = watch('buyType');
-  console.log('errors==========>', errors);
+  // console.log('errors==========>', errors);
 
   return (
   <>
@@ -397,6 +403,7 @@ function PoolForm(props: any) {
                 setValue={setValue}
                 errors={errors}
                 control={control}
+                needValidate={needValidate}
               />
 
               <AcceptCurrency
@@ -436,7 +443,9 @@ function PoolForm(props: any) {
               token={token}
               setToken={setToken}
               setValue={setValue}
+              getValues={getValues}
               errors={errors}
+              watch={watch}
             />
 
             <AddressReceiveMoney
@@ -525,7 +534,7 @@ function PoolForm(props: any) {
           <button
             disabled={loading || loadingDeploy}
             className={classes.formButtonUpdatePool}
-            onClick={handleCampaignCreate}
+            onClick={handleCampaignCreateUpdate}
           >
             {
               (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')
@@ -536,7 +545,7 @@ function PoolForm(props: any) {
           {/*<button*/}
           {/*  disabled={loading || loadingDeploy || poolDetail?.is_deploy}*/}
           {/*  className={poolDetail?.is_deploy ? classes.formButtonDeployed : classes.formButtonUpdatePool}*/}
-          {/*  onClick={handleCampaignCreate}*/}
+          {/*  onClick={handleCampaignCreateUpdate}*/}
           {/*>*/}
           {/*  {*/}
           {/*    (loading || loadingDeploy) ? <CircularProgress size={25} /> : (isEdit ? 'Update' : 'Create')*/}

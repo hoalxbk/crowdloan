@@ -22,19 +22,12 @@ const CONTRACT_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGN];
 const CONTRACT_FACTORY_CONFIGS = NETWORK_CONFIGS.contracts[Const.CONTRACTS.CAMPAIGNFACTORY];
 
 const {abi: CONTRACT_ABI} = CONTRACT_CONFIGS.CONTRACT_DATA;
-const {abi: CONTRACT_FACTORY_NORMAL_ABI} = CONTRACT_FACTORY_CONFIGS.CONTRACT_DATA;
-const {abi: CONTRACT_CLAIM_ABI} = CONTRACT_CONFIGS.CONTRACT_CLAIMABLE;
-const {abi: CONTRACT_FACTORY_CLAIM_ABI} = CONTRACT_FACTORY_CONFIGS.CONTRACT_CLAIMABLE;
 const {abi: CONTRACT_ERC20_ABI} = require('../../../blockchain_configs/contracts/Normal/Erc20.json');
-const {abi: CONTRACT_TIER_ABI} = require('../../../blockchain_configs/contracts/Normal/Tier.json');
 
 const Web3 = require('web3');
 const BadRequestException = require("../../Exceptions/BadRequestException");
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config');
-const tierSmartContract = process.env.TIER_SMART_CONTRACT;
-const SMART_CONTRACT_USDT_ADDRESS = process.env.SMART_CONTRACT_USDT_ADDRESS;
-const SMART_CONTRACT_USDC_ADDRESS = process.env.SMART_CONTRACT_USDC_ADDRESS;
 const OFFER_FREE_TIME = process.env.OFFER_FREE_TIME_SECOND || 1800;
 const OFFER_FREE_BUY = process.env.OFFER_FREE_BUY_LIMIT || 0;
 
@@ -460,35 +453,12 @@ class CampaignController {
         console.log(`Do not found wallet for campaign ${campaign_id}`);
         return HelperUtils.responseBadRequest("Do not found wallet for campaign");
       }
-      // init pool contract
-      const poolContract = new web3.eth.Contract(CONTRACT_ABI, camp.campaign_hash);
-      // get convert rate token erc20 -> our token
-      let scCurrency, unit;
-      switch (camp.accept_currency) {
-        case Const.ACCEPT_CURRENCY.USDT:
-          scCurrency = SMART_CONTRACT_USDT_ADDRESS;
-          unit = 6;
-          break;
-        case Const.ACCEPT_CURRENCY.USDC:
-          scCurrency = SMART_CONTRACT_USDC_ADDRESS;
-          unit = 6;
-          break;
-        case Const.ACCEPT_CURRENCY.ETH:
-          scCurrency = '0x0000000000000000000000000000000000000000';
-          unit = 18;
-          break;
-        default:
-          console.log(`Do not found currency support ${camp.accept_currency} of campaignId ${campaign_id} `);
-          return HelperUtils.responseErrorInternal("Internal Server Error !");
-      }
-      // call to SC to get rate
-      const receipt = await Promise.all([
-        poolContract.methods.getOfferedCurrencyRate(scCurrency).call(),
-        poolContract.methods.getOfferedCurrencyDecimals(scCurrency).call()
-      ]);
+      // call to SC to get convert rate token erc20 -> our token
+      const receipt = await HelperUtils.getOfferCurrencyInfo(camp);
       const rate = receipt[0];
       const decimal = receipt[1];
-      console.log(rate, decimal);
+      const unit = receipt[2];
+      console.log(rate, decimal, unit);
       // calc min, max token user can buy
       const maxTokenAmount = new BigNumber(maxBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
       const minTokenAmount = new BigNumber(minBuy).multipliedBy(rate).dividedBy(Math.pow(10, Number(decimal))).multipliedBy(Math.pow(10, unit)).toString();
@@ -597,7 +567,7 @@ class CampaignController {
         return HelperUtils.responseBadRequest("You can not claim token at current time !");
       }
       // call to SC to get amount token purchased of user
-      const campaignClaimSC = new web3.eth.Contract(CONTRACT_CLAIM_ABI, camp.campaign_hash);
+      const campaignClaimSC = await HelperUtils.getContractClaimInstance(camp);
       const tokenPurchased = await campaignClaimSC.methods.userPurchased(userWalletAddress).call();
       // calc max token that user can claimable
       const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased);

@@ -36,12 +36,13 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   const { appChainID } = useSelector((state: any) => state.appNetwork).data;
   const walletsInfo = useSelector((state: any) => state.wallet).entities;
   const [openSideBar, setOpenSideBar] = useState(false);
+  const { data: message = '' } = useSelector((state: any) => state.messages);
 
-  const { 
-    handleProviderChosen, 
-    currentConnector, 
-    walletName, 
-    setWalletName, 
+  const {
+    handleProviderChosen,
+    currentConnector,
+    walletName,
+    setWalletName,
     loginError,
     currentConnectedWallet,
     setCurrentConnectedWallet,
@@ -84,7 +85,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
       Object.keys(walletsInfo).forEach(key => {
         const wallet = walletsInfo[key];
 
-        if (wallet.addresses.length > 0 && wallet.connectionState === WalletConnectionState.CONNECTED && !isFound) { 
+        if (wallet.addresses.length > 0 && wallet.connectionState === WalletConnectionState.CONNECTED && !isFound) {
           isFound = true;
           setCurrentConnectedWallet && setCurrentConnectedWallet(wallet);
           currentWalletsName.push(key);
@@ -97,7 +98,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
         setWalletName && setWalletName(currentWalletsName);
         handleProviderChosen && handleProviderChosen(chooseWallet, connectorsByName[chooseWallet]);
       }
-    } 
+    }
   }, [walletsInfo, walletName]);
 
   return (
@@ -111,7 +112,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
           </div>
           {isWidthDown('xs', props.width) && <img src={iconHamburger} onClick={() => setOpenSideBar(true)}/>}
           <div className={styles.rightBar + (openSideBar ? ' active' : '')}>
-              {isWidthDown('xs', props.width) && 
+              {isWidthDown('xs', props.width) &&
                 <>
                   <img src={logo} className={styles.sideBarLogo}/>
                   <img src={iconClose} className={styles.closeBtn} onClick={() => setOpenSideBar(false)}/></>}
@@ -123,11 +124,11 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
                       {appChainID === ETH_CHAIN_ID ? 'Ethereum': 'BSC Mainnet'}
                     </span>
                   </button>
-                  <button 
-                    className={`${styles.btn} ${styles.btnConnect}`} 
-                    onClick={() => { 
+                  <button
+                    className={`${styles.btn} ${styles.btnConnect}`}
+                    onClick={() => {
                       if (!connectWalletLoading) {
-                        !currentAccount ? handleConnectWalletOpen(): handleDisconnectDialogOpen() 
+                        !currentAccount ? handleConnectWalletOpen(): handleDisconnectDialogOpen()
                       }
                     }}
                     disabled={connectWalletLoading}
@@ -137,7 +138,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
                     <>
                       <span>
                       {
-                        currentAccount && (!loginError ? `${balance} ${appChainID === ETH_CHAIN_ID ? "ETH": "BNB"}`: '0' ) 
+                        currentAccount && (!loginError ? `${balance} ${appChainID === ETH_CHAIN_ID ? "ETH": "BNB"}`: '0' )
                       }
                       </span>
                       {
@@ -148,7 +149,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
                         currentAccount && `${trimMiddlePartAddress(currentAccount)}` || "Connect Wallet"
                       }
                       </span>
-                      </> 
+                      </>
                   ): <BeatLoader color={'white'} css={css`margin-top: 3px`} size={10} />
                 }
                 </button>
@@ -156,13 +157,13 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
           </div>
         <HeaderContext.Provider value={{ agreedTerms, setAgreedTerms }}>
             <ConnectWalletModal opened={openConnectWallet as boolean} handleClose={handleConnectWalletClose}/>
-            <AppNetworkSwitch 
-              opened={switchNetworkDialog} 
-              handleClose={() => setSwitchNetworkDialog(false)} 
+            <AppNetworkSwitch
+              opened={switchNetworkDialog}
+              handleClose={() => setSwitchNetworkDialog(false)}
             />
-            <WalletDisconnect 
-              opened={disconnectDialog} 
-              handleClose={() => { setDisconnectDialog(false); setAgreedTerms(false); setOpenSideBar(false); }} 
+            <WalletDisconnect
+              opened={disconnectDialog}
+              handleClose={() => { setDisconnectDialog(false); setAgreedTerms(false); setOpenSideBar(false); }}
               currentWallet={currentConnectedWallet}
             />
         </HeaderContext.Provider>
@@ -173,18 +174,32 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
               <span className={styles.loginErrorBannerText}>
                 {loginError} Learn how to &nbsp;
                 <a href="https://help.1inch.exchange/en/articles/4966690-how-to-use-1inch-on-bsc-binance-smart-chain" target="_blank" className={styles.loginErrorGuide}>
-                  change network in wallet 
+                  change network in wallet
                 </a>
                 &nbsp; or &nbsp;
-                <button 
-                  className={styles.btnChangeAppNetwork} 
+                <button
+                  className={styles.btnChangeAppNetwork}
                   onClick={() => {setOpenSideBar(false); setSwitchNetworkDialog(true);}}
                 >
                   Change App Network
                 </button>
               </span>
             </div>
-          ) 
+          )
+        }
+        {
+          (window.location.href.indexOf('buy-token') > -1) && !loginError && message != '' && <div className={styles.loginErrorBanner}>
+          <img src="/images/red-warning.svg" alt="red-warning icon" />
+          <span className={styles.loginErrorBannerText}>
+            {message}&nbsp;&nbsp;
+            <button
+              className={styles.btnChangeAppNetwork}
+              onClick={() => {setOpenSideBar(false); setSwitchNetworkDialog(true);}}
+            >
+              Change App Network
+            </button>
+          </span>
+        </div>
         }
       </div>
     </>

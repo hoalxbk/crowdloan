@@ -32,6 +32,8 @@ const AppContainer = (props: any) => {
         method: 'net_version'
       }).then((currentNetworkId: string) => {
         localStorage.setItem('NETWORK_ID', currentNetworkId);
+        dispatch({ type: userActions.USER_WALLET_CHANGED, payload: currentNetworkId });
+
         // if (currentNetworkId && currentNetworkId !== NETWORK_ID) {
         //   if (history) {
         //     const pathName = history.location.pathname;
@@ -50,42 +52,25 @@ const AppContainer = (props: any) => {
         // }
       });
 
-      web3Instance?.eth.getAccounts().then(accounts => {
+      web3Instance?.eth.getAccounts().then((accounts: any) => {
         console.log('NO_ACCOUNT');
         if (accounts.length === 0) {
           dispatch({ type: userActions.USER_CONNECT_WALLET_LOCK });
+          dispatch({ type: userActions.USER_WALLET_CHANGED, payload: '' });
+
           const pathName = history.location.pathname;
-
           console.log('dispatch(logout());', pathName);
-
           if (pathName !== '/network-change' && pathName !== '/dashboard/network-change') {
             console.log('Mismatch route: /network-change');
-
-            // let isInvestor = false;
-            // if (loginUser && checkIsAdminRoute(history.location.pathname)) {
-            //   isInvestor = false;
-            //   dispatch(logout(isInvestor));
-            // } else if (loginInvestor && checkIsInvestorRoute(history.location.pathname)) {
-            //   isInvestor = true;
-            //   dispatch(logout(isInvestor));
-            // }
-            // setTimeout(() => {
-            //   // Switch redirect
-            //   if (checkIsAdminRoute(history.location.pathname)) {
-            //     history.push(adminRoute('/login'));
-            //   } else if (checkIsInvestorRoute(history.location.pathname)) {
-            //     history.push(publicRoute('/login'));
-            //   }
-            // }, 1500);
-
             dispatch(logout(false));
             setTimeout(() => {
               history.push(adminRoute('/login'));
             }, 1500);
-
           }
         }
       });
+
+
     }
   };
 
@@ -98,7 +83,7 @@ const AppContainer = (props: any) => {
     const { ethereum } = windowObj;
 
     if (ethereum) {
-      web3Instance?.eth.getAccounts().then(accounts => {
+      web3Instance?.eth?.getAccounts().then((accounts: any) => {
           accounts[0] && dispatch({
             type: userActions.USER_CONNECT_WALLET_SUCCESS,
             payload: accounts[0]
@@ -132,12 +117,13 @@ const AppContainer = (props: any) => {
       ethereum.on('chainChanged', (newNetworkId: string) => {
         console.log('chainChanged');
         localStorage.setItem('NETWORK_ID', String(Number(newNetworkId)));
+        dispatch({ type: userActions.USER_WALLET_CHANGED, payload: String(Number(newNetworkId)) });
         if (
           Number(NETWORK_ID) !== Number(newNetworkId) &&
           Number(NETWORK_ID_BSC) !== Number(newNetworkId)
         ) {
           console.log('Network change: NETWORK_ID:', newNetworkId);
-          dispatch(alertFailure('Please change to correct Network !'));
+          // dispatch(alertFailure('Please change to correct Network !'));
         }
 
         // const { history } = props;

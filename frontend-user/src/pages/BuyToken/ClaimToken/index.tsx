@@ -18,6 +18,7 @@ type ClaimTokenProps = {
   ableToFetchFromBlockchain: boolean | undefined
   buyTokenSuccess: boolean | undefined
   poolId: number | undefined;
+  disableAllButton: boolean
 }
 
 const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
@@ -32,7 +33,8 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     poolAddress,
     poolId,
     ableToFetchFromBlockchain,
-    buyTokenSuccess
+    buyTokenSuccess,
+    disableAllButton
   } = props;
 
   const { claimToken, setClaimTokenLoading, transactionHash, claimTokenSuccess, loading, error } = useTokenClaim(poolAddress, poolId);
@@ -82,7 +84,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
       <Button
         text={'Claim'}
         backgroundColor={'#3232DC'}
-        disabled={!availableClaim || userPurchased <= 0}
+        disabled={!availableClaim || userPurchased <= 0 || disableAllButton}
         loading={loading}
         onClick={handleTokenClaim}
       />

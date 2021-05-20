@@ -105,8 +105,10 @@ module.exports = Object.freeze({
   },
   ACCEPT_CURRENCY: {
     ETH: 'eth',
+    BNB: 'bnb',
     USDT: 'usdt',
     USDC: 'usdc',
+    BUSD: 'busd'
   },
   POOL_TYPE: {
     SWAP: 'swap',
@@ -116,9 +118,17 @@ module.exports = Object.freeze({
     DISPLAY: 1,
     HIDDEN: 0,
   },
+  NETWORK_AVAILABLE: {
+    ETH: 'eth',
+    BSC: 'bsc',
+  },
   KYC_STATUS: {
     NOT_VERIFIED: 0,
     VERIFIED: 1,
     VERIFY_FAIL: 2,
+  },
+  NETWORK_AVAILABLE: {
+    ETH: 'eth',
+    BSC: 'bsc',
   }
 });

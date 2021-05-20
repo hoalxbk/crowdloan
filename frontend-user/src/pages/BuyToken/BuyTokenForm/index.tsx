@@ -53,6 +53,10 @@ type BuyTokenFormProps = {
   setBuyTokenSuccess: Dispatch<SetStateAction<boolean>> 
   isClaimable: boolean | undefined
   currentUserTier: any,
+  alreadyJoinPool: any,
+  joinPoolSuccess: boolean,
+  existedWinner: any,
+  disableAllButton: boolean
 }
 
 enum MessageType {
@@ -94,7 +98,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     tokenSold,
     setBuyTokenSuccess,
     isClaimable,
-    currentUserTier
+    currentUserTier,
+    joinPoolSuccess,
+    alreadyJoinPool,
+    existedWinner,
+    disableAllButton
 } = props;
 
   const { connectedAccount, wrongChain } = useAuth();
@@ -240,7 +248,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   if (tokenAllowance != null || tokenAllowance != undefined) {
     if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))
     && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH)
-    && !wrongChain && ableToFetchFromBlockchain && isDeployed
+    && !wrongChain && ableToFetchFromBlockchain && isDeployed && (alreadyJoinPool || joinPoolSuccess) && existedWinner && !disableAllButton
     )  {
       enableApprove = true;
     }
@@ -259,6 +267,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
      && new BigNumber(estimateTokens).lte(new BigNumber(poolAmount).minus(tokenSold))
      && new BigNumber(tokenBalance).gte(new BigNumber(input))
      && !wrongChain
+     && !disableAllButton
      /* && validTier */
      && ((purchasableCurrency !== PurchaseCurrency.ETH ? new BigNumber(tokenAllowance || 0).gt(0): true));
 
@@ -406,7 +415,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   return (
     <div className={styles.buyTokenForm}>
       {
-        appChainID !== BSC_CHAIN_ID && (
         <>
           <p className={styles.buyTokenFormTitle}>
             You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {purchasableCurrency} BOUGHT from {numberWithCommas(maximumBuy)} {purchasableCurrency} available for your TIER.
@@ -421,7 +429,6 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             </p>
           )}
         </>
-        )
       }
       <div className={styles.buyTokenInputForm}>
         <p className={styles.buyTokenInputLabel}>
@@ -469,11 +476,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         <p className={styles.buyTokenEstimateLabel}>You will get approximately</p>
         <strong className={styles.buyTokenEstimateAmount}>{numberWithCommas(`${estimateTokens}`)} {tokenDetails?.symbol}</strong>
       </div>
-      {
+      {/* {
         <p className={`${poolErrorBeforeBuy?.type === MessageType.error ? `${styles.poolErrorBuy}`: `${styles.poolErrorBuyWarning}`}`}>
           {poolErrorBeforeBuy && poolErrorBeforeBuy.message}
         </p>
-      }
+      } */}
       <div className={styles.btnGroup}>
         <Button
         text={new BigNumber(tokenAllowance || 0).gt(0) ? 'Approved': 'Approve'}

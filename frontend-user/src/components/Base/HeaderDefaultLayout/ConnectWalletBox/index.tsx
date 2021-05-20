@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AbstractConnector } from '@web3-react/abstract-connector';
 import mobile from 'is-mobile';
 import { settingAppNetwork, NetworkUpdateType } from '../../../../store/actions/appNetwork';
-import { WalletInfo } from '../../../../constants/connectors';
+import {ConnectorNames, WalletInfo} from '../../../../constants/connectors';
 import { NetworkInfo, APP_NETWORKS_NAME } from '../../../../constants/network';
 import { HeaderContext, HeaderContextType } from '../context/HeaderContext';
 import useStyles from './style';
@@ -46,11 +46,11 @@ const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWal
   const render = () => {
     if (appNetwork) {
       const { name, icon, id, disableIcon } = appNetwork;
-      const temporaryDisable = name === APP_NETWORKS_NAME.BSC;
+      const temporaryDisable = false;//name === APP_NETWORKS_NAME.BSC;
 
       return (
-        <div 
-          className={`${styles.walletBox}`} 
+        <div
+          className={`${styles.walletBox}`}
           onClick={() => {
             !temporaryDisable && handleNetworkChange(isAppNetwork, id as string, agreedTerms)
           }}
@@ -61,10 +61,10 @@ const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWal
               <img src={`${((agreedTerms || forceEnable) && !temporaryDisable) ? icon: disableIcon}`} style={{ width: agreedTerms ? 40: 50 }} alt={name} className={styles.walletBoxIcon} />
             }
             {
-              appChainID === id && 
-                <img 
-                  src={`/images/circle_done.svg`} 
-                  style={{ color: '#212a3b' }} 
+              appChainID === id &&
+                <img
+                  src={`/images/circle_done.svg`}
+                  style={{ color: '#212a3b' }}
                   className={styles.walletBoxCheck}
                 />
             }
@@ -78,8 +78,8 @@ const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWal
       const { name, icon, disableIcon } = wallet;
 
       return (
-        <div 
-          className={`${styles.walletBox}`} 
+        <div
+          className={`${styles.walletBox}`}
           onClick={() => {
             if (mobile() && wallet?.deepLink) {
               window.open(wallet.deepLink);
@@ -92,12 +92,12 @@ const ConnectWalletBox: React.FC<ConnectWalletBoxPropsType> = (props: ConnectWal
         >
           <div className={styles.walletBoxIconWrap}>
             {
-              connectWalletLoading && walletName && walletName.indexOf(name) >= 0 ? <img src="/images/loading.png" /> 
-              :  <img 
-                  src={`${agreedTerms ? icon: disableIcon}`} 
-                  style={{ width: agreedTerms ? 40: 50 }} 
-                  alt={name} 
-                  className={styles.walletBoxIcon} 
+              connectWalletLoading && walletName && walletName.indexOf(name) >= 0 ? <img src="/images/loading.png" />
+              :  <img
+                  src={`${agreedTerms ? icon: disableIcon}`}
+                  style={{ width: agreedTerms ? 40: 50 }}
+                  alt={name}
+                  className={styles.walletBoxIcon}
                 />
             }
           </div>
