@@ -7,9 +7,9 @@ import TransactionSubmitModal from '../../../components/Base/TransactionSubmitMo
 import Button from '../Button';
 import useStyles from './style';
 
-import { getUSDCAddress, getUSDTAddress } from '../../../utils/contractAddress/getAddresses';
+import { getUSDCAddress, getUSDTAddress, getBUSDAddress } from '../../../utils/contractAddress/getAddresses';
 import { numberWithCommas } from '../../../utils/formatNumber';
-import { BSC_CHAIN_ID } from '../../../constants/network';
+import { BSC_CHAIN_ID, ETH_CHAIN_ID } from '../../../constants/network';
 import { PurchaseCurrency } from '../../../constants/purchasableCurrency';
 import { TokenType } from '../../../hooks/useTokenDetails';
 import getAccountBalance from '../../../utils/getAccountBalance';
@@ -131,7 +131,16 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         address: getUSDTAddress(appChainID),
         name: "USDT",
         symbol: "USDT",
-        decimals: 6
+        decimals: appChainID == ETH_CHAIN_ID ? 6 : 18
+      };
+    }
+
+    if (purchasableCurrency && purchasableCurrency === PurchaseCurrency.BUSD) {
+      return {
+        address: getBUSDAddress(appChainID),
+        name: "BUSD",
+        symbol: "BUSD",
+        decimals: 18
       };
     }
 
@@ -140,7 +149,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         address: getUSDCAddress(appChainID),
         name: "USDC",
         symbol: "USDC",
-        decimals: 6
+        decimals: appChainID == ETH_CHAIN_ID ? 6 : 18
       };
     }
 

@@ -98,9 +98,11 @@ export const TIERS = [
 ];
 
 export const KYC_STATUS = {
-  NOT_VERIFIED: 0,
-  VERIFIED: 1,
-  VERIFY_FAIL: 2,
+  INCOMPLETE: 0, // Blockpass verifications pending
+  APPROVED: 1, // profile has been approved by Merchant
+  RESUBMIT: 2, // Merchant has rejected one or more attributes
+  WAITING: 3, // Merchant's review pending
+  INREVIEW: 4, // in review by Merchant
 };
 
 export const GAS_LIMIT_CONFIGS = {

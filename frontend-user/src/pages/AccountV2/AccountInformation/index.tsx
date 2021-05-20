@@ -61,12 +61,12 @@ const AccountInformation = (props: any) => {
         <div className={styles.inputGroup} style={{ marginBottom: 3 }}>
           <span style={{ display: 'inline-block' }}>KYC for Red Kite</span>
           {connectedAccount && <>
-            {kycStatus == KYC_STATUS.NOT_VERIFIED && <span>Unverified</span>}
-            {kycStatus == KYC_STATUS.NOT_VERIFIED && <button className="verify-email" onClick={handleKYC}>KYC NOW</button>}
+            {kycStatus == KYC_STATUS.INCOMPLETE && <span>Unverified</span>}
+            {kycStatus == KYC_STATUS.INCOMPLETE && <button className="verify-email" onClick={handleKYC}>KYC NOW</button>}
 
-            {kycStatus == KYC_STATUS.VERIFIED && <span>Verified</span>}
+            {kycStatus == KYC_STATUS.APPROVED && <span>Verified</span>}
 
-            {kycStatus == KYC_STATUS.VERIFY_FAIL && <span style={{ color: 'red', overflow: 'unset' }}>Rejected</span>}
+            {kycStatus == KYC_STATUS.RESUBMIT && <span style={{ color: 'red', overflow: 'unset' }}>Rejected</span>}
             {/*{kycStatus == KYC_STATUS.VERIFY_FAIL && <button style={{color: 'red', borderColor: 'red'}} className="verify-email" onClick={handleRejectKYC}>Re-submit KYC</button>}*/}
 
             {/*<span>{isKYC ? 'Verified' : 'Unverified'}</span>*/}
@@ -79,7 +79,7 @@ const AccountInformation = (props: any) => {
           <span></span>
           {connectedAccount && <>
             <span style={{ color: 'red', display: 'inline-block' }}>
-            {kycStatus == KYC_STATUS.VERIFY_FAIL && 'Please send information to support@polkafoundry.com to resubmit KYC.'}
+            {kycStatus == KYC_STATUS.RESUBMIT && 'Please send information to support@polkafoundry.com to resubmit KYC.'}
             </span>
           </>}
 

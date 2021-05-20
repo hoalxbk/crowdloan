@@ -1,12 +1,17 @@
 import _, { set } from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
+import { useTypedSelector } from '../../../hooks/useTypedSelector';
+import { ETH_CHAIN_ID } from '../../../constants/network';
 
 const closeIcon = '/images/icons/close.svg'
+const ETHERSCAN_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL || "";
+const BCSSCAN_URL = process.env.REACT_APP_BSCSCAN_BASE_URL || "";
 
 const ModalTransaction = (props: any) => {
   const styles = useStyles();
   const commonStyles = useCommonStyle();
+  const { appChainID } = useTypedSelector(state => state.appNetwork).data;
 
   const {
     transactionHashes,
@@ -42,7 +47,7 @@ const ModalTransaction = (props: any) => {
           </div>
           <div className="modal-content__foot">
             <a
-              href={`https://goerli.etherscan.io/tx/${transactionHashes[0]}`}
+              href={ETH_CHAIN_ID == appChainID ? `{${ETHERSCAN_URL}/tx/${transactionHashes[0]}` : `{${BCSSCAN_URL}/address/${transactionHashes[0]}`}
               target="_blank"
               className={commonStyles.nnb1418d}
             >View on Etherscan</a>
