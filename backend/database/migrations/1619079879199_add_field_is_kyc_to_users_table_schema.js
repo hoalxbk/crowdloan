@@ -8,7 +8,7 @@ class AddFieldIsKycToUserTableSchema extends Schema {
   up () {
     this.table('users', (table) => {
       // alter table
-      table.boolean('is_kyc').nullable().default(Const.KYC_STATUS.NOT_VERIFIED);
+      table.boolean('is_kyc').nullable().default(Const.KYC_STATUS.INCOMPLETE);
     })
   }
 
