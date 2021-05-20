@@ -6,6 +6,7 @@ export const USDT_ADDRESS = process.env.REACT_APP_USDT_SMART_CONTRACT;
 export const USDC_ADDRESS = process.env.REACT_APP_USDC_SMART_CONTRACT;
 export const USDC_BSC_ADDRESS = process.env.REACT_APP_USDC_BSC_SMART_CONTRACT;
 export const USDT_BSC_ADDRESS = process.env.REACT_APP_USDT_BSC_SMART_CONTRACT;
+export const BUSD_BSC_ADDRESS = process.env.REACT_APP_BUSD_BSC_SMART_CONTRACT;
 
 export enum ChainId  {
   MAINNET = 1,
