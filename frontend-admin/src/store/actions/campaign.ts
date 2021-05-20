@@ -618,27 +618,82 @@ export const deployPool = (campaign: any, history: any) => {
           process.env.REACT_APP_SMART_CONTRACT_BSC_USDT_ADDRESS as string;
       }
 
+      // Old code 2
+      // let tokenByEthDecimals = 0;
+      // let tokenByETHActualRate: any;
+      // let reversedRate = removeTrailingZeros(new BigNumber(1).dividedBy(token_by_eth).toFixed());
+      // let digitsAfterDecimals = getDigitsAfterDecimals(reversedRate);
+      //
+      // if (digitsAfterDecimals > 6) {
+      //   // get 6 decimals after comma if decimals part is too long
+      //   const splittedComma = reversedRate.split('.');
+      //   reversedRate = splittedComma[0].concat(".", splittedComma[1].substr(0, 6));
+      //   digitsAfterDecimals = 6;
+      // }
+      //
+      // if (accept_currency !== ACCEPT_CURRENCY.ETH) {
+      //   if (network_available == NETWORK_AVAILABLE.ETH) {
+      //     tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+      //   } else {
+      //     tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 18)).toFixed();
+      //   }
+      // } else {
+      //   tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
+      // }
+      //
+
       let tokenByEthDecimals = 0;
       let tokenByETHActualRate: any;
       let reversedRate = removeTrailingZeros(new BigNumber(1).dividedBy(token_by_eth).toFixed());
-      let digitsAfterDecimals = getDigitsAfterDecimals(reversedRate);
+
+      if (network_available == NETWORK_AVAILABLE.ETH) {
+        if (accept_currency === ACCEPT_CURRENCY.ETH) {
+          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, 0)).toFixed();
+        } else if (accept_currency === ACCEPT_CURRENCY.USDT) {
+          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+        } else if (accept_currency === ACCEPT_CURRENCY.USDC) {
+          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+        }
+      } else if (network_available == NETWORK_AVAILABLE.BSC) {
+        if (accept_currency === ACCEPT_CURRENCY.ETH) {
+          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, 0)).toFixed();
+        } else if (accept_currency === ACCEPT_CURRENCY.USDT) {
+          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, 0)).toFixed();
+        } else if (accept_currency === ACCEPT_CURRENCY.USDC) {
+          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, 0)).toFixed();
+        }
+      }
+
+      let digitsAfterDecimals = getDigitsAfterDecimals(tokenByETHActualRate);
 
       if (digitsAfterDecimals > 6) {
         // get 6 decimals after comma if decimals part is too long
-        const splittedComma = reversedRate.split('.');
-        reversedRate = splittedComma[0].concat(".", splittedComma[1].substr(0, 6));
+        const splittedComma = tokenByETHActualRate.split('.');
+        tokenByETHActualRate = splittedComma[0].concat(".", splittedComma[1].substr(0, 6));
         digitsAfterDecimals = 6;
       }
 
-      if (accept_currency !== ACCEPT_CURRENCY.ETH) {
-        if (network_available == NETWORK_AVAILABLE.ETH) {
-          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
-        } else {
-          tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 18)).toFixed();
-        }
-      } else {
-        tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
-      }
+      // if (accept_currency !== ACCEPT_CURRENCY.ETH) {
+      //   if (network_available == NETWORK_AVAILABLE.ETH) {
+      //     tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 6)).toFixed();
+      //   } else {
+      //
+      //     tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, tokenInfo.decimals - 18)).toFixed();
+      //   }
+      // } else {
+      //   tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
+      // }
+
+      // let digitsAfterDecimals = getDigitsAfterDecimals(tokenByETHActualRate);
+      // if (digitsAfterDecimals > 6) {
+      //   // get 6 decimals after comma if decimals part is too long
+      //   const splittedComma = tokenByETHActualRate.split('.');
+      //   tokenByETHActualRate = splittedComma[0].concat(".", splittedComma[1].substr(0, 6));
+      //   digitsAfterDecimals = 6;
+      // }
+      tokenByETHActualRate = new BigNumber(tokenByETHActualRate).multipliedBy(Math.pow(10, digitsAfterDecimals)).toFixed();
+
+      console.log('tokenByETHActualRate', tokenByETHActualRate, digitsAfterDecimals);
 
       const poolType = campaign.pool_type;
       let factorySmartContract = getContractInstance(campaignFactoryABI, process.env.REACT_APP_SMART_CONTRACT_FACTORY_ADDRESS || '');
@@ -671,7 +726,7 @@ export const deployPool = (campaign: any, history: any) => {
           startTimeUnix,
 
           paidTokenAddress,
-          tokenByEthDecimals,
+          digitsAfterDecimals,
           tokenByETHActualRate,
           address_receiver,
           signerWallet,
