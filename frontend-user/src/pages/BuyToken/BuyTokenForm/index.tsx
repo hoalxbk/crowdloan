@@ -28,6 +28,7 @@ import {
   convertTimeToStringFormatWithoutGMT,
   convertUnixTimeToDateTime
 } from "../../../utils/convertDate";
+import {getIconCurrencyUsdt} from "../../../utils/usdt";
 
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
 
@@ -120,6 +121,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     tokenDepositSuccess
   } = usePoolDepositAction({ poolAddress, poolId, purchasableCurrency, amount: input, isClaimable, networkAvailable });
 
+  const { currencyIcon, currencyName } = getIconCurrencyUsdt({ purchasableCurrency, networkAvailable });
   const { retrieveTokenAllowance } = useTokenAllowance();
   const { retrieveUserPurchased } = useUserPurchased(tokenDetails, poolAddress, ableToFetchFromBlockchain);
 
@@ -419,8 +421,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       {
         <>
           <p className={styles.buyTokenFormTitle}>
-            You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {purchasableCurrency} BOUGHT from {numberWithCommas(maximumBuy)} {purchasableCurrency} available for your TIER.
-            The remaining amount is {numberWithCommas(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed())} {purchasableCurrency}.
+            You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {currencyName} BOUGHT from {numberWithCommas(maximumBuy)} {currencyName} available for your TIER.
+            The remaining amount is {numberWithCommas(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed())} {currencyName}.
           </p>
           {currentUserTier && currentUserTier.start_time && currentUserTier.end_time && (
             <p className={styles.buyTokenFormTitle}>
@@ -437,11 +439,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
           <span>Input</span>
           {isWidthUp('sm', props.width) && <span>Your wallet balance:&nbsp;
             {numberWithCommas(parseFloat(tokenBalance.toString()).toFixed(6))} &nbsp;
-            {purchasableCurrency}
+            {currencyName}
           </span>}
           {isWidthDown('xs', props.width) && <span>Balance:&nbsp;
             {numberWithCommas(parseFloat(tokenBalance.toString()).toFixed(6))} &nbsp;
-            {purchasableCurrency}
+            {currencyName}
           </span>}
         </p>
         <div className={styles.buyTokenInputWrapper}>
@@ -466,8 +468,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             >
               Max
             </button>
-            <img src={`/images/${purchasableCurrency}.png`} alt={purchasableCurrency} className={styles.purchasableCurrencyIcon} />
-            {purchasableCurrency}
+            <img src={currencyIcon} alt={purchasableCurrency} className={styles.purchasableCurrencyIcon} />
+            {currencyName}
           </span>
         </div>
       </div>

@@ -640,7 +640,6 @@ export const deployPool = (campaign: any, history: any) => {
       // } else {
       //   tokenByETHActualRate = new BigNumber(reversedRate).multipliedBy(Math.pow(10, Number(tokenByEthDecimals))).toFixed();
       // }
-      //
 
       let tokenByEthDecimals = 0;
       let tokenByETHActualRate: any;
