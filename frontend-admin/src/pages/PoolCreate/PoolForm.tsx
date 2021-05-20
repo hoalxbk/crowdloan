@@ -411,6 +411,7 @@ function PoolForm(props: any) {
                 setValue={setValue}
                 errors={errors}
                 control={control}
+                watch={watch}
               />
 
             </div>
