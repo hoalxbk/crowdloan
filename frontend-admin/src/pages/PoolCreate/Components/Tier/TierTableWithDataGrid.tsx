@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import useStyles from "../style";
+import useStyles from "../../style";
 import FormControl from '@material-ui/core/FormControl';
 
 // @ts-ignore

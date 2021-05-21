@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import useStyles from "../style";
+import useStyles from "../../style";
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -8,12 +8,11 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import {Button, makeStyles} from "@material-ui/core";
-import CreateEditTierForm from "./CreateEditTierForm";
 import moment from "moment";
-import {DATETIME_FORMAT, TIERS} from "../../../constants";
-import {renderErrorCreatePool} from "../../../utils/validate";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
+import {DATETIME_FORMAT, TIERS} from "../../../../constants";
+import {renderErrorCreatePool} from "../../../../utils/validate";
 import BigNumber from "bignumber.js";
+import CreateEditClaimConfigForm from "./CreateEditClaimConfigForm";
 
 const useStylesTable = makeStyles({
   table: {
@@ -21,21 +20,21 @@ const useStylesTable = makeStyles({
   },
 });
 
-const createData = (name: string, startTime: any, endTime: any, minBuy: number, maxBuy: number, isEdit: boolean, ticket_allow_percent = 0) => {
-  return { name, startTime, endTime, minBuy, maxBuy, isEdit, ticket_allow_percent };
+const createData = (id: number, startTime: any, endTime: any, minBuy: number, maxBuy: number, isEdit: boolean) => {
+  return { id, startTime, endTime, minBuy, maxBuy, isEdit };
 };
 
 const createDefaultTiers = () => {
   return [
-    createData('-', null, null, 0, 1000, false),
-    createData('Dove', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 2000, false),
-    createData('Hawk', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 3000, false),
-    createData('Eagle', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 4000, false),
-    createData('Phoenix', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 5000, false),
+    // createData('-', null, null, 0, 1000, false),
+    // createData('Dove', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 2000, false),
+    // createData('Hawk', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 3000, false),
+    // createData('Eagle', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 4000, false),
+    // createData('Phoenix', moment().format(DATETIME_FORMAT), moment().add(1, 'd').format(DATETIME_FORMAT), 0, 5000, false),
   ];
 };
 
-function TierTable(props: any) {
+function ClaimConfigTable(props: any) {
   const classes = useStyles();
   const classesTable = useStylesTable();
   const {
@@ -50,18 +49,21 @@ function TierTable(props: any) {
   const [rows, setRows] = useState(createDefaultTiers());
 
   useEffect(() => {
-    if (poolDetail && poolDetail.tiers) {
-      const dataFormatted = poolDetail.tiers.map((item: any, index: any) => {
+    if (poolDetail && poolDetail.campaignClaimConfig) {
+      console.log('poolDetail.campaignClaimConfig-->item', poolDetail.campaignClaimConfig);
+
+      const dataFormatted = poolDetail.campaignClaimConfig.map((item: any, index: any) => {
         return createData(
-          TIERS[index],
+          index + 1,
           item.start_time ? moment(item.start_time * 1000).format(DATETIME_FORMAT) : null,
           item.end_time ? moment(item.end_time * 1000).format(DATETIME_FORMAT) : null,
-          (new BigNumber(item.min_buy)).toNumber(),
-          (new BigNumber(item.max_buy)).toNumber(),
+          (new BigNumber(item.min_percent_claim)).toNumber(),
+          (new BigNumber(item.max_percent_claim)).toNumber(),
           false,
-          item.ticket_allow_percent || 0,
         );
       });
+
+      console.log('dataFormatted-->item', dataFormatted);
 
       setRows(dataFormatted);
     }
@@ -99,7 +101,7 @@ function TierTable(props: any) {
   const deleteTier = (e: any, row: any, index: number) => {
     console.log('ROW: ', row, index);
     // eslint-disable-next-line no-restricted-globals
-    if (!confirm('Do you want delete this tier?')) {
+    if (!confirm('Do you want delete this record ?')) {
       return false;
     }
 
@@ -116,7 +118,7 @@ function TierTable(props: any) {
   return (
     <>
       {isOpenEditPopup &&
-        <CreateEditTierForm
+        <CreateEditClaimConfigForm
           isOpenEditPopup={isOpenEditPopup}
           setIsOpenEditPopup={setIsOpenEditPopup}
           renderError={renderError}
@@ -127,68 +129,51 @@ function TierTable(props: any) {
       }
 
       <div className={classes.formControl}>
-        <label className={classes.formControlLabel}>Tier Configuration</label>
+        <label className={classes.formControlLabel}>Claim Configuration</label>
       </div>
-      {/*<div className={classes.formControl}>*/}
-      {/*  <Button*/}
-      {/*    variant="contained"*/}
-      {/*    color="primary"*/}
-      {/*    onClick={openPopupCreate}*/}
-      {/*  >Create</Button>*/}
-      {/*</div>*/}
+      <div className={classes.formControl}>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={openPopupCreate}
+        >Create</Button>
+      </div>
       <TableContainer component={Paper}>
         <Table className={classesTable.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Name</TableCell>
-              <TableCell align="right">Allocation (%)</TableCell>
-              <TableCell align="right">Start Buy Time</TableCell>
+              <TableCell>Start Time</TableCell>
               <TableCell align="right">End Time</TableCell>
-              <TableCell align="right">Min Buy</TableCell>
-              <TableCell align="right">Max Buy</TableCell>
-              <TableCell align="right">Currency</TableCell>
+              <TableCell align="right">Min Percent Claim</TableCell>
+              <TableCell align="right">Max Percent Claim</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row: any, index: number) => {
-              let startTime = row.startTime;
-              let endTime = row.endTime;
+              let startTime = row.startTime || '--';
+              let endTime = row.endTime || '--';
               let minBuy = new BigNumber(row.minBuy || '0').toFixed();
               let maxBuy = new BigNumber(row.maxBuy || '0').toFixed();
-              if (index < minTier) {
-                startTime = '--';
-                endTime = '--';
-                minBuy = '0';
-                maxBuy = '0';
-              }
-
               return (
                 <TableRow key={index}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell align="right">{row.ticket_allow_percent || 0}</TableCell>
-                  <TableCell align="right">{startTime}</TableCell>
+                  <TableCell>{startTime}</TableCell>
                   <TableCell align="right">{endTime}</TableCell>
                   <TableCell align="right">{minBuy}</TableCell>
                   <TableCell align="right">{maxBuy}</TableCell>
-                  <TableCell align="right">{(acceptCurrency + '').toUpperCase()}</TableCell>
                   <TableCell align="right">
-
                     <Button
                       variant="contained"
                       color="primary"
                       onClick={(e) => openPopupEdit(e, row, index)}
-                      disabled={isDeployed || (index < minTier)}
                     >Edit</Button>
 
-                    {/*<Button*/}
-                    {/*  variant="contained"*/}
-                    {/*  color="secondary"*/}
-                    {/*  onClick={(e) => deleteTier(e, row, index)}*/}
-                    {/*  style={{marginLeft: 10, marginTop: 10}}*/}
-                    {/*>Delete</Button>*/}
+                    <Button
+                      variant="contained"
+                      color="secondary"
+                      onClick={(e) => deleteTier(e, row, index)}
+                      style={{marginLeft: 10, marginTop: 0}}
+                    >Delete</Button>
                   </TableCell>
                 </TableRow>
               )
@@ -199,7 +184,7 @@ function TierTable(props: any) {
 
       <input
         type="hidden"
-        name="tierConfiguration"
+        name="campaignClaimConfig"
         value={JSON.stringify(rows)}
         ref={register({
           // required: true
@@ -209,4 +194,4 @@ function TierTable(props: any) {
   );
 }
 
-export default TierTable;
+export default ClaimConfigTable;

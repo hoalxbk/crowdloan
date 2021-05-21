@@ -29,6 +29,11 @@ class Campaign extends Model {
   userBalanceSnapshots() {
     return this.hasMany('App/Models/UserBalanceSnapshot')
   }
+
+  campaignClaimConfig() {
+    return this.hasMany('App/Models/CampaignClaimConfig')
+  }
+
 }
 
 module.exports = Campaign;

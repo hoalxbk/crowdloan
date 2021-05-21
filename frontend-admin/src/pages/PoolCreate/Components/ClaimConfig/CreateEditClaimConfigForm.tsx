@@ -1,22 +1,23 @@
 import React from 'react';
-import ConfirmDialog from "../../../components/Base/ConfirmDialog";
-import useStyles from "../style";
+import ConfirmDialog from "../../../../components/Base/ConfirmDialog";
+import useStyles from "../../style";
 import {Controller, useForm} from "react-hook-form";
 import {DatePicker} from 'antd';
 import moment from "moment";
-import CurrencyInputWithValidate from "./CurrencyInputWithValidate";
-import {DATETIME_FORMAT} from "../../../constants";
-import {fieldMustBeGreaterThanZero, renderErrorCreatePool} from "../../../utils/validate";
+import CurrencyInputWithValidate from "../CurrencyInputWithValidate";
+import {DATETIME_FORMAT} from "../../../../constants";
+import {fieldMustBeGreaterThanZero, renderErrorCreatePool} from "../../../../utils/validate";
 import BigNumber from 'bignumber.js';
+import TableCell from "@material-ui/core/TableCell";
 
-function CreateEditTierForm(props: any) {
+function CreateEditClaimConfigForm(props: any) {
   const classes = useStyles();
   const {
     isOpenEditPopup, setIsOpenEditPopup, editData, isEdit,
     handleCreateUpdateData,
   } = props;
   const renderError = renderErrorCreatePool;
-
+  console.log('editData', editData);
   const {
     register, setValue, getValues, clearErrors, errors, handleSubmit, control,
     formState: { touched, isValid }
@@ -32,12 +33,10 @@ function CreateEditTierForm(props: any) {
 
   const submitData = (data: any) => {
     const responseData = {
-      name: data.name,
       startTime: data.startTime.format(DATETIME_FORMAT),
       endTime: data.endTime.format(DATETIME_FORMAT),
       minBuy: data.minBuy,
       maxBuy: data.maxBuy,
-      ticket_allow_percent: data.ticket_allow_percent,
     };
     handleCreateUpdateData && handleCreateUpdateData(responseData);
   };
@@ -63,43 +62,17 @@ function CreateEditTierForm(props: any) {
         // btnLoading={true}
       >
 
-        <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>Name</label>
-          <input
-            type="text"
-            value={editData.name}
-            className={classes.formControlInput}
-            disabled={true}
-          />
-          <input
-            type="hidden"
-            name="name"
-            ref={register({ required: true })}
-            maxLength={255}
-            className={classes.formControlInput}
-          />
-        </div>
-        <p className={classes.formErrorMessage}>
-          {
-            renderError(errors, 'name')
-          }
-        </p>
-
-
-        <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>Allocation (%)</label>
-          <div>
-            <CurrencyInputWithValidate
-              register={register}
-              errors={errors}
-              initValue={editData.ticket_allow_percent}
-              controlName={'ticket_allow_percent'}
-              validateRule={{
-                // required: true,
-              }}
-            />
-          </div>
-        </div>
+        {/*{isEdit &&*/}
+        {/*  <div className={classes.formControl}>*/}
+        {/*    <label className={classes.formControlLabel}>Record No.</label>*/}
+        {/*    <input*/}
+        {/*      type="text"*/}
+        {/*      value={editData.id}*/}
+        {/*      className={classes.formControlInput}*/}
+        {/*      disabled={true}*/}
+        {/*    />*/}
+        {/*  </div>*/}
+        {/*}*/}
 
 
         <div className={classes.formControl}>
@@ -187,7 +160,7 @@ function CreateEditTierForm(props: any) {
 
 
         <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>Min Buy</label>
+          <label className={classes.formControlLabel}>Min Percent Claim</label>
           <div>
             <CurrencyInputWithValidate
               register={register}
@@ -207,20 +180,10 @@ function CreateEditTierForm(props: any) {
               }}
             />
           </div>
-          {/*<p className={classes.formErrorMessage}>*/}
-          {/*  {*/}
-          {/*    renderError(errors, 'minBuyGreaterMaxBuy')*/}
-          {/*  }*/}
-          {/*</p>*/}
-          {/*<p className={classes.formErrorMessage}>*/}
-          {/*  {*/}
-          {/*    renderError(errors, 'greaterThanZero')*/}
-          {/*  }*/}
-          {/*</p>*/}
         </div>
 
         <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>Max Buy</label>
+          <label className={classes.formControlLabel}>Max Percent Claim</label>
           <div>
             <CurrencyInputWithValidate
               register={register}
@@ -271,4 +234,4 @@ function CreateEditTierForm(props: any) {
   );
 }
 
-export default CreateEditTierForm;
+export default CreateEditClaimConfigForm;

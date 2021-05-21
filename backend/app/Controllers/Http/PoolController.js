@@ -24,7 +24,7 @@ const Web3 = require('web3');
 const web3 = new Web3(NETWORK_CONFIGS.WEB3_API_URL);
 const Config = use('Config')
 const moment = require('moment');
-const BigNumber = use('bignumber.js')
+const BigNumber = use('bignumber.js');
 const {pick} = require('lodash');
 
 class PoolController {
@@ -90,27 +90,12 @@ class PoolController {
       claimConfig.fill(claimConfigData);
       await claimConfig.save();
 
-      const tiers = (inputParams.tier_configuration || []).map((item, index) => {
-        const tierObj = new Tier();
-        tierObj.fill({
-          level: index,
-          name: item.name,
+      const poolService = new PoolService;
+      // Update Claim Config
+      await poolService.updateClaimConfig(campaign, inputParams.claim_configuration || []);
 
-          // start_time: moment.utc(item.startTime).unix(),
-          // end_time: moment.utc(item.endTime).unix(),
-          start_time: item.startTime,
-          end_time: item.endTime,
-
-          min_buy: new BigNumber(item.minBuy || 0).toFixed(),
-          max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
-          ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
-          currency: item.currency,
-        });
-        return tierObj;
-      });
-      await campaign.tiers().saveMany(tiers);
-
-      console.log('inputParams.tier_configuration', JSON.stringify(tiers));
+      // Update Tier Config
+      await poolService.updateTierConfig(campaign, inputParams.tier_configuration || []);
 
       const campaignId = campaign.id;
       // Create Web3 Account
@@ -131,7 +116,7 @@ class PoolController {
       'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
-      'min_tier', 'tier_configuration',
+      'min_tier', 'tier_configuration', 'claim_configuration',
     ]);
 
     const tokenInfo = inputParams.tokenInfo;
@@ -169,46 +154,19 @@ class PoolController {
     console.log('[updatePool] - Update Pool with data: ', data, params);
     const campaignId = params.campaignId;
     try {
+      const poolService = new PoolService;
       const campaign = await CampaignModel.query().where('id', campaignId).first();
       if (!campaign) {
         return HelperUtils.responseNotFound('Pool not found');
       }
       await CampaignModel.query().where('id', campaignId).update(data);
 
-      // update claim config
-      const claimConfig = await CampaignClaimConfigModel.query().where('campaign_id', campaignId).first();
-      if (!claimConfig) {
-        return HelperUtils.responseNotFound('Not found pool claim config !');
-      }
-      const claimConfigUpdate = {
-        min_percent_claim: claimConfig.min_percent_claim,
-        max_percent_claim: claimConfig.max_percent_claim,
-        campaign_id: claimConfig.campaign_id,
-        start_time: inputParams.release_time
-      }
-      await CampaignClaimConfigModel.query().where('id', claimConfig.id).update(claimConfigUpdate);
+      // Update Claim Config
+      await poolService.updateClaimConfig(campaign, inputParams.claim_configuration || []);
 
+      // Update Tier Config
       if (!campaign.is_deploy) {
-        const tiers = (inputParams.tier_configuration || []).map((item, index) => {
-          const tierObj = new Tier();
-          tierObj.fill({
-            level: index,
-            name: item.name,
-            // start_time: moment.utc(item.startTime).unix(),
-            // end_time: moment.utc(item.endTime).unix(),
-            start_time: item.startTime,
-            end_time: item.endTime,
-
-            min_buy: new BigNumber(item.minBuy || 0).toFixed(),
-            max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
-            ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
-            currency: item.currency,
-          });
-          return tierObj;
-        });
-        const campaignUpdated = await CampaignModel.query().where('id', campaignId).first();
-        await campaignUpdated.tiers().delete();
-        await campaignUpdated.tiers().saveMany(tiers);
+        await poolService.updateTierConfig(campaign, inputParams.tier_configuration || []);
       }
 
       // Delete cache
@@ -292,7 +250,7 @@ class PoolController {
     const poolId = params.campaignId;
     console.log('Start getPool (Admin) with poolId: ', poolId);
     try {
-      let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      let pool = await CampaignModel.query().with('tiers').with('campaignClaimConfig').where('id', poolId).first();
       if (!pool) {
         return HelperUtils.responseNotFound('Pool not found');
       }
