@@ -7,10 +7,13 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import { ClipLoader } from "react-spinners";
+import { useTypedSelector } from '../../../hooks/useTypedSelector';
+import { ETH_CHAIN_ID } from '../../../constants/network';
 
 import useStyles from './style';
 
 const ETHERSCAN_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL || "";
+const BCSSCAN_URL = process.env.REACT_APP_BSCSCAN_BASE_URL || "";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -77,6 +80,7 @@ const DialogContent = withStyles((theme: Theme) => ({
 
 const TransactionSubmitModal: React.FC<any> = (props: any) => {
   const styles = useStyles();
+  const { appChainID } = useTypedSelector(state => state.appNetwork).data;
   const { opened, handleClose, transactionHash, additionalText } = props;
 
   return (
@@ -92,7 +96,7 @@ const TransactionSubmitModal: React.FC<any> = (props: any) => {
                 <span className={styles.dialogLabel}>TXn Hash</span>
                 <input value={transactionHash} className={styles.dialogInput} disabled={true} />
                 <a 
-                  href={`${ETHERSCAN_URL}/tx/${transactionHash}`} 
+                  href={ETH_CHAIN_ID == appChainID ? `{${ETHERSCAN_URL}/tx/${transactionHash}` : `{${BCSSCAN_URL}/address/${transactionHash}`}
                   className={styles.dialogButton} 
                   target="_blank"
                 >

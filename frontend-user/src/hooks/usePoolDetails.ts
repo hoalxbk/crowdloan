@@ -54,14 +54,25 @@ const BSC_ICON = '/images/bsc.svg';
 const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
   const [poolDetailDone, setPoolDetailDone] = useState<boolean>(false);
   const { loading: fetchPoolLoading, error, data }  = useFetch<any>(`/pool/${poolId}`);
-  const { tokenDetails } = useTokenDetails(data?.token, data?.network_available);
   const { data: connectedAccountTier } = useTypedSelector(state => state.userTier);
 
   const poolDetails = useMemo(() => {
-    if (data && data.tiers && !fetchPoolLoading && !error && tokenDetails && poolDetailDone)  {
+    if (data && data.tiers && !fetchPoolLoading && !error && poolDetailDone)  {
       const buyLimit: number[] = [];
       const minimumBuy: number[] = [];
       const tiersWithDetails: Tier[] = [];
+      
+      const tokenDetails = (data.token == '' || data.token == null || data.token == 'TBD') ? {
+        symbol: 'PRARE',
+        name: 'Polka Rare',
+        decimals: 18,
+        address: 'Token contract not available yet.'
+      } : {
+        symbol: data.symbol,
+        name: data.name,
+        decimals: data.decimals,
+        address: data.token
+      }
       
       data.tiers.length > 0 && data.tiers.map((tier: any) => { 
         buyLimit.push(tier.max_buy);
@@ -109,11 +120,11 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
     }
 
     return;
-  }, [data, fetchPoolLoading, error, poolDetailDone, tokenDetails, connectedAccountTier]);
+  }, [data, fetchPoolLoading, error, poolDetailDone, connectedAccountTier]);
 
   useEffect(() => {
-    tokenDetails && setPoolDetailDone(true);
-  }, [tokenDetails]);
+    data && setPoolDetailDone(true);
+  }, [data]);
 
   return  {
     poolDetails,
