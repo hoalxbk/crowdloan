@@ -47,7 +47,7 @@ const ModalTransaction = (props: any) => {
           </div>
           <div className="modal-content__foot">
             <a
-              href={ETH_CHAIN_ID == appChainID ? `{${ETHERSCAN_URL}/tx/${transactionHashes[0]}` : `{${BCSSCAN_URL}/address/${transactionHashes[0]}`}
+              href={ETH_CHAIN_ID == appChainID ? `${ETHERSCAN_URL}/tx/${transactionHashes[0]}` : `${BCSSCAN_URL}/address/${transactionHashes[0]}`}
               target="_blank"
               className={commonStyles.nnb1418d}
             >View on Etherscan</a>

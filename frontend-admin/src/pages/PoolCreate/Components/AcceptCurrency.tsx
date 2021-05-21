@@ -7,8 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import {Controller} from "react-hook-form";
 import {getTiers} from "../../../request/tier";
 import {renderErrorCreatePool} from "../../../utils/validate";
-import {useSelector} from "react-redux";
-import {BSC_NETWORK_ACCEPT_CHAINS, ETH_NETWORK_ACCEPT_CHAINS, NETWORK_AVAILABLE} from "../../../constants";
+import {NETWORK_AVAILABLE} from "../../../constants";
 
 function AcceptCurrency(props: any) {
   const classes = useStyles();
@@ -17,7 +16,6 @@ function AcceptCurrency(props: any) {
     poolDetail
   } = props;
   const renderError = renderErrorCreatePool;
-  const { userCurrentNetwork } = useSelector((state: any) => state);
 
   useEffect(() => {
     if (poolDetail && poolDetail.accept_currency) {
@@ -36,12 +34,7 @@ function AcceptCurrency(props: any) {
   const isDeployed = !!poolDetail?.is_deploy;
   const networkAvailable = watch('networkAvailable');
   let isBscNetworks = networkAvailable === NETWORK_AVAILABLE.BSC;
-  console.log('userCurrentNetwork',
-    // userCurrentNetwork?.currentNetworkId,
-    // BSC_NETWORK_ACCEPT_CHAINS,
-    // BSC_NETWORK_ACCEPT_CHAINS[(userCurrentNetwork?.currentNetworkId || '') + ''],
-    isBscNetworks,
-  );
+  // console.log('userCurrentNetwork', isBscNetworks);
 
   return (
     <>

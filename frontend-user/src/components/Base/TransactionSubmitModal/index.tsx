@@ -1,14 +1,14 @@
 import React from 'react';
-import { withStyles, Theme, createStyles, WithStyles } from '@material-ui/core/styles';
+import {createStyles, Theme, withStyles, WithStyles} from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
 import MuiDialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import { ClipLoader } from "react-spinners";
-import { useTypedSelector } from '../../../hooks/useTypedSelector';
-import { ETH_CHAIN_ID } from '../../../constants/network';
+import {ClipLoader} from "react-spinners";
+import {useTypedSelector} from '../../../hooks/useTypedSelector';
+import {ETH_CHAIN_ID} from '../../../constants/network';
 
 import useStyles from './style';
 
@@ -95,16 +95,16 @@ const TransactionSubmitModal: React.FC<any> = (props: any) => {
                 <>
                 <span className={styles.dialogLabel}>TXn Hash</span>
                 <input value={transactionHash} className={styles.dialogInput} disabled={true} />
-                <a 
-                  href={ETH_CHAIN_ID == appChainID ? `{${ETHERSCAN_URL}/tx/${transactionHash}` : `{${BCSSCAN_URL}/address/${transactionHash}`}
-                  className={styles.dialogButton} 
+                <a
+                  href={ETH_CHAIN_ID == appChainID ? `${ETHERSCAN_URL}/tx/${transactionHash}` : `${BCSSCAN_URL}/address/${transactionHash}`}
+                  className={styles.dialogButton}
                   target="_blank"
                 >
                   View on Etherscan
                 </a>
                 {
                   additionalText && (
-                    <p style={{ marginTop: 30, fontWeight: 'bold', lineHeight: '18px', fontSize: 15.5, color: '#8db4ff', fontFamily: 'Helvetica' }}> 
+                    <p style={{ marginTop: 30, fontWeight: 'bold', lineHeight: '18px', fontSize: 15.5, color: '#8db4ff', fontFamily: 'Helvetica' }}>
                       {additionalText}
                     </p>
                   )

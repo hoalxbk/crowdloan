@@ -1,8 +1,11 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
+const CampaignClaimConfigModel = use('App/Models/CampaignClaimConfig');
+const TierModel = use('App/Models/Tier');
 const Config = use('Config');
 const Const = use('App/Common/Const');
+const BigNumber = use('bignumber.js');
 
 const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -82,6 +85,54 @@ class PoolService {
       builder.where('wallet_address', walletAddress);
     }, '>', 0);
     return query;
+  }
+
+  checkExist(campaignId) {
+
+  }
+
+  updatePoolAdmin() {
+
+  }
+
+  async updateClaimConfig(campaign, claim_configuration) {
+    const campaignClaimConfigs = claim_configuration.map((item, index) => {
+      const tierObj = new CampaignClaimConfigModel();
+      tierObj.fill({
+        start_time: item.startTime,
+        end_time: item.endTime,
+        min_percent_claim: new BigNumber(item.minBuy || 0).toFixed(),
+        max_percent_claim: new BigNumber(item.maxBuy || 0).toFixed(),
+      });
+      return tierObj;
+    });
+
+    await campaign.campaignClaimConfig().delete();
+    await campaign.campaignClaimConfig().saveMany(campaignClaimConfigs);
+  }
+
+  async updateTierConfig(campaign, tier_configuration) {
+    const tiers = tier_configuration.map((item, index) => {
+      const tierObj = new TierModel();
+      tierObj.fill({
+        level: index,
+        name: item.name,
+        // start_time: moment.utc(item.startTime).unix(),
+        // end_time: moment.utc(item.endTime).unix(),
+        start_time: item.startTime,
+        end_time: item.endTime,
+
+        min_buy: new BigNumber(item.minBuy || 0).toFixed(),
+        max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
+        ticket_allow: new BigNumber(item.ticket_allow || 0).toFixed(),
+        currency: item.currency,
+      });
+      return tierObj;
+    });
+    await campaign.tiers().delete();
+    await campaign.tiers().saveMany(tiers);
+
+    console.log('inputParams.tier_configuration', JSON.stringify(tiers));
   }
 
 }

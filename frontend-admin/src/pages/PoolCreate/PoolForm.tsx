@@ -20,7 +20,7 @@ import TotalCoinSold from "./Components/TotalCoinSold";
 import TokenLogo from "./Components/TokenLogo";
 import DurationTime from "./Components/DurationTimes";
 import MinTier from "./Components/MinTier";
-import TierTable from "./Components/TierTable";
+import TierTable from "./Components/Tier/TierTable";
 import BuyType from "./Components/BuyType";
 import PoolType from "./Components/PoolType";
 import NetworkAvailable from "./Components/NetworkAvailable";
@@ -34,6 +34,7 @@ import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
 import PoolWebsite from "./Components/PoolWebsite";
 import moment from "moment";
+import ClaimConfigTable from "./Components/ClaimConfig/ClaimConfigTable";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -66,6 +67,7 @@ function PoolForm(props: any) {
   });
 
   const createUpdatePool = async (data: any) => {
+    // Format Tiers
     const minTier = data.minTier;
     let tierConfiguration = data.tierConfiguration || '[]';
     tierConfiguration = JSON.parse(tierConfiguration);
@@ -79,6 +81,15 @@ function PoolForm(props: any) {
         item.minBuy = 0;
       }
 
+      item.startTime = moment(item.startTime).unix() || null;
+      item.endTime = moment(item.endTime).unix() || null;
+      return item;
+    });
+
+    // Format Claim Config
+    let campaignClaimConfig = data.campaignClaimConfig || '[]';
+    campaignClaimConfig = JSON.parse(campaignClaimConfig);
+    campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
       item.startTime = moment(item.startTime).unix() || null;
       item.endTime = moment(item.endTime).unix() || null;
       return item;
@@ -133,6 +144,9 @@ function PoolForm(props: any) {
       min_tier: data.minTier,
       tier_configuration: tierConfiguration,
 
+      // Claim Configuration
+      claim_configuration: campaignClaimConfig,
+
       // Wallet
       wallet: isEdit ? poolDetail?.wallet : {},
     };
@@ -168,6 +182,15 @@ function PoolForm(props: any) {
 
   // Update After Deploy
   const updatePoolAfterDeloy = async (data: any) => {
+    // Format Claim Config
+    let campaignClaimConfig = data.campaignClaimConfig || '[]';
+    campaignClaimConfig = JSON.parse(campaignClaimConfig);
+    campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
+      item.startTime = moment(item.startTime).unix() || null;
+      item.endTime = moment(item.endTime).unix() || null;
+      return item;
+    });
+
     // Only allow update informations:
     // name
     // website
@@ -186,6 +209,10 @@ function PoolForm(props: any) {
       // Token
       token_images: data.tokenImages,
       total_sold_coin: data.totalSoldCoin,
+
+      // Claim Configuration
+      claim_configuration: campaignClaimConfig,
+
     };
 
     console.log('[updatePoolAfterDeloy] - Submit with data: ', submitData);
@@ -511,6 +538,22 @@ function PoolForm(props: any) {
       </Grid>
 
 
+
+
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+
+          <div className={classes.exchangeRate}>
+          <ClaimConfigTable
+            poolDetail={poolDetail}
+            register={register}
+            watch={watch}
+          />
+          </div>
+
+
+        </Grid>
+      </Grid>
 
       <Grid container spacing={2}>
         <Grid item xs={12}>
