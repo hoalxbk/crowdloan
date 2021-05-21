@@ -115,26 +115,7 @@ class WhiteListUserController {
         console.log(`Do not found tiers with campaign ${campaign_id}`);
         return HelperUtils.responseBadRequest('Do not found tiers with campaign request');
       }
-      // calc number of ticket allowance for each tier then save to db
-      const newTiers = oldTiers.toJSON().map(item => {
-        const tierObj = new TierModel();
-        tierObj.fill({
-          level: item.level,
-          name: item.name,
-          start_time: item.start_time,
-          end_time: item.end_time,
-          min_buy: item.min_buy,
-          max_buy: item.max_buy,
-          ticket_allow_percent: item.ticket_allow_percent,
-          ticket_allow: Math.floor(total_ticket * item.ticket_allow_percent / 100)
-        });
-        return tierObj;
-      });
-      // save to db
-      const campaignUpdated = await CampaignModel.query().where('id', campaign_id).first();
-      await campaignUpdated.tiers().delete();
-      await campaignUpdated.tiers().saveMany(newTiers);
-
+      const newTiers = oldTiers.toJSON();
       // filter tier
       let tierData = [];
       for (let i = 0; i < newTiers.length; i++) {

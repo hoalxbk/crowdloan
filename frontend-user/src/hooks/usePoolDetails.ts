@@ -67,7 +67,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         buyLimit.push(tier.max_buy);
         minimumBuy.push(tier.min_buy);
         tiersWithDetails.push({
-          allocation: tier.ticket_allow_percent,
+          allocation: tier.ticket_allow,
           name: tier.name,
           // maxBuy: `${tier.max_buy} ${data.accept_currency.toUpperCase()}`,
           startTime: tier.start_time,

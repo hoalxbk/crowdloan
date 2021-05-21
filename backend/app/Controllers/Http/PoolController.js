@@ -103,7 +103,7 @@ class PoolController {
 
           min_buy: new BigNumber(item.minBuy || 0).toFixed(),
           max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
-          ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
+          ticket_allow: new BigNumber(item.ticket_allow || 0).toFixed(),
           currency: item.currency,
         });
         return tierObj;
@@ -201,7 +201,7 @@ class PoolController {
 
             min_buy: new BigNumber(item.minBuy || 0).toFixed(),
             max_buy: new BigNumber(item.maxBuy || 0).toFixed(),
-            ticket_allow_percent: new BigNumber(item.ticket_allow_percent || 0).toFixed(),
+            ticket_allow: new BigNumber(item.ticket_allow || 0).toFixed(),
             currency: item.currency,
           });
           return tierObj;
