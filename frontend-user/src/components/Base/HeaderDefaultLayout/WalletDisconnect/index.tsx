@@ -12,6 +12,8 @@ import { AppContext } from '../../../../AppContext';
 import {withWidth, isWidthDown, isWidthUp} from '@material-ui/core';
 import useStyles from './style';
 import { trimMiddlePartAddress } from '../../../../utils/accountAddress';
+import {useWeb3React} from "@web3-react/core";
+import {checkIsWalletLink, disconnectWalletLink} from "../../../../utils";
 
 const linkIcon = '/images/hyperlink.svg';
 
@@ -90,9 +92,15 @@ const WalletDisconnect: React.FC<ComponentProps> = (props: any) => {
   const currency = appChainID === ETH_CHAIN_ID ? 'ETH': 'BNB'
   const walletIconPath = currentWallet ? `/images/${currentWallet.typeId}.svg`: '';
 
+  const {connector} = useWeb3React();
   const handleAccountLogout = async () => {
     if (walletName === ConnectorNames.WalletConnect && localStorage.getItem("walletconnect")) {
       localStorage.removeItem("walletconnect");
+    }
+
+    // Disconnect WalletLink
+    if (checkIsWalletLink(connector)) {
+      connector && disconnectWalletLink(connector);
     }
 
     handleClose();
