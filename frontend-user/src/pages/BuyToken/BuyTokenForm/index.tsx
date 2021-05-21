@@ -261,7 +261,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   if (tokenAllowance != null || tokenAllowance != undefined) {
     if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))
     && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH)
-    && !wrongChain && ableToFetchFromBlockchain && isDeployed && (alreadyJoinPool || joinPoolSuccess) && existedWinner && !disableAllButton
+    && !wrongChain && ableToFetchFromBlockchain && isDeployed
+    // && (alreadyJoinPool || joinPoolSuccess)
+    && existedWinner && !disableAllButton
     )  {
       enableApprove = true;
     }
