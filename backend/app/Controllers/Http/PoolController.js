@@ -76,29 +76,32 @@ class PoolController {
     console.log('Create Pool with data: ', data);
 
     try {
+      // Create Pool
+      const poolService = new PoolService;
       const campaign = new CampaignModel();
       campaign.fill(data);
       await campaign.save();
 
-      // save config claim token for campaign
-      const claimConfigData = {
-        campaign_id:  campaign.id,
-        start_time: inputParams.release_time,
-        max_percent_claim: 100,
-      };
-      const claimConfig = new CampaignClaimConfigModel();
-      claimConfig.fill(claimConfigData);
-      await claimConfig.save();
-
-      const poolService = new PoolService;
       // Update Claim Config
-      await poolService.updateClaimConfig(campaign, inputParams.claim_configuration || []);
+      let claimConfigs = inputParams.claim_configuration || [];
+      if (claimConfigs.length == 0) {
+        claimConfigs = [{
+          minBuy: 0,
+          maxBuy: 100,
+          endTime: null,
+          startTime:inputParams.release_time,
+        }];
+      }
+      console.log('[createPool] - Update Claim Config - claimConfigs', claimConfigs);
+      await poolService.updateClaimConfig(campaign, claimConfigs);
 
       // Update Tier Config
+      console.log('[createPool] - Update Tier Config - inputParams.tier_configuration', inputParams.tier_configuration);
       await poolService.updateTierConfig(campaign, inputParams.tier_configuration || []);
 
-      const campaignId = campaign.id;
       // Create Web3 Account
+      const campaignId = campaign.id;
+      console.log('[createPool] - Create Walllet Account with campaignId', campaignId);
       const account = await (new WalletAccountService).createWalletAddress(campaignId);
 
       return HelperUtils.responseSuccess(campaign);
