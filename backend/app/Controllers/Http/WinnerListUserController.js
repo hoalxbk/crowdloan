@@ -218,6 +218,26 @@ class WinnerListUserController {
     }
   }
 
+
+  async checkPickedWinner({request, params}) {
+    try {
+      console.log('[checkPickedWinner] - Params: ', params);
+      const campaign_id = params.campaignId;
+      const winnerService = new WinnerListService();
+
+      // TODO: Add to Cache
+      let existRecord = await winnerService.buildQueryBuilder({ campaign_id }).first();
+      if (existRecord) {
+        console.log('[checkPickedWinner] - Exist Winner: ', existRecord);
+        return HelperUtils.responseSuccess(true, 'Campaign picked Winner');
+      }
+      return HelperUtils.responseNotFound(false, 'The campaign has not yet chosen a winner');
+    } catch (e) {
+      console.log('[checkPickedWinner] - ERROR: ', e);
+      return HelperUtils.responseErrorInternal();
+    }
+  }
+
 }
 
 module.exports = WinnerListUserController

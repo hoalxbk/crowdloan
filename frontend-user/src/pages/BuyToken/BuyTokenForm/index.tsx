@@ -489,11 +489,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         <p className={styles.buyTokenEstimateLabel}>You will get approximately</p>
         <strong className={styles.buyTokenEstimateAmount}>{numberWithCommas(`${estimateTokens}`)} {tokenDetails?.symbol}</strong>
       </div>
-      {/* {
+
+      {
         <p className={`${poolErrorBeforeBuy?.type === MessageType.error ? `${styles.poolErrorBuy}`: `${styles.poolErrorBuyWarning}`}`}>
           {poolErrorBeforeBuy && poolErrorBeforeBuy.message}
         </p>
-      } */}
+      }
+
       <div className={styles.btnGroup}>
         <Button
         text={new BigNumber(tokenAllowance || 0).gt(0) ? 'Approved': 'Approve'}

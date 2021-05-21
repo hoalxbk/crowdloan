@@ -81,6 +81,14 @@ const BuyToken: React.FC<any> = (props: any) => {
     poolDetails ? `/pool/${poolDetails?.id}/check-exist-winner?wallet_address=${connectedAccount}`: undefined,
     poolDetails?.method !== "whitelist"
   );
+
+  const { data: pickedWinner } = useFetch<Array<any>>(
+    poolDetails ? `/pool/${poolDetails?.id}/check-picked-winner`: undefined,
+    poolDetails?.method !== "whitelist"
+  );
+
+  console.log('pickedWinner', pickedWinner);
+
   const { data: alreadyJoinPool } = useFetch<boolean>(
     poolDetails && connectedAccount ?
     `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
@@ -174,7 +182,7 @@ const BuyToken: React.FC<any> = (props: any) => {
       return 'Determined at whitelist closing';
     }
 
-    if (existedWinner && poolDetails) {
+    if (pickedWinner && poolDetails) {
       return `*Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${poolDetails?.purchasableCurrency?.toUpperCase()}`
     }
 
