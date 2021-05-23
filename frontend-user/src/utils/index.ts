@@ -144,3 +144,16 @@ export const fixGasLimitWithProvider = (library: any, type = 'deposit') => {
 
   return overrides;
 };
+
+export const checkIsWalletLink = (library: any) => {
+  const provider = (library?.provider as any);
+  if (provider?.isWalletLink) {
+    console.log('Provider is WalletLink:', provider);
+  }
+  return !!provider?.isWalletLink;
+};
+
+export const disconnectWalletLink = (library: any) => {
+  const provider = (library?.provider as any);
+  provider?.close && provider?.close();
+};

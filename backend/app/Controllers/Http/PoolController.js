@@ -1,9 +1,7 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
-const CampaignClaimConfigModel = use('App/Models/CampaignClaimConfig');
 const WalletAccountModel = use('App/Models/WalletAccount');
-const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
 const PoolService = use('App/Services/PoolService');
@@ -37,7 +35,7 @@ class PoolController {
       'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
-      'min_tier', 'tier_configuration',
+      'min_tier', 'tier_configuration', 'claim_configuration',
     ]);
 
     const tokenInfo = inputParams.tokenInfo;
@@ -76,30 +74,26 @@ class PoolController {
     console.log('Create Pool with data: ', data);
 
     try {
+      // Create Pool
+      const poolService = new PoolService;
       const campaign = new CampaignModel();
       campaign.fill(data);
       await campaign.save();
 
-      // save config claim token for campaign
-      const claimConfigData = {
-        campaign_id:  campaign.id,
-        start_time: inputParams.release_time,
-        max_percent_claim: 100,
-      };
-      const claimConfig = new CampaignClaimConfigModel();
-      claimConfig.fill(claimConfigData);
-      await claimConfig.save();
-
-      const poolService = new PoolService;
       // Update Claim Config
-      await poolService.updateClaimConfig(campaign, inputParams.claim_configuration || []);
+      let claimConfigs = inputParams.claim_configuration || [];
+      claimConfigs = poolService.addDefaultClaimConfig(claimConfigs, campaign.release_time);
+      console.log('[createPool] - Update Claim Config - claimConfigs', claimConfigs);
+      await poolService.updateClaimConfig(campaign, claimConfigs);
 
       // Update Tier Config
+      console.log('[createPool] - Update Tier Config - inputParams.tier_configuration', inputParams.tier_configuration);
       await poolService.updateTierConfig(campaign, inputParams.tier_configuration || []);
 
-      const campaignId = campaign.id;
       // Create Web3 Account
+      const campaignId = campaign.id;
       const account = await (new WalletAccountService).createWalletAddress(campaignId);
+      console.log('[createPool] - Create Walllet Account:', account.wallet_address);
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {

@@ -231,12 +231,22 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       }
     }
 
+    // if (
+    //   input &&
+    //   new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
+    // ) {
+    //   return {
+    //     message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
+    //     type: MessageType.error
+    //   }
+    // }
+
     if (
       input &&
-      new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
+      new BigNumber(input).gt(new BigNumber(maximumBuy))
     ) {
       return {
-        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
+        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(maximumBuy).toFixed()}`)} ${currencyName}.`,
         type: MessageType.error
       }
     }
@@ -261,7 +271,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   if (tokenAllowance != null || tokenAllowance != undefined) {
     if ((tokenAllowance <= 0 || new BigNumber(tokenAllowance).lt(new BigNumber(input)))
     && (purchasableCurrency && purchasableCurrency !== PurchaseCurrency.ETH)
-    && !wrongChain && ableToFetchFromBlockchain && isDeployed && (alreadyJoinPool || joinPoolSuccess) && existedWinner && !disableAllButton
+    && !wrongChain && ableToFetchFromBlockchain && isDeployed
+    // && (alreadyJoinPool || joinPoolSuccess)
+    && existedWinner && !disableAllButton
     )  {
       enableApprove = true;
     }
@@ -425,6 +437,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     }
   }
 
+  console.log('poolAmount--maximumBuy:==========>', poolAmount, maximumBuy);
+
   return (
     <div className={styles.buyTokenForm}>
       {
@@ -489,11 +503,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         <p className={styles.buyTokenEstimateLabel}>You will get approximately</p>
         <strong className={styles.buyTokenEstimateAmount}>{numberWithCommas(`${estimateTokens}`)} {tokenDetails?.symbol}</strong>
       </div>
-      {/* {
+
+      {
         <p className={`${poolErrorBeforeBuy?.type === MessageType.error ? `${styles.poolErrorBuy}`: `${styles.poolErrorBuyWarning}`}`}>
           {poolErrorBeforeBuy && poolErrorBeforeBuy.message}
         </p>
-      } */}
+      }
+
       <div className={styles.btnGroup}>
         <Button
         text={new BigNumber(tokenAllowance || 0).gt(0) ? 'Approved': 'Approve'}
