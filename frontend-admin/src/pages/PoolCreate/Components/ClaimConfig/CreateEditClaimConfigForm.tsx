@@ -111,7 +111,7 @@ function CreateEditClaimConfigForm(props: any) {
 
 
         <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>Max Percent Claim</label>
+          <label className={classes.formControlLabel}>Max Claim (%)</label>
           <div>
             <CurrencyInputWithValidate
               register={register}
