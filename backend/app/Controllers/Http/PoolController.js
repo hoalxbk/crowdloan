@@ -353,6 +353,8 @@ class PoolController {
       // // Cache data
       // RedisUtils.createRedisPoolList(param, listData);
 
+      console.log('listData:======>', JSON.stringify(listData));
+
       return HelperUtils.responseSuccess(listData);
     } catch (e) {
       console.log(e)

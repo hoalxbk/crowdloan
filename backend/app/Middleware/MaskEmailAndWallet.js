@@ -4,7 +4,7 @@ class MaskEmailAndWallet {
   async handle({ request, response, view }, next) {
     await next();
     // get response data
-    const data = response._lazyBody?.content?.data;
+    const data = response._lazyBody && response._lazyBody.content && response._lazyBody.content.data;
     this.doMask(data,['email', 'wallet', 'wallet_address']);
   }
 
