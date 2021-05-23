@@ -231,12 +231,22 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       }
     }
 
+    // if (
+    //   input &&
+    //   new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
+    // ) {
+    //   return {
+    //     message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
+    //     type: MessageType.error
+    //   }
+    // }
+
     if (
       input &&
-      new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
+      new BigNumber(input).gt(new BigNumber(maximumBuy))
     ) {
       return {
-        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
+        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(maximumBuy).toFixed()}`)} ${currencyName}.`,
         type: MessageType.error
       }
     }
@@ -426,6 +436,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       setApproveModal(false);
     }
   }
+
+  console.log('poolAmount--maximumBuy:==========>', poolAmount, maximumBuy);
 
   return (
     <div className={styles.buyTokenForm}>

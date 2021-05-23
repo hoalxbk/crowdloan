@@ -95,6 +95,19 @@ class PoolService {
 
   }
 
+  addDefaultClaimConfig(claim_configuration, release_time) {
+    let claimConfigs = claim_configuration || [];
+    if (claimConfigs.length == 0) {
+      claimConfigs = [{
+        minBuy: 0,
+        maxBuy: 100,
+        endTime: null,
+        startTime: release_time,
+      }];
+    }
+    return claimConfigs
+  }
+
   async updateClaimConfig(campaign, claim_configuration) {
     const campaignClaimConfigs = claim_configuration.map((item, index) => {
       const tierObj = new CampaignClaimConfigModel();

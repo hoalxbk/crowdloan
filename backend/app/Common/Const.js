@@ -122,6 +122,10 @@ module.exports = Object.freeze({
     ETH: 'eth',
     BSC: 'bsc',
   },
+  DEPLOY_STATUS: {
+    DEPLOYED: 1,
+    NOT_DEPLOY: 0,
+  },
   KYC_STATUS: {
     INCOMPLETE: 0, // Blockpass verifications pending
     APPROVED: 1, // profile has been approved by Merchant
@@ -132,5 +136,5 @@ module.exports = Object.freeze({
   NETWORK_AVAILABLE: {
     ETH: 'eth',
     BSC: 'bsc',
-  }
+  },
 });

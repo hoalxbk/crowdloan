@@ -1,9 +1,7 @@
 'use strict'
 
 const CampaignModel = use('App/Models/Campaign');
-const CampaignClaimConfigModel = use('App/Models/CampaignClaimConfig');
 const WalletAccountModel = use('App/Models/WalletAccount');
-const Tier = use('App/Models/Tier');
 const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
 const PoolService = use('App/Services/PoolService');
@@ -37,7 +35,7 @@ class PoolController {
       'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
-      'min_tier', 'tier_configuration',
+      'min_tier', 'tier_configuration', 'claim_configuration',
     ]);
 
     const tokenInfo = inputParams.tokenInfo;
@@ -84,14 +82,7 @@ class PoolController {
 
       // Update Claim Config
       let claimConfigs = inputParams.claim_configuration || [];
-      if (claimConfigs.length == 0) {
-        claimConfigs = [{
-          minBuy: 0,
-          maxBuy: 100,
-          endTime: null,
-          startTime:inputParams.release_time,
-        }];
-      }
+      claimConfigs = poolService.addDefaultClaimConfig(claimConfigs, campaign.release_time);
       console.log('[createPool] - Update Claim Config - claimConfigs', claimConfigs);
       await poolService.updateClaimConfig(campaign, claimConfigs);
 
@@ -101,8 +92,8 @@ class PoolController {
 
       // Create Web3 Account
       const campaignId = campaign.id;
-      console.log('[createPool] - Create Walllet Account with campaignId', campaignId);
       const account = await (new WalletAccountService).createWalletAddress(campaignId);
+      console.log('[createPool] - Create Walllet Account:', account.wallet_address);
 
       return HelperUtils.responseSuccess(campaign);
     } catch (e) {

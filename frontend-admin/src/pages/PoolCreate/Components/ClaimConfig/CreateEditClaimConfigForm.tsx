@@ -27,15 +27,15 @@ function CreateEditClaimConfigForm(props: any) {
     defaultValues: {
       ...editData,
       startTime: isEdit ? moment(editData.startTime, DATETIME_FORMAT) : null,
-      endTime: isEdit ? moment(editData.endTime, DATETIME_FORMAT) : null,
+      // endTime: isEdit ? moment(editData.endTime, DATETIME_FORMAT) : null,
     },
   });
 
   const submitData = (data: any) => {
     const responseData = {
       startTime: data.startTime.format(DATETIME_FORMAT),
-      endTime: data.endTime.format(DATETIME_FORMAT),
-      minBuy: data.minBuy,
+      // endTime: data.endTime.format(DATETIME_FORMAT),
+      // minBuy: data.minBuy,
       maxBuy: data.maxBuy,
     };
     handleCreateUpdateData && handleCreateUpdateData(responseData);
@@ -109,78 +109,6 @@ function CreateEditClaimConfigForm(props: any) {
           </p>
         </div>
 
-
-
-
-        <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>End Time</label>
-          <div >
-            <Controller
-              control={control}
-              rules={{
-                required: true,
-                validate: {
-                  greateOrEqualStartTime: value => {
-                    const startTime = getValues('startTime');
-                    const valueUnix = moment(value).unix();
-                    const startTimeUnix = moment(startTime).unix();
-                    console.log('Validate Finish Time', valueUnix, startTimeUnix);
-
-                    return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
-                  }
-                }
-              }}
-              name="endTime"
-              render={(field) => {
-                return (
-                  <DatePicker
-                    {...field}
-                    format="YYYY-MM-DD HH:mm:ss"
-                    showTime={{
-                      defaultValue: moment("00:00:00", "HH:mm:ss"),
-                      format: "HH:mm"
-                    }}
-                    onSelect={(datetimeSelected: any) => {
-                      setValue(field.name, datetimeSelected, {shouldValidate: true});
-                    }}
-                    minuteStep={15}
-                  />
-                )
-              }}
-            />
-          </div>
-          <p className={classes.formErrorMessage}>
-            {
-              renderError(errors, 'endTime')
-            }
-          </p>
-        </div>
-
-
-
-
-        <div className={classes.formControl}>
-          <label className={classes.formControlLabel}>Min Percent Claim</label>
-          <div>
-            <CurrencyInputWithValidate
-              register={register}
-              errors={errors}
-              initValue={editData.minBuy}
-              controlName={'minBuy'}
-              validateRule={{
-                required: true,
-                validate: {
-                  minBuyGreaterMaxBuy: (value: any) => {
-                    const maxBuy = getValues('maxBuy');
-                    const maxBuyBigNumber = (new BigNumber(maxBuy));
-                    return maxBuyBigNumber.comparedTo(value) > 0;
-                  },
-                  // greaterThanZero: fieldMustBeGreaterThanZero,
-                },
-              }}
-            />
-          </div>
-        </div>
 
         <div className={classes.formControl}>
           <label className={classes.formControlLabel}>Max Percent Claim</label>

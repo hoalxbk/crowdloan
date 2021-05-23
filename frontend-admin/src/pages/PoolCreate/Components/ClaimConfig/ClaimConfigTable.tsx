@@ -112,9 +112,9 @@ function ClaimConfigTable(props: any) {
     setRows(newRows);
   };
 
-  const acceptCurrency = watch('acceptCurrency');
-  const minTier = watch('minTier');
-  const isDeployed = !!poolDetail?.is_deploy;
+  // const acceptCurrency = watch('acceptCurrency');
+  // const minTier = watch('minTier');
+  // const isDeployed = !!poolDetail?.is_deploy;
   return (
     <>
       {isOpenEditPopup &&
@@ -143,24 +143,24 @@ function ClaimConfigTable(props: any) {
           <TableHead>
             <TableRow>
               <TableCell>Start Time</TableCell>
-              <TableCell align="right">End Time</TableCell>
-              <TableCell align="right">Min Percent Claim</TableCell>
-              <TableCell align="right">Max Percent Claim</TableCell>
+              {/*<TableCell align="right">End Time</TableCell>*/}
+              {/*<TableCell align="right">Min Percent Claim</TableCell>*/}
+              <TableCell align="right">Max Claim (%)</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {rows.map((row: any, index: number) => {
               let startTime = row.startTime || '--';
-              let endTime = row.endTime || '--';
-              let minBuy = new BigNumber(row.minBuy || '0').toFixed();
+              // let endTime = row.endTime || '--';
+              // let minBuy = new BigNumber(row.minBuy || '0').toFixed();
               let maxBuy = new BigNumber(row.maxBuy || '0').toFixed();
               return (
                 <TableRow key={index}>
                   <TableCell>{startTime}</TableCell>
-                  <TableCell align="right">{endTime}</TableCell>
-                  <TableCell align="right">{minBuy}</TableCell>
-                  <TableCell align="right">{maxBuy}</TableCell>
+                  {/*<TableCell align="right">{endTime}</TableCell>*/}
+                  {/*<TableCell align="right">{minBuy}</TableCell>*/}
+                  <TableCell align="right">{maxBuy} %</TableCell>
                   <TableCell align="right">
                     <Button
                       variant="contained"

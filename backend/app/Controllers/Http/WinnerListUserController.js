@@ -231,7 +231,7 @@ class WinnerListUserController {
         console.log('[checkPickedWinner] - Exist Winner: ', existRecord);
         return HelperUtils.responseSuccess(true, 'Campaign picked Winner');
       }
-      return HelperUtils.responseNotFound(false, 'The campaign has not yet chosen a winner');
+      return HelperUtils.responseSuccess(false, 'The campaign has not yet chosen a winner');
     } catch (e) {
       console.log('[checkPickedWinner] - ERROR: ', e);
       return HelperUtils.responseErrorInternal();

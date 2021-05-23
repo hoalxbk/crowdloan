@@ -162,6 +162,10 @@ Route.group(() => {
   Route.get('pool/:campaignId/check-exist-winner', 'WinnerListUserController.checkExistWinner').validator('CheckUserWinnerExist').middleware();
   Route.get('pool/:campaignId/check-picked-winner', 'WinnerListUserController.checkPickedWinner');
 
+  // Claim Config
+  Route.get('pool/:campaignId/claim-configs', 'ClaimConfigController.getListClaimConfig');
+  Route.get('pool/:campaignId/user/:walletAddress/claimable-amount', 'ClaimConfigController.getClaimableAmount');
+
 }).middleware(['maskEmailAndWallet']);
 
 
