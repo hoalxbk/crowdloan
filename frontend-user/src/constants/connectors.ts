@@ -70,7 +70,7 @@ export enum ConnectorNames {
   MetaMask = "MetaMask",
   BSC = "BSC Wallet",
   WalletConnect = "WalletConnect",
-  WalletLinkConnect = "Coin Base",
+  WalletLinkConnect = "Coinbase Wallet",
   Fortmatic = 'Fortmatic'
 }
 
@@ -108,7 +108,7 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     connector: walletLinkConnect,
     name: ConnectorNames.WalletLinkConnect,
     icon: '/images/wallet-link/wallet-link.svg',
-    description: 'Connect to Coin Base Wallet and more...',
+    description: 'Connect to Coinbase Wallet and more...',
     disableIcon: '/images/wallet-link/wallet-link-disabled.svg',
     href: null,
     mobile: true,
