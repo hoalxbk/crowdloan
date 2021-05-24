@@ -16,7 +16,7 @@ const AccountInformation = (props: any) => {
   const { isAuth, connectedAccount, wrongChain } = useAuth();
 
   const handleKYC = () => {
-    window.open('https://docs.google.com/forms/d/1XnPZrW4l21sFjtgkKky4w5eE1zB-1TmdACBSpa9uKO8/viewform', '_blank');
+    window.open('https://verify-with.blockpass.org/?clientId=red_kite_kyc_7a0e6&serviceName=Red%20Kite%20KYC&env=prod', '_blank');
   }
   const handleRejectKYC = () => {
     window.open(process.env.REACT_APP_KYC_RESUBMIT_LINK, '_blank');

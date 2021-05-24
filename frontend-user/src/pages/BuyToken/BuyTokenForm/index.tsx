@@ -209,20 +209,20 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const poolErrorBeforeBuy = useMemo(() => {
     const timeToShowMsg = new Date() > endJoinTimeInDate && new Date() < startBuyTimeInDate;
 
-    if (
-      poolBalance
-      && poolAmount
-      && startBuyTimeInDate
-      && endJoinTimeInDate &&
-      new BigNumber(poolAmount).gt(0) &&
-      new BigNumber(poolBalance).lt(new BigNumber(poolAmount)) &&
-      timeToShowMsg
-    ) {
-      return {
-        message: `This pool is not ready to buy, please contact the administrator for more information.`,
-        type: MessageType.warning
-      };
-    }
+    // if (
+    //   poolBalance
+    //   && poolAmount
+    //   && startBuyTimeInDate
+    //   && endJoinTimeInDate &&
+    //   new BigNumber(poolAmount).gt(0) &&
+    //   new BigNumber(poolBalance).lt(new BigNumber(poolAmount)) &&
+    //   timeToShowMsg
+    // ) {
+    //   return {
+    //     message: `This pool is not ready to buy, please contact the administrator for more information.`,
+    //     type: MessageType.warning
+    //   };
+    // }
 
     if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !connectedAccountFirstBuy && new Date() > startBuyTimeInDate) {
       return {
