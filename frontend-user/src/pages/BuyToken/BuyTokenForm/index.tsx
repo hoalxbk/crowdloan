@@ -231,22 +231,12 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       }
     }
 
-    // if (
-    //   input &&
-    //   new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
-    // ) {
-    //   return {
-    //     message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
-    //     type: MessageType.error
-    //   }
-    // }
-
     if (
       input &&
-      new BigNumber(input).gt(new BigNumber(maximumBuy))
+      new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
     ) {
       return {
-        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(maximumBuy).toFixed()}`)} ${currencyName}.`,
+        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
         type: MessageType.error
       }
     }
