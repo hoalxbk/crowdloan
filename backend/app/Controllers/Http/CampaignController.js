@@ -558,7 +558,7 @@ class CampaignController {
       // get campaign claim config from db
       const claimParams = {
         'campaign_id': campaign_id,
-        'current_time': Math.floor(Date.now() / 1000)
+        'current_time': ConvertDateUtils.getDatetimeNowUTC()
       };
       const claimConfigService = new CampaignClaimConfigService();
       const claimConfig = await claimConfigService.findOneByFilters(claimParams);
@@ -568,10 +568,15 @@ class CampaignController {
       }
       // call to SC to get amount token purchased of user
       const campaignClaimSC = await HelperUtils.getContractClaimInstance(camp);
-      const tokenPurchased = await campaignClaimSC.methods.userPurchased(userWalletAddress).call();
+      const received = await Promise.all([
+        campaignClaimSC.methods.userPurchased(userWalletAddress).call(),
+        campaignClaimSC.methods.userClaimed(userWalletAddress).call()
+      ]);
+      const tokenPurchased = received[0];
+      const tokenClaimed = received[1];
       // calc max token that user can claimable
-      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased);
-      console.log(`user token purchased ${tokenPurchased} and max token claim ${maxTokenClaim}`);
+      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased).sub(tokenClaimed);
+      console.log(`user token purchased ${tokenPurchased} and user claimed ${tokenClaimed} and max token claim ${maxTokenClaim}`);
       // get message hash
       const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenClaim);
       console.log(`message hash to claim ${messageHash}`);
