@@ -302,6 +302,10 @@ class CampaignController {
         console.log(`User ${user}`);
         return HelperUtils.responseBadRequest("You're not valid user to join this campaign !");
       }
+      if (user.is_kyc != Const.KYC_STATUS.APPROVED) {
+        console.log('User does not KYC yet !');
+        return HelperUtils.responseBadRequest("You must register for KYC successfully to be allowed to join !");
+      }
       // check user tier
       const userTier = (await HelperUtils.getUserTierSmart(wallet_address))[0];
       console.log(`user tier is ${userTier}`);
