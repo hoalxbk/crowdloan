@@ -100,7 +100,7 @@ const TransactionSubmitModal: React.FC<any> = (props: any) => {
                   className={styles.dialogButton}
                   target="_blank"
                 >
-                  View on Etherscan
+                  View on {ETH_CHAIN_ID == appChainID ? 'Etherscan' : 'Bscscan'}
                 </a>
                 {
                   additionalText && (
