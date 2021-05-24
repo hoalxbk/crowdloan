@@ -561,7 +561,7 @@ class CampaignController {
         'current_time': ConvertDateUtils.getDatetimeNowUTC()
       };
       const claimConfigService = new CampaignClaimConfigService();
-      const claimConfig = await claimConfigService.findOneByFilters(claimParams);
+      const claimConfig = await claimConfigService.findLastClaimPhase(claimParams);
       if (!claimConfig) {
         console.log(`Do not found claim config for campaign ${campaign_id}`);
         return HelperUtils.responseBadRequest("You can not claim token at current time !");
@@ -575,7 +575,7 @@ class CampaignController {
       const tokenPurchased = received[0];
       const tokenClaimed = received[1];
       // calc max token that user can claimable
-      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased).sub(tokenClaimed);
+      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased).minus(tokenClaimed);
       console.log(`user token purchased ${tokenPurchased} and user claimed ${tokenClaimed} and max token claim ${maxTokenClaim}`);
       // get message hash
       const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenClaim);

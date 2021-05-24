@@ -22,6 +22,10 @@ class CampaignClaimConfigService {
   async findOneByFilters(params) {
     return await this.buildQueryBuilder(params).first();
   }
+
+  async findLastClaimPhase(params) {
+    return await this.buildQueryBuilder(params).orderBy('start_time', 'desc').first();
+  }
 }
 
 module.exports = CampaignClaimConfigService
