@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { BeatLoader } from 'react-spinners';
 import { css } from "@emotion/core";
@@ -101,6 +101,13 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
     }
   }, [walletsInfo, walletName]);
 
+  const handleClickPoolList = (e: any) => {
+    console.log('props', props.location.pathname);
+    if (props?.location?.pathname === '/dashboard') {
+      window.location.reload();
+    }
+  };
+
   return (
     <>
       <div>
@@ -116,7 +123,7 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
                 <>
                   <img src={logo} className={styles.sideBarLogo}/>
                   <img src={iconClose} className={styles.closeBtn} onClick={() => setOpenSideBar(false)}/></>}
-                  <ButtonLink text="Pool" to={'/dashboard'} icon={BrightStartIcon} className={`${styles.btn} start`} />
+                  <ButtonLink text="Pool" to={'/dashboard'} icon={BrightStartIcon} className={`${styles.btn} start`} onClick={handleClickPoolList}/>
                   {currentAccount && <ButtonLink text="My Account" to={'/account'} icon={iconAccount} className={`${styles.btn} start my-account`} />}
                   <button className={`${styles.btn} ${styles.btnNetwork}`} onClick={() => {setSwitchNetworkDialog(true); setOpenSideBar(false);}}>
                     <img src={`/images/${appChainID === ETH_CHAIN_ID ? EthereumIcon: BSCIcon}`} />
@@ -206,4 +213,4 @@ const HeaderDefaultLayout: React.FC<any> = (props: any) => {
   );
 };
 
-export default withWidth()(HeaderDefaultLayout);
+export default withWidth()(withRouter(HeaderDefaultLayout));

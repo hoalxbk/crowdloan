@@ -1,8 +1,8 @@
-import _, { set } from 'lodash';
 import useStyles from './style';
 import useCommonStyle from '../../../styles/CommonStyle';
 import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import { ETH_CHAIN_ID } from '../../../constants/network';
+import React from "react";
 
 const closeIcon = '/images/icons/close.svg'
 const ETHERSCAN_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL || "";
@@ -50,7 +50,7 @@ const ModalTransaction = (props: any) => {
               href={ETH_CHAIN_ID == appChainID ? `${ETHERSCAN_URL}/tx/${transactionHashes[0]}` : `${BCSSCAN_URL}/tx/${transactionHashes[0]}`}
               target="_blank"
               className={commonStyles.nnb1418d}
-            >View on Etherscan</a>
+            >View on {ETH_CHAIN_ID == appChainID ? 'Etherscan' : 'Bscscan'}</a>
           </div>
         </div>
       </div>
