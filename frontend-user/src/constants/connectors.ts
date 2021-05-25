@@ -29,7 +29,6 @@ bscConnector.handleChainChanged = (chainId: string) => {
 
 // mainnet only
 export const walletLinkConnect = new WalletLinkConnector({
-  // TODO: Move link to .env file
   url: process.env.REACT_APP_NETWORK_URL || '',
   appName: 'Red Kite',
   appLogoUrl: 'https://redkite.polkafoundry.com/images/logo-red-kite.svg',
@@ -74,7 +73,7 @@ export enum ConnectorNames {
   Fortmatic = 'Fortmatic'
 }
 
-export type connectorNames = Extract<ConnectorNames, ConnectorNames.MetaMask | ConnectorNames.BSC | ConnectorNames.WalletConnect | ConnectorNames.Fortmatic>;
+export type connectorNames = Extract<ConnectorNames, ConnectorNames.MetaMask | ConnectorNames.BSC | ConnectorNames.WalletConnect | ConnectorNames.WalletLinkConnect | ConnectorNames.Fortmatic>;
 
 export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   METAMASK: {
