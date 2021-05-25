@@ -298,9 +298,13 @@ class CampaignController {
         'wallet_address': wallet_address
       }
       const user = await userService.findUser(userParams);
-      if (!user || user.email === '') {
+      if (!user || !user.email) {
         console.log(`User ${user}`);
         return HelperUtils.responseBadRequest("You're not valid user to join this campaign !");
+      }
+      if (user.is_kyc != Const.KYC_STATUS.APPROVED) {
+        console.log('User does not KYC yet !');
+        return HelperUtils.responseBadRequest("You must register for KYC successfully to be allowed join campaign !");
       }
       // check user tier
       const userTier = (await HelperUtils.getUserTierSmart(wallet_address))[0];
@@ -348,7 +352,7 @@ class CampaignController {
         'wallet_address': userWalletAddress
       }
       const user = await userService.findUser(userParams);
-      if (!user || user.email === '') {
+      if (!user || !user.email) {
         console.log(`User ${user}`);
         return HelperUtils.responseBadRequest("You're not valid user to buy this campaign !");
       }
@@ -442,7 +446,7 @@ class CampaignController {
           return HelperUtils.responseBadRequest("Time out of your tier you can buy!");
         }
         // set min, max buy amount of user
-        minBuy = tier.min_buy * winner.lottery_ticket;
+        minBuy = tier.min_buy;
         maxBuy = tier.max_buy * winner.lottery_ticket;
       }
 
