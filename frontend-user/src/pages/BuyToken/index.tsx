@@ -593,7 +593,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {
                   poolDetails?.type === 'claimable' && (
                     <ClaimToken
-                      releaseTime={releaseTimeInDate}
+                      releaseTime={poolDetails?.releaseTime ? releaseTimeInDate : undefined}
                       ableToFetchFromBlockchain={ableToFetchFromBlockchain}
                       poolAddress={poolDetails?.poolAddress}
                       tokenDetails={poolDetails?.tokenDetails}

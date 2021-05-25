@@ -37,6 +37,7 @@ function CreateEditTierForm(props: any) {
       endTime: data.endTime ? data.endTime.format(DATETIME_FORMAT) : null,
       minBuy: data.minBuy,
       maxBuy: data.maxBuy,
+      ticket_allow_percent: data.ticket_allow_percent,
       ticket_allow: data.ticket_allow,
     };
     handleCreateUpdateData && handleCreateUpdateData(responseData);
@@ -88,6 +89,22 @@ function CreateEditTierForm(props: any) {
 
         <div className={classes.formControl}>
           <label className={classes.formControlLabel}>Allocation (%)</label>
+          <div>
+            <CurrencyInputWithValidate
+              register={register}
+              errors={errors}
+              initValue={editData.ticket_allow_percent}
+              controlName={'ticket_allow_percent'}
+              validateRule={{
+                // required: true,
+              }}
+            />
+          </div>
+        </div>
+
+
+        <div className={classes.formControl}>
+          <label className={classes.formControlLabel}>Ticket Number:</label>
           <div>
             <CurrencyInputWithValidate
               register={register}
