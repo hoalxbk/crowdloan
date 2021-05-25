@@ -494,7 +494,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                           marginTop: 40,
                           font: 'normal normal bold 14px/18px DM Sans'
                         }}>
-                        This pool is ended.
+                        {(poolDetails?.startBuyTime && poolDetails?.endBuyTime) ? 'This pool is ended.' : ''}
                       </p>
                     )
                   }

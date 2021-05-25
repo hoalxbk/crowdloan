@@ -81,8 +81,8 @@ function PoolForm(props: any) {
         item.minBuy = 0;
       }
 
-      item.startTime = moment(item.startTime).unix() || null;
-      item.endTime = moment(item.endTime).unix() || null;
+      item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
+      item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
       return item;
     });
 
@@ -90,8 +90,8 @@ function PoolForm(props: any) {
     let campaignClaimConfig = data.campaignClaimConfig || '[]';
     campaignClaimConfig = JSON.parse(campaignClaimConfig);
     campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
-      item.startTime = moment(item.startTime).unix() || null;
-      item.endTime = moment(item.endTime).unix() || null;
+      item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
+      item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
       return item;
     });
 
@@ -186,8 +186,8 @@ function PoolForm(props: any) {
     let campaignClaimConfig = data.campaignClaimConfig || '[]';
     campaignClaimConfig = JSON.parse(campaignClaimConfig);
     campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
-      item.startTime = moment(item.startTime).unix() || null;
-      item.endTime = moment(item.endTime).unix() || null;
+      item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
+      item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
       return item;
     });
 

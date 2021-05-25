@@ -33,8 +33,8 @@ function CreateEditTierForm(props: any) {
   const submitData = (data: any) => {
     const responseData = {
       name: data.name,
-      startTime: data.startTime.format(DATETIME_FORMAT),
-      endTime: data.endTime.format(DATETIME_FORMAT),
+      startTime: data.startTime ? data.startTime.format(DATETIME_FORMAT) : null,
+      endTime: data.endTime ? data.endTime.format(DATETIME_FORMAT) : null,
       minBuy: data.minBuy,
       maxBuy: data.maxBuy,
       ticket_allow: data.ticket_allow,
@@ -108,7 +108,7 @@ function CreateEditTierForm(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true,
+                // required: true,
               }}
               name="startTime"
               render={(field) => {
@@ -145,17 +145,17 @@ function CreateEditTierForm(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true,
-                validate: {
-                  greateOrEqualStartTime: value => {
-                    const startTime = getValues('startTime');
-                    const valueUnix = moment(value).unix();
-                    const startTimeUnix = moment(startTime).unix();
-                    console.log('Validate Finish Time', valueUnix, startTimeUnix);
-
-                    return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
-                  }
-                }
+                // required: true,
+                // validate: {
+                //   greateOrEqualStartTime: value => {
+                //     const startTime = getValues('startTime');
+                //     const valueUnix = moment(value).unix();
+                //     const startTimeUnix = moment(startTime).unix();
+                //     console.log('Validate Finish Time', valueUnix, startTimeUnix);
+                //
+                //     return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
+                //   }
+                // }
               }}
               name="endTime"
               render={(field) => {
