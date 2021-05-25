@@ -167,16 +167,17 @@ const getUserTierSmart = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
     mantraSc.methods.getUnstake(wallet_address).call(),
+    mantraSc.methods.balanceOf(wallet_address).call(),
     tierSc.methods.externalToken(MANTRA_DAO_STAKE_SMART_CONTRACT).call(),
   ]);
 
   console.log('receivedData: ', receivedData);
 
-  const sPkfRate = new BigNumber(receivedData[3].rate).dividedBy(Math.pow(10, receivedData[3].decimals));
+  const sPkfRate = new BigNumber(receivedData[4].rate).dividedBy(Math.pow(10, receivedData[4].decimals));
   // get 4 tiers
   const tiers = receivedData[0].slice(0, 4);
   // calc pfk equal
-  const pkfEq = new BigNumber(receivedData[1]).plus(new BigNumber(receivedData[2].amount).multipliedBy(sPkfRate));
+  const pkfEq = new BigNumber(receivedData[1]).plus(new BigNumber(receivedData[2].amount).plus(new BigNumber(receivedData[3])).multipliedBy(sPkfRate));
   let userTier = 0;
   tiers.map((pkfRequire, index) => {
     if (pkfEq.gte(pkfRequire)) {
