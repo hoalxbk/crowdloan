@@ -50,7 +50,7 @@ const namedMiddleware = {
   checkIcoOwner: 'App/Middleware/CheckIcoOwner',
   checkSignature: 'App/Middleware/CheckSignature',
   checkAdminSignature: 'App/Middleware/CheckAdminSignature',
-  checkBlockPassSignature:'App/Middleware/CheckBlockPassSignature.js',
+  checkBlockPassSignature:'App/Middleware/CheckBlockPassSignature',
   formatEmailAndWallet: 'App/Middleware/FormatEmailAndWallet',
   maskEmailAndWallet: 'App/Middleware/MaskEmailAndWallet',
   typeAdmin: 'App/Middleware/TypeAdmin',

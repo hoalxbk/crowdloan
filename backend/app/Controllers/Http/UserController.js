@@ -390,14 +390,25 @@ class UserController {
   }
 
   async kycUpdateStatus({request}) {
-    const params = request.only(['guid', 'status', 'event', 'recordId', 'refId', 'submitCount',
+    const params = request.only(['guid', 'status', 'clientId', 'event', 'recordId', 'refId', 'submitCount',
       'blockPassID', 'inreviewDate', 'waitingDate', 'approvedDate', 'env']);
     console.log(`KYC update with info ${JSON.stringify(params)}`);
     try {
       // save to db to log
       const blockPassObj = new BlockPassModel();
       blockPassObj.fill({
-        ...params
+        client_id: params.clientId,
+        guid: params.guid,
+        status: params.status,
+        event: params.event,
+        record_id: params.recordId,
+        ref_id: params.refId,
+        submit_count: params.submitCount,
+        block_pass_id: params.blockPassID,
+        in_review_date: params.inreviewDate,
+        waiting_date: params.waitingDate,
+        approved_date: params.approvedDate,
+        env: params.env
       });
       blockPassObj.save();
 
