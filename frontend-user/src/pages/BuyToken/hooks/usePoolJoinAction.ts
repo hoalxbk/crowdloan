@@ -54,14 +54,14 @@ const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
 
         if (response.data) {
           if (response.data.status === 200) {
-            dispatch(alertSuccess("Join Pool Successful!"));
+            dispatch(alertSuccess("Apply Whitelist successful!"));
             setJoinPoolSuccess(true);
           }
 
           if (response.data.status !== 200) {
             dispatch(alertFailure(response.data.message));
           }
-        } 
+        }
 
         setSignature("");
         setPoolJoinLoading(false);
