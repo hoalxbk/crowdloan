@@ -11,13 +11,13 @@ export const getPoolCountDown = (
 
   if (method && method === "whitelist" && startJoinTime && endJoinTime && startBuyTime && endBuyTime) {
     if (today < startJoinTime.getTime()) {
-      date = startJoinTime; 
-      display = "Start join in";
+      date = startJoinTime;
+      display = "Start whitelist in";
     }
 
     if (today > startJoinTime.getTime() && today < endJoinTime.getTime()) {
       date = endJoinTime;
-      display = "End join in";
+      display = "End whitelist in";
     }
 
     if (today > endJoinTime.getTime() && today < startBuyTime.getTime()) {
@@ -34,7 +34,7 @@ export const getPoolCountDown = (
 
   if (method && method === "fcfs" && startBuyTime && endBuyTime) {
     if (today < startBuyTime.getTime()) {
-      date = startBuyTime; 
+      date = startBuyTime;
       display = "Start buy in"
     }
 

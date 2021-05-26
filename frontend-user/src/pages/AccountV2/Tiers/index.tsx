@@ -64,7 +64,7 @@ const Tiers = (props: any) => {
     if(process > 100) process = 100
     return process;
   }
-  
+
   useEffect(() => {
     if(!_.isEmpty(tiers)) {
       setLoading(false);
@@ -105,11 +105,11 @@ const Tiers = (props: any) => {
             (verifiedEmail && connectedAccount) ?  (
               <p>
               {userTier > 0 ? `You are in tier ${getUserTierAlias(userTier as number).text}`: 'You are not in any tier yet'}. To upgrade your tier, please click <Link to="/account" className={styles.tierLinkToAccount}>here</Link>.
-              </p> 
+              </p>
             ): (
               <p>
                 You are not in any tier yet.
-              </p> 
+              </p>
             )
           }
         </>

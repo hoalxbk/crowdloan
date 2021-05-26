@@ -116,7 +116,7 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
       },
       [PoolDetailKey.joinTime]: {
         display: `${joinTime ? convertTimeToStringFormatWithoutGMT(joinTimeInDate) : 'TBA'}  -  ${endJoinTime ? convertTimeToStringFormat(endJoinTimeInDate) : 'TBA'}`,
-        label: 'Join Time'
+        label: 'Whitelist Time'
       },
       [PoolDetailKey.buyTime]: {
         display: `${startBuyTime ? convertTimeToStringFormatWithoutGMT(startBuyTimeInDate) : 'TBA'}  -  ${endBuyTime ? convertTimeToStringFormat(endBuyTimeInDate) : 'TBA'}`,
