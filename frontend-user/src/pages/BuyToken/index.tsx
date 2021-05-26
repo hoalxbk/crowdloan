@@ -366,6 +366,27 @@ const BuyToken: React.FC<any> = (props: any) => {
                 </p>
               )
             }
+            {
+              // (joinTimeInDate || 0) <= today && today <= (endJoinTimeInDate || 0) &&
+              (poolDetails?.joinTime || 0) <= (today.getTime() / 1000) && (today.getTime() / 1000) <= (poolDetails?.endJoinTime || 0) &&
+              (
+                <p className={styles.poolTicketWinner}>
+                  <div>
+                    <img src="/images/tick.svg" alt="warning" />
+                  </div>
+                  <span style={{ marginLeft: 14 }}>
+                  You must click the Apply Whitelist button to join the pool whitelist &nbsp;.
+                  {/*  <Link*/}
+                  {/*    to={'https://bom.to/SH5Zcdln5TTSH'}*/}
+                  {/*    style={{ color: 'white', textDecoration: 'underline' }}*/}
+                  {/*  >*/}
+                  {/*    here*/}
+                  {/*</Link>.*/}
+                </span>
+                </p>
+              )
+            }
+
           </header>
           <main className={styles.poolDetailInfo}>
             <div className={styles.poolDetailTierWrapper}>
@@ -425,8 +446,8 @@ const BuyToken: React.FC<any> = (props: any) => {
                     <div className={styles.btnGroup}>
                       {
                         <Button
-                          // text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
-                          text={(!joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
+                          text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
+                          // text={(!joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
                           backgroundColor={'#D01F36'}
                           disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess || disableAllButton}
                           loading={poolJoinLoading}
