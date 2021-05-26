@@ -7,15 +7,16 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export type Tier = {
   allocation: string,
+  ticket_allow: string,
   name: string,
   // maxBuy: string,s
   startTime: string,
-  endTime: string 
+  endTime: string
 }
 
 export type PoolDetails = {
   id: number;
-  website: string; 
+  website: string;
   amount: number;
   ethRate: number;
   method: string;
@@ -61,7 +62,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
       const buyLimit: number[] = [];
       const minimumBuy: number[] = [];
       const tiersWithDetails: Tier[] = [];
-      
+
       const tokenDetails = (data.token == '' || data.token == null || data.token == 'TBD') ? {
         symbol: 'PRARE',
         name: 'Polka Rare',
@@ -73,12 +74,13 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         decimals: data.decimals,
         address: data.token
       }
-      
-      data.tiers.length > 0 && data.tiers.map((tier: any) => { 
+
+      data.tiers.length > 0 && data.tiers.map((tier: any) => {
         buyLimit.push(tier.max_buy);
         minimumBuy.push(tier.min_buy);
         tiersWithDetails.push({
-          allocation: tier.ticket_allow,
+          allocation: tier.ticket_allow_percent,
+          ticket_allow: tier.ticket_allow,
           name: tier.name,
           // maxBuy: `${tier.max_buy} ${data.accept_currency.toUpperCase()}`,
           startTime: tier.start_time,
@@ -115,8 +117,8 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         isDisplay: data.is_display === 1,
         addressReceiver: data.address_receiver,
         description: data.description,
-        tiersWithDetails 
-      } 
+        tiersWithDetails
+      }
     }
 
     return;

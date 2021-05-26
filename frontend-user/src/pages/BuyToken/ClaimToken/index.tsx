@@ -18,11 +18,12 @@ type ClaimTokenProps = {
   ableToFetchFromBlockchain: boolean | undefined
   buyTokenSuccess: boolean | undefined
   poolId: number | undefined;
-  disableAllButton: boolean
+  disableAllButton: boolean;
+  poolDetails: any;
 }
 
 const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
-  const { releaseTime } = props;
+  const { releaseTime, poolDetails } = props;
   const styles = useStyles();
 
   const [openClaimModal, setOpenClaimModal] = useState<boolean>(false);
@@ -72,7 +73,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     <div className={styles.poolDetailClaim}>
       <p className={styles.poolDetailClaimTitle}>
         <span>{'Token can claim from'}</span>
-        <strong>{convertTimeToStringFormat(releaseTime || new Date())}</strong>
+        <strong>{releaseTime ? convertTimeToStringFormat(releaseTime || new Date()) : 'TBA'}</strong>
       </p>
       <Countdown startDate={releaseTime} />
       <div className={styles.poolDetailClaimInfo}>
@@ -92,6 +93,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
         opened={openClaimModal}
         handleClose={() => { setOpenClaimModal(false); setClaimTokenLoading(false)}}
         transactionHash={transactionHash}
+        networkAvailable={poolDetails?.networkAvailable}
       />
     </div>
   )

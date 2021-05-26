@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {createStyles, Theme, withStyles, WithStyles} from '@material-ui/core/styles';
 import Dialog from '@material-ui/core/Dialog';
 import MuiDialogTitle from '@material-ui/core/DialogTitle';
@@ -8,12 +8,8 @@ import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
 import {ClipLoader} from "react-spinners";
 import {useTypedSelector} from '../../../hooks/useTypedSelector';
-import {ETH_CHAIN_ID} from '../../../constants/network';
 
 import useStyles from './style';
-
-const ETHERSCAN_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL || "";
-const BCSSCAN_URL = process.env.REACT_APP_BSCSCAN_BASE_URL || "";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -74,49 +70,61 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
 
 const DialogContent = withStyles((theme: Theme) => ({
   root: {
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     color: '#999999'
   },
 }))(MuiDialogContent);
 
-const TransactionSubmitModal: React.FC<any> = (props: any) => {
+const ApplyWhitelistModal: React.FC<any> = (props: any) => {
   const styles = useStyles();
-  const { appChainID } = useTypedSelector(state => state.appNetwork).data;
-  const { opened, handleClose, transactionHash, additionalText, networkAvailable } = props;
+  // const { appChainID } = useTypedSelector(state => state.appNetwork).data;
+  // const { opened, handleClose, transactionHash, additionalText, networkAvailable } = props;
+  const [openSubmitModal, setOpenSubmitModal] = useState(true);
+  const handleClose = () => {
+    setOpenSubmitModal(false);
+  };
+  const whitelistLink = 'https://bom.to/SH5Zcdln5TTSH';
+  const instructionLink = 'https://bom.to/SH5Zcdln5TTSH';
 
   return (
-      <Dialog open={opened} onClose={handleClose} className={styles.dialog}>
+      <Dialog open={openSubmitModal} onClose={handleClose} className={styles.dialog}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose} customClass={styles.dialogTitle} >
-          Transaction {transactionHash ? 'Submitted': 'Submitting'}
+          Whitelist Application Form
         </DialogTitle>
         <DialogContent>
           <div>
-            {
-              transactionHash ? (
-                <>
-                <span className={styles.dialogLabel}>TXn Hash</span>
-                <input value={transactionHash} className={styles.dialogInput} disabled={true} />
-                <a
-                  href={ETH_CHAIN_ID == appChainID ? `${ETHERSCAN_URL}/tx/${transactionHash}` : `${BCSSCAN_URL}/tx/${transactionHash}`}
-                  className={styles.dialogButton}
-                  target="_blank"
-                >
-                  View on {ETH_CHAIN_ID == appChainID ? 'Etherscan' : 'Bscscan'}
-                </a>
-                {
-                  additionalText && (
-                    <p style={{ marginTop: 30, fontWeight: 'bold', lineHeight: '18px', fontSize: 15.5, color: '#8db4ff', fontFamily: 'Helvetica' }}>
-                      {additionalText}
-                    </p>
-                  )
-                }
-                </>
-              ): <ClipLoader color={'white'}/>
-            }
+
+            <p style={{
+              marginBottom: 10,
+            }}>
+              Please fill out the
+              {' '}
+              <a
+                style={{
+                  color: 'red',
+                  fontWeight: 'bold'
+                }}
+                href={whitelistLink}
+              >whitelist form</a>
+              {' '}
+              to participate in NFTify's IDO.
+            </p>
+            <p>
+              You can read more about the instruction {' '}
+              <a
+                href={instructionLink}
+                style={{
+                  color: 'red',
+                  fontWeight: 'bold'
+                }}
+              >here</a>
+              .
+            </p>
+
           </div>
         </DialogContent>
       </Dialog>
   )
 }
 
-export default TransactionSubmitModal;
+export default ApplyWhitelistModal;

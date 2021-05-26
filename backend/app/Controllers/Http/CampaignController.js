@@ -325,13 +325,13 @@ class CampaignController {
       }
       // call to join campaign
       await campaignService.joinCampaign(campaign_id, wallet_address, user.email);
-      return HelperUtils.responseSuccess(null, "Join Campaign Successful !");
+      return HelperUtils.responseSuccess(null, "Apply Whitelist successful. !");
     } catch (e) {
       console.log("error", e)
       if (e instanceof BadRequestException) {
         return HelperUtils.responseBadRequest(e.message);
       } else {
-        return HelperUtils.responseErrorInternal('ERROR : Join campaign fail !');
+        return HelperUtils.responseErrorInternal('ERROR : Apply Whitelist fail !');
       }
     }
   }

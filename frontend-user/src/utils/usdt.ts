@@ -16,6 +16,7 @@ export const isAllowanceUsdt = (decimals: any, amount: any, allowanceAmount: any
 };
 
 export const getIconCurrencyUsdt = ({ purchasableCurrency, networkAvailable }: any) => {
+  purchasableCurrency = purchasableCurrency + '';
   let currencyIcon = `/images/${purchasableCurrency.toUpperCase()}.png`;
   let currencyName = purchasableCurrency.toUpperCase();
   if (networkAvailable == NETWORK_AVAILABLE.BSC) {

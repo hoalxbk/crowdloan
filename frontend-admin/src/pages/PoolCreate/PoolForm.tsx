@@ -81,8 +81,8 @@ function PoolForm(props: any) {
         item.minBuy = 0;
       }
 
-      item.startTime = moment(item.startTime).unix() || null;
-      item.endTime = moment(item.endTime).unix() || null;
+      item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
+      item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
       return item;
     });
 
@@ -90,8 +90,8 @@ function PoolForm(props: any) {
     let campaignClaimConfig = data.campaignClaimConfig || '[]';
     campaignClaimConfig = JSON.parse(campaignClaimConfig);
     campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
-      item.startTime = moment(item.startTime).unix() || null;
-      item.endTime = moment(item.endTime).unix() || null;
+      item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
+      item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
       return item;
     });
 
@@ -186,8 +186,8 @@ function PoolForm(props: any) {
     let campaignClaimConfig = data.campaignClaimConfig || '[]';
     campaignClaimConfig = JSON.parse(campaignClaimConfig);
     campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
-      item.startTime = moment(item.startTime).unix() || null;
-      item.endTime = moment(item.endTime).unix() || null;
+      item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
+      item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
       return item;
     });
 
@@ -444,14 +444,7 @@ function PoolForm(props: any) {
             </div>
 
             <div className={classes.exchangeRate}>
-              <MinTier
-                poolDetail={poolDetail}
-                setValue={setValue}
-                errors={errors}
-                control={control}
-              />
-
-              <TierTable
+              <ClaimConfigTable
                 poolDetail={poolDetail}
                 register={register}
                 watch={watch}
@@ -513,14 +506,7 @@ function PoolForm(props: any) {
             />
           </div>
 
-          <div className={classes.exchangeRate}>
-            <PoolDescription
-              poolDetail={poolDetail}
-              register={register}
-              setValue={setValue}
-              errors={errors}
-            />
-          </div>
+
 
 
           <ExchangeRate
@@ -537,18 +523,37 @@ function PoolForm(props: any) {
 
       </Grid>
 
-
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          <div className={classes.exchangeRate}>
+            <PoolDescription
+              poolDetail={poolDetail}
+              register={register}
+              setValue={setValue}
+              errors={errors}
+            />
+          </div>
+        </Grid>
+      </Grid>
 
 
       <Grid container spacing={2}>
         <Grid item xs={12}>
 
           <div className={classes.exchangeRate}>
-          <ClaimConfigTable
-            poolDetail={poolDetail}
-            register={register}
-            watch={watch}
-          />
+            <MinTier
+              poolDetail={poolDetail}
+              setValue={setValue}
+              errors={errors}
+              control={control}
+            />
+
+            <TierTable
+              poolDetail={poolDetail}
+              register={register}
+              watch={watch}
+            />
+
           </div>
 
 

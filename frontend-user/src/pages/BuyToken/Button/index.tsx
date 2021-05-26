@@ -8,15 +8,20 @@ type ButtonPropsType = {
   href?: string;
   disabled?: boolean;
   onClick?: () => void;
-  loading?: boolean
+  loading?: boolean,
+  style?: {},
 }
 
 const Button: React.FC<ButtonPropsType> = (props: ButtonPropsType) => {
   const styles = useStyles();
-  const { backgroundColor = 'transparent', text = '', disabled = false, onClick, loading = false } = props;
+  const { style, backgroundColor = 'transparent', text = '', disabled = false, onClick, loading = false } = props;
+  const customStyle = {
+    ...style,
+    backgroundColor,
+  };
 
   return (
-    <button style={{ backgroundColor }} className={styles.button} disabled={disabled || loading} onClick={onClick}>
+    <button style={customStyle} className={styles.button} disabled={disabled || loading} onClick={onClick}>
       {
         loading ? <BeatLoader color={'white'} size={8} /> : `${text}`
       }

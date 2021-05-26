@@ -33,10 +33,11 @@ function CreateEditTierForm(props: any) {
   const submitData = (data: any) => {
     const responseData = {
       name: data.name,
-      startTime: data.startTime.format(DATETIME_FORMAT),
-      endTime: data.endTime.format(DATETIME_FORMAT),
+      startTime: data.startTime ? data.startTime.format(DATETIME_FORMAT) : null,
+      endTime: data.endTime ? data.endTime.format(DATETIME_FORMAT) : null,
       minBuy: data.minBuy,
       maxBuy: data.maxBuy,
+      ticket_allow_percent: data.ticket_allow_percent,
       ticket_allow: data.ticket_allow,
     };
     handleCreateUpdateData && handleCreateUpdateData(responseData);
@@ -92,6 +93,22 @@ function CreateEditTierForm(props: any) {
             <CurrencyInputWithValidate
               register={register}
               errors={errors}
+              initValue={editData.ticket_allow_percent}
+              controlName={'ticket_allow_percent'}
+              validateRule={{
+                // required: true,
+              }}
+            />
+          </div>
+        </div>
+
+
+        <div className={classes.formControl}>
+          <label className={classes.formControlLabel}>Ticket Number:</label>
+          <div>
+            <CurrencyInputWithValidate
+              register={register}
+              errors={errors}
               initValue={editData.ticket_allow}
               controlName={'ticket_allow'}
               validateRule={{
@@ -108,7 +125,7 @@ function CreateEditTierForm(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true,
+                // required: true,
               }}
               name="startTime"
               render={(field) => {
@@ -145,17 +162,17 @@ function CreateEditTierForm(props: any) {
             <Controller
               control={control}
               rules={{
-                required: true,
-                validate: {
-                  greateOrEqualStartTime: value => {
-                    const startTime = getValues('startTime');
-                    const valueUnix = moment(value).unix();
-                    const startTimeUnix = moment(startTime).unix();
-                    console.log('Validate Finish Time', valueUnix, startTimeUnix);
-
-                    return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
-                  }
-                }
+                // required: true,
+                // validate: {
+                //   greateOrEqualStartTime: value => {
+                //     const startTime = getValues('startTime');
+                //     const valueUnix = moment(value).unix();
+                //     const startTimeUnix = moment(startTime).unix();
+                //     console.log('Validate Finish Time', valueUnix, startTimeUnix);
+                //
+                //     return startTime ? valueUnix > startTimeUnix : valueUnix > moment().unix();
+                //   }
+                // }
               }}
               name="endTime"
               render={(field) => {

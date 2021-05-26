@@ -115,11 +115,11 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         image: currencyIcon,
       },
       [PoolDetailKey.joinTime]: {
-        display: `${convertTimeToStringFormatWithoutGMT(joinTimeInDate)}  -  ${convertTimeToStringFormat(endJoinTimeInDate)}`,
+        display: `${joinTime ? convertTimeToStringFormatWithoutGMT(joinTimeInDate) : 'TBA'}  -  ${endJoinTime ? convertTimeToStringFormat(endJoinTimeInDate) : 'TBA'}`,
         label: 'Join Time'
       },
       [PoolDetailKey.buyTime]: {
-        display: `${convertTimeToStringFormatWithoutGMT(startBuyTimeInDate)}  -  ${convertTimeToStringFormat(endBuyTimeInDate)}`,
+        display: `${startBuyTime ? convertTimeToStringFormatWithoutGMT(startBuyTimeInDate) : 'TBA'}  -  ${endBuyTime ? convertTimeToStringFormat(endBuyTimeInDate) : 'TBA'}`,
         label: 'Buy Time'
       }
     }

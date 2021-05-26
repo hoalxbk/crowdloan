@@ -38,6 +38,8 @@ import { sotaTiersActions } from '../../store/constants/sota-tiers';
 
 import useStyles from './style';
 import { pushMessage } from '../../store/actions/message';
+import {getIconCurrencyUsdt} from "../../utils/usdt";
+import ApplyWhitelistModal from "./ApplyWhitelistModal/ApplyWhitelistModal";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -87,8 +89,6 @@ const BuyToken: React.FC<any> = (props: any) => {
     poolDetails?.method !== "whitelist"
   );
 
-  console.log('pickedWinner', pickedWinner);
-
   const { data: alreadyJoinPool } = useFetch<boolean>(
     poolDetails && connectedAccount ?
     `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
@@ -125,6 +125,12 @@ const BuyToken: React.FC<any> = (props: any) => {
   /* const tierStartBuyInDate = new Date(Number(currentUserTier?.start_time) * 1000); */
   /* const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000); */
   const releaseTimeInDate = poolDetails?.releaseTime ? new Date(Number(poolDetails?.releaseTime) * 1000): undefined;
+
+  // Get Currency Info
+  const { currencyIcon, currencyName } = getIconCurrencyUsdt({
+    purchasableCurrency: poolDetails?.purchasableCurrency,
+    networkAvailable: poolDetails?.networkAvailable,
+  });
 
   const today = new Date();
   const availableJoin = poolDetails?.method === 'whitelist' && joinTimeInDate && endJoinTimeInDate
@@ -183,7 +189,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     }
 
     if (pickedWinner && poolDetails) {
-      return `*Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${poolDetails?.purchasableCurrency?.toUpperCase()}`
+      return `*Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${currencyName}`
     }
 
     return 'Determined at whitelist closing';
@@ -317,7 +323,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {/*Congratulations! You have won the lottery!*/}
                   {existedWinner &&
                     <p className={styles.LotteryWinnersMessage}>
-                      Congratulations! You have won the lottery. You can buy up to {numberWithCommas(`${userBuyLimit}`)} {poolDetails?.purchasableCurrency.toUpperCase()}.
+                      Congratulations! You have won the lottery. You can buy up to {numberWithCommas(`${userBuyLimit}`)} {currencyName}.
                     </p>
                   }
                   {!existedWinner &&
@@ -360,6 +366,27 @@ const BuyToken: React.FC<any> = (props: any) => {
                 </p>
               )
             }
+            {
+              // (joinTimeInDate || 0) <= today && today <= (endJoinTimeInDate || 0) &&
+              (poolDetails?.joinTime || 0) <= (today.getTime() / 1000) && (today.getTime() / 1000) <= (poolDetails?.endJoinTime || 0) &&
+              (
+                <p className={styles.poolTicketWinner}>
+                  <div>
+                    <img src="/images/tick.svg" alt="warning" />
+                  </div>
+                  <span style={{ marginLeft: 14 }}>
+                  You must click the Apply Whitelist button to join the pool whitelist &nbsp;.
+                  {/*  <Link*/}
+                  {/*    to={'https://bom.to/SH5Zcdln5TTSH'}*/}
+                  {/*    style={{ color: 'white', textDecoration: 'underline' }}*/}
+                  {/*  >*/}
+                  {/*    here*/}
+                  {/*</Link>.*/}
+                </span>
+                </p>
+              )
+            }
+
           </header>
           <main className={styles.poolDetailInfo}>
             <div className={styles.poolDetailTierWrapper}>
@@ -419,13 +446,25 @@ const BuyToken: React.FC<any> = (props: any) => {
                     <div className={styles.btnGroup}>
                       {
                         <Button
-                          text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Join Pool': 'Joined'}
+                          text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
+                          // text={(!joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
                           backgroundColor={'#D01F36'}
                           disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess || disableAllButton}
                           loading={poolJoinLoading}
                           onClick={joinPool}
+                          style={{
+                            minWidth: 125,
+                            padding: '0 20px',
+                          }}
                         />
                       }
+                      {
+                        joinPoolSuccess  &&
+                        (
+                          <ApplyWhitelistModal />
+                        )
+                      }
+
                       <Button
                         text={'Etherscan'}
                         backgroundColor={'#3232DC'}
@@ -494,7 +533,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                           marginTop: 40,
                           font: 'normal normal bold 14px/18px DM Sans'
                         }}>
-                        This pool is ended.
+                        {(poolDetails?.startBuyTime && poolDetails?.endBuyTime) ? 'This pool is ended.' : ''}
                       </p>
                     )
                   }
@@ -593,13 +632,14 @@ const BuyToken: React.FC<any> = (props: any) => {
                 {
                   poolDetails?.type === 'claimable' && (
                     <ClaimToken
-                      releaseTime={releaseTimeInDate}
+                      releaseTime={poolDetails?.releaseTime ? releaseTimeInDate : undefined}
                       ableToFetchFromBlockchain={ableToFetchFromBlockchain}
                       poolAddress={poolDetails?.poolAddress}
                       tokenDetails={poolDetails?.tokenDetails}
                       buyTokenSuccess={buyTokenSuccess}
                       poolId={poolDetails?.id}
                       disableAllButton={disableAllButton}
+                      poolDetails={poolDetails}
                     />
                  )
                 }
