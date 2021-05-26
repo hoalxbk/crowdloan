@@ -77,17 +77,18 @@ const DialogContent = withStyles((theme: Theme) => ({
 
 const ApplyWhitelistModal: React.FC<any> = (props: any) => {
   const styles = useStyles();
-  // const { appChainID } = useTypedSelector(state => state.appNetwork).data;
-  // const { opened, handleClose, transactionHash, additionalText, networkAvailable } = props;
   const [openSubmitModal, setOpenSubmitModal] = useState(true);
   const handleClose = () => {
     setOpenSubmitModal(false);
   };
-  const whitelistLink = 'https://bom.to/SH5Zcdln5TTSH';
-  const instructionLink = 'https://bom.to/SH5Zcdln5TTSH';
+  const whitelistLink = 'https://bitly.com.vn/qhwl65';
+  const instructionLink = 'https://bitly.com.vn/f2gyte';
 
   return (
-      <Dialog open={openSubmitModal} onClose={handleClose} className={styles.dialog}>
+      <Dialog
+        open={openSubmitModal} className={styles.dialog}
+        // onClose={handleClose}
+      >
         <DialogTitle id="customized-dialog-title" onClose={handleClose} customClass={styles.dialogTitle} >
           Whitelist Application Form
         </DialogTitle>
@@ -97,28 +98,20 @@ const ApplyWhitelistModal: React.FC<any> = (props: any) => {
             <p style={{
               marginBottom: 10,
             }}>
-              Please fill out the
-              {' '}
+              Please fill out the whitelist form to participate in NFTify's IDO.
+              <br/>
               <a
                 style={{
-                  color: 'red',
-                  fontWeight: 'bold'
+                  color: '#1a73e8'
                 }}
-                href={whitelistLink}
-              >whitelist form</a>
-              {' '}
-              to participate in NFTify's IDO.
+              href={whitelistLink}>{whitelistLink}</a>
             </p>
             <p>
-              You can read more about the instruction {' '}
-              <a
-                href={instructionLink}
-                style={{
-                  color: 'red',
-                  fontWeight: 'bold'
-                }}
-              >here</a>
-              .
+              You can read more about the instruction here. (<a
+              style={{
+                color: '#1a73e8'
+              }}
+              href={instructionLink}>{instructionLink}</a>)
             </p>
 
           </div>
