@@ -39,6 +39,7 @@ import { sotaTiersActions } from '../../store/constants/sota-tiers';
 import useStyles from './style';
 import { pushMessage } from '../../store/actions/message';
 import {getIconCurrencyUsdt} from "../../utils/usdt";
+import ApplyWhitelistModal from "./ApplyWhitelistModal/ApplyWhitelistModal";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -424,13 +425,25 @@ const BuyToken: React.FC<any> = (props: any) => {
                     <div className={styles.btnGroup}>
                       {
                         <Button
-                          text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Join Pool': 'Joined'}
+                          // text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
+                          text={(!joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
                           backgroundColor={'#D01F36'}
                           disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess || disableAllButton}
                           loading={poolJoinLoading}
                           onClick={joinPool}
+                          style={{
+                            minWidth: 125,
+                            padding: '0 20px',
+                          }}
                         />
                       }
+                      {
+                        joinPoolSuccess  &&
+                        (
+                          <ApplyWhitelistModal />
+                        )
+                      }
+
                       <Button
                         text={'Etherscan'}
                         backgroundColor={'#3232DC'}
