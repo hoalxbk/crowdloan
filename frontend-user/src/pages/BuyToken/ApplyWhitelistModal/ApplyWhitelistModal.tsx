@@ -111,7 +111,7 @@ const ApplyWhitelistModal: React.FC<any> = (props: any) => {
               style={{
                 color: '#1a73e8'
               }}
-              href={whitelistLink}>{instructionLink}</a>)
+              href={instructionLink}>{instructionLink}</a>)
             </p>
 
           </div>
