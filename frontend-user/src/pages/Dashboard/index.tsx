@@ -123,6 +123,10 @@ const Dashboard = (props: any) => {
           Get Notified&nbsp;
           <img src={arrowRightIcon}/>
         </button>
+        {/*<button className="btn" onClick={() => props.history.push('/pools')}>*/}
+        {/*  View all Pools&nbsp;*/}
+        {/*  <img src={arrowRightIcon}/>*/}
+        {/*</button>*/}
       </div>
       <div className={styles.listPools} style={{marginTop: '220px'}}>
         <h2>Featured Pools</h2>
@@ -131,18 +135,14 @@ const Dashboard = (props: any) => {
             return index < 8 && <Card pool={pool} key={pool.id}/>
           })}
         </div>
-        {/* <button className="btn">
-          View all Pools&nbsp;
-          <img src={arrowRightIcon}/>
-        </button> */}
         <a href="https://t.me/PolkaFoundryANN" target="_blank" className="btn" style={{width: '170px'}}>
           View all Pools&nbsp;
           <img src={arrowRightIcon}/>
         </a>
-        {/* <a href="/pools" className="btn" style={{width: '170px'}}>
-          View all Pools&nbsp;
-          <img src={arrowRightIcon}/>
-        </a> */}
+        {/*<button className="btn" onClick={() => props.history.push('/pools')}>*/}
+        {/*  View all Pools&nbsp;*/}
+        {/*  <img src={arrowRightIcon}/>*/}
+        {/*</button>*/}
       </div>
       <div className={styles.getAlert}>
         <img src={background}/>

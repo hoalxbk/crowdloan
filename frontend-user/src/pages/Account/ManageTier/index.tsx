@@ -37,7 +37,7 @@ const ManageTier = (props: any) => {
   const { data: balance = {} } = useSelector((state: any) => state.balance);
   const { connectedAccount, isAuth, wrongChain } = useAuth();
 
-  const { 
+  const {
     classNamePrefix = '',
     tokenDetails,
     emailVerified
@@ -111,7 +111,7 @@ const ManageTier = (props: any) => {
             Unlock
           </button>
         </div>
-        
+
         <div className={styles.PenaltyInfomation}>
           <p className="title">Disclaimer</p>
           <p className="subcription">There are penalties when you unlock, based on the date you deposited your last tokens:</p>

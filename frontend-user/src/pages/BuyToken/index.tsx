@@ -88,8 +88,6 @@ const BuyToken: React.FC<any> = (props: any) => {
     poolDetails?.method !== "whitelist"
   );
 
-  console.log('pickedWinner', pickedWinner);
-
   const { data: alreadyJoinPool } = useFetch<boolean>(
     poolDetails && connectedAccount ?
     `/user/check-join-campaign/${poolDetails?.id}?wallet_address=${connectedAccount}`
@@ -607,6 +605,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       buyTokenSuccess={buyTokenSuccess}
                       poolId={poolDetails?.id}
                       disableAllButton={disableAllButton}
+                      poolDetails={poolDetails}
                     />
                  )
                 }

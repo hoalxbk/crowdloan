@@ -8,6 +8,9 @@ export const USDC_BSC_ADDRESS = process.env.REACT_APP_USDC_BSC_SMART_CONTRACT;
 export const USDT_BSC_ADDRESS = process.env.REACT_APP_USDT_BSC_SMART_CONTRACT;
 export const BUSD_BSC_ADDRESS = process.env.REACT_APP_BUSD_BSC_SMART_CONTRACT;
 
+export const ETHERSCAN_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL || "";
+export const BCSSCAN_URL = process.env.REACT_APP_BSCSCAN_BASE_URL || "";
+
 export enum ChainId  {
   MAINNET = 1,
   ROPSTEN = 3,
@@ -18,14 +21,14 @@ export enum ChainId  {
   BSC_MAINNET = 56
 }
 
-export type chainId = 
-  Extract< ChainId, 
-    ChainId.MAINNET | 
-    ChainId.ROPSTEN | 
-    ChainId.RINKEBY | 
-    ChainId.GOERLI | 
-    ChainId.KOVAN | 
-    ChainId.BSC_MAINNET | 
+export type chainId =
+  Extract< ChainId,
+    ChainId.MAINNET |
+    ChainId.ROPSTEN |
+    ChainId.RINKEBY |
+    ChainId.GOERLI |
+    ChainId.KOVAN |
+    ChainId.BSC_MAINNET |
     ChainId.BSC_TESTNET
   >;
 
@@ -49,7 +52,7 @@ export interface NetworkInfo {
 export enum APP_NETWORKS_NAME {
   METAMASK = "METAMASK",
   BSC = "BSC"
-} 
+}
 
 export type appNetworkType = Extract<APP_NETWORKS_NAME, APP_NETWORKS_NAME.METAMASK | APP_NETWORKS_NAME.BSC>
 

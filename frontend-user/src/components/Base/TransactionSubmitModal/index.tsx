@@ -44,7 +44,8 @@ export interface DialogTitleProps extends WithStyles<typeof styles> {
   id: string;
   children: React.ReactNode;
   onClose: () => void;
-  customClass: string
+  customClass: string,
+  networkAvailable?: string,
 }
 
 export interface ComponentProps {
@@ -81,7 +82,7 @@ const DialogContent = withStyles((theme: Theme) => ({
 const TransactionSubmitModal: React.FC<any> = (props: any) => {
   const styles = useStyles();
   const { appChainID } = useTypedSelector(state => state.appNetwork).data;
-  const { opened, handleClose, transactionHash, additionalText } = props;
+  const { opened, handleClose, transactionHash, additionalText, networkAvailable } = props;
 
   return (
       <Dialog open={opened} onClose={handleClose} className={styles.dialog}>
