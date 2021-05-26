@@ -38,6 +38,7 @@ import { sotaTiersActions } from '../../store/constants/sota-tiers';
 
 import useStyles from './style';
 import { pushMessage } from '../../store/actions/message';
+import {getIconCurrencyUsdt} from "../../utils/usdt";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -126,6 +127,12 @@ const BuyToken: React.FC<any> = (props: any) => {
   /* const tierEndBuyInDate = new Date(Number(currentUserTier?.end_time) * 1000); */
   const releaseTimeInDate = poolDetails?.releaseTime ? new Date(Number(poolDetails?.releaseTime) * 1000): undefined;
 
+  // Get Currency Info
+  const { currencyIcon, currencyName } = getIconCurrencyUsdt({
+    purchasableCurrency: poolDetails?.purchasableCurrency,
+    networkAvailable: poolDetails?.networkAvailable,
+  });
+
   const today = new Date();
   const availableJoin = poolDetails?.method === 'whitelist' && joinTimeInDate && endJoinTimeInDate
     ? (
@@ -183,7 +190,7 @@ const BuyToken: React.FC<any> = (props: any) => {
     }
 
     if (pickedWinner && poolDetails) {
-      return `*Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${poolDetails?.purchasableCurrency?.toUpperCase()}`
+      return `*Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${currencyName}`
     }
 
     return 'Determined at whitelist closing';
@@ -317,7 +324,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   {/*Congratulations! You have won the lottery!*/}
                   {existedWinner &&
                     <p className={styles.LotteryWinnersMessage}>
-                      Congratulations! You have won the lottery. You can buy up to {numberWithCommas(`${userBuyLimit}`)} {poolDetails?.purchasableCurrency.toUpperCase()}.
+                      Congratulations! You have won the lottery. You can buy up to {numberWithCommas(`${userBuyLimit}`)} {currencyName}.
                     </p>
                   }
                   {!existedWinner &&
