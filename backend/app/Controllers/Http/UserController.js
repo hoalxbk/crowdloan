@@ -394,24 +394,6 @@ class UserController {
       'blockPassID', 'inreviewDate', 'waitingDate', 'approvedDate', 'env']);
     console.log(`KYC update with info ${JSON.stringify(params)}`);
     try {
-      // save to db to log
-      const blockPassObj = new BlockPassModel();
-      blockPassObj.fill({
-        client_id: params.clientId,
-        guid: params.guid,
-        status: params.status,
-        event: params.event,
-        record_id: params.recordId,
-        ref_id: params.refId,
-        submit_count: params.submitCount,
-        block_pass_id: params.blockPassID,
-        in_review_date: params.inreviewDate,
-        waiting_date: params.waitingDate,
-        approved_date: params.approvedDate,
-        env: params.env
-      });
-      blockPassObj.save();
-
       // call to api to get user info
       const url = process.env.BLOCK_PASS_API_URL.replace('CLIENT_ID', process.env.BLOCK_PASS_CLIENT_ID)
         .replace('RECORDID', params.recordId);
@@ -448,9 +430,29 @@ class UserController {
       const userModel = new UserModel();
       userModel.fill({
         ...JSON.parse(JSON.stringify(user)),
-        is_kyc: Const.KYC_STATUS[kycStatus.toString().toUpperCase()]
+        is_kyc: Const.KYC_STATUS[kycStatus.toString().toUpperCase()],
+        record_id: params.recordId,
+        ref_id: params.refId
       });
       await UserModel.query().where('id', user.id).update(userModel);
+
+      // save to db to log
+      const blockPassObj = new BlockPassModel();
+      blockPassObj.fill({
+        client_id: params.clientId,
+        guid: params.guid,
+        status: params.status,
+        event: params.event,
+        record_id: params.recordId,
+        ref_id: params.refId,
+        submit_count: params.submitCount,
+        block_pass_id: params.blockPassID,
+        in_review_date: params.inreviewDate,
+        waiting_date: params.waitingDate,
+        approved_date: params.approvedDate,
+        env: params.env
+      });
+      blockPassObj.save();
       return HelperUtils.responseSuccess();
     } catch (e) {
       console.log(e);
