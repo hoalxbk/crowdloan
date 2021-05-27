@@ -304,7 +304,7 @@ class CampaignController {
       }
       if (user.is_kyc != Const.KYC_STATUS.APPROVED) {
         console.log('User does not KYC yet !');
-        return HelperUtils.responseBadRequest("You must register for KYC successfully to be allowed to join !");
+        return HelperUtils.responseBadRequest("You must register for KYC successfully to be allowed to join. Or the email address and/or wallet address you used for KYC does not match the one you use on Red Kite. Please check and update on Blockpass to complete KYC verification.");
       }
       // check user tier
       const userTier = (await HelperUtils.getUserTierSmart(wallet_address))[0];

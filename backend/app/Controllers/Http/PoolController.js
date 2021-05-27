@@ -31,7 +31,8 @@ class PoolController {
     const inputParams = request.only([
       'registed_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
-      'token', 'token_by_eth',  'token_conversion_rate', 'token_images', 'total_sold_coin',
+      'token', 'token_images', 'total_sold_coin',
+      'token_by_eth',  'token_conversion_rate', 'price_usdt', 'display_price_rate',
       'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
@@ -50,6 +51,8 @@ class PoolController {
       'finish_time': inputParams.finish_time,
       'ether_conversion_rate': inputParams.token_by_eth,
       'token_conversion_rate': inputParams.token_conversion_rate,
+      'price_usdt': inputParams.price_usdt,
+      'display_price_rate': inputParams.display_price_rate,
 
       'banner': inputParams.banner,
       'address_receiver': inputParams.address_receiver,
@@ -106,7 +109,8 @@ class PoolController {
     const inputParams = request.only([
       'registed_by',
       'title', 'website', 'banner', 'description', 'address_receiver',
-      'token', 'token_by_eth', 'token_conversion_rate', 'token_images', 'total_sold_coin',
+      'token', 'token_images', 'total_sold_coin',
+      'token_by_eth',  'token_conversion_rate', 'price_usdt', 'display_price_rate',
       'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type',
@@ -124,6 +128,8 @@ class PoolController {
       'finish_time': inputParams.finish_time,
       'ether_conversion_rate': inputParams.token_by_eth,
       'token_conversion_rate': inputParams.token_conversion_rate,
+      'price_usdt': inputParams.price_usdt,
+      'display_price_rate': inputParams.display_price_rate,
 
       'banner': inputParams.banner,
       'address_receiver': inputParams.address_receiver,
@@ -306,7 +312,9 @@ class PoolController {
         'release_time', 'start_join_pool_time', 'start_time', 'end_join_pool_time', 'finish_time',
 
         // Token Info
-        'name', 'symbol', 'decimals', 'token', 'token_conversion_rate', 'ether_conversion_rate', 'token_images', 'total_sold_coin',
+        'name', 'symbol', 'decimals', 'token', 'token_images', 'total_sold_coin',
+        'token_conversion_rate', 'ether_conversion_rate',
+        'price_usdt', 'display_price_rate',
       ]);
 
       console.log('[getPublicPool] - pool.tiers: ', pool.tiers);

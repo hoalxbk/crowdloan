@@ -1,0 +1,74 @@
+import React, {useEffect, useState} from 'react';
+import useStyles from "../style";
+import FormControl from '@material-ui/core/FormControl';
+import {Controller} from "react-hook-form";
+import {renderErrorCreatePool} from "../../../utils/validate";
+import {Switch} from 'antd';
+import {changeDisplayStatus} from "../../../request/pool";
+import {alertSuccess} from "../../../store/actions/alert";
+import {withRouter} from "react-router";
+import {useDispatch} from "react-redux";
+
+function ExchangeRateDisplayPriceSwitch(props: any) {
+  const classes = useStyles();
+  const {
+    setValue, errors, control,
+    poolDetail,
+  } = props;
+  const renderError = renderErrorCreatePool;
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (poolDetail && (poolDetail.display_price_rate != undefined)) {
+      console.log('poolDetail.display_price_rate: ', poolDetail.display_price_rate);
+      setValue('display_price_rate', !!poolDetail.display_price_rate);
+    }
+  }, [poolDetail]);
+
+  const changeDisplay = async (value: any) => {
+    const res = await changeDisplayStatus({
+      poolId: poolDetail.id,
+      isDisplay: value,
+    });
+    console.log('Change display: Response: ', res);
+    if (res.status === 200) {
+      dispatch(alertSuccess('Change display setting successful!'));
+    }
+    return value;
+  };
+
+  return (
+    <>
+      <div><label className={classes.formControlLabel}>Display Exchange Rate</label></div>
+      <FormControl component="fieldset">
+        <Controller
+          control={control}
+          name="display_price_rate"
+          render={(field) => {
+            const { value, onChange } = field;
+            return (
+              <Switch
+                onChange={ async (switchValue) => {
+                  await onChange(switchValue);
+                  // await changeDisplay(switchValue);
+                }}
+                checked={value}
+                checkedChildren="Display"
+                unCheckedChildren="Hidden"
+              />
+            )
+          }}
+        />
+
+        <p className={classes.formErrorMessage}>
+          {
+            renderError(errors, 'display_price_rate')
+          }
+        </p>
+      </FormControl>
+      <br/>
+    </>
+  );
+}
+
+export default withRouter(ExchangeRateDisplayPriceSwitch);

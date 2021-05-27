@@ -54,7 +54,7 @@ const usePoolJoinAction = ({ poolId }: PoolDepositActionParams) => {
 
         if (response.data) {
           if (response.data.status === 200) {
-            dispatch(alertSuccess("Apply Whitelist successful!"));
+            dispatch(alertSuccess(response?.data?.message));
             setJoinPoolSuccess(true);
           }
 

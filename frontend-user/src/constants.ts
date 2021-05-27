@@ -3,6 +3,8 @@ export const API_URL_PREFIX = 'user';
 export const ADMIN_URL_PREFIX = 'dashboard';
 export const IMAGE_URL_PREFIX = 'image';
 export const MAX_BUY_CAMPAIGN = 1000;
+export const WHITELIST_LINK = 'https://bitly.com.vn/qhwl65';
+export const INSTRUCTION_WHITELIST_LINK = 'https://bitly.com.vn/f2gyte';
 export const POOL_STATUS = {
   TBA: 0,
   UPCOMING: 1,

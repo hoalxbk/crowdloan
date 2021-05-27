@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { HashLoader } from "react-spinners";
 import { useParams, useLocation } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
@@ -40,6 +40,7 @@ import useStyles from './style';
 import { pushMessage } from '../../store/actions/message';
 import {getIconCurrencyUsdt} from "../../utils/usdt";
 import ApplyWhitelistModal from "./ApplyWhitelistModal/ApplyWhitelistModal";
+import {INSTRUCTION_WHITELIST_LINK, WHITELIST_LINK} from "../../constants";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -459,7 +460,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                         />
                       }
                       {
-                        joinPoolSuccess  &&
+                        joinPoolSuccess &&
                         (
                           <ApplyWhitelistModal />
                         )
@@ -473,6 +474,20 @@ const BuyToken: React.FC<any> = (props: any) => {
                         }}
                         disabled={!poolDetails?.tokenDetails?.address}
                       />
+                    </div>
+                    <div style={{ paddingTop: 20 }}>
+                      {(alreadyJoinPool || joinPoolSuccess) &&
+                      <>
+                        <p style={{ paddingBottom: 10 }}>
+                          Please fill out the whitelist form to participate in NFTify's IDO: {' '}
+                          <a style={{ color: '#1a73e8' }} href={WHITELIST_LINK} target={'_blank'}>{WHITELIST_LINK}</a>.
+                        </p>
+                        <p>
+                          You can read more about the instruction here. (
+                          <a style={{ color: '#1a73e8' }} href={INSTRUCTION_WHITELIST_LINK} target={'_blank'}>{INSTRUCTION_WHITELIST_LINK}</a>)
+                        </p>
+                      </>
+                      }
                     </div>
                   </>
                 )
