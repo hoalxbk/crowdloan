@@ -104,14 +104,18 @@ const ApplyWhitelistModal: React.FC<any> = (props: any) => {
                 style={{
                   color: '#1a73e8'
                 }}
-              href={whitelistLink}>{whitelistLink}</a>
+                href={whitelistLink}
+                target={'_blank'}
+              >{whitelistLink}</a>
             </p>
             <p>
               You can read more about the instruction here. (<a
               style={{
                 color: '#1a73e8'
               }}
-              href={instructionLink}>{instructionLink}</a>)
+              href={instructionLink}
+              target={'_blank'}
+            >{instructionLink}</a>)
             </p>
 
           </div>
