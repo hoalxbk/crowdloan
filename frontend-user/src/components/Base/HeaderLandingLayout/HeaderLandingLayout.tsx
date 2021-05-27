@@ -31,10 +31,10 @@ const HeaderDefaultLayout = () => {
           <img src="/images/icons/ring.svg" alt="red-warning icon" />
           <img src={iconClose} onClick={() => setShowBanner(false)} className={styles.closeBtn}/>
           <span className={styles.loginErrorBannerText}>
-          PolkaRare (PRARE) launches on 11 May.
+          NFTify (N1) launches on 4 June.
           &nbsp;&nbsp;<button
             className={styles.btnChangeAppNetwork}
-            onClick={() => {window.open('#/buy-token/22', '_blank')}}
+            onClick={() => {window.open('#/buy-token/23', '_blank')}}
           >
             View Details
           </button>
