@@ -3,8 +3,8 @@ export const API_URL_PREFIX = 'user';
 export const ADMIN_URL_PREFIX = 'dashboard';
 export const IMAGE_URL_PREFIX = 'image';
 export const MAX_BUY_CAMPAIGN = 1000;
-export const WHITELIST_LINK = 'https://bitly.com.vn/qhwl65';
-export const INSTRUCTION_WHITELIST_LINK = 'https://bitly.com.vn/f2gyte';
+export const WHITELIST_LINK = 'https://docs.google.com/forms/u/1/d/e/1FAIpQLSfv2chbFzAcsUwxupmFIRpPRhZ-IkI5UEq2z16GFs1lMbvdXg/viewform';
+export const INSTRUCTION_WHITELIST_LINK = 'https://medium.com/polkafoundry/nftify-whitelist-on-red-kite-launchpad-on-june-4-2021-26cd4b8ebc8d';
 export const POOL_STATUS = {
   TBA: 0,
   UPCOMING: 1,
