@@ -10,6 +10,7 @@ import {ClipLoader} from "react-spinners";
 import {useTypedSelector} from '../../../hooks/useTypedSelector';
 
 import useStyles from './style';
+import {INSTRUCTION_WHITELIST_LINK, WHITELIST_LINK} from "../../../constants";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -81,8 +82,6 @@ const ApplyWhitelistModal: React.FC<any> = (props: any) => {
   const handleClose = () => {
     setOpenSubmitModal(false);
   };
-  const whitelistLink = 'https://bitly.com.vn/qhwl65';
-  const instructionLink = 'https://bitly.com.vn/f2gyte';
 
   return (
       <Dialog
@@ -104,18 +103,18 @@ const ApplyWhitelistModal: React.FC<any> = (props: any) => {
                 style={{
                   color: '#1a73e8'
                 }}
-                href={whitelistLink}
+                href={WHITELIST_LINK}
                 target={'_blank'}
-              >{whitelistLink}</a>
+              >{WHITELIST_LINK}</a>
             </p>
             <p>
               You can read more about the instruction here. (<a
               style={{
                 color: '#1a73e8'
               }}
-              href={instructionLink}
+              href={INSTRUCTION_WHITELIST_LINK}
               target={'_blank'}
-            >{instructionLink}</a>)
+            >{INSTRUCTION_WHITELIST_LINK}</a>)
             </p>
 
           </div>
