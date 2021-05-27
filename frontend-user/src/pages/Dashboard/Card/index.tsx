@@ -8,6 +8,7 @@ import { Link } from 'react-router-dom';
 import { POOL_STATUS, NETWORK, POOL_TYPE, ACCEPT_CURRENCY, BUY_TYPE } from '../../../constants';
 import useFetch from '../../../hooks/useFetch';
 import { numberWithCommas } from '../../../utils/formatNumber';
+import {getIconCurrencyUsdt} from "../../../utils/usdt";
 
 const dotIcon = '/images/icons/dot.svg'
 const EthereumIcon = "/images/ethereum.svg";
@@ -64,6 +65,8 @@ const Card = (props: any): JSX.Element => {
   //   return () => clearInterval(intervalCount);
   // }, [])
 
+  const { currencyIcon, currencyName } = getIconCurrencyUsdt({ purchasableCurrency: pool?.accept_currency, networkAvailable: pool?.network_available });
+
   return (
     <Link to={`/buy-token/${pool.id}`}>
       <div className={styles.card}>
@@ -103,9 +106,26 @@ const Card = (props: any): JSX.Element => {
             <li>
               <span>Rate</span>
               <span className="total">1 {pool.symbol} =&nbsp;
-                {pool.accept_currency === ACCEPT_CURRENCY.ETH ?
-                  numberWithCommas(pool.ether_conversion_rate, 4) :
-                  numberWithCommas(pool.token_conversion_rate, 4)} {pool.accept_currency.toUpperCase()}</span>
+
+                {pool.accept_currency === ACCEPT_CURRENCY.ETH &&
+                  <>
+                    {numberWithCommas(pool?.price_usdt, 4)} USD
+                  </>
+                }
+
+                {pool.accept_currency !== ACCEPT_CURRENCY.ETH &&
+                  <>
+                    {numberWithCommas(pool?.token_conversion_rate, 4)} {' '}
+                    {currencyName}
+                    {/*{pool?.accept_currency?.toUpperCase()}*/}
+                  </>
+                }
+
+                {/*{numberWithCommas(pool.price_usdt, 4)} USDT*/}
+                {/*{pool.accept_currency === ACCEPT_CURRENCY.ETH ?*/}
+                {/*  numberWithCommas(pool.ether_conversion_rate, 4) :*/}
+                {/*  numberWithCommas(pool.token_conversion_rate, 4)} {pool.accept_currency.toUpperCase()}*/}
+              </span>
             </li>
             <li>
               <span>Participants</span>

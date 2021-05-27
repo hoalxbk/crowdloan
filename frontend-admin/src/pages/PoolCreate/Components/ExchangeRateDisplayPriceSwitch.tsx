@@ -39,33 +39,38 @@ function ExchangeRateDisplayPriceSwitch(props: any) {
 
   return (
     <>
-      <div><label className={classes.formControlLabel}>Display Exchange Rate</label></div>
-      <FormControl component="fieldset">
-        <Controller
-          control={control}
-          name="display_price_rate"
-          render={(field) => {
-            const { value, onChange } = field;
-            return (
-              <Switch
-                onChange={ async (switchValue) => {
-                  await onChange(switchValue);
-                  // await changeDisplay(switchValue);
-                }}
-                checked={value}
-                checkedChildren="Display"
-                unCheckedChildren="Hidden"
-              />
-            )
-          }}
-        />
+      <div style={{
+        marginTop: 30,
+        // marginBottom: 30,
+      }}>
+        <div><label className={classes.exchangeRateTitle}>Display ETH Exchange Rate</label></div>
+        <FormControl component="fieldset">
+          <Controller
+            control={control}
+            name="display_price_rate"
+            render={(field) => {
+              const { value, onChange } = field;
+              return (
+                <Switch
+                  onChange={ async (switchValue) => {
+                    await onChange(switchValue);
+                    // await changeDisplay(switchValue);
+                  }}
+                  checked={value}
+                  checkedChildren="Display"
+                  unCheckedChildren="Hidden"
+                />
+              )
+            }}
+          />
 
-        <p className={classes.formErrorMessage}>
-          {
-            renderError(errors, 'display_price_rate')
-          }
-        </p>
-      </FormControl>
+          <p className={classes.formErrorMessage}>
+            {
+              renderError(errors, 'display_price_rate')
+            }
+          </p>
+        </FormControl>
+      </div>
       <br/>
     </>
   );

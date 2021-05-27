@@ -44,3 +44,16 @@ export const checkIsBetweenCloseTimeAndReleaseTime = (campaignDetail: any): bool
 
   return isBetween;
 };
+
+export const campaignClaimConfigFormat = (campaignClaimConfigJSON: string) => {
+  let campaignClaimConfigString = campaignClaimConfigJSON || '[]';
+  let campaignClaimConfig = JSON.parse(campaignClaimConfigString);
+  campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
+    item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
+    item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
+    return item;
+  });
+
+  console.log('campaignClaimConfig', campaignClaimConfig);
+  return campaignClaimConfig;
+};

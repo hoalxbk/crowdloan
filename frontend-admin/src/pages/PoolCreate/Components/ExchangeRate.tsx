@@ -18,17 +18,21 @@ function ExchangeRate(props: any) {
     token
   } = props;
 
+  const acceptCurrency = watch('acceptCurrency');
+
   return (
     <div className={classes.exchangeRate}>
-      <ExchangeRateDisplayPriceSwitch
-        poolDetail={poolDetail}
-        register={register}
-        token={token}
-        setValue={setValue}
-        errors={errors}
-        control={control}
-        watch={watch}
-      />
+      {acceptCurrency == ACCEPT_CURRENCY.ETH &&
+        <ExchangeRateDisplayPriceSwitch
+          poolDetail={poolDetail}
+          register={register}
+          token={token}
+          setValue={setValue}
+          errors={errors}
+          control={control}
+          watch={watch}
+        />
+      }
 
       <ExchangeRateETH
         poolDetail={poolDetail}
@@ -40,15 +44,19 @@ function ExchangeRate(props: any) {
         watch={watch}
       />
 
-      <ExchangeRateUSDTDisplay
-        poolDetail={poolDetail}
-        register={register}
-        token={token}
-        setValue={setValue}
-        errors={errors}
-        control={control}
-        watch={watch}
-      />
+
+      {acceptCurrency == ACCEPT_CURRENCY.ETH &&
+        <ExchangeRateUSDTDisplay
+          poolDetail={poolDetail}
+          register={register}
+          token={token}
+          setValue={setValue}
+          errors={errors}
+          control={control}
+          watch={watch}
+        />
+      }
+
 
       <p className={classes.exchangeRateDesc}>
         Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.orem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.

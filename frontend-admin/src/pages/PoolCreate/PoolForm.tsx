@@ -35,6 +35,7 @@ import UserJoinPool from "./Components/UserJoinPool";
 import PoolWebsite from "./Components/PoolWebsite";
 import moment from "moment";
 import ClaimConfigTable from "./Components/ClaimConfig/ClaimConfigTable";
+import {campaignClaimConfigFormat} from "../../utils/campaign";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -102,7 +103,6 @@ function PoolForm(props: any) {
       return false;
     }
 
-    const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
     const submitData = {
       registed_by: loginUser?.wallet_address,
       is_display: data.is_display,
@@ -121,6 +121,8 @@ function PoolForm(props: any) {
 
       token_by_eth: data.tokenRate,
       token_conversion_rate: data.tokenRate,
+
+      // price_usdt: data.acceptCurrency === ACCEPT_CURRENCY.ETH ? data.price_usdt : data.tokenRate,
       price_usdt: data.price_usdt,
       display_price_rate: data.display_price_rate,
 
@@ -184,12 +186,15 @@ function PoolForm(props: any) {
   const updatePoolAfterDeloy = async (data: any) => {
     // Format Claim Config
     let campaignClaimConfig = data.campaignClaimConfig || '[]';
-    campaignClaimConfig = JSON.parse(campaignClaimConfig);
-    campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
-      item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
-      item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
-      return item;
-    });
+    // campaignClaimConfig = JSON.parse(campaignClaimConfig);
+    // campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
+    //   item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
+    //   item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
+    //   return item;
+    // });
+
+    campaignClaimConfig = campaignClaimConfigFormat(campaignClaimConfig);
+    console.log('campaignClaimConfig', campaignClaimConfig);
 
     // Only allow update informations:
     // name
@@ -207,7 +212,7 @@ function PoolForm(props: any) {
       description: data.description,
 
       // USDT Price
-      price_usdt: data.price_usdt,
+      price_usdt: data.price_usdt, // Do not check isAcceptEth
       display_price_rate: data.display_price_rate,
 
       // Token
@@ -300,7 +305,6 @@ function PoolForm(props: any) {
         return item;
       });
 
-      const isAcceptEth = data.acceptCurrency === ACCEPT_CURRENCY.ETH;
       const submitData = {
         id: poolDetail.id,
         registed_by: loginUser?.wallet_address,
@@ -322,6 +326,7 @@ function PoolForm(props: any) {
         token_conversion_rate: data.tokenRate,
 
         // USDT Price
+        // price_usdt: data.acceptCurrency === ACCEPT_CURRENCY.ETH ? data.price_usdt : data.tokenRate,
         price_usdt: data.price_usdt,
         display_price_rate: data.display_price_rate,
 
@@ -453,6 +458,7 @@ function PoolForm(props: any) {
             <div className={classes.exchangeRate}>
               <ClaimConfigTable
                 poolDetail={poolDetail}
+                setValue={setValue}
                 register={register}
                 watch={watch}
               />

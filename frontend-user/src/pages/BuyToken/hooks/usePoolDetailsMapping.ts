@@ -9,6 +9,7 @@ export enum PoolDetailKey {
   website = 'website',
   swapAmount = 'swapAmount',
   exchangeRate = 'exchangeRate',
+  usdtExchangeRate = 'usdtExchangeRate',
   method = 'method',
   type = 'type',
   minTier = 'minTier',
@@ -23,6 +24,7 @@ export type poolDetailKey = Extract<
   PoolDetailKey.swapAmount |
   PoolDetailKey.type |
   PoolDetailKey.method |
+  PoolDetailKey.usdtExchangeRate |
   PoolDetailKey.exchangeRate |
   PoolDetailKey.minTier |
   PoolDetailKey.deposited |
@@ -35,7 +37,7 @@ export type PoolDetailMapping = {
     display: string | number;
     utilIcon?: string;
     reverse?: string;
-    label: string,
+    label?: string,
     image?: string;
   }
 };
@@ -53,6 +55,8 @@ export type PoolDetailMappingProps = {
   endJoinTime: string;
   startBuyTime: string;
   endBuyTime: string;
+  priceUsdt?: any;
+  displayPriceRate?: any;
 }
 
 
@@ -70,7 +74,9 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
       joinTime,
       endJoinTime,
       startBuyTime,
-      endBuyTime
+      endBuyTime,
+      priceUsdt,
+      displayPriceRate,
   } = poolDetails;
     const joinTimeInDate = new Date(Number(joinTime) * 1000);
     const endJoinTimeInDate = new Date(Number(endJoinTime) * 1000);
@@ -89,12 +95,18 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         val: amount,
         label: 'Swap Amount'
       },
+      [PoolDetailKey.usdtExchangeRate]: {
+        display: `1 ${tokenDetails.symbol} = ${priceUsdt} USDT`,
+        reverse: `1 USDT = ${new BigNumber(1).div(priceUsdt).toNumber()} ${tokenDetails?.symbol}`,
+        val: 10,
+        utilIcon: '/images/swap.svg',
+        label: 'Exchange Rate',
+      },
       [PoolDetailKey.exchangeRate]: {
         display: `1 ${tokenDetails.symbol} = ${ethRate} ${currencyName}`,
         reverse: `1 ${currencyName} = ${new BigNumber(1).div(ethRate).toNumber()} ${tokenDetails?.symbol}`,
         val: 10,
         utilIcon: '/images/swap.svg',
-        label: 'Exchange Rate',
       },
       [PoolDetailKey.method]: {
         display: method === 'whitelist' ? 'Whitelist/Lottery': 'FCFS',
