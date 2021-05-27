@@ -353,14 +353,17 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     /**
      * @notice User can receive their tokens when pool finished
      */
-    function claimTokens(address _candidate, uint256 _amount, bytes memory _signature) public {
+    function claimTokens(address _candidate, uint256 _amount, bytes memory _signature) nonReentrant public {
         require(_verifyClaimToken(_candidate, _amount, _signature), "POOL::NOT_ALLOW_TO_CLAIM");
         require(isFinalized(), "POOL::NOT_FINALIZED");
+        require(_amount >= userClaimed[_candidate], "POOL::AMOUNT_MUST_GREATER_THAN_CLAIMED");
+        
+        uint256 maxClaimAmount = userPurchased[_candidate].sub(userClaimed[_candidate]);
 
-        uint256 claimAmount = userPurchased[_candidate].sub(userClaimed[_candidate]);
+        uint claimAmount = _amount.sub(userClaimed[_candidate]);
 
-        if (claimAmount > _amount) {
-            claimAmount = _amount;
+        if (_amount > maxClaimAmount) {
+            claimAmount = maxClaimAmount;
         }
 
         userClaimed[_candidate] = userClaimed[_candidate].add(claimAmount);
