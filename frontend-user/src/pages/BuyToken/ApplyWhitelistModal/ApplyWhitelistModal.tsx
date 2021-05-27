@@ -6,11 +6,9 @@ import MuiDialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import Typography from '@material-ui/core/Typography';
-import {ClipLoader} from "react-spinners";
-import {useTypedSelector} from '../../../hooks/useTypedSelector';
 
 import useStyles from './style';
-import {INSTRUCTION_WHITELIST_LINK, WHITELIST_LINK} from "../../../constants";
+import WhiteListGuideText from "./WhiteListGuideText";
 
 const styles = (theme: Theme) =>
   createStyles({
@@ -84,26 +82,13 @@ const ApplyWhitelistModal: React.FC<any> = (props: any) => {
   };
 
   return (
-      <Dialog
-        open={openSubmitModal} className={styles.dialog}
-        // onClose={handleClose}
-      >
+      <Dialog open={openSubmitModal} className={styles.dialog}>
         <DialogTitle id="customized-dialog-title" onClose={handleClose} customClass={styles.dialogTitle} >
           Whitelist Application Form
         </DialogTitle>
         <DialogContent>
           <div>
-
-            <p style={{
-              marginBottom: 10,
-            }}>
-              Please fill out the <a style={{ color: '#1a73e8' }} href={WHITELIST_LINK} target={'_blank'}>whitelist form</a> to participate in NFTify's IDO.
-              <br/>
-            </p>
-            <p>
-              You can read more about the instruction <a style={{ color: '#1a73e8' }} href={INSTRUCTION_WHITELIST_LINK} target={'_blank'}>here</a>.
-            </p>
-
+            <WhiteListGuideText />
           </div>
         </DialogContent>
       </Dialog>
