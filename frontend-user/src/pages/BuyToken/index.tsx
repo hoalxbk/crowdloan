@@ -479,12 +479,11 @@ const BuyToken: React.FC<any> = (props: any) => {
                       {(alreadyJoinPool || joinPoolSuccess) &&
                       <>
                         <p style={{ paddingBottom: 10 }}>
-                          Please fill out the whitelist form to participate in NFTify's IDO: {' '}
-                          <a style={{ color: '#1a73e8' }} href={WHITELIST_LINK} target={'_blank'}>{WHITELIST_LINK}</a>.
+                          Please fill out the <a style={{ color: '#1a73e8' }} href={WHITELIST_LINK} target={'_blank'}>whitelist form</a> to participate in NFTify's IDO.
+                          .
                         </p>
                         <p>
-                          You can read more about the instruction here. (
-                          <a style={{ color: '#1a73e8' }} href={INSTRUCTION_WHITELIST_LINK} target={'_blank'}>{INSTRUCTION_WHITELIST_LINK}</a>)
+                          You can read more about the instruction <a style={{ color: '#1a73e8' }} href={INSTRUCTION_WHITELIST_LINK} target={'_blank'}>here</a>.
                         </p>
                       </>
                       }

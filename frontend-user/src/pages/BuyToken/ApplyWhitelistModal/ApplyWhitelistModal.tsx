@@ -97,24 +97,11 @@ const ApplyWhitelistModal: React.FC<any> = (props: any) => {
             <p style={{
               marginBottom: 10,
             }}>
-              Please fill out the whitelist form to participate in NFTify's IDO.
+              Please fill out the <a style={{ color: '#1a73e8' }} href={WHITELIST_LINK} target={'_blank'}>whitelist form</a> to participate in NFTify's IDO.
               <br/>
-              <a
-                style={{
-                  color: '#1a73e8'
-                }}
-                href={WHITELIST_LINK}
-                target={'_blank'}
-              >{WHITELIST_LINK}</a>
             </p>
             <p>
-              You can read more about the instruction here. (<a
-              style={{
-                color: '#1a73e8'
-              }}
-              href={INSTRUCTION_WHITELIST_LINK}
-              target={'_blank'}
-            >{INSTRUCTION_WHITELIST_LINK}</a>)
+              You can read more about the instruction <a style={{ color: '#1a73e8' }} href={INSTRUCTION_WHITELIST_LINK} target={'_blank'}>here</a>.
             </p>
 
           </div>
