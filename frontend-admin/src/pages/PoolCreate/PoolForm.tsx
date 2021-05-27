@@ -28,7 +28,7 @@ import AcceptCurrency from "./Components/AcceptCurrency";
 import PoolDescription from "./Components/PoolDescription";
 import AddressReceiveMoney from "./Components/AddressReceiveMoney";
 import ExchangeRate from "./Components/ExchangeRate";
-import DisplaySwitch from "./Components/DisplaySwitch";
+import DisplayPoolSwitch from "./Components/DisplayPoolSwitch";
 import PoolHash from "./Components/PoolHash";
 import PoolName from "./Components/PoolName";
 import UserJoinPool from "./Components/UserJoinPool";
@@ -116,13 +116,13 @@ function PoolForm(props: any) {
 
       // Token
       token: data.token,
-      // TODO: Check to switch
-      // token_by_eth: isAcceptEth ? data.tokenRate : 0,
-      // token_conversion_rate: !isAcceptEth ? data.tokenRate : 0,
-      token_by_eth: data.tokenRate,
-      token_conversion_rate: data.tokenRate,
       token_images: data.tokenImages,
       total_sold_coin: data.totalSoldCoin,
+
+      token_by_eth: data.tokenRate,
+      token_conversion_rate: data.tokenRate,
+      price_usdt: data.price_usdt,
+      display_price_rate: data.display_price_rate,
 
       // TokenInfo
       tokenInfo,
@@ -205,6 +205,10 @@ function PoolForm(props: any) {
       website: data.website,
       banner: data.banner,
       description: data.description,
+
+      // USDT Price
+      price_usdt: data.price_usdt,
+      display_price_rate: data.display_price_rate,
 
       // Token
       token_images: data.tokenImages,
@@ -310,13 +314,16 @@ function PoolForm(props: any) {
 
         // Token
         token: data.token,
-        // TODO: Check to switch
-        // token_by_eth: isAcceptEth ? data.tokenRate : 0,
-        // token_conversion_rate: !isAcceptEth ? data.tokenRate : 0,
-        token_by_eth: data.tokenRate,
-        token_conversion_rate: data.tokenRate,
         token_images: data.tokenImages,
         total_sold_coin: data.totalSoldCoin,
+
+        // Rate
+        token_by_eth: data.tokenRate,
+        token_conversion_rate: data.tokenRate,
+
+        // USDT Price
+        price_usdt: data.price_usdt,
+        display_price_rate: data.display_price_rate,
 
         // TokenInfo
         tokenInfo,
@@ -362,7 +369,7 @@ function PoolForm(props: any) {
   };
 
   const watchBuyType = watch('buyType');
-  // console.log('errors==========>', errors);
+  console.log('errors==========>', errors);
 
   return (
   <>
@@ -374,7 +381,7 @@ function PoolForm(props: any) {
           <div className="">
             <div className={classes.exchangeRate}>
               {!!poolDetail?.id &&
-                <DisplaySwitch
+                <DisplayPoolSwitch
                   poolDetail={poolDetail}
                   register={register}
                   setValue={setValue}
@@ -505,8 +512,6 @@ function PoolForm(props: any) {
               needValidate={needValidate}
             />
           </div>
-
-
 
 
           <ExchangeRate

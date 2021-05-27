@@ -9,7 +9,7 @@ import {alertSuccess} from "../../../store/actions/alert";
 import {withRouter} from "react-router";
 import {useDispatch} from "react-redux";
 
-function DisplaySwitch(props: any) {
+function DisplayPoolSwitch(props: any) {
   const classes = useStyles();
   const {
     setValue, errors, control,
@@ -76,4 +76,4 @@ function DisplaySwitch(props: any) {
   );
 }
 
-export default withRouter(DisplaySwitch);
+export default withRouter(DisplayPoolSwitch);
