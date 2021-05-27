@@ -165,10 +165,10 @@ export const deposit = (address: string | null | undefined, amount: string, libr
       //   console.log('Provider is WalletLink:', provider);
       //   console.log('Gas Limit: ', overrides);
       // }
-
-      let overrides = fixGasLimitWithProvider(library, 'deposit');
-
-      result = await contract?.depositERC20(tokenAddress, convertToWei(amount), overrides);
+      //
+      // let overrides = fixGasLimitWithProvider(library, 'deposit');
+      // result = await contract?.depositERC20(tokenAddress, convertToWei(amount), overrides);
+      result = await contract?.depositERC20(tokenAddress, convertToWei(amount));
 
       dispatch({
         type: sotaTiersActions.DEPOSIT_SUCCESS,

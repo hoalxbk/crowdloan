@@ -38,8 +38,9 @@ const useTokenAllowance = (
              const contract = getContract(token.address, ERC20_ABI, library, account as string);
 
              if (contract) {
-               let overrides = fixGasLimitWithProvider(library, 'approve');
-               const transaction = await contract.approve(spender, MAX_INT, overrides);
+               // let overrides = fixGasLimitWithProvider(library, 'approve');
+               // const transaction = await contract.approve(spender, MAX_INT, overrides);
+               const transaction = await contract.approve(spender, MAX_INT);
                console.log('Approve Token', transaction);
 
               setTransactionHash(transaction.hash);
