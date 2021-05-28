@@ -42,9 +42,9 @@ function ExchangeRateUSDTDisplay(props: any) {
 
   return (
     <div style={{
-      marginTop: 40,
+      paddingTop: 30,
     }}>
-      <Typography className={classes.exchangeRateTitle}>USDT Display Rate</Typography>
+      <Typography className={classes.exchangeRateTitle}>USD Display Rate</Typography>
       <div className={classes.formControlFlex}>
 
         <div className={classes.formControlFlexBlock}>
@@ -86,9 +86,9 @@ function ExchangeRateUSDTDisplay(props: any) {
               value={rateValue}
               ref={register({
                 // required: true,
-                // validate: {
-                //   min: (value: any) => new BigNumber(value).comparedTo(0) > 0,
-                // }
+                validate: {
+                  min: (value: any) => new BigNumber(value).comparedTo(0) > 0,
+                }
               })}
               // disabled={isDeployed}
             />
@@ -96,7 +96,7 @@ function ExchangeRateUSDTDisplay(props: any) {
 
             <Tooltip title={'USDT'}>
               <button className={`${classes.box} ${classes.boxEther}`}>
-                USDT
+                USD
               </button>
             </Tooltip>
             <div className={`${classes.formErrorMessage} ${classes.formErrorMessageAbsolute}`}>

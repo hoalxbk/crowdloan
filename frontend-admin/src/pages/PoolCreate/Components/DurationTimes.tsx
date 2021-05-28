@@ -6,6 +6,7 @@ import {DatePicker} from "antd";
 import moment from "moment";
 import {BUY_TYPE, DATETIME_FORMAT, POOL_TYPE} from "../../../constants";
 import {renderErrorCreatePool} from "../../../utils/validate";
+import {campaignClaimConfigFormat} from "../../../utils/campaign";
 
 function DurationTime(props: any) {
   const classes = useStyles();
@@ -40,6 +41,27 @@ function DurationTime(props: any) {
   const watchPoolType = watch('poolType');
   const isBuyTypeFCFS = watchBuyType === BUY_TYPE.FCFS;
   const isPoolTypeSwap = watchPoolType === POOL_TYPE.SWAP;
+
+  // Convert and format campaignClaimConfig table
+
+  const campaignClaimConfigJSON = watch('campaignClaimConfig');
+
+  useEffect(() => {
+    if (campaignClaimConfigJSON) {
+      // try {
+      //   let campaignClaimConfig = campaignClaimConfigFormat(campaignClaimConfigJSON);
+      //   if (campaignClaimConfig && campaignClaimConfig.length > 0) {
+      //     let claimTimeValue = Number(campaignClaimConfig[0]?.startTime);
+      //     console.log('claimTimeValue', claimTimeValue, moment.unix(claimTimeValue).format( DATETIME_FORMAT));
+      //     setValue('release_time', moment.unix(claimTimeValue).format(DATETIME_FORMAT));
+      //   }
+      //   console.log('campaignClaimConfig Duration:', campaignClaimConfig);
+      //   console.log('poolDetail', poolDetail);
+      // } catch (e) {
+      //   console.log('ERROR: ', e);
+      // }
+    }
+  }, [campaignClaimConfigJSON]);
 
   return (
     <>
@@ -285,6 +307,7 @@ function DurationTime(props: any) {
                   minuteStep={15}
                   className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
                   disabled={isDeployed || isPoolTypeSwap}
+                  // disabled={true} // Always disable. Fill first record of Claim Configuration to this field
                 />
               )
             }}

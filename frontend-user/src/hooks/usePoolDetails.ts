@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTypedSelector } from '../hooks/useTypedSelector';
 import useFetch from './useFetch';
 import useTokenDetails, { TokenType } from './useTokenDetails';
+import BigNumber from 'bignumber.js';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -41,6 +42,8 @@ export type PoolDetails = {
   minimumBuy: number[];
   description: string;
   tiersWithDetails: Tier[];
+  displayPriceRate: any;
+  priceUsdt: string;
 }
 
 export type PoolDetailsReturnType ={
@@ -117,7 +120,9 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         isDisplay: data.is_display === 1,
         addressReceiver: data.address_receiver,
         description: data.description,
-        tiersWithDetails
+        tiersWithDetails,
+        displayPriceRate: !!data.display_price_rate,
+        priceUsdt: new BigNumber(data.price_usdt).toFixed(),
       }
     }
 

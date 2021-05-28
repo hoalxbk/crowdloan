@@ -135,6 +135,8 @@ export const fixGasLimit = (type = 'deposit') => {
 
 export const fixGasLimitWithProvider = (library: any, type = 'deposit') => {
   let overrides = {};
+  return overrides;
+
   const provider = (library?.provider as any);
   if (provider?.isWalletLink) {
     overrides = fixGasLimit(type);

@@ -38,7 +38,7 @@ function ClaimConfigTable(props: any) {
   const classes = useStyles();
   const classesTable = useStylesTable();
   const {
-    register, watch,
+    register, watch, setValue,
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
@@ -95,10 +95,11 @@ function ClaimConfigTable(props: any) {
       // @ts-ignore
       rows.push(responseData);
     }
+    setValue('campaignClaimConfig', JSON.stringify(rows));
     setIsOpenEditPopup(false);
   };
 
-  const deleteTier = (e: any, row: any, index: number) => {
+  const deleteRecord = (e: any, row: any, index: number) => {
     console.log('ROW: ', row, index);
     // eslint-disable-next-line no-restricted-globals
     if (!confirm('Do you want delete this record ?')) {
@@ -110,6 +111,7 @@ function ClaimConfigTable(props: any) {
       newRows.splice(index, 1);
     }
     setRows(newRows);
+    setValue('campaignClaimConfig', JSON.stringify(newRows));
   };
 
   // const acceptCurrency = watch('acceptCurrency');
@@ -171,7 +173,7 @@ function ClaimConfigTable(props: any) {
                     <Button
                       variant="contained"
                       color="secondary"
-                      onClick={(e) => deleteTier(e, row, index)}
+                      onClick={(e) => deleteRecord(e, row, index)}
                       style={{marginLeft: 10, marginTop: 0}}
                     >Delete</Button>
                   </TableCell>

@@ -46,8 +46,9 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
          const contract = getContract(poolAddress, PreSale_ABI, library, account as string);
 
          if (contract) {
-           let overrides = fixGasLimitWithProvider(library, 'claim');
-           const transaction = await contract.claimTokens(account, amount, signature, overrides);
+           // let overrides = fixGasLimitWithProvider(library, 'claim');
+           // const transaction = await contract.claimTokens(account, amount, signature, overrides);
+           const transaction = await contract.claimTokens(account, amount, signature);
 
            setSignature("");
            setUserClaimSignature("");

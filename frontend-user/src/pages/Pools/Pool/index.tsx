@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { POOL_STATUS, NETWORK, POOL_TYPE, ACCEPT_CURRENCY, BUY_TYPE } from '../../../constants';
 import { numberWithCommas } from '../../../utils/formatNumber';
 import useCommonStyle from '../../../styles/CommonStyle';
+import {getIconCurrencyUsdt} from "../../../utils/usdt";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -63,6 +64,8 @@ const Pool = (props: any): JSX.Element => {
     }
   }
 
+  const { currencyIcon, currencyName } = getIconCurrencyUsdt({ purchasableCurrency: pool?.accept_currency, networkAvailable: pool?.network_available });
+
   return (
     <td>
       <Link to={`/buy-token/${pool.id}`} className={styles.link}>
@@ -72,9 +75,21 @@ const Pool = (props: any): JSX.Element => {
             <span className={commonStyle.nnb1418d}>{pool.title}</span>
           </div>
           <div className={styles.ratio + ' ' + commonStyle.nnn1424h}>
-            {pool.accept_currency === ACCEPT_CURRENCY.ETH ?
-              numberWithCommas(pool.ether_conversion_rate, 4) :
-              numberWithCommas(pool.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}
+            {pool.accept_currency === ACCEPT_CURRENCY.ETH &&
+              <>
+                {`${numberWithCommas(pool?.price_usdt, 4)} USD`}
+              </>
+            }
+
+            {pool.accept_currency !== ACCEPT_CURRENCY.ETH &&
+              <>
+                {numberWithCommas(pool?.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}
+              </>
+            }
+
+            {/*{pool.accept_currency === ACCEPT_CURRENCY.ETH ?*/}
+            {/*  numberWithCommas(pool.ether_conversion_rate, 4) :*/}
+            {/*  numberWithCommas(pool.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}*/}
           </div>
           <div className={styles.poolType + ' ' + commonStyle.nnn1424h}>
             {pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? 'Whitelist Lottery' : 'FCFS'}

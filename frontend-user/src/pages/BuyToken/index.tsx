@@ -40,8 +40,9 @@ import useStyles from './style';
 import { pushMessage } from '../../store/actions/message';
 import {getIconCurrencyUsdt} from "../../utils/usdt";
 import ApplyWhitelistModal from "./ApplyWhitelistModal/ApplyWhitelistModal";
-import {INSTRUCTION_WHITELIST_LINK, WHITELIST_LINK} from "../../constants";
 import WhiteListGuideText from "./ApplyWhitelistModal/WhiteListGuideText";
+import {ACCEPT_CURRENCY, INSTRUCTION_WHITELIST_LINK, WHITELIST_LINK} from "../../constants";
+import PoolInfoTable from "./PoolInfoTable/PoolInfoTable";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -63,7 +64,7 @@ const BuyToken: React.FC<any> = (props: any) => {
   const styles = useStyles();
 
   const [buyTokenSuccess, setBuyTokenSuccess] = useState<boolean>(false);
-  const [showRateReserve, setShowRateReverse] = useState<boolean>(false);
+
   const [copiedAddress, setCopiedAddress] = useState(false);
   const [activeNav, setActiveNav] = useState(HeaderType.About);
   const [disableAllButton, setDisableAllButton] = useState<boolean>(false);
@@ -404,47 +405,11 @@ const BuyToken: React.FC<any> = (props: any) => {
                 ):  poolDetailsMapping &&
                 (
                   <>
-                    {
-                      Object.keys(poolDetailsMapping).map((key: string) => {
-                        const poolDetail = poolDetailsMapping[key as poolDetailKey];
-                        if (poolDetails?.method !== 'whitelist' && key === PoolDetailKey.joinTime) return;
-                        return (
-                          <div className={styles.poolDetailBasic} key={key}>
-                            <span className={styles.poolDetailBasicLabel}>{poolDetail.label}</span>
-                            <p className={styles.poolsDetailBasicText}>
-                              {
-                                poolDetail.image && <img src={poolDetail.image} className={styles.poolDetailBasicIcon}  />
-                              }
-                              <Tooltip title={<p style={{ fontSize: 15 }}>{poolDetail.display}</p>}>
-                                  <span>
-                                  {
-                                    key !== PoolDetailKey.exchangeRate ? poolDetail.display: (
-                                      showRateReserve ? poolDetail.reverse: poolDetail.display
-                                    )
-                                  }
-                                  </span>
-                                </Tooltip>
-                              {
-                                poolDetail.utilIcon && (
-                                  <img
-                                    src={poolDetail.utilIcon}
-                                    className={styles.poolDetailUtil}
-                                    onClick={() => {
-                                      if (key === PoolDetailKey.website) {
-                                        window.open(poolDetail.display as string, '_blank')
-                                      }
+                    <PoolInfoTable
+                      poolDetailsMapping={poolDetailsMapping}
+                      poolDetails={poolDetails}
+                    />
 
-                                      if (key === PoolDetailKey.exchangeRate) {
-                                        setShowRateReverse(!showRateReserve);
-                                      }
-                                    }}
-                                    key={key}
-                                  />)
-                              }
-                            </p>
-                          </div>
-                        )})
-                    }
                     <div className={styles.btnGroup}>
                       {
                         <Button

@@ -17,7 +17,7 @@ npm i
 #### Step 2
 Create ``.env`` file
 ```
-cp .env.example .env
+cp .env.local.example .env
 ```
 
 
