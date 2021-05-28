@@ -35,8 +35,8 @@ const useStyles = makeStyles((theme: any) => {
       alignItems: 'flex-start',
     },
     poolHeaderNetworkAvailable: {
-      fontWeight: 400, 
-      marginLeft: 10, 
+      fontWeight: 400,
+      marginLeft: 10,
       color: '#999999',
       fontSize: 14,
     },
@@ -213,7 +213,7 @@ const useStyles = makeStyles((theme: any) => {
       marginLeft: 10,
       display: 'inline-block',
       cursor: 'pointer',
-      width: 18 
+      width: 18
     },
     poolDetailTierWrapper: {
       display: 'flex',
@@ -328,12 +328,44 @@ const useStyles = makeStyles((theme: any) => {
       alignItems: 'flex-start',
 
       [theme.breakpoints.down('md')]: {
-        flexDirection: 'column'     
+        flexDirection: 'column'
       },
       [theme.breakpoints.down('xs')]: {
-        flexDirection: 'column'     
+        flexDirection: 'column'
       }
     },
+
+    poolWhitelistGuide: {
+      color: 'white',
+      borderRadius: 4,
+      padding: '13px 15px',
+      backgroundColor: 'rgba(50, 50, 220, 0.2)',
+      fontSize: 'normal normal bold 14px/18px DM Sans',
+      // display: 'flex',
+      display: 'block',
+      alignItems: 'center',
+      marginTop: 20,
+
+      '& span': {
+        [theme.breakpoints.down('xs')]: {
+          textAlign: 'center',
+          marginLeft: '0 !important' as any
+        }
+      },
+
+      [theme.breakpoints.down('xs')]: {
+        flexDirection: 'column',
+        alignItems: 'center'
+      }
+    },
+    poolWhiteListLineSmall: {
+      paddingBottom: 5,
+    },
+    poolWhiteListLine: {
+      paddingTop: 7,
+      paddingBottom: 7,
+    },
+
     loader: {
       display: 'flex',
       flexDirection: 'column',

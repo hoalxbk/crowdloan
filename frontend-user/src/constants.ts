@@ -115,6 +115,7 @@ export const GAS_LIMIT_CONFIGS = {
   STAKE_SOTA_TIERS: '120000', // 79021
   UNSTAKE_SOTA_TIERS: '100000', // 72527
 };
+
 export const NETWORK_AVAILABLE = {
   ETH: 'eth',
   BSC: 'bsc',
