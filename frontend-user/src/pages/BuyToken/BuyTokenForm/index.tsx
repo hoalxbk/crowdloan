@@ -434,8 +434,15 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       {
         <>
           <p className={styles.buyTokenFormTitle}>
-            You have {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {currencyName} BOUGHT from {numberWithCommas(maximumBuy)} {currencyName} available for your TIER.
-            The remaining amount is {numberWithCommas(new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed())} {currencyName}.
+            You have {' '}
+            {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {currencyName}
+            {' '}  BOUGHT from {' '}
+            {numberWithCommas(new BigNumber(maximumBuy).toFixed())} {currencyName}
+            {' '} available for your TIER.
+            {' '} The remaining amount is {' '}
+            {numberWithCommas(
+              new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()
+            )} {currencyName}.
           </p>
           {currentUserTier && currentUserTier.start_time && currentUserTier.end_time && (
             <p className={styles.buyTokenFormTitle}>
