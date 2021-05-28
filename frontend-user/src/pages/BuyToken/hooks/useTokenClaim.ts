@@ -26,7 +26,7 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
     signature &&
     amount &&
     !claimError &&
-    claimTokenWithSignature(signature, amount);
+    claimTokenWithSignature(signature || '', amount || '0');
   }, [signature, poolAddress, amount, claimError]);
 
   useEffect(() => {
@@ -41,6 +41,8 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
 
   const claimTokenWithSignature = useCallback(
     async (signature: string, amount: string) => {
+
+    console.log('poolAddress, signature, amount, account:', poolAddress, signature, amount, account);
     if (poolAddress && signature && amount && account) {
       try {
          const contract = getContract(poolAddress, PreSale_ABI, library, account as string);
@@ -58,7 +60,7 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
 
            setClaimTokenSuccess(true);
            setClaimTokenLoading(false);
-            dispatch(alertSuccess("Token Claim Successful"));
+           dispatch(alertSuccess("Token Claim Successful"));
          }
       } catch (err) {
         dispatch(alertFailure(err.message));

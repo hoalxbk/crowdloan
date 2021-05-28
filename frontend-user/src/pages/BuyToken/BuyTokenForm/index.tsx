@@ -427,7 +427,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     }
   }
 
-  console.log('poolAmount--maximumBuy:==========>', poolAmount, maximumBuy);
+  console.log('poolAmount--maximumBuy:==========>', poolAmount, maximumBuy, userPurchased);
 
   return (
     <div className={styles.buyTokenForm}>
