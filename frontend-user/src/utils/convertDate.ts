@@ -49,12 +49,12 @@ export const convertTimeLocalWithTimezone = (datetime: any): string => {
 
 export const unixTimeNow = () => {
   return parseInt((Date.now() / 1000) + '')
-}
+};
 
 export const unixTime = (time: any) => {
   return moment(time).unix();
-}
+};
 
 export const timeAgo = (time: any) => {
   return moment(time).fromNow()
-}
+};

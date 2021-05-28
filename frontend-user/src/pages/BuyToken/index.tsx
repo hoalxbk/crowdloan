@@ -41,8 +41,9 @@ import { pushMessage } from '../../store/actions/message';
 import {getIconCurrencyUsdt} from "../../utils/usdt";
 import ApplyWhitelistModal from "./ApplyWhitelistModal/ApplyWhitelistModal";
 import WhiteListGuideText from "./ApplyWhitelistModal/WhiteListGuideText";
-import {ACCEPT_CURRENCY, INSTRUCTION_WHITELIST_LINK, WHITELIST_LINK} from "../../constants";
+import {ACCEPT_CURRENCY, INSTRUCTION_WHITELIST_LINK, POOL_TYPE, WHITELIST_LINK} from "../../constants";
 import PoolInfoTable from "./PoolInfoTable/PoolInfoTable";
+import WhiteListUserGuideBanner from "./WhiteListUserGuideBanner/WhiteListUserGuideBanner";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -372,22 +373,28 @@ const BuyToken: React.FC<any> = (props: any) => {
             {
               // (joinTimeInDate || 0) <= today && today <= (endJoinTimeInDate || 0) &&
               (poolDetails?.joinTime || 0) <= (today.getTime() / 1000) && (today.getTime() / 1000) <= (poolDetails?.endJoinTime || 0) &&
-              (
-                <p className={styles.poolTicketWinner}>
-                  <div>
-                    <img src="/images/tick.svg" alt="warning" />
-                  </div>
-                  <span style={{ marginLeft: 14 }}>
-                  You must click the Apply Whitelist button to join the pool whitelist &nbsp;.
-                  {/*  <Link*/}
-                  {/*    to={'https://bom.to/SH5Zcdln5TTSH'}*/}
-                  {/*    style={{ color: 'white', textDecoration: 'underline' }}*/}
-                  {/*  >*/}
-                  {/*    here*/}
-                  {/*</Link>.*/}
-                </span>
-                </p>
-              )
+
+              <>
+                {!(alreadyJoinPool || joinPoolSuccess) &&
+                  (
+                    <p className={styles.poolTicketWinner}>
+                      <div>
+                        <img src="/images/tick.svg" alt="warning" />
+                      </div>
+                      <span style={{ marginLeft: 14 }}>
+                        You must click the Apply Whitelist button to join the pool whitelist.
+                      </span>
+                    </p>
+                  )
+                }
+                {(alreadyJoinPool || joinPoolSuccess) &&
+                  (
+                    <WhiteListUserGuideBanner
+                      poolDetails={poolDetails}
+                    />
+                  )
+                }
+              </>
             }
 
           </header>
@@ -425,12 +432,6 @@ const BuyToken: React.FC<any> = (props: any) => {
                           }}
                         />
                       }
-                      {
-                        joinPoolSuccess &&
-                        (
-                          <ApplyWhitelistModal />
-                        )
-                      }
 
                       <Button
                         text={'Etherscan'}
@@ -440,12 +441,6 @@ const BuyToken: React.FC<any> = (props: any) => {
                         }}
                         disabled={!poolDetails?.tokenDetails?.address}
                       />
-                    </div>
-                    <div style={{ paddingTop: 20 }}>
-                      {
-                      (alreadyJoinPool || joinPoolSuccess) &&
-                        <WhiteListGuideText/>
-                      }
                     </div>
                   </>
                 )
@@ -603,7 +598,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   activeNav === HeaderType.MyTier && <MyTier tiers={poolDetails?.tiersWithDetails} />
                 }
                 {
-                  poolDetails?.type === 'claimable' && (
+                  poolDetails?.type === POOL_TYPE.CLAIMABLE && (
                     <ClaimToken
                       releaseTime={poolDetails?.releaseTime ? releaseTimeInDate : undefined}
                       ableToFetchFromBlockchain={ableToFetchFromBlockchain}
