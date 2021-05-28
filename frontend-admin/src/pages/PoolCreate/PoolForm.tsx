@@ -12,7 +12,6 @@ import {alertFailure, alertSuccess} from "../../store/actions/alert";
 import {withRouter} from "react-router-dom";
 import {deployPool} from "../../store/actions/campaign";
 import {adminRoute} from "../../utils";
-import {ACCEPT_CURRENCY} from "../../constants";
 
 import PoolBanner from "./Components/PoolBanner";
 import TokenAddress from "./Components/TokenAddress";
