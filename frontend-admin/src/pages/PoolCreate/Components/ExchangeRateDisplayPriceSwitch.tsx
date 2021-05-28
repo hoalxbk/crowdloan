@@ -20,7 +20,6 @@ function ExchangeRateDisplayPriceSwitch(props: any) {
 
   useEffect(() => {
     if (poolDetail && (poolDetail.display_price_rate != undefined)) {
-      console.log('poolDetail.display_price_rate: ', poolDetail.display_price_rate);
       setValue('display_price_rate', !!poolDetail.display_price_rate);
     }
   }, [poolDetail]);

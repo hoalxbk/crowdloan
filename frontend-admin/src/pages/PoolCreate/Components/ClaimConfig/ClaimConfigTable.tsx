@@ -51,7 +51,6 @@ function ClaimConfigTable(props: any) {
   useEffect(() => {
     if (poolDetail && poolDetail.campaignClaimConfig) {
       console.log('poolDetail.campaignClaimConfig-->item', poolDetail.campaignClaimConfig);
-
       const dataFormatted = poolDetail.campaignClaimConfig.map((item: any, index: any) => {
         return createData(
           index + 1,
@@ -62,7 +61,6 @@ function ClaimConfigTable(props: any) {
           false,
         );
       });
-
       console.log('dataFormatted-->item', dataFormatted);
 
       setRows(dataFormatted);
@@ -114,9 +112,6 @@ function ClaimConfigTable(props: any) {
     setValue('campaignClaimConfig', JSON.stringify(newRows));
   };
 
-  // const acceptCurrency = watch('acceptCurrency');
-  // const minTier = watch('minTier');
-  // const isDeployed = !!poolDetail?.is_deploy;
   return (
     <>
       {isOpenEditPopup &&
@@ -145,8 +140,6 @@ function ClaimConfigTable(props: any) {
           <TableHead>
             <TableRow>
               <TableCell>Start Time</TableCell>
-              {/*<TableCell align="right">End Time</TableCell>*/}
-              {/*<TableCell align="right">Min Percent Claim</TableCell>*/}
               <TableCell align="right">Max Claim (%)</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
@@ -154,14 +147,10 @@ function ClaimConfigTable(props: any) {
           <TableBody>
             {rows.map((row: any, index: number) => {
               let startTime = row.startTime || '--';
-              // let endTime = row.endTime || '--';
-              // let minBuy = new BigNumber(row.minBuy || '0').toFixed();
               let maxBuy = new BigNumber(row.maxBuy || '0').toFixed();
               return (
                 <TableRow key={index}>
                   <TableCell>{startTime}</TableCell>
-                  {/*<TableCell align="right">{endTime}</TableCell>*/}
-                  {/*<TableCell align="right">{minBuy}</TableCell>*/}
                   <TableCell align="right">{maxBuy} %</TableCell>
                   <TableCell align="right">
                     <Button

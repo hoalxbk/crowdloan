@@ -43,23 +43,23 @@ function DurationTime(props: any) {
   const isPoolTypeSwap = watchPoolType === POOL_TYPE.SWAP;
 
   // Convert and format campaignClaimConfig table
-
   const campaignClaimConfigJSON = watch('campaignClaimConfig');
-
   useEffect(() => {
     if (campaignClaimConfigJSON) {
-      // try {
-      //   let campaignClaimConfig = campaignClaimConfigFormat(campaignClaimConfigJSON);
-      //   if (campaignClaimConfig && campaignClaimConfig.length > 0) {
-      //     let claimTimeValue = Number(campaignClaimConfig[0]?.startTime);
-      //     console.log('claimTimeValue', claimTimeValue, moment.unix(claimTimeValue).format( DATETIME_FORMAT));
-      //     setValue('release_time', moment.unix(claimTimeValue).format(DATETIME_FORMAT));
-      //   }
-      //   console.log('campaignClaimConfig Duration:', campaignClaimConfig);
-      //   console.log('poolDetail', poolDetail);
-      // } catch (e) {
-      //   console.log('ERROR: ', e);
-      // }
+      try {
+        let campaignClaimConfig = campaignClaimConfigFormat(campaignClaimConfigJSON);
+        // console.log('Change campaignClaimConfig: ', campaignClaimConfig);
+        if (campaignClaimConfig && campaignClaimConfig.length > 0) {
+          let claimTimeValue = Number(campaignClaimConfig[0]?.startTime); // Format: Timestamp
+          // Convert claimTimeValue from "1625072400" to Moment Object
+          const claimTimeObject = moment(claimTimeValue * 1000);
+          setValue('release_time', claimTimeObject);
+        } else {
+          setValue('release_time', null);
+        }
+      } catch (e) {
+        console.log('ERROR: ', e);
+      }
     }
   }, [campaignClaimConfigJSON]);
 
@@ -306,8 +306,8 @@ function DurationTime(props: any) {
                   }}
                   minuteStep={15}
                   className={`${commonStyle.DateTimePicker} ${classes.formDatePicker}`}
-                  disabled={isDeployed || isPoolTypeSwap}
-                  // disabled={true} // Always disable. Fill first record of Claim Configuration to this field
+                  // disabled={isDeployed || isPoolTypeSwap}
+                  disabled={true} // Always disable. Fill first record of Claim Configuration to this field
                 />
               )
             }}

@@ -7,8 +7,6 @@ import moment from "moment";
 import CurrencyInputWithValidate from "../CurrencyInputWithValidate";
 import {DATETIME_FORMAT} from "../../../../constants";
 import {fieldMustBeGreaterThanZero, renderErrorCreatePool} from "../../../../utils/validate";
-import BigNumber from 'bignumber.js';
-import TableCell from "@material-ui/core/TableCell";
 
 function CreateEditClaimConfigForm(props: any) {
   const classes = useStyles();
@@ -26,16 +24,15 @@ function CreateEditClaimConfigForm(props: any) {
     reValidateMode: 'onChange',
     defaultValues: {
       ...editData,
+      // Convert startTime from "2021-05-28 08:45:59" to Moment Object
       startTime: isEdit ? moment(editData.startTime, DATETIME_FORMAT) : null,
-      // endTime: isEdit ? moment(editData.endTime, DATETIME_FORMAT) : null,
     },
   });
 
   const submitData = (data: any) => {
     const responseData = {
+      // Convert startTime from Moment Object to String "2021-05-28 08:45:59"
       startTime: data.startTime.format(DATETIME_FORMAT),
-      // endTime: data.endTime.format(DATETIME_FORMAT),
-      // minBuy: data.minBuy,
       maxBuy: data.maxBuy,
     };
     handleCreateUpdateData && handleCreateUpdateData(responseData);

@@ -163,7 +163,6 @@ export const userCurrentNetwork = (state: any = { currentNetworkId: '' }, action
         ...state,
         currentNetworkId: action.payload
       };
-      console.log('New State: ', state, newState);
       return newState;
     }
 
