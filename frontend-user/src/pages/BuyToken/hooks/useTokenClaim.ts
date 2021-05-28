@@ -19,15 +19,16 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
   const [claimError, setClaimError] = useState<string>("");
 
   const { error, signMessage, signature: authSignature, setSignature } = useWalletSignature();
-  const { signature, amount, error: claimSignError, setSignature: setUserClaimSignature } = useUserClaimSignature(account, poolId, authSignature);
+  const { signature, amount, error: claimSignError, setSignature: setUserClaimSignature, loadingClaim } = useUserClaimSignature(account, poolId, authSignature);
 
   useEffect(() => {
     poolAddress &&
     signature &&
     amount &&
     !claimError &&
-    claimTokenWithSignature(signature || '', amount || '0');
-  }, [signature, poolAddress, amount, claimError]);
+    !loadingClaim &&
+    claimTokenWithSignature(signature, amount);
+  }, [signature, poolAddress, amount, claimError, loadingClaim]);
 
   useEffect(() => {
     if (error || claimSignError) {
