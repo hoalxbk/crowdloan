@@ -8,6 +8,7 @@ import PreSale_ABI from '../../../abi/PreSalePool.json';
 import { getContract } from '../../../utils/contract';
 import { alertSuccess, alertFailure } from '../../../store/actions/alert';
 import {fixGasLimitWithProvider} from "../../../utils";
+import BigNumber from 'bignumber.js';
 
 const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefined) => {
   const { library, account } = useWeb3React();
@@ -45,6 +46,17 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
 
     console.log('poolAddress, signature, amount, account:', poolAddress, signature, amount, account);
     if (poolAddress && signature && amount && account) {
+
+      if (amount && (new BigNumber(amount)).lte(0)) {
+        const msg = 'You not enough claimable token !';
+        dispatch(alertFailure(msg));
+        setClaimTokenLoading(false);
+        setClaimError(msg);
+        setSignature("");
+        setUserClaimSignature("");
+        return;
+      }
+
       try {
          const contract = getContract(poolAddress, PreSale_ABI, library, account as string);
 

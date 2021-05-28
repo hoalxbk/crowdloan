@@ -11,12 +11,12 @@ export enum PoolStatus {
 }
 
 export type poolStatus = Extract<
-  PoolStatus, 
-  PoolStatus.Progress | 
-  PoolStatus.Upcoming | 
-  PoolStatus.Joining | 
+  PoolStatus,
+  PoolStatus.Progress |
+  PoolStatus.Upcoming |
+  PoolStatus.Joining |
   PoolStatus.Filled |
-  PoolStatus.Closed | 
+  PoolStatus.Closed |
   PoolStatus.Claimable |
   PoolStatus.TBA
 >
@@ -27,6 +27,7 @@ export const getPoolStatus = (
   startBuyTime: Date | undefined,
   endBuyTime: Date | undefined,
   releaseTime: Date | undefined,
+
   soldProgress: string | undefined,
   isClaimable: boolean | undefined,
   poolType: string | undefined
@@ -56,10 +57,10 @@ export const getPoolStatus = (
   }
 
   if (
-    startBuyTime 
-    && endBuyTime 
-    && today > startBuyTime.getTime() 
-    && today < endBuyTime.getTime() 
+    startBuyTime
+    && endBuyTime
+    && today > startBuyTime.getTime()
+    && today < endBuyTime.getTime()
   ) {
     return new BigNumber(soldProgress || 0).multipliedBy(100).gte(99) ?  PoolStatus.Filled: PoolStatus.Progress;
   }

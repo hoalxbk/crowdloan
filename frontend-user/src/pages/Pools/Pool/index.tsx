@@ -8,6 +8,7 @@ import { POOL_STATUS, NETWORK, POOL_TYPE, ACCEPT_CURRENCY, BUY_TYPE } from '../.
 import { numberWithCommas } from '../../../utils/formatNumber';
 import useCommonStyle from '../../../styles/CommonStyle';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
+import {PoolStatus} from "../../../utils/getPoolStatus";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -51,18 +52,24 @@ const Pool = (props: any): JSX.Element => {
 
   const poolStatus = () => {
     switch(pool.status) {
-      case POOL_STATUS.CLOSED:
-        return <div className="closed"><span>Closed</span></div>
-      case POOL_STATUS.FILLED:
-        return <div className="filled"><span>Filled</span></div>
-      case POOL_STATUS.IN_PROGRESS:
-        return <div className="in-progress"><span>Inprogress</span></div>
-      case POOL_STATUS.JOINING:
-        return <div className="joining"><span>Joining</span></div>
-      default:
+      case PoolStatus.TBA:
+        return <div className="tba"><span>TBA</span></div>
+      case PoolStatus.Upcoming:
         return <div className="up-comming"><span>Upcoming</span></div>
+      case PoolStatus.Joining:
+        return <div className="joining"><span>Whitelisting</span></div>
+      case PoolStatus.Progress:
+        return <div className="in-progress"><span>Inprogress</span></div>
+      case PoolStatus.Filled:
+        return <div className="filled"><span>Filled</span></div>
+      case PoolStatus.Closed:
+        return <div className="closed"><span>Ended</span></div>
+      case PoolStatus.Claimable:
+        return <div className="claimable"><span>Claimable</span></div>
+      default:
+        return <div className="up-comming"><span>{pool.status}</span></div>
     }
-  }
+  };
 
   const { currencyIcon, currencyName } = getIconCurrencyUsdt({ purchasableCurrency: pool?.accept_currency, networkAvailable: pool?.network_available });
 
@@ -80,7 +87,6 @@ const Pool = (props: any): JSX.Element => {
                 {`${numberWithCommas(pool?.price_usdt, 4)} USD`}
               </>
             }
-
             {pool.accept_currency !== ACCEPT_CURRENCY.ETH &&
               <>
                 {numberWithCommas(pool?.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}
@@ -92,7 +98,7 @@ const Pool = (props: any): JSX.Element => {
             {/*  numberWithCommas(pool.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}*/}
           </div>
           <div className={styles.poolType + ' ' + commonStyle.nnn1424h}>
-            {pool.pool_type === BUY_TYPE.WHITELIST_LOTTERY ? 'Whitelist Lottery' : 'FCFS'}
+            {(pool?.buy_type + '').toLowerCase() === BUY_TYPE.WHITELIST_LOTTERY ? 'Whitelist Lottery' : 'FCFS'}
           </div>
           <div className={styles.progress}>
             <span className={commonStyle.nnb1418d}>{`${progress.toFixed(2)}%`}</span>

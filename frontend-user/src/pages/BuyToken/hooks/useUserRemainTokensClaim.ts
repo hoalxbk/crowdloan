@@ -22,21 +22,27 @@ const useUserRemainTokensClaim = (
       if (userAddress && poolAddress && tokenDetails && ableToFetchFromBlockchain
           && ethers.utils.isAddress(userAddress)
           && ethers.utils.isAddress(poolAddress)
-         ) {
-           setUserPurchasedLoading(true);
+      ) {
+        setUserPurchasedLoading(true);
+        const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read);
+        if (contract) {
+          const userPurchased = await contract.methods.userPurchased(userAddress).call();
+          const userClaimed = await contract.methods.userClaimed(userAddress).call();
+          const userPurchasedReturn = new BigNumber(userPurchased).minus(new BigNumber(userClaimed)).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed();
 
-           const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read);
-
-           if (contract) {
-             const userPurchased = await contract.methods.userPurchased(userAddress).call();
-             const userClaimed = await contract.methods.userClaimed(userAddress).call();
-             const userPurchasedReturn = new BigNumber(userPurchased).minus(new BigNumber(userClaimed)).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed();
-
-             return userPurchasedReturn;
-           }
-
-           return 0;
-         }
+          return {
+            userPurchased: new BigNumber(userPurchased).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed(),
+            userClaimed: new BigNumber(userClaimed).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed(),
+            userPurchasedReturn,
+          }
+        }
+        return {
+          userPurchased: 0,
+          userClaimed: 0,
+          userPurchasedReturn: 0,
+          tokenDecimals: tokenDetails.decimals,
+        }
+      }
     } catch (err) {
       console.log(err);
     }

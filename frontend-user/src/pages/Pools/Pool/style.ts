@@ -51,24 +51,36 @@ const useStyles = makeStyles((theme: any) => {
           font: 'normal normal bold 12px/14px DM Sans'
         }
       },
+      '& .tba': {
+        backgroundColor: '#9E63FF',
+        color: '#fff'
+      },
       '& .up-comming': {
         backgroundColor: '#6398FF',
+        color: '#fff'
+      },
+      '& .joining': {
+        backgroundColor: '#12A064',
         color: '#fff'
       },
       '& .in-progress': {
         backgroundColor: '#FFDE30',
         color: '#030925'
       },
-      '& .closed': {
-        backgroundColor: '#D01F36',
-        color: '#fff'
-      },
       '& .filled': {
         backgroundColor: '#12A064',
         color: '#fff'
       },
-      '& .joining': {
-        backgroundColor: '#12A064',
+      '& .closed': {
+        backgroundColor: '#D01F36',
+        color: '#fff'
+      },
+      '& .claimable': {
+        backgroundColor: '#FF9330',
+        color: '#fff'
+      },
+      '& .none': {
+        backgroundColor: '#FF9330',
         color: '#fff'
       },
     },

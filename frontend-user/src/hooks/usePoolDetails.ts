@@ -3,6 +3,8 @@ import { useTypedSelector } from '../hooks/useTypedSelector';
 import useFetch from './useFetch';
 import useTokenDetails, { TokenType } from './useTokenDetails';
 import BigNumber from 'bignumber.js';
+import moment from "moment";
+import {convertMomentObjectToDateTimeString, convertUnixTimeToDateTime} from "../utils/convertDate";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -91,6 +93,17 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         })
       })
 
+      let campaignClaimConfig = data.campaignClaimConfig || [];
+      campaignClaimConfig = campaignClaimConfig.map((claimConfig: any, index: number) => {
+        return {
+          ...claimConfig,
+          start_time_formated: convertUnixTimeToDateTime(claimConfig.start_time),
+          start_time_moment: moment(claimConfig.start_time),
+        }
+      });
+
+      console.log('data.campaignClaimConfig', data.campaignClaimConfig, campaignClaimConfig);
+
       return {
         method: data.buy_type,
         startTime: data.start_join_pool_time,
@@ -123,6 +136,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         tiersWithDetails,
         displayPriceRate: !!data.display_price_rate,
         priceUsdt: new BigNumber(data.price_usdt).toFixed(),
+        campaignClaimConfig,
       }
     }
 

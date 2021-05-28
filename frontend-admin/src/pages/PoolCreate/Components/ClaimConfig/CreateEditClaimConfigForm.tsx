@@ -123,28 +123,6 @@ function CreateEditClaimConfigForm(props: any) {
               }}
             />
           </div>
-
-          {/*<CurrencyInput*/}
-          {/*  placeholder="Please enter a number"*/}
-          {/*  value={maxBuy}*/}
-          {/*  decimalsLimit={2}*/}
-          {/*  onValueChange={(value: any, name: any) => {*/}
-          {/*    setMaxBuy(value);*/}
-          {/*  }}*/}
-          {/*  className={`${classes.formInputBox}`}*/}
-          {/*/>*/}
-          {/*<input*/}
-          {/*  type='hidden'*/}
-          {/*  name="maxBuy"*/}
-          {/*  value={maxBuy || ''}*/}
-          {/*  ref={register({ required: true })}*/}
-          {/*/>*/}
-
-          {/*<p className={classes.formErrorMessage}>*/}
-          {/*  {*/}
-          {/*    renderError(errors, 'maxBuy')*/}
-          {/*  }*/}
-          {/*</p>*/}
           <p className={classes.formErrorMessage}>
             {
               renderError(errors, 'maxBuyGreaterThanZero')

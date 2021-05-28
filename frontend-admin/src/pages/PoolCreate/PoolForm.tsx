@@ -220,7 +220,9 @@ function PoolForm(props: any) {
 
       // Claim Configuration
       claim_configuration: campaignClaimConfig,
-
+      // Time
+      // Release time will auto fill from first record of Campaign Claim Config Table
+      release_time: data.release_time ? data.release_time.unix() : null,
     };
 
     console.log('[updatePoolAfterDeloy] - Submit with data: ', submitData);

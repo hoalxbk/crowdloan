@@ -5,6 +5,8 @@ export const IMAGE_URL_PREFIX = 'image';
 export const MAX_BUY_CAMPAIGN = 1000;
 export const WHITELIST_LINK = 'https://forms.gle/HiQkhaRM8mujeryq8';
 export const INSTRUCTION_WHITELIST_LINK = 'https://medium.com/polkafoundry/nftify-whitelist-on-red-kite-launchpad-on-june-4-2021-26cd4b8ebc8d';
+export const DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
+
 export const POOL_STATUS = {
   TBA: 0,
   UPCOMING: 1,

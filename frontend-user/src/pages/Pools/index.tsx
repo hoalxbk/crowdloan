@@ -17,6 +17,7 @@ import useFetch from '../../hooks/useFetch';
 import useAuth from '../../hooks/useAuth';
 
 import Pagination from '@material-ui/lab/Pagination';
+import {getPoolStatusByPoolDetail} from "../../utils/getPoolStatusByPoolDetail";
 
 const iconSearch = 'images/icons/search.svg';
 
@@ -52,6 +53,8 @@ const Pools = (props: any) => {
     `${getPoolsPrefixUri()}?page=${currentPage}&limit=10&title=${input}`
   );
 
+  console.log('poolsList===1122===>', poolsList);
+
   const handleInputChange = debounce((e: any) => {
     ReactDOM.unstable_batchedUpdates(() => {
       setInput(e.target.value);
@@ -79,38 +82,31 @@ const Pools = (props: any) => {
       setCurrentPage(poolsList.page);
       setPools(poolsList.data);
 
-      const tempPools = [...poolsList.data] as never[];
-      tempPools.forEach(async (pool: any) => {
-        const currentTime = moment.utc().unix();
-        const startJoinPoolTime = parseInt(pool.start_join_pool_time);
-        const endJoinPoolTime = parseInt(pool.end_join_pool_time);
-        const startTime = parseInt(pool.start_time);
-        const finishTime = parseInt(pool.finish_time);
-        if(startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime) {
-          pool.status = POOL_STATUS.UPCOMING
-        } else if(startJoinPoolTime <= currentTime && currentTime <= endJoinPoolTime)
-         {
-           pool.status = POOL_STATUS.JOINING
-         } else if(currentTime >= startTime && currentTime <= finishTime) {
-           if(Math.round(pool.tokenSold * 100 / pool.total_sold_coin) == 100) {
-             pool.status = POOL_STATUS.FILLED
-           } else {
-             pool.status = POOL_STATUS.IN_PROGRESS
-           }
-         } else {
-           pool.status = POOL_STATUS.CLOSED
-         }
-      });
+      let listData = poolsList.data;
+      let temp = [];
+      for (let i = 0; i < listData.length; i++) {
+        const pool = listData[i];
+        const status = await getPoolStatusByPoolDetail(pool, 0);
+        console.log('Pool STATUS:', status);
+
+        temp.push({
+          ...pool,
+          status,
+        });
+      }
+
+      poolsList.data = temp;
+      listData = temp;
 
       if(!appChain || !connector) return;
 
-      await Promise.all(tempPools.map(async (pool: any) => {
+      await Promise.all(listData.map(async (pool: any) => {
         if(pool.is_deploy === 0) return
           const tokenSold = await getTokenSold(pool);
           pool.tokenSold = tokenSold
       }));
 
-      setPools(tempPools);
+      setPools(listData);
     }
 
     poolsList && poolsList.data && poolsList.data && manipulatePoolsData();
@@ -142,7 +138,7 @@ const Pools = (props: any) => {
           <div className={styles.searchGroup}>
             <input
               type="text"
-              placeholder="Search by Pool ID, Pool name, Token contract address, Token symbol"
+              placeholder="Search by Pool name"
               className={commonStyle.nnn1424h}
               onChange={handleInputChange}
             />

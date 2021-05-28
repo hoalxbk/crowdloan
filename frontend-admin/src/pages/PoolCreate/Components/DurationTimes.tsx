@@ -313,6 +313,14 @@ function DurationTime(props: any) {
             }}
           />
         </div>
+        <div style={{ color: 'blue' }}>
+          <p>
+            Please config first record of Claim Configuration Table.
+          </p>
+          <p>
+            This field will auto fill from first record of Claim Configuration Table.
+          </p>
+        </div>
         <div className={`${classes.formErrorMessage} ${classes.formErrorMessageAbsolute}`}>
           {
             renderError(errors, 'release_time')
