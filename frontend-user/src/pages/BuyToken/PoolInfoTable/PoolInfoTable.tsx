@@ -23,7 +23,6 @@ function PoolInfoTable(props: any) {
 
           if (key === PoolDetailKey.exchangeRate) {
             if (poolDetails?.purchasableCurrency == ACCEPT_CURRENCY.ETH && !poolDetails?.displayPriceRate) {
-              console.log('poolDetailsqqqqq=============>', poolDetails);
               return (
                 <ExchangeRateUsdtRow
                   key={key}
