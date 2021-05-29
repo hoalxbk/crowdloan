@@ -81,7 +81,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
       return false;
     }
     if (userPurchased <= 0) {
-      dispatch(alertFailure('User purchased must greater than 0'));
+      dispatch(alertFailure('You can not claim token at current time!'));
       return false;
     }
     if (disableAllButton) {
@@ -106,12 +106,15 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
 
   return (
     <div className={styles.poolDetailClaim}>
-      <p className={styles.poolDetailClaimTitle}>
-        <span>{'Token can claim from'}</span>
-        <strong>{releaseTime ? convertTimeToStringFormat(releaseTime || new Date()) : 'TBA'}</strong>
-      </p>
+
       {releaseTime && releaseTime >= nowTime &&
-        <Countdown startDate={releaseTime} />
+        <>
+          <p className={styles.poolDetailClaimTitle}>
+            <span>{'Token can claim from'}</span>
+            <strong>{releaseTime ? convertTimeToStringFormat(releaseTime || new Date()) : 'TBA'}</strong>
+          </p>
+          <Countdown startDate={releaseTime} />
+        </>
       }
 
       {/*<div className={styles.poolDetailClaimInfo}>*/}

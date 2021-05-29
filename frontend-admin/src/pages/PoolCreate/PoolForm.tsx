@@ -185,13 +185,6 @@ function PoolForm(props: any) {
   const updatePoolAfterDeloy = async (data: any) => {
     // Format Claim Config
     let campaignClaimConfig = data.campaignClaimConfig || '[]';
-    // campaignClaimConfig = JSON.parse(campaignClaimConfig);
-    // campaignClaimConfig = campaignClaimConfig.map((item: any, index: number) => {
-    //   item.startTime = item.startTime ? (moment(item.startTime).unix() || null) : null;
-    //   item.endTime = item.endTime ? (moment(item.endTime).unix() || null) : null;
-    //   return item;
-    // });
-
     campaignClaimConfig = campaignClaimConfigFormat(campaignClaimConfig);
     console.log('campaignClaimConfig', campaignClaimConfig);
 

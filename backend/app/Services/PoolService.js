@@ -75,7 +75,7 @@ class PoolService {
   }
 
   getPoolWithTiers(filterParams) {
-    const pool = this.buildQueryBuilder(filterParams).with('tiers').first();
+    const pool = this.buildQueryBuilder(filterParams).with('tiers').with('campaignClaimConfig').first();
     return pool;
   }
 

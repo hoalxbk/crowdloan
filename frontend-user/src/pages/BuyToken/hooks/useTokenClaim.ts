@@ -48,7 +48,7 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
     if (poolAddress && signature && amount && account) {
 
       if (amount && (new BigNumber(amount)).lte(0)) {
-        const msg = 'You not enough claimable token !';
+        const msg = 'You can not claim token at current time!';
         dispatch(alertFailure(msg));
         setClaimTokenLoading(false);
         setClaimError(msg);
