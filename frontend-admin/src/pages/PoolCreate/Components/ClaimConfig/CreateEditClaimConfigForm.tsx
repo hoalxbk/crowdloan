@@ -7,6 +7,7 @@ import moment from "moment";
 import CurrencyInputWithValidate from "../CurrencyInputWithValidate";
 import {DATETIME_FORMAT} from "../../../../constants";
 import {fieldMustBeGreaterThanZero, renderErrorCreatePool} from "../../../../utils/validate";
+import {convertDateTimeStringToMomentObject, convertMomentObjectToDateTimeString} from "../../../../utils/convertDate";
 
 function CreateEditClaimConfigForm(props: any) {
   const classes = useStyles();
@@ -25,14 +26,15 @@ function CreateEditClaimConfigForm(props: any) {
     defaultValues: {
       ...editData,
       // Convert startTime from "2021-05-28 08:45:59" to Moment Object
-      startTime: isEdit ? moment(editData.startTime, DATETIME_FORMAT) : null,
+      startTime: isEdit ? convertDateTimeStringToMomentObject(editData.startTime) : null,
     },
   });
 
   const submitData = (data: any) => {
     const responseData = {
       // Convert startTime from Moment Object to String "2021-05-28 08:45:59"
-      startTime: data.startTime.format(DATETIME_FORMAT),
+      // startTime: data.startTime.format(DATETIME_FORMAT),
+      startTime: convertMomentObjectToDateTimeString(data.startTime),
       maxBuy: data.maxBuy,
     };
     handleCreateUpdateData && handleCreateUpdateData(responseData);
