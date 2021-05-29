@@ -52,10 +52,11 @@ const ModalVerifyEmail = (props: any) => {
       axios.post(`${process.env.REACT_APP_API_BASE_URL}/user/register-email`, data, options)
       .then(res => {
         if(res.data.status == 200) {
-          setEmail(inputEmail)
           dispatch(alertSuccess(res.data.message));
+          window.location.reload();
+          setEmail(inputEmail)
           setOpenModalVerifyEmail(false);
-          setEmailVeryfied(1)
+          setEmailVeryfied(1);
         } else if(res.data.status == 400) {
           dispatch(alertFailure(res.data.message));
         }
@@ -72,13 +73,13 @@ const ModalVerifyEmail = (props: any) => {
     else setDisableVerify(false);
   }, [inputEmail])
 
-  const handleVerifyEmail = () => {
+  const handleVerifyEmail = async () => {
     if(inputEmail != '' && REGEX.test(inputEmail) == false || inputEmail == '') {
       setInvalidEmail(true);
       return;
     }
     setInvalidEmail(false);
-    signMessage();
+    await signMessage();
   }
 
   return (
