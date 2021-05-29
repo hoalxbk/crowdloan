@@ -55,12 +55,18 @@ const Dashboard = (props: any) => {
     || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (checkBuyTime(pool) || checkJoinTime(pool) || !pool.release_time)
   };
 
-  const setStatusPools = () => {
-    pools.forEach(async (pool: any) => {
+  const setStatusPools = async () => {
+    for (let i = 0; i < pools.length; i++) {
+      const pool: any = pools[i];
       const status = await getPoolStatusByPoolDetail(pool, 0);
       console.log('Status Pool:', status);
       pool.status = status;
-    });
+    }
+    // pools.forEach(async (pool: any) => {
+    //   const status = await getPoolStatusByPoolDetail(pool, 0);
+    //   console.log('Status Pool:', status);
+    //   pool.status = status;
+    // });
     setUpcomingPools(pools.filter((pool: any) => pool?.status != PoolStatus.Claimable && pool?.status != PoolStatus.Closed && pool?.is_display == 1))
     setFeaturePools(pools.filter((pool: any) => (pool?.status == PoolStatus.Claimable || pool?.status == PoolStatus.Closed) && pool?.is_display == 1))
   };

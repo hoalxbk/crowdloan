@@ -7,7 +7,7 @@ const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 export type PoolDetails = {
   id: number;
-  website: string; 
+  website: string;
   amount: number;
   ethRate: number;
   method: string;
@@ -43,13 +43,13 @@ export type PoolsReturnType ={
 
 const usePools = (): PoolsReturnType => {
   const [poolsDone, setPoolsDone] = useState<boolean>(false);
-  const { loading, error, data }  = useFetch<any>(`/pools`);
+  const { loading, error, data }  = useFetch<any>(`/pools?limit=50`);
   const { data: connectedAccountTier } = useTypedSelector(state => state.userTier);
 
   const pools = useMemo(() => {
     if (data && !loading && !error && poolsDone)  {
       const result = data.data.map((p: any) => {
-        
+
         return {
           ...p,
           // token_images: `${BASE_URL}/image/${p.token_images}`,
