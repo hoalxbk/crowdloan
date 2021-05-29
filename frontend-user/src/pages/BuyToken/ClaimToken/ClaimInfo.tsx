@@ -92,7 +92,7 @@ function ClaimInfo(props: any) {
           <span>{numberWithCommas(`${maximumTokenClaimUtilNow || 0}`)} {tokenDetails?.symbol}</span>
         </div>
 
-        {nextClaim && (new BigNumber(maximumTokenClaimUtilNow).lte(0)) &&
+        {nextClaim && (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)) &&
           <>
             <div className={styles.poolDetailClaimInfoBlock}>
               <span>Next Claim Time</span>
