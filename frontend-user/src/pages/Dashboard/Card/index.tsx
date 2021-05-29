@@ -9,6 +9,7 @@ import { POOL_STATUS, NETWORK, POOL_TYPE, ACCEPT_CURRENCY, BUY_TYPE } from '../.
 import useFetch from '../../../hooks/useFetch';
 import { numberWithCommas } from '../../../utils/formatNumber';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
+import {PoolStatus} from "../../../utils/getPoolStatus";
 
 const dotIcon = '/images/icons/dot.svg'
 const EthereumIcon = "/images/ethereum.svg";
@@ -72,25 +73,25 @@ const Card = (props: any): JSX.Element => {
       <div className={styles.card}>
         <div className={styles.cardHeader}>
           <img src={pool.banner} />
-          {pool.status == POOL_STATUS.CLOSED && <div className="time ended">
+          {pool.status == PoolStatus.Closed && <div className="time ended">
             <span>Ended</span>
           </div>}
-          {pool.status == POOL_STATUS.TBA && <div className="time tba">
+          {pool.status == PoolStatus.TBA && <div className="time tba">
             <span>TBA</span>
           </div>}
-          {pool.status == POOL_STATUS.FILLED && <div className="time filled">
+          {pool.status == PoolStatus.Filled && <div className="time filled">
             <span>Filled</span>
           </div>}
-          {pool.status == POOL_STATUS.IN_PROGRESS && <div className="time in-progress">
+          {pool.status == PoolStatus.Progress && <div className="time in-progress">
             <span>In Progress</span>
           </div>}
-          {pool.status == POOL_STATUS.JOINING && <div className="time joining">
+          {pool.status == PoolStatus.Joining && <div className="time joining">
             <span>Whitelisting</span>
           </div>}
-          {pool.status == POOL_STATUS.CLAIMABLE && <div className="time claimable">
+          {pool.status == PoolStatus.Claimable && <div className="time claimable">
             <span>Claimable</span>
           </div>}
-          {pool.status == POOL_STATUS.UPCOMING && <div className="time upcomming">
+          {pool.status == PoolStatus.Upcoming && <div className="time upcomming">
             <span>Upcoming</span>
           </div>}
         </div>
