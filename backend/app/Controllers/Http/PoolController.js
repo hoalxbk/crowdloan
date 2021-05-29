@@ -294,7 +294,7 @@ class PoolController {
         return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
       }
 
-      let pool = await CampaignModel.query().with('tiers').where('id', poolId).first();
+      let pool = await CampaignModel.query().with('tiers').with('campaignClaimConfig').where('id', poolId).first();
       if (!pool) {
         return HelperUtils.responseNotFound('Pool not found');
       }
@@ -315,9 +315,12 @@ class PoolController {
         'name', 'symbol', 'decimals', 'token', 'token_images', 'total_sold_coin',
         'token_conversion_rate', 'ether_conversion_rate',
         'price_usdt', 'display_price_rate',
+
+        // Claim Config
+        'campaignClaimConfig',
       ]);
 
-      console.log('[getPublicPool] - pool.tiers: ', pool.tiers);
+      console.log('[getPublicPool] - pool.tiers: ', JSON.stringify(pool.tiers));
       if (pool.tiers && pool.tiers.length > 0) {
         publicPool.tiers = pool.tiers.map((item, index) => {
           return {
@@ -327,6 +330,8 @@ class PoolController {
           }
         });
       }
+      console.log('[getPublicPool] - pool.campaignClaimConfig: ', JSON.stringify(pool.campaignClaimConfig));
+
 
       // Cache data
       RedisUtils.createRedisPoolDetail(poolId, publicPool);
@@ -361,7 +366,7 @@ class PoolController {
       // // Cache data
       // RedisUtils.createRedisPoolList(param, listData);
 
-      console.log('listData:======>', JSON.stringify(listData));
+      // console.log('listData:======>', JSON.stringify(listData));
 
       return HelperUtils.responseSuccess(listData);
     } catch (e) {

@@ -30,7 +30,7 @@ const ModalVerifyEmail = (props: any) => {
     setEmailVeryfied,
     open
   } = props;
-  
+
   useEffect(() => {
     setInputEmail(email);
   }, [email])

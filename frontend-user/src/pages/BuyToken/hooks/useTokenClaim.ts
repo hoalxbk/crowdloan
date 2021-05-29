@@ -8,6 +8,7 @@ import PreSale_ABI from '../../../abi/PreSalePool.json';
 import { getContract } from '../../../utils/contract';
 import { alertSuccess, alertFailure } from '../../../store/actions/alert';
 import {fixGasLimitWithProvider} from "../../../utils";
+import BigNumber from 'bignumber.js';
 
 const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefined) => {
   const { library, account } = useWeb3React();
@@ -19,15 +20,16 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
   const [claimError, setClaimError] = useState<string>("");
 
   const { error, signMessage, signature: authSignature, setSignature } = useWalletSignature();
-  const { signature, amount, error: claimSignError, setSignature: setUserClaimSignature } = useUserClaimSignature(account, poolId, authSignature);
+  const { signature, amount, error: claimSignError, setSignature: setUserClaimSignature, loadingClaim } = useUserClaimSignature(account, poolId, authSignature);
 
   useEffect(() => {
     poolAddress &&
     signature &&
     amount &&
     !claimError &&
+    !loadingClaim &&
     claimTokenWithSignature(signature, amount);
-  }, [signature, poolAddress, amount, claimError]);
+  }, [signature, poolAddress, amount, claimError, loadingClaim]);
 
   useEffect(() => {
     if (error || claimSignError) {
@@ -41,7 +43,20 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
 
   const claimTokenWithSignature = useCallback(
     async (signature: string, amount: string) => {
+
+    console.log('poolAddress, signature, amount, account:', poolAddress, signature, amount, account);
     if (poolAddress && signature && amount && account) {
+
+      if (amount && (new BigNumber(amount)).lte(0)) {
+        const msg = 'You can not claim token at current time!';
+        dispatch(alertFailure(msg));
+        setClaimTokenLoading(false);
+        setClaimError(msg);
+        setSignature("");
+        setUserClaimSignature("");
+        return;
+      }
+
       try {
          const contract = getContract(poolAddress, PreSale_ABI, library, account as string);
 
@@ -58,7 +73,7 @@ const useTokenClaim = (poolAddress: string | undefined, poolId: number | undefin
 
            setClaimTokenSuccess(true);
            setClaimTokenLoading(false);
-            dispatch(alertSuccess("Token Claim Successful"));
+           dispatch(alertSuccess("Token Claim Successful"));
          }
       } catch (err) {
         dispatch(alertFailure(err.message));

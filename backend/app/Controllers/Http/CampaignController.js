@@ -581,6 +581,9 @@ class CampaignController {
       // calc max token that user can claimable
       const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased).minus(tokenClaimed);
       console.log(`user token purchased ${tokenPurchased} and user claimed ${tokenClaimed} and max token claim ${maxTokenClaim}`);
+
+      console.log('claimConfig BE:', claimConfig);
+
       // get message hash
       const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenClaim);
       console.log(`message hash to claim ${messageHash}`);

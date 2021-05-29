@@ -1,5 +1,6 @@
 import moment from 'moment'
 import momentTimezone from 'moment-timezone';
+import {DATETIME_FORMAT} from "../constants";
 
 export const convertTimeToStringFormat = (date: Date) => {
   const timezone = momentTimezone.tz(date, moment.tz.guess());
@@ -46,6 +47,16 @@ export const convertTimeLocalWithTimezone = (datetime: any): string => {
   const time = buildMomentTimezone(datetime).format("MM/DD/YYYY");
   return time;
 }
+
+export const convertDateTimeStringToMomentObject = (datetime: string) => {
+  // Convert datetime from "2021-05-28 08:45:59" to Moment Object
+  return moment(datetime, DATETIME_FORMAT);
+};
+
+export const convertMomentObjectToDateTimeString = (datetime: any) => {
+  // Convert datetime from Moment Object to String "2021-05-28 08:45:59"
+  return moment(datetime).format(DATETIME_FORMAT);
+};
 
 export const unixTimeNow = () => {
   return parseInt((Date.now() / 1000) + '')

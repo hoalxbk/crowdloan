@@ -11,16 +11,18 @@ const useUserClaimSignature = (connectedAccount: string | undefined | null, camp
   const [signature, setSignature] = useState<string | undefined>(undefined);
   const [amount, setAmount] = useState<string| undefined>("");
   const [error, setError] = useState<string | undefined>("");
+  const [loadingClaim, setLoadingClaim] = useState<boolean | undefined>(false);
 
   useEffect(() => {
       const getUserSignature = async () => {
         setError("");
         setSignature("");
+        setLoadingClaim(true);
 
         try {
           const config = {
             headers: {
-              msgSignature: MESSAGE_INVESTOR_SIGNATURE 
+              msgSignature: MESSAGE_INVESTOR_SIGNATURE
             }
           }
           const response = await axios.post('/user/claim', {
@@ -34,17 +36,19 @@ const useUserClaimSignature = (connectedAccount: string | undefined | null, camp
             if (data && status === 200) {
               setSignature(data.signature);
               setAmount(data.amount);
-            } 
+            }
 
             if (message && status !== 200) {
               dispatch(alertFailure(message));
               setError(message);
               setSignature("");
             }
-          } 
+          }
+          setLoadingClaim(false);
         } catch (err) {
           setError(err.message);
           setSignature("");
+          setLoadingClaim(false);
         }
       }
     connectedAccount && campaignId && authSignature && getUserSignature();
@@ -54,7 +58,8 @@ const useUserClaimSignature = (connectedAccount: string | undefined | null, camp
     signature,
     setSignature,
     amount,
-    error
+    error,
+    loadingClaim,
   }
 }
 
