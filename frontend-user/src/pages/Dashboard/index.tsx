@@ -10,6 +10,8 @@ import { POOL_STATUS, POOL_TYPE, BUY_TYPE } from '../../constants';
 import POOL_ABI from '../../abi/Pool.json';
 import { getContractInstance, convertFromWei, convertToWei } from '../../services/web3';
 import moment from 'moment';
+import {getPoolStatusByPoolDetail} from "../../utils/getPoolStatusByPoolDetail";
+import {PoolStatus} from "../../utils/getPoolStatus";
 
 const arrowRightIcon = '/images/icons/arrow-right.svg';
 const background = '/images/icons/background2.svg';
@@ -51,48 +53,17 @@ const Dashboard = (props: any) => {
     || pool.pool_type == POOL_TYPE.SWAP && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (checkBuyTime(pool) || checkJoinTime(pool))
     || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.FCFS && (checkBuyTime(pool) || !pool.release_time)
     || pool.pool_type == POOL_TYPE.CLAIMABLE && pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (checkBuyTime(pool) || checkJoinTime(pool) || !pool.release_time)
-  }
+  };
 
   const setStatusPools = () => {
     pools.forEach(async (pool: any) => {
-      const currentTime = moment.utc().unix();
-      if(checkTBA(pool))
-      {
-        pool.status = POOL_STATUS.TBA;
-        return;
-      }
-      const startJoinPoolTime = parseInt(pool.start_join_pool_time);
-      const endJoinPoolTime = parseInt(pool.end_join_pool_time);
-      const startTime = parseInt(pool.start_time);
-      const finishTime = parseInt(pool.finish_time);
-      const isClaimable = pool.type !== 'swap';
-      const releaseTime = parseInt(pool.release_time);
-      if(pool.buy_type == BUY_TYPE.FCFS && currentTime < startTime
-        || pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY && (startJoinPoolTime > currentTime || endJoinPoolTime < currentTime && currentTime < startTime))
-      {
-        pool.status = POOL_STATUS.UPCOMING
-      } else if(startJoinPoolTime <= currentTime
-        && currentTime <= endJoinPoolTime
-        )
-      {
-        pool.status = POOL_STATUS.JOINING
-      } else if(currentTime >= startTime && currentTime <= finishTime) {
-        if(Math.round(parseFloat(pool.tokenSold) * 100 / parseFloat(pool.total_sold_coin)) == 100) {
-          pool.status = POOL_STATUS.FILLED
-        } else {
-          pool.status = POOL_STATUS.IN_PROGRESS
-        }
-      } else if(releaseTime && currentTime >= releaseTime && isClaimable) {
-        pool.status = POOL_STATUS.CLAIMABLE
-      }
-      else {
-        pool.status = POOL_STATUS.CLOSED
-      }
-    })
-
-    setUpcomingPools(pools.filter((pool: any) => pool?.status != POOL_STATUS.CLAIMABLE && pool?.status != POOL_STATUS.CLOSED && pool?.is_display == 1))
-    setFeaturePools(pools.filter((pool: any) => (pool?.status == POOL_STATUS.CLAIMABLE || pool?.status == POOL_STATUS.CLOSED) && pool?.is_display == 1))
-  }
+      const status = await getPoolStatusByPoolDetail(pool, 0);
+      console.log('Status Pool:', status);
+      pool.status = status;
+    });
+    setUpcomingPools(pools.filter((pool: any) => pool?.status != PoolStatus.Claimable && pool?.status != PoolStatus.Closed && pool?.is_display == 1))
+    setFeaturePools(pools.filter((pool: any) => (pool?.status == PoolStatus.Claimable || pool?.status == PoolStatus.Closed) && pool?.is_display == 1))
+  };
 
   useEffect(() => {
     if(pools.length == 0 || poolFetched) return;

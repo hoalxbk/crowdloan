@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import {PoolStatus} from "./getPoolStatus";
-import {POOL_TYPE} from "../constants";
+import {BUY_TYPE, POOL_TYPE} from "../constants";
 
 export const getPoolStatusByPoolDetail = async (
   // startJoinTime: Date | undefined,
@@ -27,7 +27,7 @@ export const getPoolStatusByPoolDetail = async (
     return poolDetails?.endJoinTime || poolDetails?.end_join_pool_time;
   };
   const releaseTimeField = () => {
-    return poolDetails?.releaseTime || poolDetails?.end_join_pool_time;
+    return poolDetails?.releaseTime || poolDetails?.release_time;
   };
   const amountField = () => {
     return poolDetails?.amount || poolDetails?.total_sold_coin;
@@ -44,19 +44,18 @@ export const getPoolStatusByPoolDetail = async (
   const startJoinTime = startJoinTimeField() ? new Date(Number(startJoinTimeField()) * 1000): undefined;
   const endJoinTime = endJoinTimeField() ? new Date(Number(endJoinTimeField()) * 1000): undefined;
   const releaseTime = releaseTimeField() ? new Date(Number(releaseTimeField()) * 1000): undefined;
+  const isClaimable = poolTypeField() !== POOL_TYPE.SWAP;
+  const buyType = buyTypeField();
 
   const soldProgress = new BigNumber(tokenSold).div(amountField() || 1).toFixed();
-  const isClaimable = poolTypeField() !== POOL_TYPE.SWAP;
-  const poolType = buyTypeField();
-
   const today = new Date().getTime();
   const requiredReleaseTime = isClaimable ? !releaseTime: false;
 
-  if ((!startBuyTime || !startJoinTime || !endBuyTime || !endJoinTime || requiredReleaseTime) && poolType === 'whitelist') {
+  if ((!startBuyTime || !startJoinTime || !endBuyTime || !endJoinTime || requiredReleaseTime) && buyType === BUY_TYPE.WHITELIST_LOTTERY) {
     return PoolStatus.TBA;
   }
 
-  if ((!startBuyTime || !endBuyTime || requiredReleaseTime) && poolType === 'fcfs') {
+  if ((!startBuyTime || !endBuyTime || requiredReleaseTime) && buyType === BUY_TYPE.FCFS) {
     return PoolStatus.TBA;
   }
 
