@@ -1,13 +1,10 @@
 'use strict'
 
-const TierModel = use('App/Models/Tier');
-const CampaignModel = use('App/Models/Campaign');
 const WhitelistService = use('App/Services/WhitelistUserService')
 const TierService = use('App/Services/TierService');
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
-
-const PickRandomWinnerJob = use('App/Jobs/PickRandomWinnerJob')
+const PickRandomWinnerJob2 = use('App/Jobs/PickRandomWinnerJob2')
 
 class WhiteListUserController {
   async getWhiteList({request}) {
@@ -18,10 +15,10 @@ class WhiteListUserController {
     console.log(`start getWhiteList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
     try {
       // get from redis cached
-      let redisKey = 'whitelist_' + campaign_id;
-      if (page) {
-        redisKey = redisKey.concat('_', page, '_', pageSize);
-      }
+      // let redisKey = 'whitelist_' + campaign_id;
+      // if (page) {
+      //   redisKey = redisKey.concat('_', page, '_', pageSize);
+      // }
       // if (await Redis.exists(redisKey)) {
       //   console.log(`existed key ${redisKey} on redis`);
       //   const cachedWL = await Redis.get(redisKey);
@@ -37,7 +34,7 @@ class WhiteListUserController {
       // get winner list
       const whitelist = await whitelistService.findWhitelistUser(filterParams);
       // save to redis
-      await Redis.set(redisKey, JSON.stringify(whitelist));
+      // await Redis.set(redisKey, JSON.stringify(whitelist));
       return HelperUtils.responseSuccess(whitelist);
     } catch (e) {
       console.log(e);
@@ -53,10 +50,10 @@ class WhiteListUserController {
     console.log(`start getWhiteList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
     try {
       // get from redis cached
-      let redisKey = 'whitelist_' + campaign_id;
-      if (page) {
-        redisKey = redisKey.concat('_', page, '_', pageSize);
-      }
+      // let redisKey = 'whitelist_' + campaign_id;
+      // if (page) {
+      //   redisKey = redisKey.concat('_', page, '_', pageSize);
+      // }
       // if (await Redis.exists(redisKey)) {
       //   console.log(`existed key ${redisKey} on redis`);
       //   const cachedWL = await Redis.get(redisKey);
@@ -73,7 +70,7 @@ class WhiteListUserController {
       // get winner list
       const whitelist = await whitelistService.findWhitelistUser(filterParams);
       // save to redis
-      await Redis.set(redisKey, JSON.stringify(whitelist));
+      // await Redis.set(redisKey, JSON.stringify(whitelist));
       return HelperUtils.responseSuccess(whitelist);
     } catch (e) {
       console.log(e);
@@ -128,14 +125,13 @@ class WhiteListUserController {
           tierData.push(tierObj);
         }
       }
-
+      // create data to pick winner
       const randomData = {
         campaign_id : campaign_id,
         tiers : tierData
       }
-
       // dispatch to job to pick random user
-      PickRandomWinnerJob.handle(randomData);
+      PickRandomWinnerJob2.handle(randomData);
       return HelperUtils.responseSuccess(null, "Pickup random winner successful !")
     } catch (e) {
       console.log(e);
