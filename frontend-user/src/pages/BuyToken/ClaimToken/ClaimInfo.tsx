@@ -35,7 +35,6 @@ function ClaimInfo(props: any) {
 
 
   console.log('CURRENT1: currentClaim, currentClaimIndex, nextClaim, nextClaimIndex, maximumTokenClaimUtilNow', currentClaim, currentClaimIndex, nextClaim, nextClaimIndex, maximumTokenClaimUtilNow);
-
   console.log('!!userPurchased', userPurchased, !!userPurchased);
   console.log('AAA', nextClaim, maximumTokenClaimUtilNow, userClaimed);
 

@@ -27,6 +27,9 @@ const useUserRemainTokensClaim = (
         const contract = getContractInstance(Pool_ABI, poolAddress, connector, appChainID, SmartContractMethod.Read);
         if (contract) {
           const userPurchased = await contract.methods.userPurchased(userAddress).call();
+
+          console.log('userPurchased===>', userPurchased);
+
           const userClaimed = await contract.methods.userClaimed(userAddress).call();
           const userPurchasedReturn = new BigNumber(userPurchased).minus(new BigNumber(userClaimed)).div(new BigNumber(10).pow(tokenDetails.decimals)).toFixed();
 
