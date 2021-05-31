@@ -9,6 +9,7 @@ import InstallMetameask from './components/Base/InstallMetamask';
 import BigNumber from 'bignumber.js';
 import {adminRoute, checkIsAdminRoute, checkIsInvestorRoute, publicRoute} from "./utils";
 BigNumber.config({ EXPONENTIAL_AT: 50 });
+BigNumber.config({ ROUNDING_MODE: BigNumber.ROUND_FLOOR });
 
 const NETWORK_ID = process.env.REACT_APP_NETWORK_ID as string;
 const BACK_URL_NETWORK_CHANGE = 'BACK_URL_NETWORK_CHANGE';

@@ -13,6 +13,8 @@ import { numberWithCommas } from '../../../utils/formatNumber';
 import {useDispatch} from "react-redux";
 import {alertFailure} from "../../../store/actions/alert";
 import ClaimInfo from "./ClaimInfo";
+import useDetectClaimConfigApplying from "../hooks/useDetectClaimConfigApplying";
+import BigNumber from "bignumber.js";
 
 type ClaimTokenProps = {
   releaseTime: Date | undefined
@@ -75,11 +77,34 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     }
   }, [error]);
 
+
+  const userPurchasedValue = userClaimInfo?.userPurchased || 0;
+  const userClaimed = userClaimInfo?.userClaimed || 0;
+  const {
+    currentClaim,
+    currentClaimIndex,
+    nextClaim,
+    nextClaimIndex,
+    maximumTokenClaimUtilNow,
+  } = useDetectClaimConfigApplying(
+    poolDetails,
+    userPurchasedValue,
+    userClaimed
+  );
+
   const validateClaimable = () => {
     if (!availableClaim) {
       dispatch(alertFailure('You can not claim token at current time!'));
       return false;
     }
+
+    if (!nextClaim &&
+      (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)) // maximumTokenClaimUtilNow - userClaimed <= 0
+    ) {
+      dispatch(alertFailure('You not enough claimable token'));
+      return false;
+    }
+
     if (userPurchased <= 0) {
       dispatch(alertFailure('You can not claim token at current time!'));
       return false;
@@ -129,12 +154,19 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
         tokenDetails={tokenDetails}
         userClaimInfo={userClaimInfo}
         releaseTime={releaseTime}
+
+        currentClaim={currentClaim}
+        currentClaimIndex={currentClaimIndex}
+        nextClaim={nextClaim}
+        nextClaimIndex={nextClaimIndex}
+        maximumTokenClaimUtilNow={maximumTokenClaimUtilNow}
       />
 
       <Button
         text={'Claim'}
         backgroundColor={'#3232DC'}
         // disabled={!availableClaim || userPurchased <= 0 || disableAllButton}
+        disabled={disableAllButton} // If network is not correct, disable Claim Button
         loading={loading}
         onClick={handleTokenClaim}
       />

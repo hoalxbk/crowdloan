@@ -108,6 +108,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     networkAvailable,
 } = props;
 
+  console.log('maximumBuy11', maximumBuy, rate);
+
   const { connectedAccount, wrongChain } = useAuth();
   /* const userTier = useTypedSelector(state => state.userTier).data; */
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
@@ -203,7 +205,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       return new BigNumber(tokenBalance).toFixed();
     }
 
-    return maxBuy.toFixed();
+    return (maxBuy.toFixed());
   }, [tokenBalance, maximumBuy, userPurchased, poolAmount, tokenSold, rate]);
 
   const poolErrorBeforeBuy = useMemo(() => {
@@ -386,7 +388,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   useEffect(() => {
     if (input && rate && purchasableCurrency) {
       const tokens = new BigNumber(input).multipliedBy(new BigNumber(1).div(rate)).toNumber()
-      setEstimateTokens(tokens);
+      const tokenWithDecimal = new BigNumber(tokens).decimalPlaces(6).toNumber();
+      console.log('tokens===>', tokens, tokenWithDecimal);
+      setEstimateTokens(tokenWithDecimal);
     } else {
       setEstimateTokens(0);
     }

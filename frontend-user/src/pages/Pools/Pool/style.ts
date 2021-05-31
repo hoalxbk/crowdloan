@@ -65,7 +65,7 @@ const useStyles = makeStyles((theme: any) => {
       },
       '& .in-progress': {
         backgroundColor: '#FFDE30',
-        color: '#030925'
+        color: '#fff'
       },
       '& .filled': {
         backgroundColor: '#12A064',
