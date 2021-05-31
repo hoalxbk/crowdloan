@@ -1,12 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {convertTimeToStringFormat, convertUnixTimeToDateTime} from "../../../utils/convertDate";
+import React from 'react';
+import {convertUnixTimeToDateTime} from "../../../utils/convertDate";
 import useStyles from "./style";
 import {numberWithCommas} from "../../../utils/formatNumber";
-import moment from "moment";
-import {useWeb3React} from "@web3-react/core";
-import useWalletSignature from "../../../hooks/useWalletSignature";
-import useUserClaimSignature from "../hooks/useUserClaimSignature";
 import BigNumber from 'bignumber.js';
+import useDetectClaimConfigApplying from "../hooks/useDetectClaimConfigApplying";
 
 function ClaimInfo(props: any) {
   const styles = useStyles();
@@ -14,7 +11,12 @@ function ClaimInfo(props: any) {
     poolDetails,
     tokenDetails,
     userClaimInfo,
-    releaseTime
+    releaseTime,
+    currentClaim,
+    currentClaimIndex,
+    nextClaim,
+    nextClaimIndex,
+    maximumTokenClaimUtilNow,
   } = props;
 
   const {
@@ -22,56 +24,20 @@ function ClaimInfo(props: any) {
     userClaimed = 0,
     userPurchasedReturn = 0,
   } = (userClaimInfo || {});
-  const [currentClaim, setCurrentClaim] = useState<any>();
-  const [currentClaimIndex, setCurrentClaimIndex] = useState(0);
 
-  const [nextClaim, setNextClaim] = useState<any>();
-  const [nextClaimIndex, setNextClaimIndex] = useState(0);
+  // const {
+  //   currentClaim,
+  //   currentClaimIndex,
+  //   nextClaim,
+  //   nextClaimIndex,
+  //   maximumTokenClaimUtilNow,
+  // } = useDetectClaimConfigApplying(poolDetails, userPurchased, userClaimed);
 
-  const [maximumTokenClaimUtilNow, setMaximumTokenClaimUtilNow] = useState<any>(0);
 
-  useEffect(() => {
+  console.log('CURRENT1: currentClaim, currentClaimIndex, nextClaim, nextClaimIndex, maximumTokenClaimUtilNow', currentClaim, currentClaimIndex, nextClaim, nextClaimIndex, maximumTokenClaimUtilNow);
 
-    if (poolDetails && poolDetails.campaignClaimConfig && poolDetails.campaignClaimConfig.length > 0) {
-      const now = moment();
-      const nowUnix = now.unix();
-      let validRow = null;
-      let validIndex = -1;
-      for (let i = 0; i < poolDetails.campaignClaimConfig.length; i++) {
-        const row = poolDetails.campaignClaimConfig[i];
-        if (nowUnix < row.start_time) {
-          break;
-        } else {
-          validRow = row;
-          validIndex = i;
-        }
-      }
-      if (validRow) {
-        setCurrentClaim(validRow);
-        setCurrentClaimIndex(validIndex);
-
-        const next = poolDetails.campaignClaimConfig[validIndex + 1];
-        console.log('NextClaim: next: ', next);
-        if (next) {
-          setNextClaim(next);
-          setNextClaimIndex(validIndex + 1);
-        }
-
-        if (validIndex >= 0 && userPurchased && userClaimed) {
-          const maximum = new BigNumber(validRow?.max_percent_claim || 0).dividedBy(100).multipliedBy(userPurchased || 0);
-          console.log('validRow.max_percent_claim', validRow?.max_percent_claim, userPurchased, userClaimed, maximum.toFixed());
-          if (maximum.lt(0)) {
-            setMaximumTokenClaimUtilNow(0);
-          } else {
-            setMaximumTokenClaimUtilNow(maximum);
-          }
-        }
-      }
-      console.log('Finish validRow', validRow, validIndex);
-    }
-  }, [poolDetails, userPurchased, userClaimed]);
-
-  const utcNow = moment().unix();
+  console.log('!!userPurchased', userPurchased, !!userPurchased);
+  console.log('AAA', nextClaim, maximumTokenClaimUtilNow, userClaimed);
 
   return (
     <>
@@ -92,7 +58,11 @@ function ClaimInfo(props: any) {
           <span>{numberWithCommas(`${maximumTokenClaimUtilNow || 0}`)} {tokenDetails?.symbol}</span>
         </div>
 
-        {nextClaim && (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)) &&
+        {
+          !!userPurchased // User don't buy any token
+          && nextClaim // Don't have next Claim Phase
+          && (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)) // Only user claimed all token in Current Phase and waiting Next Claim Phase
+          &&
           <>
             <div className={styles.poolDetailClaimInfoBlock}>
               <span>Next Claim Time</span>
