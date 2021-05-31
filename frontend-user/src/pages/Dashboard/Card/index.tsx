@@ -91,7 +91,7 @@ const Card = (props: any): JSX.Element => {
           {pool.status == PoolStatus.Claimable && <div className="time claimable">
             <span>Claimable</span>
           </div>}
-          {pool.status == PoolStatus.Upcoming && <div className="time upcomming">
+          {pool.status == PoolStatus.Upcoming && <div className="time upcoming">
             <span>Upcoming</span>
           </div>}
         </div>
