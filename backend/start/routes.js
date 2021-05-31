@@ -100,6 +100,9 @@ Route.group(() => {
   Route.post('pool/reserves/update-setting', 'ReservedListController.updateReserveSetting');
   Route.get('pool/reserves/setting', 'ReservedListController.reserveSetting');
 
+  //snapshot user balance
+  Route.get('pool/:campaignId/user-snapshot-balance', 'CampaignController.userSnapShotBalance');
+
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'formatEmailAndWallet']);
 
 Route.group(() => {

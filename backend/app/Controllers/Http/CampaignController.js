@@ -8,6 +8,7 @@ const WinnerListService = use('App/Services/WinnerListUserService');
 const WhitelistService = use('App/Services/WhitelistUserService');
 const ReservedListService = use('App/Services/ReservedListService');
 const CampaignClaimConfigService = use('App/Services/CampaignClaimConfigService');
+const SnapshotBalance = use('App/Jobs/SnapshotBalance')
 const UserService = use('App/Services/UserService');
 const Const = use('App/Common/Const');
 const HelperUtils = use('App/Common/HelperUtils');
@@ -611,6 +612,30 @@ class CampaignController {
     } catch (e) {
       console.log(e);
       return HelperUtils.responseErrorInternal("Claim token has internal server error !");
+    }
+  }
+
+  async userSnapShotBalance({request}) {
+    // get request params
+    const campaign_id = request.params.campaignId;
+    console.log(`Snap shot user balance with campaign ${campaign_id}`);
+    try {
+      // get campaign
+      const camp = await CampaignModel.query().where('id', campaign_id).first();
+      if (!camp) {
+        console.log(`Do not found campaign with id ${campaign_id}`);
+        return HelperUtils.responseBadRequest('Do not found campaign');
+      }
+      // create data to snap shot
+      const data = {
+        campaign_id : campaign_id
+      }
+      // dispatch to job to snapshot balance
+      SnapshotBalance.handle(data);
+      return HelperUtils.responseSuccess(null, "Snapshot user balance successful !")
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('Snapshot user balance has error!');
     }
   }
 
