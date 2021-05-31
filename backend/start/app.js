@@ -65,6 +65,7 @@ const aliases = {}
 */
 const commands = [
   'App/Commands/AutoJoinUser',
+  'App/Commands/SnapshotBalanceCommand',
 ];
 
 const jobs = [
