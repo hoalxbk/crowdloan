@@ -29,6 +29,7 @@ import {
   convertUnixTimeToDateTime
 } from "../../../utils/convertDate";
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
+import useTokenSold from "../hooks/useTokenSold";
 
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
 
@@ -208,6 +209,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
     return (maxBuy.toFixed());
   }, [tokenBalance, maximumBuy, userPurchased, poolAmount, tokenSold, rate]);
 
+  const { retrieveTokenSold, tokenSold: totalUserTokenSold  } = useTokenSold(tokenDetails, poolAddress, ableToFetchFromBlockchain);
   const poolErrorBeforeBuy = useMemo(() => {
     const timeToShowMsg = new Date() > endJoinTimeInDate && new Date() < startBuyTimeInDate;
 
@@ -238,7 +240,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       new BigNumber(estimateTokens).gt(new BigNumber(poolAmount))
     ) {
       return {
-        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(userPurchased)).toFixed()}`)} ${tokenDetails?.symbol}.`,
+        message: `You can only buy  up to ${numberWithCommas(`${new BigNumber(poolAmount).minus(new BigNumber(totalUserTokenSold)).toFixed()}`)} ${tokenDetails?.symbol}.`,
         type: MessageType.error
       }
     }
