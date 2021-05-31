@@ -166,6 +166,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
         text={'Claim'}
         backgroundColor={'#3232DC'}
         // disabled={!availableClaim || userPurchased <= 0 || disableAllButton}
+        disabled={disableAllButton} // If network is not correct, disable Claim Button
         loading={loading}
         onClick={handleTokenClaim}
       />
