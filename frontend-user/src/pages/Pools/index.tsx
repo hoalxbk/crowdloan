@@ -1,17 +1,13 @@
-import { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
-import { useSelector } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-import _, { divide } from 'lodash';
+import {useEffect, useState} from 'react';
+import {useSelector} from 'react-redux';
+import {withRouter} from 'react-router-dom';
+import {debounce} from 'lodash';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
 import useCommonStyle from '../../styles/CommonStyle';
-import { getContractInstance, convertFromWei } from '../../services/web3';
+import {convertFromWei, getContractInstance} from '../../services/web3';
 import POOL_ABI from '../../abi/Pool.json';
-import moment from 'moment';
-import { POOL_STATUS } from '../../constants';
 import Pool from './Pool';
-import { debounce } from 'lodash';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
 import useFetch from '../../hooks/useFetch';
 import useAuth from '../../hooks/useAuth';
@@ -23,11 +19,12 @@ const iconSearch = 'images/icons/search.svg';
 
 const Pools = (props: any) => {
   const styles = useStyles();
-  const commonStyle = useCommonStyle()
-  const [input, setInput] = useState("");
-  const [tabActive, setTabActive] = useState(1);
+  const commonStyle = useCommonStyle();
   const { data: appChain } = useSelector((state: any) => state.appNetwork);
   const { data: connector } = useSelector((state: any) => state.connector);
+
+  const [tabActive, setTabActive] = useState(1);
+  const [input, setInput] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPage, setTotalPage] = useState(1);
   const [pools, setPools] = useState([]);
@@ -49,16 +46,16 @@ const Pools = (props: any) => {
     }
   }
 
-  const { data: poolsList } = useFetch<any>(
+  const { data: poolsList, loading: loadingGetPool } = useFetch<any>(
     `${getPoolsPrefixUri()}?page=${currentPage}&limit=10&title=${input}`
   );
 
-  console.log('poolsList===1122===>', poolsList);
+  console.log('poolsList: ', poolsList);
 
   const handleInputChange = debounce((e: any) => {
-    ReactDOM.unstable_batchedUpdates(() => {
+    Promise.resolve().then(() => {
       setInput(e.target.value);
-      setCurrentPage(1)
+      setCurrentPage(1);
     });
   }, 500);
 
@@ -80,7 +77,6 @@ const Pools = (props: any) => {
     const manipulatePoolsData = async () => {
       setTotalPage(poolsList.lastPage);
       setCurrentPage(poolsList.page);
-      setPools(poolsList.data);
 
       let listData = poolsList.data;
       let temp = [];
@@ -174,7 +170,11 @@ const Pools = (props: any) => {
                 count={totalPage}
                 color="primary"
                 style={{ marginTop: 30 }} className={styles.pagination}
-                onChange={(e: any, value: any) => setCurrentPage(value)}
+                onChange={(e: any, value: any) => {
+                  if (!loadingGetPool) {
+                    setCurrentPage(value)
+                  }
+                }}
                 page={currentPage}
               />
             }
