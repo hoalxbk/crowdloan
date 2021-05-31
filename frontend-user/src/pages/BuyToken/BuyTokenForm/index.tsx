@@ -203,7 +203,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       return new BigNumber(tokenBalance).toFixed();
     }
 
-    return maxBuy.toFixed();
+    return numberWithCommas(maxBuy.toFixed());
   }, [tokenBalance, maximumBuy, userPurchased, poolAmount, tokenSold, rate]);
 
   const poolErrorBeforeBuy = useMemo(() => {
