@@ -89,7 +89,7 @@ const Pool = (props: any): JSX.Element => {
             }
             {pool.accept_currency !== ACCEPT_CURRENCY.ETH &&
               <>
-                {numberWithCommas(pool?.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}
+                {numberWithCommas(pool?.token_conversion_rate, 4)} {currencyName}
               </>
             }
 
