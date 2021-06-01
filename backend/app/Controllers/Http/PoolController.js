@@ -85,7 +85,7 @@ class PoolController {
 
       // Update Claim Config
       let claimConfigs = inputParams.claim_configuration || [];
-      claimConfigs = poolService.addDefaultClaimConfig(claimConfigs, campaign.release_time);
+      claimConfigs = poolService.addDefaultClaimConfig(claimConfigs, campaign.finish_time);
       console.log('[createPool] - Update Claim Config - claimConfigs', claimConfigs);
       await poolService.updateClaimConfig(campaign, claimConfigs);
 

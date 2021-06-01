@@ -95,14 +95,14 @@ class PoolService {
 
   }
 
-  addDefaultClaimConfig(claim_configuration, release_time) {
+  addDefaultClaimConfig(claim_configuration, default_datetime) {
     let claimConfigs = claim_configuration || [];
     if (claimConfigs.length == 0) {
       claimConfigs = [{
         minBuy: 0,
         maxBuy: 100,
         endTime: null,
-        startTime: release_time,
+        startTime: default_datetime,
       }];
     }
     return claimConfigs
