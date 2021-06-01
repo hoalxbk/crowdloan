@@ -3,7 +3,6 @@ import {convertUnixTimeToDateTime} from "../../../utils/convertDate";
 import useStyles from "./style";
 import {numberWithCommas} from "../../../utils/formatNumber";
 import BigNumber from 'bignumber.js';
-import useDetectClaimConfigApplying from "../hooks/useDetectClaimConfigApplying";
 
 function ClaimInfo(props: any) {
   const styles = useStyles();
@@ -32,12 +31,6 @@ function ClaimInfo(props: any) {
   //   nextClaimIndex,
   //   maximumTokenClaimUtilNow,
   // } = useDetectClaimConfigApplying(poolDetails, userPurchased, userClaimed);
-
-
-  console.log('CURRENT1: currentClaim, currentClaimIndex, nextClaim, nextClaimIndex, maximumTokenClaimUtilNow', currentClaim, currentClaimIndex, nextClaim, nextClaimIndex, maximumTokenClaimUtilNow);
-  console.log('!!userPurchased', userPurchased, !!userPurchased);
-  console.log('AAA', nextClaim, maximumTokenClaimUtilNow, userClaimed);
-  console.log('(new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0))', (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)));
 
   return (
     <>
