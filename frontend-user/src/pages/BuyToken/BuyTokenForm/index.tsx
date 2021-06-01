@@ -30,6 +30,7 @@ import {
 } from "../../../utils/convertDate";
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
 import useTokenSold from "../hooks/useTokenSold";
+import {getEtherscanName} from "../../../utils/network";
 
 const REGEX_NUMBER = /^-?[0-9]{0,}[.]{0,1}[0-9]{0,6}$/;
 
@@ -116,6 +117,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
   const connector = useTypedSelector(state => state.connector).data;
 
+  const etherscanName = getEtherscanName({networkAvailable});
   const {
     deposit,
     tokenDepositLoading,
@@ -540,7 +542,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
         transactionHash={tokenDepositTransaction}
       />
       <TransactionSubmitModal
-        additionalText={`Please be patient and no need to approve again, you can check the transaction status on Etherscan.`}
+        additionalText={`Please be patient and no need to approve again, you can check the transaction status on ${etherscanName}.`}
         opened={openApproveModal}
         handleClose={() => { setApproveModal(false); }}
         transactionHash={transactionHash}
