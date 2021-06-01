@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -6,9 +6,9 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
-import {Button, makeStyles} from "@material-ui/core";
+import {Button} from "@material-ui/core";
 import {useCommonStyle} from "../../../../styles";
-import {deleteParticipantUser, deleteWinnerUser, getWinnerUser} from "../../../../request/participants";
+import {deleteWinnerUser, getWinnerUser} from "../../../../request/participants";
 import useGetList from "../hooks/useGetList";
 import useDeleteItem from "../hooks/useDeleteItem";
 import Pagination from "@material-ui/lab/Pagination";
@@ -22,7 +22,6 @@ function UserWinner(props: any) {
   const commonStyle = useCommonStyle();
   const classesTable = useStylesTable();
   const { poolDetail } = props;
-
   const {
     rows,
     search, searchDelay,
@@ -43,8 +42,6 @@ function UserWinner(props: any) {
     maxBuyTiersMapping,
     minBuyTiersMapping,
   } = useMapMaxBuyTier({ poolDetail });
-
-  console.log('poolDetail', poolDetail, maxBuyTiersMapping, minBuyTiersMapping);
 
   return (
     <>

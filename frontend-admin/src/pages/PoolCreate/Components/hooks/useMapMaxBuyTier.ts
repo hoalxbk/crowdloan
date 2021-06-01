@@ -7,7 +7,6 @@ const useMapMaxBuyTier = (props: any) => {
 
   useEffect(() => {
     if (poolDetail && poolDetail.tiers && poolDetail.tiers.length > 0) {
-      console.log('poolDetail.tiers', poolDetail.tiers);
       const tiers = poolDetail.tiers;
       const mappingMax: any = {};
       const mappingMin: any = {};
