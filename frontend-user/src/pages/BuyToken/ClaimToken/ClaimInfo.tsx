@@ -37,6 +37,7 @@ function ClaimInfo(props: any) {
   console.log('CURRENT1: currentClaim, currentClaimIndex, nextClaim, nextClaimIndex, maximumTokenClaimUtilNow', currentClaim, currentClaimIndex, nextClaim, nextClaimIndex, maximumTokenClaimUtilNow);
   console.log('!!userPurchased', userPurchased, !!userPurchased);
   console.log('AAA', nextClaim, maximumTokenClaimUtilNow, userClaimed);
+  console.log('(new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0))', (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)));
 
   return (
     <>
@@ -58,8 +59,9 @@ function ClaimInfo(props: any) {
         </div>
 
         {
-          !!userPurchased // User don't buy any token
-          && nextClaim // Don't have next Claim Phase
+          !!userPurchased
+          && new BigNumber(userPurchased).gt(0) // User bought any token
+          && nextClaim // Current time user have next Claim Phase
           && (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)) // Only user claimed all token in Current Phase and waiting Next Claim Phase
           &&
           <>

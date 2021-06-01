@@ -16,9 +16,10 @@ const useDetectClaimConfigApplying = (
   const [nextClaim, setNextClaim] = useState<any>();
   const [nextClaimIndex, setNextClaimIndex] = useState(0);
   const [maximumTokenClaimUtilNow, setMaximumTokenClaimUtilNow] = useState<any>(0);
+  let detechCurrentPhaseInterval = undefined as any;
 
   useEffect(() => {
-    if (poolDetails && poolDetails.campaignClaimConfig && poolDetails.campaignClaimConfig.length > 0) {
+    const detechCurrentPhase = () => {
       const now = moment();
       const nowUnix = now.unix();
       let validRow = null;
@@ -54,6 +55,18 @@ const useDetectClaimConfigApplying = (
         }
       }
       console.log('Finish validRow', validRow, validIndex);
+    };
+
+    if (poolDetails && poolDetails.campaignClaimConfig && poolDetails.campaignClaimConfig.length > 0) {
+      detechCurrentPhase();
+      detechCurrentPhaseInterval = setInterval(() => {
+        console.log('Deteching current phase....');
+        detechCurrentPhase();
+      }, 10000);
+    }
+
+    return () => {
+      detechCurrentPhaseInterval && clearInterval(detechCurrentPhaseInterval);
     }
   }, [poolDetails, userPurchased, userClaimed]);
 
