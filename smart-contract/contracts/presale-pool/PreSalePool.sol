@@ -362,7 +362,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
 
         uint claimAmount = _amount.sub(userClaimed[_candidate]);
 
-        if (_amount > maxClaimAmount) {
+        if (claimAmount > maxClaimAmount) {
             claimAmount = maxClaimAmount;
         }
 
