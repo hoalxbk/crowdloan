@@ -14,6 +14,7 @@ import {DATETIME_FORMAT, TIERS} from "../../../../constants";
 import {renderErrorCreatePool} from "../../../../utils/validate";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import BigNumber from "bignumber.js";
+import {getIconCurrencyUsdt} from "../../../../utils/usdt";
 
 const useStylesTable = makeStyles({
   table: {
@@ -111,9 +112,15 @@ function TierTable(props: any) {
     setRows(newRows);
   };
 
+  const isDeployed = !!poolDetail?.is_deploy;
   const acceptCurrency = watch('acceptCurrency');
   const minTier = watch('minTier');
-  const isDeployed = !!poolDetail?.is_deploy;
+  const networkAvailable = watch('networkAvailable');
+  let { currencyIcon, currencyName } = getIconCurrencyUsdt({
+    purchasableCurrency: acceptCurrency,
+    networkAvailable: networkAvailable,
+  });
+
   return (
     <>
       {isOpenEditPopup &&
@@ -176,7 +183,7 @@ function TierTable(props: any) {
                   <TableCell align="right">{endTime}</TableCell>
                   <TableCell align="right">{minBuy}</TableCell>
                   <TableCell align="right">{maxBuy}</TableCell>
-                  <TableCell align="right">{(acceptCurrency + '').toUpperCase()}</TableCell>
+                  <TableCell align="right">{currencyName}</TableCell>
                   <TableCell align="right">
 
                     <Button

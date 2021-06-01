@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {Grid, Tooltip, Typography} from "@material-ui/core";
+import {Tooltip, Typography} from "@material-ui/core";
 import BigNumber from "bignumber.js";
 import CurrencyInput from "react-currency-input-field";
 import useStyles from "../style";
 import {useCommonStyle} from "../../../styles";
 import {ACCEPT_CURRENCY} from "../../../constants";
-import ExchangeRateUSDTDisplay from "./ExchangeRateUSDTDisplay";
+import {getIconCurrencyUsdt} from "../../../utils/usdt";
 
 function ExchangeRateETH(props: any) {
   const classes = useStyles();
@@ -58,8 +58,13 @@ function ExchangeRateETH(props: any) {
     }
   };
 
-  const acceptCurrency = watch('acceptCurrency');
   const isDeployed = !!poolDetail?.is_deploy;
+  const acceptCurrency = watch('acceptCurrency');
+  const networkAvailable = watch('networkAvailable');
+  let { currencyIcon, currencyName } = getIconCurrencyUsdt({
+    purchasableCurrency: acceptCurrency,
+    networkAvailable: networkAvailable,
+  });
 
   return (
     <>
@@ -111,9 +116,9 @@ function ExchangeRateETH(props: any) {
               disabled={isDeployed}
             />
 
-            <Tooltip title={(acceptCurrency + '').toUpperCase()}>
+            <Tooltip title={currencyName}>
               <button className={`${classes.box} ${classes.boxEther}`}>
-                {(acceptCurrency + '').toUpperCase()}
+                {currencyName}
               </button>
             </Tooltip>
             <div className={`${classes.formErrorMessage} ${classes.formErrorMessageAbsolute}`}>
