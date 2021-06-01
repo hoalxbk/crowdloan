@@ -8,7 +8,7 @@ import Card from './Card';
 import usePools from '../../hooks/usePools';
 import { POOL_STATUS, POOL_TYPE, BUY_TYPE } from '../../constants';
 import POOL_ABI from '../../abi/Pool.json';
-import { getContractInstance, convertFromWei, convertToWei } from '../../services/web3';
+import {getContractInstance, convertFromWei, convertToWei, getPoolContract} from '../../services/web3';
 import moment from 'moment';
 import {getPoolStatusByPoolDetail} from "../../utils/getPoolStatusByPoolDetail";
 import {PoolStatus} from "../../utils/getPoolStatus";
@@ -29,7 +29,14 @@ const Dashboard = (props: any) => {
   const getTokenSold = async (pool: any) => {
     let result = '0';
     try {
-      const contract = getContractInstance(POOL_ABI, pool.campaign_hash || '', connector, appChain.appChainID);
+      // const contract = getContractInstance(POOL_ABI, pool.campaign_hash || '', connector, appChain.appChainID);
+      // if (contract) {
+      //   result = await contract.methods.tokenSold().call();
+      //   result = convertFromWei(result.toString());
+      // }
+      const networkAvailable = pool.network_available || pool.networkAvailable;
+      const poolHash = pool.campaign_hash || pool.campaignHash;
+      const contract = getPoolContract({ networkAvailable, poolHash });
       if (contract) {
         result = await contract.methods.tokenSold().call();
         result = convertFromWei(result.toString());
