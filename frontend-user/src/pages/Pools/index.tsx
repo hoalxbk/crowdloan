@@ -5,7 +5,7 @@ import {debounce} from 'lodash';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
 import useCommonStyle from '../../styles/CommonStyle';
-import {convertFromWei, getContractInstance} from '../../services/web3';
+import {convertFromWei, getContractInstance, getContractInstanceWeb3, getPoolContract} from '../../services/web3';
 import POOL_ABI from '../../abi/Pool.json';
 import Pool from './Pool';
 import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
@@ -14,6 +14,7 @@ import useAuth from '../../hooks/useAuth';
 
 import Pagination from '@material-ui/lab/Pagination';
 import {getPoolStatusByPoolDetail} from "../../utils/getPoolStatusByPoolDetail";
+import {NETWORK_AVAILABLE} from "../../constants";
 
 const iconSearch = 'images/icons/search.svg';
 
@@ -62,7 +63,9 @@ const Pools = (props: any) => {
   const getTokenSold = async (pool: any) => {
     let result = '0';
     try {
-      const contract = getContractInstance(POOL_ABI, pool.campaign_hash || '', connector, appChain.appChainID);
+      const networkAvailable = pool.network_available || pool.networkAvailable;
+      const poolHash = pool.campaign_hash || pool.campaignHash;
+      const contract = getPoolContract({ networkAvailable, poolHash });
       if (contract) {
         result = await contract.methods.tokenSold().call();
         result = convertFromWei(result.toString());
@@ -79,20 +82,20 @@ const Pools = (props: any) => {
       setCurrentPage(poolsList.page);
 
       let listData = poolsList.data;
-      let temp = [];
+      let poolWithStatus = [];
       for (let i = 0; i < listData.length; i++) {
         const pool = listData[i];
         const status = await getPoolStatusByPoolDetail(pool, 0);
         console.log('Pool STATUS:', status);
 
-        temp.push({
+        poolWithStatus.push({
           ...pool,
           status,
         });
       }
 
-      poolsList.data = temp;
-      listData = temp;
+      poolsList.data = poolWithStatus;
+      listData = poolWithStatus;
 
       if(!appChain || !connector) return;
 
