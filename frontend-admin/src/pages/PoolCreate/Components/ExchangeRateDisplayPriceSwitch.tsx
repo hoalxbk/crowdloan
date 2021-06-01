@@ -8,11 +8,12 @@ import {changeDisplayStatus} from "../../../request/pool";
 import {alertSuccess} from "../../../store/actions/alert";
 import {withRouter} from "react-router";
 import {useDispatch} from "react-redux";
+import {getIconCurrencyUsdt} from "../../../utils/usdt";
 
 function ExchangeRateDisplayPriceSwitch(props: any) {
   const classes = useStyles();
   const {
-    setValue, errors, control,
+    setValue, errors, control, watch,
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
@@ -35,6 +36,12 @@ function ExchangeRateDisplayPriceSwitch(props: any) {
     }
     return value;
   };
+  const acceptCurrency = watch('acceptCurrency');
+  const networkAvailable = watch('networkAvailable');
+  let { currencyIcon, currencyName } = getIconCurrencyUsdt({
+    purchasableCurrency: acceptCurrency,
+    networkAvailable: networkAvailable,
+  });
 
   return (
     <>
@@ -42,7 +49,7 @@ function ExchangeRateDisplayPriceSwitch(props: any) {
         marginTop: 30,
         // marginBottom: 30,
       }}>
-        <div><label className={classes.exchangeRateTitle}>Display ETH Exchange Rate</label></div>
+        <div><label className={classes.exchangeRateTitle}>Display {currencyName} Exchange Rate</label></div>
         <FormControl component="fieldset">
           <Controller
             control={control}
