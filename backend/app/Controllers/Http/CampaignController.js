@@ -580,7 +580,7 @@ class CampaignController {
       const tokenPurchased = received[0];
       const tokenClaimed = received[1];
       // calc max token that user can claimable
-      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased).minus(tokenClaimed);
+      const maxTokenClaim = new BigNumber(claimConfig.max_percent_claim).dividedBy(100).multipliedBy(tokenPurchased);
       console.log(`user token purchased ${tokenPurchased} and user claimed ${tokenClaimed} and max token claim ${maxTokenClaim}`);
 
       console.log('claimConfig BE:', claimConfig);

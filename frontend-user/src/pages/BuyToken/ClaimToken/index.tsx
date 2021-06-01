@@ -93,7 +93,19 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
   );
 
   const validateClaimable = () => {
+    if (new BigNumber(userPurchased).lte(0)) {
+      dispatch(alertFailure('You not enough claimable token!'));
+      return false;
+    }
+
     if (!availableClaim) {
+      dispatch(alertFailure('You can not claim token at current time!'));
+      return false;
+    }
+
+    if (nextClaim &&
+      (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0))
+    ) {
       dispatch(alertFailure('You can not claim token at current time!'));
       return false;
     }
@@ -101,16 +113,12 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     if (!nextClaim &&
       (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)) // maximumTokenClaimUtilNow - userClaimed <= 0
     ) {
-      dispatch(alertFailure('You not enough claimable token'));
+      dispatch(alertFailure('You not enough claimable token!'));
       return false;
     }
 
-    if (userPurchased <= 0) {
-      dispatch(alertFailure('You can not claim token at current time!'));
-      return false;
-    }
     if (disableAllButton) {
-      dispatch(alertFailure('Please switch to correct network before Claim'));
+      dispatch(alertFailure('Please switch to correct network before Claim!'));
       return false;
     }
     return true;
@@ -166,7 +174,7 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
         text={'Claim'}
         backgroundColor={'#3232DC'}
         // disabled={!availableClaim || userPurchased <= 0 || disableAllButton}
-        disabled={disableAllButton} // If network is not correct, disable Claim Button
+        disabled={disableAllButton || !ableToFetchFromBlockchain} // If network is not correct, disable Claim Button
         loading={loading}
         onClick={handleTokenClaim}
       />
