@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import TableContainer from "@material-ui/core/TableContainer";
 import Paper from "@material-ui/core/Paper";
 import Table from "@material-ui/core/Table";
@@ -15,6 +15,8 @@ import Pagination from "@material-ui/lab/Pagination";
 import useStylesTable from './style_table';
 import {etherscanRoute} from "../../../../utils";
 import Link from "@material-ui/core/Link";
+import useMapMaxBuyTier from "../hooks/useMapMaxBuyTier";
+import BigNumber from "bignumber.js";
 
 function UserWinner(props: any) {
   const commonStyle = useCommonStyle();
@@ -37,6 +39,13 @@ function UserWinner(props: any) {
     handleSearchFunction: search
   });
 
+  const {
+    maxBuyTiersMapping,
+    minBuyTiersMapping,
+  } = useMapMaxBuyTier({ poolDetail });
+
+  console.log('poolDetail', poolDetail, maxBuyTiersMapping, minBuyTiersMapping);
+
   return (
     <>
       <div style={{color: 'red'}}>
@@ -53,6 +62,10 @@ function UserWinner(props: any) {
             <TableRow>
               <TableCell>Email</TableCell>
               <TableCell align="center">Wallet Address</TableCell>
+              <TableCell align="center">Lottery Ticket</TableCell>
+              <TableCell align="center">Level</TableCell>
+              <TableCell align="center">Min Buy</TableCell>
+              <TableCell align="center">Max Buy</TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
@@ -63,11 +76,28 @@ function UserWinner(props: any) {
                 <TableCell component="th" scope="row">
                   {row.email}
                 </TableCell>
+
                 <TableCell align="center">
                   <Link href={etherscanRoute(row.wallet_address, poolDetail)} target={'_blank'}>
                     {row.wallet_address}
                   </Link>
                 </TableCell>
+
+                <TableCell align="center" component="th" scope="row">
+                  {row.lottery_ticket || 0}
+                </TableCell>
+                <TableCell align="center" component="th" scope="row">
+                  {row.level || 0}
+                </TableCell>
+
+                <TableCell align="center" component="th" scope="row">
+                  {minBuyTiersMapping[row.level || 0]}
+                </TableCell>
+                <TableCell align="center" component="th" scope="row">
+                  {new BigNumber(maxBuyTiersMapping[row.level || 0]).multipliedBy(row.lottery_ticket || 0).toFixed()}
+                </TableCell>
+
+
                 <TableCell align="right">
                   <Button
                     variant="contained"
@@ -81,7 +111,6 @@ function UserWinner(props: any) {
             ))}
           </TableBody>
         </Table>
-
 
         {failure && <p className={classesTable.errorMessage}>{failure}</p>}
         {!failure &&
