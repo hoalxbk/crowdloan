@@ -50,10 +50,12 @@ function DurationTime(props: any) {
         let campaignClaimConfig = campaignClaimConfigFormat(campaignClaimConfigJSON);
         // console.log('Change campaignClaimConfig: ', campaignClaimConfig);
         if (campaignClaimConfig && campaignClaimConfig.length > 0) {
-          let claimTimeValue = Number(campaignClaimConfig[0]?.startTime); // Format: Timestamp
-          // Convert claimTimeValue from "1625072400" to Moment Object
-          const claimTimeObject = moment(claimTimeValue * 1000);
-          setValue('release_time', claimTimeObject);
+          if (campaignClaimConfig[0]?.startTime) {
+            let claimTimeValue = Number(campaignClaimConfig[0]?.startTime); // Format: Timestamp
+            // Convert claimTimeValue from "1625072400" to Moment Object
+            const claimTimeObject = moment(claimTimeValue * 1000);
+            setValue('release_time', claimTimeObject);
+          }
         } else {
           setValue('release_time', null);
         }
