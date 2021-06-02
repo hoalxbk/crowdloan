@@ -1,15 +1,13 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import _ from 'lodash';
+import React, {useEffect, useState} from 'react';
+import {useDispatch} from 'react-redux';
 import useStyles from './style';
-import moment from 'moment';
-import { nFormatter } from '../../../utils/formatNumber';
-import { Link } from 'react-router-dom';
-import { POOL_STATUS, NETWORK, POOL_TYPE, ACCEPT_CURRENCY, BUY_TYPE } from '../../../constants';
+import {numberWithCommas} from '../../../utils/formatNumber';
+import {Link} from 'react-router-dom';
+import {ACCEPT_CURRENCY, BUY_TYPE, NETWORK} from '../../../constants';
 import useFetch from '../../../hooks/useFetch';
-import { numberWithCommas } from '../../../utils/formatNumber';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
 import {PoolStatus} from "../../../utils/getPoolStatus";
+import {getAccessPoolText} from "../../../utils/campaign";
 
 const dotIcon = '/images/icons/dot.svg'
 const EthereumIcon = "/images/ethereum.svg";
@@ -134,7 +132,14 @@ const Card = (props: any): JSX.Element => {
             </li>
             <li>
               <span>Access</span>
-              <span className="total">{pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase()}</span>
+              <span className="total">
+                {
+                  getAccessPoolText(pool)
+                  // pool.is_private == POOL_IS_PRIVATE.PRIVATE ?
+                  //   'Private' :
+                  //   (pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase())
+                }
+              </span>
             </li>
             <li>
               <span>Network</span>

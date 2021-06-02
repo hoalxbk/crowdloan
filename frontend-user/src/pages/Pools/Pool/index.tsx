@@ -9,6 +9,7 @@ import { numberWithCommas } from '../../../utils/formatNumber';
 import useCommonStyle from '../../../styles/CommonStyle';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
 import {PoolStatus} from "../../../utils/getPoolStatus";
+import {getAccessPoolText} from "../../../utils/campaign";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -98,7 +99,8 @@ const Pool = (props: any): JSX.Element => {
             {/*  numberWithCommas(pool.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}*/}
           </div>
           <div className={styles.poolType + ' ' + commonStyle.nnn1424h}>
-            {(pool?.buy_type + '').toLowerCase() === BUY_TYPE.WHITELIST_LOTTERY ? 'Whitelist Lottery' : 'FCFS'}
+            {/*{(pool?.buy_type + '').toLowerCase() === BUY_TYPE.WHITELIST_LOTTERY ? 'Whitelist Lottery' : 'FCFS'}*/}
+            {getAccessPoolText(pool)}
           </div>
           <div className={styles.progress}>
             <span className={commonStyle.nnb1418d}>{`${progress.toFixed(2)}%`}</span>

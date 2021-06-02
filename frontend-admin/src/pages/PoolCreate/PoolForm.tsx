@@ -35,6 +35,7 @@ import PoolWebsite from "./Components/PoolWebsite";
 import moment from "moment";
 import ClaimConfigTable from "./Components/ClaimConfig/ClaimConfigTable";
 import {campaignClaimConfigFormat} from "../../utils/campaign";
+import PrivatePoolSetting from "./Components/PrivatePoolSetting";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -121,7 +122,6 @@ function PoolForm(props: any) {
       token_by_eth: data.tokenRate,
       token_conversion_rate: data.tokenRate,
 
-      // price_usdt: data.acceptCurrency === ACCEPT_CURRENCY.ETH ? data.price_usdt : data.tokenRate,
       price_usdt: data.price_usdt,
       display_price_rate: data.display_price_rate,
 
@@ -140,6 +140,9 @@ function PoolForm(props: any) {
       network_available: data.networkAvailable,
       buy_type: data.buyType,
       pool_type: data.poolType,
+
+      // Private Pool Setting
+      is_private: data.isPrivate,
 
       // Tier
       min_tier: data.minTier,
@@ -418,6 +421,13 @@ function PoolForm(props: any) {
 
             <div className={classes.exchangeRate}>
               <BuyType
+                poolDetail={poolDetail}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+              />
+
+              <PrivatePoolSetting
                 poolDetail={poolDetail}
                 setValue={setValue}
                 errors={errors}

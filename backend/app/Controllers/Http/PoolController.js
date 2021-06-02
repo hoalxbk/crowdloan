@@ -35,7 +35,7 @@ class PoolController {
       'token_by_eth',  'token_conversion_rate', 'price_usdt', 'display_price_rate',
       'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
-      'accept_currency', 'network_available', 'buy_type', 'pool_type',
+      'accept_currency', 'network_available', 'buy_type', 'pool_type', 'is_private',
       'min_tier', 'tier_configuration', 'claim_configuration',
     ]);
 
@@ -65,6 +65,7 @@ class PoolController {
       'network_available': inputParams.network_available,
       'buy_type': inputParams.buy_type,
       'pool_type': inputParams.pool_type,
+      'is_private': inputParams.is_private,
       'min_tier': inputParams.min_tier,
 
       'is_display': false,  // Default is hidden
@@ -113,7 +114,7 @@ class PoolController {
       'token_by_eth',  'token_conversion_rate', 'price_usdt', 'display_price_rate',
       'tokenInfo',
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
-      'accept_currency', 'network_available', 'buy_type', 'pool_type',
+      'accept_currency', 'network_available', 'buy_type', 'pool_type', 'is_private',
       'min_tier', 'tier_configuration', 'claim_configuration',
     ]);
 
@@ -142,6 +143,7 @@ class PoolController {
       'network_available': inputParams.network_available,
       'buy_type': inputParams.buy_type,
       'pool_type': inputParams.pool_type,
+      'is_private': inputParams.is_private,
       'min_tier': inputParams.min_tier,
 
       'symbol': tokenInfo && tokenInfo.symbol,

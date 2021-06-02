@@ -1,6 +1,7 @@
 import _ from "lodash";
 import moment from "moment";
 import BigNumber from 'bignumber.js';
+import {BUY_TYPE, POOL_IS_PRIVATE} from "../constants";
 
 export const checkIsFinishTime = (campaignDetail: any): boolean => {
 
@@ -43,4 +44,13 @@ export const checkIsBetweenCloseTimeAndReleaseTime = (campaignDetail: any): bool
   }
 
   return isBetween;
+};
+
+export const getAccessPoolText = (pool: any) => {
+  const isPrivate = pool?.is_private || pool?.isPrivate;
+  const buyType = pool?.buy_type || pool?.buyType;
+  if (isPrivate == POOL_IS_PRIVATE.PRIVATE) {
+    return 'Private';
+  }
+  return ((buyType + '').toLowerCase() == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase());
 };
