@@ -68,9 +68,9 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
       const minimumBuy: number[] = [];
       const tiersWithDetails: Tier[] = [];
 
-      const tokenDetails = (data.token == '' || data.token == null || data.token == 'TBD') ? {
-        symbol: 'PRARE',
-        name: 'Polka Rare',
+      const tokenDetails = (data.token == 'TBD') ? {
+        symbol: 'TBA',
+        name: 'TBA',
         decimals: 18,
         address: 'Token contract not available yet.'
       } : {
