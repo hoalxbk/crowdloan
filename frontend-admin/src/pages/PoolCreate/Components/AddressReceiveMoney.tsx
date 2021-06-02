@@ -41,10 +41,10 @@ function AddressReceiveMoney(props: any) {
               type="text"
               name="addressReceiver"
               ref={register({
-                required: true,
-                validate: {
-                  validAddress: (val: any) => isValidAddress(val)
-                }
+                // required: true,
+                // validate: {
+                //   validAddress: (val: any) => isValidAddress(val)
+                // }
               })}
               maxLength={255}
               className={classes.formControlInput}

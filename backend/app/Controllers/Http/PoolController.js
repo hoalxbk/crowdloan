@@ -337,7 +337,7 @@ class PoolController {
         'campaign_hash', 'campaign_id', 'description', 'registed_by', 'register_by',
 
         // Types
-        'buy_type', 'accept_currency', 'min_tier', 'network_available', 'pool_type', 'is_deploy', 'is_display', 'is_pause',
+        'buy_type', 'accept_currency', 'min_tier', 'network_available', 'pool_type', 'is_deploy', 'is_display', 'is_pause', 'is_private',
 
         // Time
         'release_time', 'start_join_pool_time', 'start_time', 'end_join_pool_time', 'finish_time',

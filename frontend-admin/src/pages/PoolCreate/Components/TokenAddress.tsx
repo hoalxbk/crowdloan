@@ -74,15 +74,16 @@ function TokenAddress(props: any) {
             type="text"
             name="token"
             ref={register({
-              required: true,
+              // required: true,
               validate: {
                 invalidToken: async (val: string) => {
                   try {
                     const erc20Token = await getTokenInfo(val);
-                    return erc20Token;
+                    // return erc20Token;
                   } catch (err) {
-                    return err.message;
+                    // return err.message;
                   }
+                  return true;
                 },
               }
             })}

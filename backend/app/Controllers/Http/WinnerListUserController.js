@@ -257,7 +257,7 @@ class WinnerListUserController {
       // TODO: Add to Cache
       let existRecord = await winnerService.buildQueryBuilder({ campaign_id }).first();
       if (existRecord) {
-        console.log('[checkPickedWinner] - Exist Winner: ', existRecord);
+        console.log('[checkPickedWinner] - Exist Winner: ', JSON.stringify(existRecord));
         return HelperUtils.responseSuccess(true, 'Campaign picked Winner');
       }
       return HelperUtils.responseSuccess(false, 'The campaign has not yet chosen a winner');
