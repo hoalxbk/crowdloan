@@ -149,10 +149,16 @@ class PoolService {
     console.log('inputParams.tier_configuration', JSON.stringify(tiers));
   }
 
-  async checkPoolExist(campaignId) {
+  async getPoolById(campaignId) {
     const campaign = await CampaignModel.query().where('id', campaignId).first();
     return campaign;
   };
+
+  async checkPoolExist(campaignId) {
+    const campaign = this.getPoolById(campaignId);
+    return !!campaign;
+  };
+
 
 }
 
