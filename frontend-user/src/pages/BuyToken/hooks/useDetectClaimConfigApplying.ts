@@ -45,7 +45,7 @@ const useDetectClaimConfigApplying = (
         }
 
         if (validIndex >= 0 && userPurchased && userClaimed) {
-          const maximum = (new BigNumber(validRow?.max_percent_claim || 0).minus(userClaimed)).dividedBy(100).multipliedBy(userPurchased || 0);
+          const maximum = (new BigNumber(validRow?.max_percent_claim || 0).dividedBy(100).multipliedBy(userPurchased || 0)).minus(userClaimed);
           console.log('validRow.max_percent_claim', validRow?.max_percent_claim, userPurchased, userClaimed, maximum.toFixed());
           if (maximum.lt(0)) {
             setMaximumTokenClaimUtilNow(0);
