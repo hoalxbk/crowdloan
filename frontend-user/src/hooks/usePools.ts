@@ -62,7 +62,7 @@ const usePools = (): PoolsReturnType => {
     }
 
     return;
-  }, [data, loading, error, poolsDone,, connectedAccountTier]);
+  }, [data, loading, error, poolsDone, connectedAccountTier]);
 
   const pagination = useMemo(() => {
     if (data && !loading && !error && poolsDone)  {

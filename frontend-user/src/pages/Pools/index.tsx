@@ -97,6 +97,8 @@ const Pools = (props: any) => {
       poolsList.data = poolWithStatus;
       listData = poolWithStatus;
 
+      // if(!appChain || !connector) return;
+
       await Promise.all(listData.map(async (pool: any) => {
         if(pool.is_deploy === 0) return;
           const tokenSold = await getTokenSold(pool);
@@ -106,7 +108,7 @@ const Pools = (props: any) => {
       setPools(listData);
     };
 
-    poolsList && poolsList.data && poolsList.data && manipulatePoolsData();
+    poolsList && poolsList.data && manipulatePoolsData();
   }, [poolsList, appChain, connector]);
 
   const handleChangeTab = (tab: number) => {
