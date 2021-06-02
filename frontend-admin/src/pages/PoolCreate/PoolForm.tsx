@@ -582,6 +582,9 @@ function PoolForm(props: any) {
           <div className={classes.exchangeRate}>
             <UserJoinPool
               poolDetail={poolDetail}
+              setValue={setValue}
+              errors={errors}
+              control={control}
             />
           </div>
           }

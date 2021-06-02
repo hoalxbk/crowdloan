@@ -1,11 +1,16 @@
 'use strict'
 
-const WinnerListService = use('App/Services/WinnerListUserService')
-const ReservedListService = use('App/Services/ReservedListService')
 const HelperUtils = use('App/Common/HelperUtils');
+const RedisUtils = use('App/Common/RedisUtils');
 const Redis = use('Redis');
+const Const = use('App/Common/Const');
+
+const WinnerListService = use('App/Services/WinnerListUserService');
+const ReservedListService = use('App/Services/ReservedListService');
+const PoolService = use('App/Services/PoolService');
 const WhitelistModel = use('App/Models/WhitelistUser');
 const WinnerListModel = use('App/Models/WinnerListUser');
+const CampaignModel = use('App/Models/Campaign');
 
 class WinnerListUserController {
   async getWinnerList({request}) {
@@ -15,6 +20,29 @@ class WinnerListUserController {
     const pageSize = request.input('limit') ? request.input('limit') : 10;
     console.log(`start getWinnerList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
     try {
+      let campaign = null;
+      // Try get Campaign detail from Redis Cache
+      if (await RedisUtils.checkExistRedisPoolDetail(campaign_id)) {
+        let cachedPoolDetail = await RedisUtils.getRedisPoolDetail(campaign_id);
+        console.log('[getWinnerList] - Exist cache data Public Pool Detail: ', cachedPoolDetail);
+        if (cachedPoolDetail) {
+          campaign = JSON.parse(cachedPoolDetail);
+        }
+      } else {
+        campaign = await CampaignModel.query().where('id', campaign_id).first();
+        console.log('[getWinnerList] - Don\'t exist cache data Public Pool Detail. Getting from DB. ');
+        console.log(JSON.stringify(campaign));
+      }
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+
+      console.log('[getWinnerList] - Winner List Status:', campaign.public_winner_status, campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE);
+      if (campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE) {
+        return HelperUtils.responseSuccess([]);
+      }
+
+      console.log('[getWinnerList] - Get Winner List');
       // get from redis cached
       let redisKey = 'winners_' + campaign_id;
       if (page) {
@@ -25,6 +53,7 @@ class WinnerListUserController {
       //   const cachedWinners = await Redis.get(redisKey);
       //   return HelperUtils.responseSuccess(JSON.parse(cachedWinners));
       // }
+
       // if not existed winners on redis then get from db
       // create params to query to db
       const filterParams = {

@@ -17,6 +17,7 @@ import {etherscanRoute} from "../../../../utils";
 import Link from "@material-ui/core/Link";
 import useMapMaxBuyTier from "../hooks/useMapMaxBuyTier";
 import BigNumber from "bignumber.js";
+import PublicWinnerSetting from "./PublicWinnerSetting";
 
 function UserWinner(props: any) {
   const commonStyle = useCommonStyle();

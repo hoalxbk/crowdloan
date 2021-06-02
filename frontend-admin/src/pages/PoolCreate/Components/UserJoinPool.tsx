@@ -1,10 +1,12 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import useStyles from "../style";
 import UserParticipant from "./UserWinner/UserParticipant";
 import UserWinner from "./UserWinner/UserWinner";
 
 import {Tabs} from 'antd';
 import UserReverse from "./UserWinner/UserReverse";
+import PublicWinnerSetting from "./UserWinner/PublicWinnerSetting";
+
 const { TabPane } = Tabs;
 function callback(key: any) {
   console.log(key);
@@ -13,7 +15,8 @@ function callback(key: any) {
 const UserJoinPool = (props: any) => {
   const classes = useStyles();
   const {
-    poolDetail
+    setValue, errors, control,
+    poolDetail,
   } = props;
 
   return (
@@ -26,6 +29,18 @@ const UserJoinPool = (props: any) => {
           <UserParticipant poolDetail={poolDetail} />
         </TabPane>
         <TabPane tab="Winner" key="2">
+
+          <div style={{
+            paddingBottom: 20
+          }}>
+            <PublicWinnerSetting
+              poolDetail={poolDetail}
+              setValue={setValue}
+              errors={errors}
+              control={control}
+            />
+          </div>
+
           <UserWinner poolDetail={poolDetail} />
         </TabPane>
         <TabPane tab="Reserve" key="3">

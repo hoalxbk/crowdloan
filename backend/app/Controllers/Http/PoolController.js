@@ -248,6 +248,35 @@ class PoolController {
     }
   }
 
+  async changePublicWinnerStatus({ request, auth, params }) {
+    const inputParams = request.only([
+      'public_winner_status'
+    ]);
+
+    console.log('[changePublicWinnerStatus] - Update Public Winner Status with data: ', inputParams);
+    const campaignId = params.campaignId;
+
+    try {
+      const campaign = await CampaignModel.query().where('id', campaignId).first();
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+      const res = await CampaignModel.query().where('id', campaignId).update({
+        public_winner_status: inputParams.public_winner_status,
+      });
+
+      console.log('[changePublicWinnerStatus] - Update Success campaign ID: ', res);
+
+      // Delete cache
+      RedisUtils.deleteRedisPoolDetail(campaignId);
+
+      return HelperUtils.responseSuccess();
+    } catch (e) {
+      console.log(e)
+      return HelperUtils.responseErrorInternal();
+    }
+  }
+
   async getPoolAdmin({ request, auth, params }) {
     const poolId = params.campaignId;
     console.log('Start getPool (Admin) with poolId: ', poolId);
