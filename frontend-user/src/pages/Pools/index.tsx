@@ -97,16 +97,14 @@ const Pools = (props: any) => {
       poolsList.data = poolWithStatus;
       listData = poolWithStatus;
 
-      if(!appChain || !connector) return;
-
       await Promise.all(listData.map(async (pool: any) => {
-        if(pool.is_deploy === 0) return
+        if(pool.is_deploy === 0) return;
           const tokenSold = await getTokenSold(pool);
           pool.tokenSold = tokenSold
       }));
 
       setPools(listData);
-    }
+    };
 
     poolsList && poolsList.data && poolsList.data && manipulatePoolsData();
   }, [poolsList, appChain, connector]);

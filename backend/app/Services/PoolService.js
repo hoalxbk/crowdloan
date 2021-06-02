@@ -105,7 +105,7 @@ class PoolService {
         startTime: default_datetime,
       }];
     }
-    return claimConfigs
+    return claimConfigs;
   }
 
   async updateClaimConfig(campaign, claim_configuration) {
