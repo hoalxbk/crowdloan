@@ -48,7 +48,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     mapping(address => OfferedCurrency) public offeredCurrencies;
 
     // Pool extensions
-    bool public useWhitelist;
+    bool public useWhitelist = true;
 
     // -----------------------------------------
     // Lauchpad Starter's event
@@ -243,7 +243,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         _preValidatePurchase(_beneficiary, weiAmount);
 
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature), "POOL:INVALID_SIGNATURE");
 
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
@@ -270,7 +270,7 @@ contract Pool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     ) public whenNotPaused nonReentrant {
         require(offeredCurrencies[_token].rate != 0, "POOL::PURCHASE_METHOD_NOT_ALLOWED");
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature), "POOL:INVALID_SIGNATURE");
 
         _verifyAllowance(msg.sender, _token, _amount);
 

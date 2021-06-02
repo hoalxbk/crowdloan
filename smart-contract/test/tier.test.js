@@ -16,9 +16,9 @@ describe('Tier', function () {
     address0 = "0x0000000000000000000000000000000000000000";
 
     const ERC20TokenFactory = await hardhat.ethers.getContractFactory('ERC20Token');
-    PKF = await ERC20TokenFactory.deploy("PolkaFoundry", "PKF", owner, utils.parseUnits("1000000", 18));
-    uniLP = await ERC20TokenFactory.deploy("Uniswap V2", "UNI-V2", owner, utils.parseUnits("1000000", 18));
-    sPKF = await ERC20TokenFactory.deploy("Staked PKF", "sPKF", owner, utils.parseUnits("1000000", 18));
+    PKF = await ERC20TokenFactory.deploy("PolkaFoundry", "PKF", 18, owner, utils.parseUnits("1000000", 18));
+    uniLP = await ERC20TokenFactory.deploy("Uniswap V2", "UNI-V2", 18, owner, utils.parseUnits("1000000", 18));
+    sPKF = await ERC20TokenFactory.deploy("Staked PKF", "sPKF", 18, owner, utils.parseUnits("1000000", 18));
 
     const ERC721TokenFactory = await hardhat.ethers.getContractFactory('ERC721Token');
     NFT = await ERC721TokenFactory.deploy("NFT", "NFT");

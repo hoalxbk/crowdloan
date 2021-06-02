@@ -6,7 +6,7 @@ describe('Pool Factory', function () {
     // Get accounts
     accounts = await hardhat.ethers.provider.listAccounts();
     owner = accounts[0];
-    icoOwner = accounts[1];
+    idoOwner = accounts[1];
     USDTToken = "0x7648563Ef8FFDb8863fF7aDB5A860e3b14D28946";
 
     // Deploy Tier Token
@@ -14,15 +14,16 @@ describe('Pool Factory', function () {
       'ERC20Token',
     );
 
-    // Deploy ICO Token
-    const deployedIcoToken = await ERC20Token.deploy(
-    "IcoToken",
-    "ICO",
-    icoOwner,
+    // Deploy IDO Token
+    const deployedIdoToken = await ERC20Token.deploy(
+    "IdoToken",
+    "IDO",
+    18,
+    idoOwner,
     `5${'0'.repeat(27)}`
     );
-    await deployedIcoToken.deployed();
-    icoToken = deployedIcoToken.address;
+    await deployedIdoToken.deployed();
+    idoToken = deployedIdoToken.address;
 
     // Deploy Pool Factory
     const PoolFactory = await hardhat.ethers.getContractFactory(
@@ -51,7 +52,7 @@ describe('Pool Factory', function () {
 
   // REGISTER POOL
   it('Should register success pool', async function () {
-    const token = icoToken;
+    const token = idoToken;
     const duration = 86400;
     const openTime = (Date.now() / 1000).toFixed();
     const offeredCurrency = USDTToken;
@@ -101,7 +102,7 @@ describe('Pool Factory', function () {
 
   // DURATION == 0
   it('Should REVERT register pool when duration == 0', async function () {
-    const token = icoToken;
+    const token = idoToken;
     const duration = 0;
     const openTime = (Date.now() / 1000).toFixed();
     const offeredCurrency = USDTToken;
@@ -126,7 +127,7 @@ describe('Pool Factory', function () {
 
   // WALLET == address(0)
   it('Should REVERT register pool when wallet == address(0)', async function () {
-    const token = icoToken;
+    const token = idoToken;
     const duration = 86400;
     const openTime = (Date.now() / 1000).toFixed();
     const offeredCurrency = USDTToken;

@@ -3,6 +3,7 @@ pragma solidity ^0.7.1;
 
 import "../interfaces/IERC20.sol";
 import "../interfaces/IPoolFactory.sol";
+import "../libraries/TransferHelper.sol";
 import "../libraries/Ownable.sol";
 import "../libraries/ReentrancyGuard.sol";
 import "../libraries/SafeMath.sol";
@@ -57,7 +58,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     mapping(address => OfferedCurrency) public offeredCurrencies;
 
     // Pool extensions
-    bool public useWhitelist;
+    bool public useWhitelist = true;
 
     // -----------------------------------------
     // Lauchpad Starter's event
@@ -183,7 +184,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
      * @return availableTokens Number of total available
      */
     function getAvailableTokensForSale() public view returns (uint256 availableTokens) {
-        return token.balanceOf(address(this)).add(totalUnclaimed).sub(tokenSold);
+        return token.balanceOf(address(this)).sub(totalUnclaimed);
     }
 
     /**
@@ -271,7 +272,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         _preValidatePurchase(_beneficiary, weiAmount);
 
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature));
+        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature), "POOL:INVALID_SIGNATURE");
 
         // calculate token amount to be created
         uint256 tokens = _getOfferedCurrencyToTokenAmount(address(0), weiAmount);
@@ -299,9 +300,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     ) public whenNotPaused nonReentrant {
         require(offeredCurrencies[_token].rate != 0, "POOL::PURCHASE_METHOD_NOT_ALLOWED");
         require(_validPurchase(), "POOL::ENDED");
-        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature));
-
-        _verifyAllowance(msg.sender, _token, _amount);
+        require(_verifyWhitelist(_candidate, _maxAmount, _minAmount, _signature), "POOL:INVALID_SIGNATURE");
 
         _preValidatePurchase(_beneficiary, _amount);
 
@@ -354,20 +353,23 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     /**
      * @notice User can receive their tokens when pool finished
      */
-    function claimTokens(address _candidate, uint256 _amount, bytes memory _signature) public {
+    function claimTokens(address _candidate, uint256 _amount, bytes memory _signature) nonReentrant public {
         require(_verifyClaimToken(_candidate, _amount, _signature), "POOL::NOT_ALLOW_TO_CLAIM");
-        require(isFinalized(), "POOL::NOT_FINALLIZED");
+        require(isFinalized(), "POOL::NOT_FINALIZED");
+        require(_amount >= userClaimed[_candidate], "POOL::AMOUNT_MUST_GREATER_THAN_CLAIMED");
 
-        uint256 claimAmount = userPurchased[_candidate].sub(userClaimed[_candidate]);
+        uint256 maxClaimAmount = userPurchased[_candidate].sub(userClaimed[_candidate]);
 
-        if (claimAmount > _amount) {
-            claimAmount = _amount;
+        uint claimAmount = _amount.sub(userClaimed[_candidate]);
+
+        if (claimAmount > maxClaimAmount) {
+            claimAmount = maxClaimAmount;
         }
 
         userClaimed[_candidate] = userClaimed[_candidate].add(claimAmount);
 
         _deliverTokens(msg.sender, claimAmount);
-        
+
         totalUnclaimed = totalUnclaimed.sub(claimAmount);
 
         emit TokenClaimed(msg.sender, claimAmount);
@@ -425,7 +427,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
      * @dev Determines how Token is stored/forwarded on purchases.
      */
     function _forwardTokenFunds(address _token, uint256 _amount) internal {
-        IERC20(_token).transferFrom(msg.sender, fundingWallet, _amount);
+        TransferHelper.safeTransferFrom(_token, msg.sender, fundingWallet, _amount);
     }
 
     /**
@@ -460,22 +462,6 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     }
 
     /**
-     * @dev Verify allowance of purchase
-     * @param _user Address of buyer
-     * @param _token token address of purchasing token
-     * @param _amount Amount of token to buy pool token
-     */
-    function _verifyAllowance(
-        address _user,
-        address _token,
-        uint256 _amount
-    ) private view {
-        IERC20 tradeToken = IERC20(_token);
-        uint256 allowance = tradeToken.allowance(_user, address(this));
-        require(allowance >= _amount, "POOL::TOKEN_NOT_APPROVED");
-    }
-
-    /**
      * @dev Verify permission of purchase
      * @param _candidate Address of buyer
      * @param _maxAmount max token can buy
@@ -489,7 +475,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         bytes memory _signature
     ) private view returns (bool) {
         require(msg.sender == _candidate, "POOL::WRONG_CANDIDATE");
-        
+
         if (useWhitelist) {
             return (verify(signer, _candidate, _maxAmount, _minAmount, _signature));
         }
@@ -508,7 +494,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         bytes memory _signature
     ) private view returns (bool) {
         require(msg.sender == _candidate, "POOL::WRONG_CANDIDATE");
-        
+
         return (verifyClaimToken(signer, _candidate, _amount, _signature));
     }
 }
