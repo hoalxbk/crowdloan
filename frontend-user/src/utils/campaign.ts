@@ -49,7 +49,7 @@ export const checkIsBetweenCloseTimeAndReleaseTime = (campaignDetail: any): bool
 export const getAccessPoolText = (pool: any) => {
   if (!pool) return '';
   const isPrivate = pool?.is_private || pool?.isPrivate;
-  const buyType = pool?.buy_type || pool?.buyType;
+  const buyType = pool?.buy_type || pool?.buyType || pool?.method;
   if (isPrivate == POOL_IS_PRIVATE.PRIVATE) {
     return 'Private';
   }

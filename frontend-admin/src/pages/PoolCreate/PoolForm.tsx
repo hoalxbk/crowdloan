@@ -96,11 +96,15 @@ function PoolForm(props: any) {
       return item;
     });
 
-    const tokenInfo = await getTokenInforDetail(data.token);
-    if (!tokenInfo?.symbol) {
-      throw Error('Token Information has not been loaded !!!');
-      dispatch(alertFailure('Token Information has not been loaded !!!'))
-      return false;
+    let tokenInfo: any = {};
+
+    if (data.token) {
+      tokenInfo = await getTokenInforDetail(data.token);
+      if (!tokenInfo?.symbol) {
+        throw Error('Token Information has not been loaded !!!');
+        dispatch(alertFailure('Token Information has not been loaded !!!'))
+        return false;
+      }
     }
 
     const submitData = {
@@ -484,6 +488,7 @@ function PoolForm(props: any) {
               getValues={getValues}
               errors={errors}
               watch={watch}
+              needValidate={needValidate}
             />
 
             <AddressReceiveMoney
@@ -491,6 +496,7 @@ function PoolForm(props: any) {
               register={register}
               setValue={setValue}
               errors={errors}
+              needValidate={needValidate}
             />
 
             <TotalCoinSold
