@@ -1,15 +1,12 @@
-import React, { useRef, useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { withRouter, Link } from 'react-router-dom';
-import _ from 'lodash';
+import React, {useEffect, useState} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {withRouter} from 'react-router-dom';
 import DefaultLayout from '../../components/Layout/DefaultLayout';
 import useStyles from './style';
 import Card from './Card';
 import usePools from '../../hooks/usePools';
-import { POOL_STATUS, POOL_TYPE, BUY_TYPE } from '../../constants';
-import POOL_ABI from '../../abi/Pool.json';
-import {getContractInstance, convertFromWei, convertToWei, getPoolContract} from '../../services/web3';
-import moment from 'moment';
+import {BUY_TYPE, POOL_TYPE} from '../../constants';
+import {convertFromWei, getPoolContract} from '../../services/web3';
 import {getPoolStatusByPoolDetail} from "../../utils/getPoolStatusByPoolDetail";
 import {PoolStatus} from "../../utils/getPoolStatus";
 
