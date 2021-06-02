@@ -184,7 +184,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
      * @return availableTokens Number of total available
      */
     function getAvailableTokensForSale() public view returns (uint256 availableTokens) {
-        return token.balanceOf(address(this)).add(totalUnclaimed).sub(tokenSold);
+        return token.balanceOf(address(this)).sub(totalUnclaimed);
     }
 
     /**
@@ -357,7 +357,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         require(_verifyClaimToken(_candidate, _amount, _signature), "POOL::NOT_ALLOW_TO_CLAIM");
         require(isFinalized(), "POOL::NOT_FINALIZED");
         require(_amount >= userClaimed[_candidate], "POOL::AMOUNT_MUST_GREATER_THAN_CLAIMED");
-        
+
         uint256 maxClaimAmount = userPurchased[_candidate].sub(userClaimed[_candidate]);
 
         uint claimAmount = _amount.sub(userClaimed[_candidate]);
@@ -369,7 +369,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         userClaimed[_candidate] = userClaimed[_candidate].add(claimAmount);
 
         _deliverTokens(msg.sender, claimAmount);
-        
+
         totalUnclaimed = totalUnclaimed.sub(claimAmount);
 
         emit TokenClaimed(msg.sender, claimAmount);
@@ -475,7 +475,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         bytes memory _signature
     ) private view returns (bool) {
         require(msg.sender == _candidate, "POOL::WRONG_CANDIDATE");
-        
+
         if (useWhitelist) {
             return (verify(signer, _candidate, _maxAmount, _minAmount, _signature));
         }
@@ -494,7 +494,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
         bytes memory _signature
     ) private view returns (bool) {
         require(msg.sender == _candidate, "POOL::WRONG_CANDIDATE");
-        
+
         return (verifyClaimToken(signer, _candidate, _amount, _signature));
     }
 }

@@ -23,39 +23,20 @@ describe('Pool', function () {
     USDTToken = await StableTokenFactory.deploy("Tether", "USDT", 6);
     USDCToken = await StableTokenFactory.deploy("USD Coin", "USDC", 6);
 
-    // Deploy Tier Token
-    
     const ERC20Token = await hardhat.ethers.getContractFactory(
       'ERC20Token',
     );
 
-    const deployedTierToken = await ERC20Token.deploy(
-      "SotaToken",
-      "SOTA",
+    // Deploy IDO Token
+    const deployedIdoToken = await ERC20Token.deploy(
+      "IdoToken",
+      "IDO",
+      18,
       owner,
       `5${'0'.repeat(27)}`
     );
-
-    // await deployedTierToken.deployed();
-    // tierToken = deployedTierToken.address;
-
-    // // Deploy ICO Token
-    const deployedIcoToken = await ERC20Token.deploy(
-      "IcoToken",
-      "ICO",
-      owner,
-      `5${'0'.repeat(27)}`
-    );
-    await deployedIcoToken.deployed();
-    icoToken = deployedIcoToken;
-
-    // // Deploy Tier Contract
-    // const SotaTier = await hardhat.ethers.getContractFactory(
-    //   'PKFTiers'
-    // );
-    // const deployedTierContract = await SotaTier.deploy(tierToken, owner);
-    // await deployedTierContract.deployed();
-    // tierContract = deployedTierContract.address;
+    await deployedIdoToken.deployed();
+    idoToken = deployedIdoToken;
 
     // Deploy Pool Factory
     const PoolFactory = await hardhat.ethers.getContractFactory(
@@ -70,7 +51,7 @@ describe('Pool', function () {
     offeredCurrencyRate = 2;
     offeredCurrencyDecimals = 6;
     // Register new pool
-    await poolFactory.registerPool(icoToken.address, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, owner, owner);
+    await poolFactory.registerPool(idoToken.address, duration, openTime, offeredCurrency, offeredCurrencyRate, offeredCurrencyDecimals, owner, owner);
 
     const poolAddress = await poolFactory.allPools(0);
 
@@ -80,7 +61,7 @@ describe('Pool', function () {
     pool = Pool.attach(poolAddress);
 
     // Transfer token to pool
-    await icoToken.transfer(poolAddress, utils.parseEther('1000000'));
+    await idoToken.transfer(poolAddress, utils.parseEther('1000000'));
   });
 
   // Initialize properties
@@ -91,7 +72,7 @@ describe('Pool', function () {
   // Token Address
   it('Should return token address', async function () {
     const tokenAddress = await pool.token();
-    expect(tokenAddress).to.equal(icoToken.address);
+    expect(tokenAddress).to.equal(idoToken.address);
   });
 
   // Factory Address
@@ -207,15 +188,15 @@ describe('Pool', function () {
   });
 
   // Should claim correctly
-  it('Claim correct value for Claim functions', async function () {
+  it('Buy by ETH and Claim correct value for Claim functions', async function () {
     const address0 = "0x0000000000000000000000000000000000000000";
-    const tokenBalance = await icoToken.balanceOf(owner);
+    const tokenBalance = await idoToken.balanceOf(owner);
 
     await pool.setOfferedCurrencyRateAndDecimals(address0, 10000, 0);
 
     const maxAmount = utils.parseEther("10000000", 18);
-    const signature = await getBuySignature(owner, maxAmount); 
-    
+    const signature = await getBuySignature(owner, maxAmount);
+
     const buyAmount = utils.parseEther("1", 18);
     await pool.buyTokenByEtherWithPermission(owner, owner, maxAmount, 0, signature, {
       value: buyAmount
@@ -232,6 +213,7 @@ describe('Pool', function () {
     const claimAmount800 = utils.parseUnits("800", 18);
     const claimAmount1000 = utils.parseUnits("1000", 18);
     const claimAmount10000 = utils.parseUnits("10000", 18);
+    const claimAmount100000 = utils.parseUnits("100000", 18);
 
     const claimSignature200 = await getClaimSignature(owner, claimAmount200);
     const claimSignature400 = await getClaimSignature(owner, claimAmount400);
@@ -239,18 +221,19 @@ describe('Pool', function () {
     const claimSignature800 = await getClaimSignature(owner, claimAmount800);
     const claimSignature1000 = await getClaimSignature(owner, claimAmount1000);
     const claimSignature10000 = await getClaimSignature(owner, claimAmount10000);
+    const claimSignature100000 = await getClaimSignature(owner, claimAmount100000);
 
     await pool.claimTokens(owner, claimAmount200, claimSignature200);
-    let newTokenBalance = await icoToken.balanceOf(owner);
+    let newTokenBalance = await idoToken.balanceOf(owner);
     let different = utils.formatEther(newTokenBalance.sub(tokenBalance));
 
     expect(parseInt(different)).to.equal(200);
-    
-    await pool.claimTokens(owner, claimAmount200, claimSignature200);    
+
+    await pool.claimTokens(owner, claimAmount200, claimSignature200);
     await pool.claimTokens(owner, claimAmount200, claimSignature200);
 
-    expect(await icoToken.balanceOf(owner)).to.be.equal(newTokenBalance);
-  
+    expect(await idoToken.balanceOf(owner)).to.be.equal(newTokenBalance);
+
     await pool.claimTokens(owner, claimAmount400, claimSignature400);
     await pool.claimTokens(owner, claimAmount400, claimSignature400);
 
@@ -274,6 +257,130 @@ describe('Pool', function () {
 
     expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("10000", 18));
   });
+
+  it('Buy by Token and Claim correct value for Claim functions', async function () {
+    const tokenBalance = await idoToken.balanceOf(owner);
+
+    await pool.setOfferedCurrencyRateAndDecimals(USDCToken.address, utils.parseUnits("20", 18), 6);
+    await pool.setOfferedCurrencyRateAndDecimals(USDTToken.address, utils.parseUnits("5", 18), 6);
+
+    const maxAmount = utils.parseEther("10000000", 18);
+    const signature = await getBuySignature(owner, maxAmount);
+
+    await USDCToken.approve(pool.address, utils.parseUnits("999999999", 6));
+    await USDTToken.approve(pool.address, utils.parseUnits("999999999", 6));
+
+    const buyAmount = utils.parseUnits("10000", 6);
+    // 200,000
+    await pool.buyTokenByTokenWithPermission(owner, USDCToken.address, buyAmount, owner, maxAmount, 0, signature);
+    // 50,000
+    await pool.buyTokenByTokenWithPermission(owner, USDTToken.address, buyAmount, owner, maxAmount, 0, signature);
+
+    let block = await getCurrentBlock();
+    let blockTimestamp = await getBlockTimestamp(block)
+    await pool.setCloseTime(Math.floor(blockTimestamp + 10));
+    await time.advanceBlockTo(await getCurrentBlock() + 10);
+
+    const claimAmount200 = utils.parseUnits("200", 18);
+    const claimAmount400 = utils.parseUnits("400", 18);
+    const claimAmount600 = utils.parseUnits("600", 18);
+    const claimAmount800 = utils.parseUnits("800", 18);
+    const claimAmount1000 = utils.parseUnits("1000", 18);
+    const claimAmount10000 = utils.parseUnits("10000", 18);
+    const claimAmount50000 = utils.parseUnits("50000", 18);
+    const claimAmount100000 = utils.parseUnits("100000", 18);
+    const claimAmount250000 = utils.parseUnits("250000", 18);
+
+    const claimSignature200 = await getClaimSignature(owner, claimAmount200);
+    const claimSignature400 = await getClaimSignature(owner, claimAmount400);
+    const claimSignature600 = await getClaimSignature(owner, claimAmount600);
+    const claimSignature800 = await getClaimSignature(owner, claimAmount800);
+    const claimSignature1000 = await getClaimSignature(owner, claimAmount1000);
+    const claimSignature10000 = await getClaimSignature(owner, claimAmount10000);
+    const claimSignature50000 = await getClaimSignature(owner, claimAmount50000);
+    const claimSignature100000 = await getClaimSignature(owner, claimAmount100000);
+    const claimSignature250000 = await getClaimSignature(owner, claimAmount250000);
+
+    await pool.claimTokens(owner, claimAmount200, claimSignature200);
+    let newTokenBalance = await idoToken.balanceOf(owner);
+    let different = utils.formatEther(newTokenBalance.sub(tokenBalance));
+
+    expect(parseInt(different)).to.equal(200);
+
+    await pool.claimTokens(owner, claimAmount200, claimSignature200);
+    await pool.claimTokens(owner, claimAmount200, claimSignature200);
+
+    expect(await idoToken.balanceOf(owner)).to.be.equal(newTokenBalance);
+
+    await pool.claimTokens(owner, claimAmount400, claimSignature400);
+    await pool.claimTokens(owner, claimAmount400, claimSignature400);
+
+    expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("400", 18));
+
+    await expect(pool.claimTokens(owner, claimAmount200, claimSignature200)).to.be.reverted;
+
+    await pool.claimTokens(owner, claimAmount600, claimSignature600);
+
+    expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("600", 18));
+
+    await pool.claimTokens(owner, claimAmount800, claimSignature800);
+
+    expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("800", 18));
+
+    await pool.claimTokens(owner, claimAmount1000, claimSignature1000);
+
+    expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("1000", 18));
+
+    await pool.claimTokens(owner, claimAmount10000, claimSignature10000);
+
+    expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("10000", 18));
+
+    await pool.claimTokens(owner, claimAmount50000, claimSignature50000);
+
+    expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("50000", 18));
+
+    await pool.claimTokens(owner, claimAmount100000, claimSignature100000);
+
+    expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("100000", 18));
+
+    await pool.claimTokens(owner, claimAmount250000, claimSignature250000);
+
+    expect((await getTokenBalanceOf(owner)).sub(tokenBalance)).to.be.equal(utils.parseUnits("250000", 18));
+  });
+
+  // Should refund remain token correctly
+  it('Refund remaining token', async function () {
+    const tokenBalance = await idoToken.balanceOf(owner);
+
+    await pool.setOfferedCurrencyRateAndDecimals(USDCToken.address, utils.parseUnits("20", 18), 6);
+
+    const maxAmount = utils.parseEther("800000", 18);
+    const signature = await getBuySignature(owner, maxAmount);
+
+    await USDCToken.approve(pool.address, utils.parseUnits("999999999", 6));
+
+    const buyAmount = utils.parseUnits("40000", 6);
+    // 800,000
+    await pool.buyTokenByTokenWithPermission(owner, USDCToken.address, buyAmount, owner, maxAmount, 0, signature);
+
+    let block = await getCurrentBlock();
+    let blockTimestamp = await getBlockTimestamp(block)
+    await pool.setCloseTime(Math.floor(blockTimestamp + 10));
+    await time.advanceBlockTo(await getCurrentBlock() + 10);
+
+    const claimAmount800000 = utils.parseUnits("800000", 18);
+    const claimSignature8000000 = await getClaimSignature(owner, claimAmount800000);
+
+    await pool.claimTokens(owner, claimAmount800000, claimSignature8000000);
+
+    await pool.refundRemainingTokens(owner);
+
+    let newTokenBalance = await idoToken.balanceOf(owner);
+    let different = utils.formatEther(newTokenBalance.sub(tokenBalance));
+
+    expect(parseInt(different)).to.equal(1000000);
+  })
+
 
   async function getBuySignature(address, maxAmount) {
     // call to contract with parameters
@@ -301,6 +408,6 @@ describe('Pool', function () {
   }
 
   async function getTokenBalanceOf(address) {
-    return await icoToken.balanceOf(address);
+    return await idoToken.balanceOf(address);
   }
 });
