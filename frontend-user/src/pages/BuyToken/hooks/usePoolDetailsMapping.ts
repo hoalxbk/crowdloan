@@ -4,6 +4,7 @@ import { numberWithCommas } from '../../../utils/formatNumber';
 import { getUserTierAlias } from '../../../utils/getUserTierAlias';
 import { convertTimeToStringFormat, convertTimeToStringFormatWithoutGMT } from '../../../utils/convertDate';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
+import {getAccessPoolText} from "../../../utils/campaign";
 
 export enum PoolDetailKey {
   website = 'website',
@@ -109,7 +110,7 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         utilIcon: '/images/swap.svg',
       },
       [PoolDetailKey.method]: {
-        display: method === 'whitelist' ? 'Whitelist/Lottery': 'FCFS',
+        display: getAccessPoolText(poolDetails),
         label: 'Method'
       },
       [PoolDetailKey.type]: {

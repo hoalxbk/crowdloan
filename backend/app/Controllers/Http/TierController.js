@@ -12,7 +12,9 @@ class TierController {
     try {
       if (await RedisUtils.checkExistRedisTierList(campaignId)) {
         const cachedTiers = RedisUtils.getRedisTierList();
-        return HelperUtils.responseSuccess(JSON.parse(cachedTiers));
+        if (cachedTiers) {
+          return HelperUtils.responseSuccess(JSON.parse(cachedTiers));
+        }
       }
 
       console.log('Not exist Redis cache');

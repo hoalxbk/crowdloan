@@ -46,6 +46,7 @@ export type PoolDetails = {
   tiersWithDetails: Tier[];
   displayPriceRate: any;
   priceUsdt: string;
+  isPrivate: string;
 }
 
 export type PoolDetailsReturnType ={
@@ -69,8 +70,8 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
       const tiersWithDetails: Tier[] = [];
 
       const tokenDetails = (data.token == '' || data.token == null || data.token == 'TBD') ? {
-        symbol: 'PRARE',
-        name: 'Polka Rare',
+        symbol: 'TBA',
+        name: 'TBA',
         decimals: 18,
         address: 'Token contract not available yet.'
       } : {
@@ -137,6 +138,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         displayPriceRate: !!data.display_price_rate,
         priceUsdt: new BigNumber(data.price_usdt).toFixed(),
         campaignClaimConfig,
+        isPrivate: data.is_private,
       }
     }
 

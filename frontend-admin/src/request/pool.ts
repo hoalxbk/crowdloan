@@ -49,3 +49,15 @@ export const changeDisplayStatus = async (data: any) => {
   return resObject;
 };
 
+export const changePublicWinnerStatus = async (data: any) => {
+  const baseRequest = new BaseRequest();
+  let url = apiRoute(`/pool/${data.pool_id}/change-public-winner-status`);
+
+  const response = await baseRequest.post(url, {
+    public_winner_status: data.public_winner_status,
+  }) as any;
+
+  const resObject = await response.json();
+  return resObject;
+};
+

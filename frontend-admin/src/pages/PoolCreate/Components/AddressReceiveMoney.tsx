@@ -10,7 +10,7 @@ function AddressReceiveMoney(props: any) {
   const classes = useStyles();
   const commonStyle = useCommonStyle();
   const {
-    register, setValue, errors,
+    register, setValue, errors, needValidate,
     poolDetail,
   } = props;
   const renderError = renderErrorCreatePool;
@@ -41,9 +41,12 @@ function AddressReceiveMoney(props: any) {
               type="text"
               name="addressReceiver"
               ref={register({
-                required: true,
+                required: needValidate,
                 validate: {
-                  validAddress: (val: any) => isValidAddress(val)
+                  validAddress: (val: any) => {
+                    if (!needValidate) return true;
+                    return isValidAddress(val);
+                  }
                 }
               })}
               maxLength={255}

@@ -82,6 +82,7 @@ Route.group(() => {
   Route.get('pool/:campaignId', 'PoolController.getPoolAdmin');
   Route.post('pool/:campaignId/deploy-success', 'PoolController.updateDeploySuccess');
   Route.post('pool/:campaignId/change-display', 'PoolController.changeDisplay');
+  Route.post('pool/:campaignId/change-public-winner-status', 'PoolController.changePublicWinnerStatus');
 
   // Participants
   Route.get('pool/:campaignId/participants', 'WhiteListUserController.getParticipants');
