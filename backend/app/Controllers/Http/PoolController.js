@@ -391,7 +391,7 @@ class PoolController {
       // }
 
       let listData = (new PoolService).buildSearchQuery(param);
-      listData = listData.orderBy('id', 'DESC');
+      listData = listData.orderBy('created_at', 'DESC');
       listData = await listData.paginate(page,limit);
 
       // // Cache data
