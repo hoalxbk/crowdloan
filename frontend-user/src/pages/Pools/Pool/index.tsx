@@ -99,7 +99,6 @@ const Pool = (props: any): JSX.Element => {
             {/*  numberWithCommas(pool.token_conversion_rate, 4)} {pool?.accept_currency?.toUpperCase()}*/}
           </div>
           <div className={styles.poolType + ' ' + commonStyle.nnn1424h}>
-            {/*{(pool?.buy_type + '').toLowerCase() === BUY_TYPE.WHITELIST_LOTTERY ? 'Whitelist Lottery' : 'FCFS'}*/}
             {getAccessPoolText(pool)}
           </div>
           <div className={styles.progress}>

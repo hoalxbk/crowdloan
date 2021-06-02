@@ -135,9 +135,6 @@ const Card = (props: any): JSX.Element => {
               <span className="total">
                 {
                   getAccessPoolText(pool)
-                  // pool.is_private == POOL_IS_PRIVATE.PRIVATE ?
-                  //   'Private' :
-                  //   (pool.buy_type == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase())
                 }
               </span>
             </li>

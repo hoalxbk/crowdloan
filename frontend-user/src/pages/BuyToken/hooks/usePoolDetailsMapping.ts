@@ -110,7 +110,6 @@ const usePoolDetailsMapping = (poolDetails: PoolDetailMappingProps | undefined):
         utilIcon: '/images/swap.svg',
       },
       [PoolDetailKey.method]: {
-        // display: method === 'whitelist' ? 'Whitelist/Lottery': 'FCFS',
         display: getAccessPoolText(poolDetails),
         label: 'Method'
       },
