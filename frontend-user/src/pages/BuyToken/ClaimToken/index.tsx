@@ -104,14 +104,14 @@ const ClaimToken: React.FC<ClaimTokenProps> = (props: ClaimTokenProps) => {
     }
 
     if (nextClaim &&
-      (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0))
+      (new BigNumber(maximumTokenClaimUtilNow).lte(0))
     ) {
       dispatch(alertFailure('You can not claim token at current time!'));
       return false;
     }
 
     if (!nextClaim &&
-      (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)) // maximumTokenClaimUtilNow - userClaimed <= 0
+      (new BigNumber(maximumTokenClaimUtilNow).lte(0)) // maximumTokenClaimUtilNow <= 0
     ) {
       dispatch(alertFailure('You not enough claimable token!'));
       return false;

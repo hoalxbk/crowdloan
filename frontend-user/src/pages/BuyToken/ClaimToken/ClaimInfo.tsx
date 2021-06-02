@@ -36,18 +36,18 @@ function ClaimInfo(props: any) {
     <>
       <div className={styles.poolDetailClaimInfo}>
         <div className={styles.poolDetailClaimInfoBlock}>
-          <span>Total claimable token</span>
+          <span>Total bought tokens</span>
           <span>{numberWithCommas(`${userPurchased || 0}`)} {tokenDetails?.symbol}</span>
         </div>
 
         <div className={styles.poolDetailClaimInfoBlock}>
-          <span>Claimed token</span>
+          <span>You have claimed</span>
           <span>{numberWithCommas(`${userClaimed || 0}`)} {tokenDetails?.symbol}</span>
         </div>
 
 
         <div className={styles.poolDetailClaimInfoBlock}>
-          <span>Maximum token claim (until now)</span>
+          <span>Remaining tokens (until now)</span>
           <span>{numberWithCommas(`${maximumTokenClaimUtilNow || 0}`)} {tokenDetails?.symbol}</span>
         </div>
 
@@ -55,7 +55,7 @@ function ClaimInfo(props: any) {
           !!userPurchased
           && new BigNumber(userPurchased).gt(0) // User bought any token
           && nextClaim // Current time user have next Claim Phase
-          && (new BigNumber(maximumTokenClaimUtilNow).minus(userClaimed).lte(0)) // Only user claimed all token in Current Phase and waiting Next Claim Phase
+          && (new BigNumber(maximumTokenClaimUtilNow).lte(0)) // Only user claimed all token in Current Phase and waiting Next Claim Phase
           &&
           <>
             <div className={styles.poolDetailClaimInfoBlock}>
