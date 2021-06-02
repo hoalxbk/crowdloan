@@ -100,9 +100,15 @@ const Pools = (props: any) => {
       // if(!appChain || !connector) return;
 
       await Promise.all(listData.map(async (pool: any) => {
-        if(pool.is_deploy === 0) return;
+        if (pool.is_deploy === 0) return;
+        if (pool.id == 22) {
+          const tokenSold = '500000';
+          pool.tokenSold = tokenSold;
+        } else {
           const tokenSold = await getTokenSold(pool);
-          pool.tokenSold = tokenSold
+          pool.tokenSold = tokenSold;
+        }
+
       }));
 
       setPools(listData);
