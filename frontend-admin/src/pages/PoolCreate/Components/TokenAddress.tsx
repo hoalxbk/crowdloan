@@ -12,7 +12,7 @@ function TokenAddress(props: any) {
   const { currentNetworkId } = useSelector((state: any) => state).userCurrentNetwork;
   const [loadingToken, setLoadingToken] = useState(false);
   const {
-    register, setValue, errors, watch, getValues,
+    register, setValue, errors, watch, getValues, needValidate,
     poolDetail,
     token, setToken,
   } = props;
@@ -74,10 +74,16 @@ function TokenAddress(props: any) {
             type="text"
             name="token"
             ref={register({
-              required: true,
+              // required: true,
               validate: {
                 invalidToken: async (val: string) => {
                   try {
+                    if (!needValidate) {
+                      if (val) {
+                        const erc20Token = await getTokenInfo(val);
+                      }
+                      return true;
+                    }
                     const erc20Token = await getTokenInfo(val);
                     return erc20Token;
                   } catch (err) {
