@@ -30,6 +30,15 @@ export const NETWORK_AVAILABLE = {
   ETH: 'eth',
   BSC: 'bsc',
 };
+export const PUBLIC_WINNER_STATUS = {
+  PUBLIC: 1,
+  PRIVATE: 0,
+};
+export const POOL_IS_PRIVATE = {
+  PUBLIC: 0,
+  PRIVATE: 1,
+};
+
 export const ETH_CHAIN_ID = process.env.REACT_APP_NETWORK_ID as string;
 export const BSC_CHAIN_ID = process.env.REACT_APP_BSC_NETWORK_ID as string;
 export const NETWORK_ETH_NAME = process.env.REACT_APP_NETWORK_NAME;

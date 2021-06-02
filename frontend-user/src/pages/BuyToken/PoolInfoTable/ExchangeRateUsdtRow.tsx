@@ -23,8 +23,8 @@ function ExchangeRateUsdtRow(props: any) {
     displayRate = `1 USD = ${new BigNumber(1).div(poolDetails.priceUsdt).toNumber()} ${tokenDetails?.symbol}`;
   }
 
-  console.log('[ExchangeRateUsdtRow] - reverseRate', reverseRate);
-  console.log('[ExchangeRateUsdtRow] - displayRate', displayRate);
+  // console.log('[ExchangeRateUsdtRow] - reverseRate', reverseRate);
+  // console.log('[ExchangeRateUsdtRow] - displayRate', displayRate);
 
   return (
     <>

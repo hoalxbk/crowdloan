@@ -38,6 +38,15 @@ export const POOL_TYPE = {
   CLAIMABLE: 'claimable',
 };
 
+export const PUBLIC_WINNER_STATUS = {
+  PUBLIC: 1,
+  PRIVATE: 0,
+};
+export const POOL_IS_PRIVATE = {
+  PUBLIC: 0,
+  PRIVATE: 1,
+};
+
 export const USER_STATUS = {
   UNVERIFIED: 0,
   ACTIVE: 1,

@@ -137,4 +137,12 @@ module.exports = Object.freeze({
     ETH: 'eth',
     BSC: 'bsc',
   },
+  PUBLIC_WINNER_STATUS: {
+    PUBLIC: 1,
+    PRIVATE: 0,
+  },
+  POOL_IS_PRIVATE: {
+    PUBLIC: 0,
+    PRIVATE: 1,
+  },
 });

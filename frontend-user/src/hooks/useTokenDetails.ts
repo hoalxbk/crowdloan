@@ -26,9 +26,9 @@ const useTokenDetails = (address: string, networkAvailable: string) => {
 
       const contract = getContractInstance(
         ERC20_ABI,
-       address, 
-       connector, 
-       appChainID, 
+       address,
+       connector,
+       appChainID,
        SmartContractMethod.Read,
        networkAvailable === 'eth'
       );
@@ -53,8 +53,8 @@ const useTokenDetails = (address: string, networkAvailable: string) => {
     address && networkAvailable && ethers.utils.isAddress(address) && fetchTokenDetails(address);
     if(address == 'TBD') {
       setTokenDetails({
-        symbol: 'PRARE',
-        name: 'Polka Rare',
+        symbol: 'TBA',
+        name: 'TBA',
         decimals: 18,
         address: 'Token contract not available yet.'
       });
