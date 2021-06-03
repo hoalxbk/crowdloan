@@ -51,11 +51,11 @@ export const getPoolStatusByPoolDetail = async (
   const today = new Date().getTime();
   const requiredReleaseTime = isClaimable ? !releaseTime: false;
 
-  if ((!startBuyTime || !startJoinTime || !endBuyTime || !endJoinTime || requiredReleaseTime) && buyType === BUY_TYPE.WHITELIST_LOTTERY) {
+  if ((!startJoinTime || !endJoinTime) && buyType === BUY_TYPE.WHITELIST_LOTTERY) {
     return PoolStatus.TBA;
   }
 
-  if ((!startBuyTime || !endBuyTime || requiredReleaseTime) && buyType === BUY_TYPE.FCFS) {
+  if ((!startBuyTime || !endBuyTime) && buyType === BUY_TYPE.FCFS) {
     return PoolStatus.TBA;
   }
 

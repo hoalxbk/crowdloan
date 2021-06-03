@@ -36,11 +36,11 @@ export const getPoolStatus = (
 
   const requiredReleaseTime = isClaimable ? !releaseTime: false;
 
-  if ((!startBuyTime || !startJoinTime || !endBuyTime || !endJoinTime || requiredReleaseTime) && poolType === 'whitelist') {
+  if ((!startJoinTime || !endJoinTime) && poolType === 'whitelist') {
     return PoolStatus.TBA;
   }
 
-  if ((!startBuyTime || !endBuyTime || requiredReleaseTime) && poolType === 'fcfs') {
+  if ((!startBuyTime || !endBuyTime) && poolType === 'fcfs') {
     return PoolStatus.TBA;
   }
 
