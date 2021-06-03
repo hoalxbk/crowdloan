@@ -387,13 +387,13 @@ const BuyToken: React.FC<any> = (props: any) => {
                     </p>
                   )
                 }
-                {(alreadyJoinPool || joinPoolSuccess) &&
-                  (
-                    <WhiteListUserGuideBanner
-                      poolDetails={poolDetails}
-                    />
-                  )
-                }
+                {/*{(alreadyJoinPool || joinPoolSuccess) &&*/}
+                {/*  (*/}
+                {/*    <WhiteListUserGuideBanner*/}
+                {/*      poolDetails={poolDetails}*/}
+                {/*    />*/}
+                {/*  )*/}
+                {/*}*/}
               </>
             }
 
