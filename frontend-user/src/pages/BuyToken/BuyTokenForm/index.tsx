@@ -205,7 +205,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
     // Check if max buy greater than total ICO coins sold
     if (maxBuy.gt(new BigNumber(tokenBalance))) {
-      return new BigNumber(tokenBalance).toFixed();
+      return new BigNumber(tokenBalance).toFixed(6);
     }
 
     return (maxBuy.toFixed(6));
