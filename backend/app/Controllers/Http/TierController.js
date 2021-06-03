@@ -11,7 +11,7 @@ class TierController {
     const campaignId = params.campaignId;
     try {
       if (await RedisUtils.checkExistRedisTierList(campaignId)) {
-        const cachedTiers = RedisUtils.getRedisTierList();
+        const cachedTiers = await RedisUtils.getRedisTierList();
         if (cachedTiers) {
           return HelperUtils.responseSuccess(JSON.parse(cachedTiers));
         }
