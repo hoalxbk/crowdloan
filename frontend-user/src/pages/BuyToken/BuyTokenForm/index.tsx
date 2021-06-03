@@ -232,7 +232,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
     if (minimumBuy && input && new BigNumber(input || 0).lt(minimumBuy) && !connectedAccountFirstBuy && new Date() > startBuyTimeInDate) {
       return {
-        message: `The minimum amount you must trade is ${new BigNumber(minimumBuy).toFixed(2)} ${purchasableCurrency}.`,
+        message: `The minimum amount you must trade is ${new BigNumber(minimumBuy).toFixed(2)} ${currencyName}.`,
         type: MessageType.error
       }
     }
