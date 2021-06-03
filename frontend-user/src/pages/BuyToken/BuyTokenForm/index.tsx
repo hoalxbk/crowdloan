@@ -208,7 +208,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       return new BigNumber(tokenBalance).toFixed();
     }
 
-    return (maxBuy.toFixed());
+    return (maxBuy.toFixed(6));
   }, [tokenBalance, maximumBuy, userPurchased, poolAmount, tokenSold, rate]);
 
   const { retrieveTokenSold, tokenSold: totalUserTokenSold  } = useTokenSold(tokenDetails, poolAddress, ableToFetchFromBlockchain);
@@ -323,7 +323,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
   useEffect(() => {
     if (maximumBuy && userPurchased && rate) {
       const remainingAmount = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
-      remainingAmount.gt(0) && setInput(remainingAmount.toFixed());
+      remainingAmount.gt(0) && setInput(remainingAmount.toFixed(6));
     }
 
     return () => {
