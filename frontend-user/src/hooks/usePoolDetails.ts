@@ -69,7 +69,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
       const minimumBuy: number[] = [];
       const tiersWithDetails: Tier[] = [];
 
-      const tokenDetails = (data.token == '' || data.token == null || data.token == 'TBD') ? {
+      const tokenDetails = (data.token == 'TBD') ? {
         symbol: 'TBA',
         name: 'TBA',
         decimals: 18,

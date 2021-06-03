@@ -279,14 +279,14 @@ class PoolController {
 
   async getPoolAdmin({ request, auth, params }) {
     const poolId = params.campaignId;
-    console.log('Start getPool (Admin) with poolId: ', poolId);
+    console.log('[getPoolAdmin] - Start getPool (Admin) with poolId: ', poolId);
     try {
       let pool = await CampaignModel.query().with('tiers').with('campaignClaimConfig').where('id', poolId).first();
       if (!pool) {
         return HelperUtils.responseNotFound('Pool not found');
       }
       pool = JSON.parse(JSON.stringify(pool));
-      console.log('[getPool] - pool.tiers: ', pool.tiers);
+      console.log('[getPool] - pool.tiers: ', JSON.stringify(pool.tiers));
       if (pool.tiers && pool.tiers.length > 0) {
         pool.tiers = pool.tiers.map((item, index) => {
           return {
@@ -337,7 +337,9 @@ class PoolController {
         'campaign_hash', 'campaign_id', 'description', 'registed_by', 'register_by',
 
         // Types
-        'buy_type', 'accept_currency', 'min_tier', 'network_available', 'pool_type', 'is_deploy', 'is_display', 'is_pause', 'is_private',
+        'buy_type', 'accept_currency', 'min_tier', 'network_available',
+        'pool_type', 'is_deploy', 'is_display', 'is_pause', 'is_private',
+        'public_winner_status',
 
         // Time
         'release_time', 'start_join_pool_time', 'start_time', 'end_join_pool_time', 'finish_time',
@@ -362,7 +364,6 @@ class PoolController {
         });
       }
       console.log('[getPublicPool] - pool.campaignClaimConfig: ', JSON.stringify(pool.campaignClaimConfig));
-
 
       // Cache data
       RedisUtils.createRedisPoolDetail(poolId, publicPool);
@@ -391,13 +392,11 @@ class PoolController {
       // }
 
       let listData = (new PoolService).buildSearchQuery(param);
-      listData = listData.orderBy('id', 'DESC');
+      listData = listData.orderBy('id', 'ASC');
       listData = await listData.paginate(page,limit);
 
       // // Cache data
       // RedisUtils.createRedisPoolList(param, listData);
-
-      // console.log('listData:======>', JSON.stringify(listData));
 
       return HelperUtils.responseSuccess(listData);
     } catch (e) {

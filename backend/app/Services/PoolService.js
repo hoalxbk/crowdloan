@@ -6,6 +6,7 @@ const TierModel = use('App/Models/Tier');
 const Config = use('Config');
 const Const = use('App/Common/Const');
 const BigNumber = use('bignumber.js');
+const RedisUtils = use('App/Common/RedisUtils');
 
 const CONFIGS_FOLDER = '../../blockchain_configs/';
 const NETWORK_CONFIGS = require(`${CONFIGS_FOLDER}${process.env.NODE_ENV}`);
@@ -149,14 +150,36 @@ class PoolService {
     console.log('inputParams.tier_configuration', JSON.stringify(tiers));
   }
 
-  async getPoolById(campaignId) {
-    const campaign = await CampaignModel.query().where('id', campaignId).first();
-    return campaign;
+  async getPoolRedisCache(poolId) {
+    try {
+      if (await RedisUtils.checkExistRedisPoolDetail(poolId)) {
+        const cachedPoolDetail = await RedisUtils.getRedisPoolDetail(poolId);
+        console.log('[getPoolRedisCache] - Exist cache data Public Pool Detail: ', cachedPoolDetail);
+        if (cachedPoolDetail) {
+          return JSON.parse(cachedPoolDetail);
+        }
+      }
+      return null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  async getPoolById(poolId, byCache = true) {
+    if (byCache) {
+      let pool = await this.getPoolRedisCache(poolId);
+      if (pool) {
+        return pool;
+      }
+    }
+
+    const pool = await CampaignModel.query().where('id', poolId).first();
+    return pool;
   };
 
-  async checkPoolExist(campaignId) {
-    const campaign = this.getPoolById(campaignId);
-    return !!campaign;
+  async checkPoolExist(poolId) {
+    const pool = this.getPoolById(poolId);
+    return !!pool;
   };
 
 

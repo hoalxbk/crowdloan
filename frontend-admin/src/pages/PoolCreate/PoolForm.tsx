@@ -238,7 +238,8 @@ function PoolForm(props: any) {
       const response: any = await updatePoolAfterDeloy(data);
       if (response?.status === 200) {
         dispatch(alertSuccess('Successful!'));
-        history.push(adminRoute('/campaigns'));
+        // history.push(adminRoute('/campaigns'));
+        window.location.reload();
       } else {
         dispatch(alertFailure('Fail!'));
       }
@@ -327,7 +328,6 @@ function PoolForm(props: any) {
         token_conversion_rate: data.tokenRate,
 
         // USDT Price
-        // price_usdt: data.acceptCurrency === ACCEPT_CURRENCY.ETH ? data.price_usdt : data.tokenRate,
         price_usdt: data.price_usdt,
         display_price_rate: data.display_price_rate,
 

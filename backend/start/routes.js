@@ -41,7 +41,7 @@ Route.post('block-pass/receive', 'UserController.kycUpdateStatus').middleware('c
 
 
 
-// ICO Owner User
+// ICO Owner User (Admin Page)
 Route.group(() => {
   Route.get('/contract/campaign-factories', 'ContractController.campaignFactories')
   Route.get('/contract/campaigns', 'ContractController.campaigns')
@@ -90,7 +90,7 @@ Route.group(() => {
   Route.post('pool/winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners');
 
   // Winners
-  Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerList');
+  Route.get('pool/:campaignId/winners', 'WinnerListUserController.getWinnerListAdmin');
   Route.delete('pool/:campaignId/winners/:walletAddress/delete', 'WinnerListUserController.deleteWinner');
   Route.post('pool/:campaignId/winners/add-to-winner', 'WinnerListUserController.addParticipantsToWinner');
 
@@ -142,7 +142,7 @@ Route.group(() => {
   Route.post('claim', 'CampaignController.claim').middleware(['checkSignature']);
   Route.get('whitelist-search/:campaignId', 'WhiteListUserController.search');
   Route.get('winner-random/:campaignId/:number', 'WhiteListUserController.getRandomWinners');
-  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerList').middleware(['maskEmailAndWallet']);
+  Route.get('winner-list/:campaignId', 'WinnerListUserController.getWinnerListPublic').middleware(['maskEmailAndWallet']);
   Route.get('winner-search/:campaignId', 'WinnerListUserController.search').middleware(['maskEmailAndWallet']);
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');

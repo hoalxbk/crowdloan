@@ -13,36 +13,36 @@ const WinnerListModel = use('App/Models/WinnerListUser');
 const CampaignModel = use('App/Models/Campaign');
 
 class WinnerListUserController {
-  async getWinnerList({request}) {
+  async getWinnerListPublic({request}) {
     // get request params
     const campaign_id = request.params.campaignId;
     const page = request.input('page');
     const pageSize = request.input('limit') ? request.input('limit') : 10;
-    console.log(`start getWinnerList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
+    console.log(`[getWinnerListPublic] - start getWinnerList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
     try {
       let campaign = null;
       // Try get Campaign detail from Redis Cache
       if (await RedisUtils.checkExistRedisPoolDetail(campaign_id)) {
         let cachedPoolDetail = await RedisUtils.getRedisPoolDetail(campaign_id);
-        console.log('[getWinnerList] - Exist cache data Public Pool Detail: ', cachedPoolDetail);
+        console.log('[getWinnerListPublic] - Exist cache data Public Pool Detail: ', cachedPoolDetail);
         if (cachedPoolDetail) {
           campaign = JSON.parse(cachedPoolDetail);
         }
       } else {
         campaign = await CampaignModel.query().where('id', campaign_id).first();
-        console.log('[getWinnerList] - Don\'t exist cache data Public Pool Detail. Getting from DB. ');
+        console.log('[getWinnerListPublic] - Don\'t exist cache data Public Pool Detail. Getting from DB. ');
         console.log(JSON.stringify(campaign));
       }
       if (!campaign) {
         return HelperUtils.responseNotFound('Pool not found');
       }
 
-      console.log('[getWinnerList] - Winner List Status:', campaign.public_winner_status, campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE);
+      console.log('[getWinnerListPublic] - Winner List Status:', campaign.public_winner_status, campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE);
       if (campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE) {
         return HelperUtils.responseSuccess([]);
       }
 
-      console.log('[getWinnerList] - Get Winner List');
+      console.log('[getWinnerListPublic] - Get Winner List');
       // get from redis cached
       let redisKey = 'winners_' + campaign_id;
       if (page) {
@@ -67,6 +67,49 @@ class WinnerListUserController {
       const winners = await winnerListService.findWinnerListUser(filterParams);
       // save to redis
       await Redis.set(redisKey, JSON.stringify(winners))
+      return HelperUtils.responseSuccess(winners);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('Get Winner List Failed !');
+    }
+  }
+
+  async getWinnerListAdmin({request}) {
+    // get request params
+    const campaign_id = request.params.campaignId;
+    const page = request.input('page');
+    const pageSize = request.input('limit') ? request.input('limit') : 10;
+    console.log(`[getWinnerListAdmin] - start getWinnerList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
+    try {
+      let campaign = null;
+      // Try get Campaign detail from Redis Cache
+      if (await RedisUtils.checkExistRedisPoolDetail(campaign_id)) {
+        let cachedPoolDetail = await RedisUtils.getRedisPoolDetail(campaign_id);
+        console.log('[getWinnerListAdmin] - Exist cache data Public Pool Detail: ', cachedPoolDetail);
+        if (cachedPoolDetail) {
+          campaign = JSON.parse(cachedPoolDetail);
+        }
+      } else {
+        campaign = await CampaignModel.query().where('id', campaign_id).first();
+        console.log('[getWinnerListAdmin] - Don\'t exist cache data Public Pool Detail. Getting from DB. ');
+        console.log(JSON.stringify(campaign));
+      }
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+
+      // if not existed winners on redis then get from db
+      // create params to query to db
+      const filterParams = {
+        'campaign_id': campaign_id,
+        'page': page,
+        'pageSize': pageSize,
+        'search_term': request.input('search_term') || '',
+      };
+      const winnerListService = new WinnerListService();
+      // get winner list
+      const winners = await winnerListService.findWinnerListUser(filterParams);
+
       return HelperUtils.responseSuccess(winners);
     } catch (e) {
       console.log(e);
@@ -214,10 +257,17 @@ class WinnerListUserController {
   async checkExistWinner({request, params}) {
     try {
       console.log('[checkExistWinner] - Params: ', params);
-
       const inputParams = request.only(['wallet_address']);
       const campaign_id = params.campaignId;
       const wallet_address = inputParams.wallet_address;
+
+      // Check Public Winner Status
+      const poolService = new PoolService;
+      const poolExist = await poolService.getPoolById(campaign_id);
+      console.log('[checkExistWinner] - poolExist.public_winner_status:', poolExist?.public_winner_status);
+      if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
+        return HelperUtils.responseNotFound('User not exist in Winner User List');
+      }
 
       const winnerService = new WinnerListService();
       let existRecord = await winnerService.buildQueryBuilder({
@@ -247,12 +297,20 @@ class WinnerListUserController {
     }
   }
 
-
   async checkPickedWinner({request, params}) {
     try {
       console.log('[checkPickedWinner] - Params: ', params);
       const campaign_id = params.campaignId;
       const winnerService = new WinnerListService();
+
+
+      // Check Public Winner Status
+      const poolService = new PoolService;
+      const poolExist = await poolService.getPoolById(campaign_id);
+      console.log('[checkPickedWinner] - poolExist.public_winner_status:', poolExist?.public_winner_status);
+      if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
+        return HelperUtils.responseSuccess(false, 'The campaign has not yet chosen a winner');
+      }
 
       // TODO: Add to Cache
       let existRecord = await winnerService.buildQueryBuilder({ campaign_id }).first();

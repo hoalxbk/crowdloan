@@ -7,8 +7,9 @@ const Hash = use('Hash');
 const Event = use('Event')
 
 const ErrorFactory = use('App/Common/ErrorFactory');
+const PoolService = use('App/Services/PoolService');
 const ReservedListService = use('App/Services/ReservedListService');
-const UserService = use('App/Services/UserService')
+const UserService = use('App/Services/UserService');
 const UserModel = use('App/Models/User');
 const TierModel = use('App/Models/Tier');
 const WinnerModel = use('App/Models/WinnerListUser');
@@ -213,7 +214,6 @@ class UserController {
   async confirmEmail({request}) {
     try {
       const token = request.params.token;
-      // const role = Const.USER_ROLE.PUBLIC_USER;
       const userService = new UserService();
       const checkToken = await userService.confirmEmail(token);
       if (!checkToken) {
@@ -298,6 +298,20 @@ class UserController {
         campaign_id: campaignId,
       };
       console.log('[getCurrentTier] - filterParams: ', filterParams);
+
+      // Check Public Winner Status
+      const poolService = new PoolService;
+      const poolExist = await poolService.getPoolById(campaignId);
+      console.log('[getCurrentTier] - poolExist.public_winner_status:', poolExist?.public_winner_status);
+      if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
+        return HelperUtils.responseSuccess({
+          min_buy: 0,
+          max_buy: 0,
+          start_time: 0,
+          end_time: 0,
+          level: 0,
+        });
+      }
 
       // Check user is in reserved list
       const reserve = await (new ReservedListService).buildQueryBuilder(filterParams).first();
