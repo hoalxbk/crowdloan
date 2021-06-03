@@ -302,7 +302,7 @@ class UserController {
       // Check Public Winner Status
       const poolService = new PoolService;
       const poolExist = await poolService.getPoolById(campaignId);
-      console.log('[getCurrentTier] - poolExist.public_winner_status:', poolExist?.public_winner_status);
+      console.log('[getCurrentTier] - poolExist.public_winner_status:', poolExist && poolExist.public_winner_status);
       if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
         return HelperUtils.responseSuccess({
           min_buy: 0,

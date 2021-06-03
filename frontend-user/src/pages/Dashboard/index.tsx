@@ -97,7 +97,7 @@ const Dashboard = (props: any) => {
         <h2>Upcoming Pools</h2>
         <div className="pools">
           {upcomingPools.map((pool: any, index) => {
-            return index < 4 && <Card pool={pool} key={pool.id}/>
+            return index < 8 && <Card pool={pool} key={pool.id}/>
           })}
         </div>
         {/*<button className="btn" onClick={() => window.open('https://t.me/PolkaFoundryANN', '_blank')}>*/}

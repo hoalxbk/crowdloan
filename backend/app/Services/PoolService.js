@@ -166,12 +166,12 @@ class PoolService {
   }
 
   async getPoolById(poolId, byCache = true) {
-    if (byCache) {
-      let pool = await this.getPoolRedisCache(poolId);
-      if (pool) {
-        return pool;
-      }
-    }
+    // if (byCache) {
+    //   let pool = await this.getPoolRedisCache(poolId);
+    //   if (pool) {
+    //     return pool;
+    //   }
+    // }
 
     const pool = await CampaignModel.query().where('id', poolId).first();
     return pool;
