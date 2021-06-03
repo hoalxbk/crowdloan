@@ -44,6 +44,7 @@ import WhiteListGuideText from "./ApplyWhitelistModal/WhiteListGuideText";
 import {ACCEPT_CURRENCY, INSTRUCTION_WHITELIST_LINK, POOL_TYPE, WHITELIST_LINK} from "../../constants";
 import PoolInfoTable from "./PoolInfoTable/PoolInfoTable";
 import WhiteListUserGuideBanner from "./WhiteListUserGuideBanner/WhiteListUserGuideBanner";
+import {getEtherscanName} from "../../utils/network";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -434,7 +435,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       }
 
                       <Button
-                        text={'Etherscan'}
+                        text={getEtherscanName({ networkAvailable: poolDetails?.networkAvailable })}
                         backgroundColor={'#3232DC'}
                         onClick={() => {
                           poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
