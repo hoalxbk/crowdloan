@@ -44,7 +44,7 @@ import WhiteListGuideText from "./ApplyWhitelistModal/WhiteListGuideText";
 import {ACCEPT_CURRENCY, INSTRUCTION_WHITELIST_LINK, POOL_TYPE, WHITELIST_LINK} from "../../constants";
 import PoolInfoTable from "./PoolInfoTable/PoolInfoTable";
 import WhiteListUserGuideBanner from "./WhiteListUserGuideBanner/WhiteListUserGuideBanner";
-import {getEtherscanName} from "../../utils/network";
+import {getEtherscanName, getEtherscanTransactionAddress, getEtherscanTransactionLink} from "../../utils/network";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -194,7 +194,11 @@ const BuyToken: React.FC<any> = (props: any) => {
     }
 
     if (pickedWinner && poolDetails) {
-      return `*Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${currencyName}`
+      const approximateValue = new BigNumber(userBuyLimit).dividedBy(poolDetails?.ethRate || 0);
+      return `
+        *Individual caps: ${numberWithCommas(userBuyLimit.toString())} ${currencyName} - ${' '} 
+        Estimated equivalent of ${numberWithCommas(approximateValue.toFixed())} ${poolDetails?.tokenDetails?.symbol}
+      `;
     }
 
     return 'Determined at whitelist closing';
@@ -438,7 +442,8 @@ const BuyToken: React.FC<any> = (props: any) => {
                         text={getEtherscanName({ networkAvailable: poolDetails?.networkAvailable })}
                         backgroundColor={'#3232DC'}
                         onClick={() => {
-                          poolDetails && window.open(`${ETHERSCAN_BASE_URL}/address/${poolDetails?.tokenDetails?.address}` as string, '_blank')
+                          const url = getEtherscanTransactionAddress({ appChainID: appChainID, address: poolDetails?.tokenDetails?.address });
+                          poolDetails && window.open(url as string, '_blank')
                         }}
                         disabled={!poolDetails?.tokenDetails?.address}
                       />

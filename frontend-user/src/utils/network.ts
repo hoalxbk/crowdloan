@@ -1,12 +1,8 @@
-import {BSC_RPC_URL} from '../constants/network';
-import {ETH_CHAIN_ID, BSC_CHAIN_ID} from '../constants/network';
-import {ConnectorNames} from '../constants/connectors';
+import {ETH_CHAIN_ID} from '../constants/network';
 import {NETWORK_AVAILABLE} from "../constants";
 
-const BSC_CHAIN_ALIAS = process.env.REACT_APP_BSC_BSC_CHAIN_ALIAS;
-const ETH_CHAIN_ALIAS = process.env.REACT_APP_BSC_ETH_CHAIN_ALIAS;
-const REACT_APP_NETWORK_BSC_NAME = process.env.REACT_APP_NETWORK_BSC_NAME;
-const BSC_ADDRESS = parseInt(process.env.REACT_APP_BSC_CHAIN_ID as string, 10);
+const ETHERSCAN_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL || "";
+const BCSSCAN_URL = process.env.REACT_APP_BSCSCAN_BASE_URL || "";
 
 export const getEtherscanName = ({networkAvailable}: any) => {
   // console.log('etherscanName', networkAvailable);
@@ -17,6 +13,12 @@ export const getEtherscanName = ({networkAvailable}: any) => {
   }
 };
 
+export const getEtherscanTransactionLink = ({ appChainID, transactionHash }: any) => {
+  return ETH_CHAIN_ID == appChainID ? `${ETHERSCAN_URL}/tx/${transactionHash}` : `${BCSSCAN_URL}/tx/${transactionHash}`
+};
 
+export const getEtherscanTransactionAddress = ({ appChainID, address }: any) => {
+  return ETH_CHAIN_ID == appChainID ? `${ETHERSCAN_URL}/address/${address}` : `${BCSSCAN_URL}/address/${address}`;
+};
 
 
