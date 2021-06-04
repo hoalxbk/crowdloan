@@ -39,6 +39,15 @@ export const POOL_IS_PRIVATE = {
   PRIVATE: 1,
 };
 
+export const USDT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS;
+export const USDC_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS;
+export const USDT_BSC_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_BSC_USDT_ADDRESS;
+export const USDC_BSC_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_BSC_USDC_ADDRESS;
+export const BUSD_BSC_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_BSC_BUSD_ADDRESS;
+
+export const ETHERSCAN_URL = process.env.REACT_APP_ETHERSCAN_BASE_URL || "";
+export const BCSSCAN_URL = process.env.REACT_APP_BSCSCAN_BASE_URL || "";
+
 export const ETH_CHAIN_ID = process.env.REACT_APP_NETWORK_ID as string;
 export const BSC_CHAIN_ID = process.env.REACT_APP_BSC_NETWORK_ID as string;
 export const NETWORK_ETH_NAME = process.env.REACT_APP_NETWORK_NAME;

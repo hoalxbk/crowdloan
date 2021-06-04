@@ -61,3 +61,11 @@ export const changePublicWinnerStatus = async (data: any) => {
   return resObject;
 };
 
+export const depositPoolAdmin = async (data: any) => {
+  const baseRequest = new BaseRequest();
+  let url = apiRoute('/deposit-admin');
+
+  const response = await baseRequest.post(url, data) as any;
+  const resObject = await response.json();
+  return resObject;
+};
