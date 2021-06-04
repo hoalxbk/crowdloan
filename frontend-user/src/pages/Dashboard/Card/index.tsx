@@ -3,11 +3,12 @@ import {useDispatch} from 'react-redux';
 import useStyles from './style';
 import {numberWithCommas} from '../../../utils/formatNumber';
 import {Link} from 'react-router-dom';
-import {ACCEPT_CURRENCY, BUY_TYPE, NETWORK} from '../../../constants';
+import {ACCEPT_CURRENCY, BUY_TYPE, NETWORK, NFT_PLUS_AMOUNT_PRODUCTION} from '../../../constants';
 import useFetch from '../../../hooks/useFetch';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
 import {PoolStatus} from "../../../utils/getPoolStatus";
 import {getAccessPoolText} from "../../../utils/campaign";
+import BigNumber from 'bignumber.js';
 
 const dotIcon = '/images/icons/dot.svg'
 const EthereumIcon = "/images/ethereum.svg";
@@ -29,6 +30,12 @@ const Card = (props: any): JSX.Element => {
       setProgress(100);
       pool.tokenSold = '500000';
       pool.total_sold_coin = '500000';
+    } else if (pool.id == 23) {
+      const tokenSold = NFT_PLUS_AMOUNT_PRODUCTION;
+      // pool.tokenSold = new BigNumber(tokenSold).plus(pool.tokenSold || 0).toFixed();
+      setProgress(parseFloat(
+        new BigNumber(pool.tokenSold).plus(tokenSold).toFixed()
+      ) * 100 / parseFloat(pool.total_sold_coin) || 0);
     } else {
       setProgress(parseFloat(pool.tokenSold) * 100 / parseFloat(pool.total_sold_coin) || 0);
     }
@@ -160,13 +167,17 @@ const Card = (props: any): JSX.Element => {
           <div className="progress-area">
             <p>Progress</p>
             <div className="progress">
-              <span className={`current-progress ${progress !== 0 ? '' : 'inactive'}`} style={{ width: `${progress > 100 ? 100 : Math.round(progress)}%` }}></span>
+              <span className={`current-progress ${progress !== 0 ? '' : 'inactive'}`} style={{ width: `${progress > 99 ? 100 : Math.round(progress)}%` }}></span>
             </div>
             <div>
               <div>
                 <span>{`${progress.toFixed(2)}%`}</span>
               </div>
-              <span>{numberWithCommas(pool.tokenSold || '0')}/{numberWithCommas(pool.total_sold_coin || '0')}</span>
+              <span>{numberWithCommas(
+                pool.id == 23 ?
+                  new BigNumber(pool.tokenSold || '0').plus(NFT_PLUS_AMOUNT_PRODUCTION).toFixed() :
+                  new BigNumber(pool.tokenSold || '0').toFixed()
+              )}/{numberWithCommas(pool.total_sold_coin || '0')}</span>
             </div>
           </div>
         </div>
