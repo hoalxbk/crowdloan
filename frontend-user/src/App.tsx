@@ -8,6 +8,8 @@ import configureStore from './store/configureStore'
 import { ThemeProvider } from '@material-ui/core/styles';
 import defaultTheme from './themes/DefaultTheme/DefaultTheme';
 
+console.log('Version: ', process.env.TEMP_NFT_PLUS_AMOUNT_PRODUCTION || 0);
+
 export const getLibrary = (provider: any): Web3Provider => {
   const library = new ethers.providers.Web3Provider(provider, 'any');
   library.pollingInterval = 10000;
