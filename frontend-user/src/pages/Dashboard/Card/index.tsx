@@ -167,7 +167,7 @@ const Card = (props: any): JSX.Element => {
           <div className="progress-area">
             <p>Progress</p>
             <div className="progress">
-              <span className={`current-progress ${progress !== 0 ? '' : 'inactive'}`} style={{ width: `${progress > 100 ? 100 : Math.round(progress)}%` }}></span>
+              <span className={`current-progress ${progress !== 0 ? '' : 'inactive'}`} style={{ width: `${progress > 99 ? 100 : Math.round(progress)}%` }}></span>
             </div>
             <div>
               <div>

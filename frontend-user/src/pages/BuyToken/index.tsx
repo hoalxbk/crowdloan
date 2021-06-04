@@ -469,7 +469,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                   <p className={styles.poolDetailProgressTitle}>Swap Progress</p>
                   {isWidthUp('sm', props.width) && <div className={styles.poolDetailProgressStat}>
                     <span className={styles.poolDetailProgressPercent}>
-                      {numberWithCommas(new BigNumber(soldProgress).gt(100) ? '100': soldProgress)}%
+                      {numberWithCommas(new BigNumber(soldProgress).gt(99) ? '100': soldProgress)}%
                     </span>
                     <span>
                       {
