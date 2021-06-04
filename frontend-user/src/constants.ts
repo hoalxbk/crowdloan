@@ -7,7 +7,7 @@ export const WHITELIST_LINK = 'https://forms.gle/HiQkhaRM8mujeryq8';
 export const INSTRUCTION_WHITELIST_LINK = 'https://medium.com/polkafoundry/nftify-whitelist-on-red-kite-launchpad-on-june-4-2021-26cd4b8ebc8d';
 export const DATETIME_FORMAT = 'YYYY-MM-DD HH:mm:ss';
 
-export const NFT_PLUS_AMOUNT_PRODUCTION = process.env.NFT_PLUS_AMOUNT_PRODUCTION || '0';
+export const NFT_PLUS_AMOUNT_PRODUCTION = process.env.NFT_PLUS_AMOUNT_PRODUCTION || '10000';
 export const POOL_STATUS = {
   TBA: 0,
   UPCOMING: 1,
