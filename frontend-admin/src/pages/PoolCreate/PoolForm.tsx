@@ -588,9 +588,9 @@ function PoolForm(props: any) {
         </Grid>
       </Grid>
 
-      <Grid container spacing={2}>
-        <Grid item xs={12}>
-          {!isDeployed &&
+      {isDeployed &&
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
             <div className={classes.exchangeRate}>
               <BuyTokens
                 poolDetail={poolDetail}
@@ -600,9 +600,9 @@ function PoolForm(props: any) {
                 watch={watch}
               />
             </div>
-          }
+          </Grid>
         </Grid>
-      </Grid>
+      }
 
 
       <Grid container spacing={2}>

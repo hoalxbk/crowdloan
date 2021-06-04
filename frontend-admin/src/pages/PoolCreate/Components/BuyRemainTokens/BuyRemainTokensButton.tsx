@@ -36,8 +36,6 @@ function BuyRemainTokensButton(props: any) {
     }
   }, [poolDetail]);
 
-
-
   const isDeployed = !!poolDetail?.is_deploy;
   const acceptCurrency = watch('acceptCurrency');
   const networkAvailable = watch('networkAvailable');
