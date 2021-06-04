@@ -174,7 +174,9 @@ const Card = (props: any): JSX.Element => {
                 <span>{`${progress.toFixed(2)}%`}</span>
               </div>
               <span>{numberWithCommas(
-                new BigNumber(pool.tokenSold || '0').plus(NFT_PLUS_AMOUNT_PRODUCTION).toFixed()
+                pool.id == 23 ?
+                  new BigNumber(pool.tokenSold || '0').plus(NFT_PLUS_AMOUNT_PRODUCTION).toFixed() :
+                  new BigNumber(pool.tokenSold || '0').toFixed()
               )}/{numberWithCommas(pool.total_sold_coin || '0')}</span>
             </div>
           </div>
