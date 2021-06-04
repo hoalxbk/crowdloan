@@ -59,32 +59,36 @@ class GetUserPurchasedBalanceJob {
     // Insert record
     for (let i = 0; i < winners.length; i++) {
       const winner = winners[i];
-      console.log('winner.wallet_address', winner.wallet_address);
+      const winnerWallet = winner.wallet_address;
+      console.log('winner.wallet_address', winnerWallet);
 
-      let userPurchasedAmount = await contract.methods.userPurchased(winner.wallet_address).call();
+      let userPurchasedAmount = await contract.methods.userPurchased(winnerWallet).call();
       userPurchasedAmount = new BigNumber(userPurchasedAmount).div(Math.pow(10, camp.decimals || 0)).toFixed();
 
       console.log('userPurchasedAmount: ', userPurchasedAmount);
 
-
       // Find and update
       const userPurcha = await UserPurchasedBalanceModel.query()
-        .where('wallet_address', wallet_address)
+        .where('wallet_address', winnerWallet)
         .where('campaign_id', campaign_id)
         .first();
+
+      console.log('userPurcha', userPurcha);
       if (userPurcha) {
+        console.log('Update User Purchase: ');
         // Update User purchase
         const res = await UserPurchasedBalanceModel.query()
-          .where('wallet_address', wallet_address)
+          .where('wallet_address', winnerWallet)
           .where('campaign_id', campaign_id)
           .update({
             user_purchased_amount: userPurchasedAmount,
           });
       } else {
+        console.log('Create User Purchase: ');
         // Create User purchase
         const res = await UserPurchasedBalanceModel.create({
           campaign_id,
-          wallet_address: wallet_address,
+          wallet_address: winnerWallet,
           user_purchased_amount: userPurchasedAmount,
         });
       }
