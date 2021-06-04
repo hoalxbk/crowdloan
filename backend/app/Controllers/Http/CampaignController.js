@@ -1,5 +1,6 @@
 'use strict'
 
+const AirdropModel = use('App/Models/Airdrop');
 const CampaignModel = use('App/Models/Campaign');
 const CampaignService = use('App/Services/CampaignService');
 const WalletService = use('App/Services/WalletAccountService');
@@ -9,6 +10,8 @@ const WhitelistService = use('App/Services/WhitelistUserService');
 const ReservedListService = use('App/Services/ReservedListService');
 const CampaignClaimConfigService = use('App/Services/CampaignClaimConfigService');
 const SnapshotBalance = use('App/Jobs/SnapshotBalance')
+const GetUserPurchasedBalanceJob = use('App/Jobs/GetUserPurchasedBalanceJob')
+
 const UserService = use('App/Services/UserService');
 const Const = use('App/Common/Const');
 const HelperUtils = use('App/Common/HelperUtils');
@@ -681,6 +684,35 @@ class CampaignController {
       console.log(e);
       return HelperUtils.responseErrorInternal('Snapshot user balance has error!');
     }
+  }
+
+  async getAirdrop({request}) {
+    const campaign_id = request.params.campaignId;
+    const wallet_address = request.params.walletAddress;
+    console.log(`Check Airdrop with: `, request.params);
+    try {
+      // get campaign
+      const camp = await CampaignModel.query().where('id', campaign_id).first();
+      if (!camp) {
+        console.log(`Campaign Not Found: ${campaign_id}`);
+        return HelperUtils.responseBadRequest('Campaign Not Found');
+      }
+
+      const airdrop = await AirdropModel.query()
+        .where('campaign_id', campaign_id)
+        .where('wallet_address', wallet_address)
+        .first();
+      if (!airdrop) {
+        return HelperUtils.responseSuccess(false, 'Not have Airdrop');
+      }
+
+      return HelperUtils.responseSuccess(airdrop, 'Get Airdrop successful !');
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('Get Airdrop Error');
+    }
+
+
   }
 
 }

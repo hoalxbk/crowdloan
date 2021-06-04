@@ -2,8 +2,10 @@ import React from 'react';
 import BuyRemainTokensButton from "./BuyRemainTokensButton";
 import ApproveButton from "./ApproveButton";
 import {ACCEPT_CURRENCY} from "../../../../constants";
+import useStyles from "../../style";
 
 function BuyTokens(props: any) {
+  const classes = useStyles();
   const {
     setValue, errors, control, watch,
     poolDetail
@@ -15,13 +17,9 @@ function BuyTokens(props: any) {
 
   return (
     <>
-      <BuyRemainTokensButton
-        poolDetail={poolDetail}
-        setValue={setValue}
-        errors={errors}
-        control={control}
-        watch={watch}
-      />
+      <div className={classes.formControl}>
+
+      <label className={classes.formControlLabel}>Start Join Pool Time</label>
       {acceptCurrency !== ACCEPT_CURRENCY.ETH &&
         <ApproveButton
           poolDetail={poolDetail}
@@ -32,7 +30,14 @@ function BuyTokens(props: any) {
         />
       }
 
-
+      <BuyRemainTokensButton
+        poolDetail={poolDetail}
+        setValue={setValue}
+        errors={errors}
+        control={control}
+        watch={watch}
+      />
+      </div>
     </>
   );
 }
