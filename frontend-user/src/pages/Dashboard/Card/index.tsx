@@ -3,7 +3,7 @@ import {useDispatch} from 'react-redux';
 import useStyles from './style';
 import {numberWithCommas} from '../../../utils/formatNumber';
 import {Link} from 'react-router-dom';
-import {ACCEPT_CURRENCY, BUY_TYPE, NETWORK} from '../../../constants';
+import {ACCEPT_CURRENCY, BUY_TYPE, NETWORK, NFT_PLUS_AMOUNT_PRODUCTION} from '../../../constants';
 import useFetch from '../../../hooks/useFetch';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
 import {PoolStatus} from "../../../utils/getPoolStatus";
@@ -31,7 +31,7 @@ const Card = (props: any): JSX.Element => {
       pool.tokenSold = '500000';
       pool.total_sold_coin = '500000';
     } else if (pool.id == 23) {
-      const tokenSold = process.env.NFT_PLUS_AMOUNT_PRODUCTION || 0;
+      const tokenSold = NFT_PLUS_AMOUNT_PRODUCTION;
       pool.tokenSold = new BigNumber(tokenSold).plus(pool.tokenSold || 0).toFixed();
       setProgress(parseFloat(pool.tokenSold) * 100 / parseFloat(pool.total_sold_coin) || 0);
     } else {
