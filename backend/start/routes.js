@@ -117,6 +117,7 @@ Route.group(() => {
   Route.post('admins', 'AdminController.create').middleware(['auth:admin']);
   Route.put('admins/:id', 'AdminController.update').middleware(['auth:admin']);
 
+  Route.post('deposit-admin', 'CampaignController.depositAdmin').middleware(['auth:admin']);
 }).prefix(Const.USER_TYPE_PREFIX.ICO_OWNER).middleware(['typeAdmin', 'checkPrefix', 'checkAdminJwtSecret']); //user/public
 
 

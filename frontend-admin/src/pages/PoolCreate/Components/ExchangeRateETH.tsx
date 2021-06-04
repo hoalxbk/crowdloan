@@ -93,7 +93,7 @@ function ExchangeRateETH(props: any) {
           <div className={classes.formControlRate}>
             <CurrencyInput
               value={rateValue}
-              decimalsLimit={6}
+              decimalsLimit={8}
               maxLength={25}
               onValueChange={(value: any, name: any) => {
                 setRateValue(value);

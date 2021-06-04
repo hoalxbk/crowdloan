@@ -4,7 +4,7 @@ import {useCommonStyle} from "../../styles";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 
-import {CircularProgress, Grid} from "@material-ui/core";
+import {Button, CircularProgress, Grid} from "@material-ui/core";
 import {getTokenInfo, TokenType} from "../../utils/token";
 import {isFactorySuspended} from "../../utils/campaignFactory";
 import {createPool, updatePool} from "../../request/pool";
@@ -36,6 +36,7 @@ import moment from "moment";
 import ClaimConfigTable from "./Components/ClaimConfig/ClaimConfigTable";
 import {campaignClaimConfigFormat} from "../../utils/campaign";
 import PrivatePoolSetting from "./Components/PrivatePoolSetting";
+import BuyTokens from "./Components/BuyRemainTokens/BuyTokens";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -177,7 +178,11 @@ function PoolForm(props: any) {
       const response: any = await createUpdatePool(data);
       if (response?.status === 200) {
         dispatch(alertSuccess('Successful!'));
-        history.push(adminRoute('/campaigns'));
+        if (isEdit) {
+          window.location.reload();
+        } else {
+          history.push(adminRoute('/campaigns'));
+        }
       } else {
         dispatch(alertFailure('Fail!'));
       }
@@ -375,6 +380,8 @@ function PoolForm(props: any) {
   };
 
   const watchBuyType = watch('buyType');
+  const isDeployed = !!poolDetail?.is_deploy;
+
   console.log('errors==========>', errors);
 
   return (
@@ -580,6 +587,23 @@ function PoolForm(props: any) {
 
         </Grid>
       </Grid>
+
+      <Grid container spacing={2}>
+        <Grid item xs={12}>
+          {!isDeployed &&
+            <div className={classes.exchangeRate}>
+              <BuyTokens
+                poolDetail={poolDetail}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+                watch={watch}
+              />
+            </div>
+          }
+        </Grid>
+      </Grid>
+
 
       <Grid container spacing={2}>
         <Grid item xs={12}>

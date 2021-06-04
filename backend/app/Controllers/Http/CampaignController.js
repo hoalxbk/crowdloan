@@ -491,6 +491,50 @@ class CampaignController {
     }
   }
 
+  async depositAdmin({request}) {
+    const requestParams = request.only([ 'minBuy', 'maxBuy', 'userWalletAddress', 'campaignId']);
+    console.log('requestParams: ', requestParams);
+    const campaignId = requestParams.campaignId;
+    const minTokenAmount = requestParams.minBuy || 0;
+    const maxTokenAmount = requestParams.maxBuy;
+    const userWalletAddress = requestParams.userWalletAddress;
+
+    const filterParams = {
+      'campaign_id': campaignId,
+    };
+    // get private key for campaign from db
+    const walletService = new WalletService();
+    const wallet = await walletService.findByCampaignId(filterParams);
+    if (!wallet) {
+      console.log(`Do not found wallet for campaign ${campaign_id}`);
+      return HelperUtils.responseBadRequest("Do not found wallet for campaign");
+    }
+
+    console.log('Wallet: ', wallet);
+    const privateKey = wallet.private_key;
+    console.log('privateKey: ', privateKey);
+    const messageHash = web3.utils.soliditySha3(userWalletAddress, maxTokenAmount, minTokenAmount);
+    console.log('messageHash: ', messageHash);
+
+    // create signature
+    const account = web3.eth.accounts.privateKeyToAccount(privateKey);
+    console.log('account: ', account);
+
+    const accAddress = HelperUtils.checkSumAddress(account.address);
+    web3.eth.accounts.wallet.add(account);
+    web3.eth.defaultAccount = accAddress;
+    const signature = await web3.eth.sign(messageHash, accAddress);
+    console.log(`signature ${signature}`);
+
+    const response = {
+      'max_buy': maxTokenAmount,
+      'min_buy': minTokenAmount,
+      'signature': signature
+    };
+
+    return HelperUtils.responseSuccess(response);
+  }
+
   async countingJoinedCampaign({request}) {
     const campaignId = request.params.campaignId;
     try {
