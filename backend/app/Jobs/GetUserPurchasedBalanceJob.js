@@ -47,7 +47,7 @@ class GetUserPurchasedBalanceJob {
     const filterParams = {
       'campaign_id': campaign_id,
       'page': 1,
-      'pageSize': 1000000000000000000,
+      'pageSize': 1000000000000000000000,
     };
     const winnerListService = new WinnerListService();
     let winners = await winnerListService.buildQueryBuilder(filterParams).fetch();
@@ -97,7 +97,7 @@ class GetUserPurchasedBalanceJob {
 
   // Dispatch
   static doDispatch(data) {
-    console.log('Dispatch Send Mail GetUserPurchasedBalance: ', data);
+    console.log('Dispatch GetUserPurchasedBalanceJob: ', data);
     kue.dispatch(this.key, data, { priority, attempts, remove, jobFn });
   }
 }
