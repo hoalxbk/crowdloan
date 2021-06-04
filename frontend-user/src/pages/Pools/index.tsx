@@ -15,6 +15,7 @@ import useAuth from '../../hooks/useAuth';
 import Pagination from '@material-ui/lab/Pagination';
 import {getPoolStatusByPoolDetail} from "../../utils/getPoolStatusByPoolDetail";
 import {NETWORK_AVAILABLE} from "../../constants";
+import BigNumber from 'bignumber.js';
 
 const iconSearch = 'images/icons/search.svg';
 
@@ -104,6 +105,9 @@ const Pools = (props: any) => {
         if (pool.id == 22) {
           const tokenSold = '500000';
           pool.tokenSold = tokenSold;
+        } else if (pool.id == 23) {
+          const tokenSold = process.env.TEMP_NFT_PLUS_AMOUNT_PRODUCTION || 0;
+          pool.tokenSold = new BigNumber(tokenSold).plus(pool.tokenSold || 0).toFixed();
         } else {
           const tokenSold = await getTokenSold(pool);
           pool.tokenSold = tokenSold;
