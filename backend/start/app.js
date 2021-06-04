@@ -73,6 +73,7 @@ const jobs = [
   'App/Jobs/CheckTxStatus',
   'App/Jobs/SendForgotPasswordJob',
   'App/Jobs/SendConfirmationEmailJob',
+  'App/Jobs/GetUserPurchasedBalanceJob',
 ];
 
 module.exports = { providers, aceProviders, aliases, commands, jobs }

@@ -148,6 +148,7 @@ Route.group(() => {
   Route.get('counting/:campaignId', 'CampaignController.countingJoinedCampaign');
   Route.get('check-join-campaign/:campaignId', 'CampaignController.checkJoinedCampaign');
 
+  Route.get('get-airdrop/:campaignId/:walletAddress', 'CampaignController.getAirdrop');
 }).prefix(Const.USER_TYPE_PREFIX.PUBLIC_USER).middleware(['typeUser',  'checkPrefix', 'formatEmailAndWallet']);// , 'maskEmailAndWallet'
 
 Route.post(':type/check-max-usd', 'UserBuyCampaignController.checkBuy')
