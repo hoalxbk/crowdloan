@@ -106,7 +106,7 @@ const Pools = (props: any) => {
           const tokenSold = '500000';
           pool.tokenSold = tokenSold;
         } else if (pool.id == 23) {
-          const tokenSold = process.env.TEMP_NFT_PLUS_AMOUNT_PRODUCTION || 0;
+          const tokenSold = process.env.NFT_PLUS_AMOUNT_PRODUCTION || 0;
           pool.tokenSold = new BigNumber(tokenSold).plus(pool.tokenSold || 0).toFixed();
         } else {
           const tokenSold = await getTokenSold(pool);
