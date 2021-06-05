@@ -4,7 +4,7 @@ import {useCommonStyle} from "../../styles";
 import {useForm} from "react-hook-form";
 import {useDispatch, useSelector} from "react-redux";
 
-import {Button, CircularProgress, Grid} from "@material-ui/core";
+import {CircularProgress, Grid} from "@material-ui/core";
 import {getTokenInfo, TokenType} from "../../utils/token";
 import {isFactorySuspended} from "../../utils/campaignFactory";
 import {createPool, updatePool} from "../../request/pool";
@@ -37,9 +37,7 @@ import ClaimConfigTable from "./Components/ClaimConfig/ClaimConfigTable";
 import {campaignClaimConfigFormat} from "../../utils/campaign";
 import PrivatePoolSetting from "./Components/PrivatePoolSetting";
 import BuyTokens from "./Components/BuyRemainTokens/BuyTokens";
-import WhitelistLink from "./Components/WhitelistBannerSetting/WhitelistLink";
-import GuideLink from "./Components/WhitelistBannerSetting/GuideLink";
-import AnnouncementTime from "./Components/WhitelistBannerSetting/AnnouncementTime";
+import WhitelistBannerSetting from "./Components/WhitelistBannerSetting/WhitelistBannerSetting";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -188,7 +186,7 @@ function PoolForm(props: any) {
       if (response?.status === 200) {
         dispatch(alertSuccess('Successful!'));
         if (isEdit) {
-          window.location.reload();
+          // window.location.reload();
         } else {
           history.push(adminRoute('/campaigns'));
         }
@@ -258,7 +256,7 @@ function PoolForm(props: any) {
       if (response?.status === 200) {
         dispatch(alertSuccess('Successful!'));
         // history.push(adminRoute('/campaigns'));
-        window.location.reload();
+        // window.location.reload();
       } else {
         dispatch(alertFailure('Fail!'));
       }
@@ -560,36 +558,14 @@ function PoolForm(props: any) {
             watch={watch}
           />
 
-          <div className="">
-            <div className={classes.exchangeRate}>
-              <WhitelistLink
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                control={control}
-                watch={watch}
-              />
-
-              <GuideLink
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                control={control}
-                watch={watch}
-              />
-
-              <AnnouncementTime
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                control={control}
-                watch={watch}
-              />
-            </div>
-          </div>
+          <WhitelistBannerSetting
+            poolDetail={poolDetail}
+            register={register}
+            setValue={setValue}
+            errors={errors}
+            control={control}
+            watch={watch}
+          />
 
         </Grid>
 

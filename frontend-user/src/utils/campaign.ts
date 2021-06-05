@@ -1,7 +1,7 @@
 import _ from "lodash";
 import moment from "moment";
 import BigNumber from 'bignumber.js';
-import {BUY_TYPE, POOL_IS_PRIVATE} from "../constants";
+import {BUY_TYPE, NFT_PLUS_AMOUNT_PRODUCTION, POOL_IS_PRIVATE} from "../constants";
 
 export const checkIsFinishTime = (campaignDetail: any): boolean => {
 
@@ -54,4 +54,51 @@ export const getAccessPoolText = (pool: any) => {
     return 'Private';
   }
   return ((buyType + '').toLowerCase() == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase());
+};
+
+export const getProgressWithPools = (pool: any) => {
+  let tokenSold = pool.tokenSold || pool.token_sold || '0';
+  let totalSoldCoin = pool.totalSoldCoin || pool.total_sold_coin || '0';
+  let progress = '0';
+
+  const isFinish = checkPoolIsFinish(pool);
+  if (isFinish) {
+    return {
+      progress: '100',
+      tokenSold: totalSoldCoin,
+      totalSoldCoin: totalSoldCoin,
+    }
+  }
+
+  if (pool.id == 22) {
+    return {
+      progress: '100',
+      tokenSold: '500000',
+      totalSoldCoin: '500000',
+    };
+  }
+
+  // Normal Case
+  if (new BigNumber(tokenSold).gt(totalSoldCoin)) {
+    tokenSold = totalSoldCoin;
+  }
+  progress = new BigNumber(tokenSold).div(totalSoldCoin).multipliedBy(100).toFixed();
+
+  if (new BigNumber(progress).lte(0)) {
+    progress = '0';
+  }
+  if (new BigNumber(progress).gt(100)) {
+    progress = '100';
+  }
+
+  return {
+    progress,
+    tokenSold,
+    totalSoldCoin,
+  }
+};
+
+export const checkPoolIsFinish = (pool: any) => {
+  const currentTime = moment().unix();
+  return (pool.finish_time && currentTime > pool.finish_time);
 };
