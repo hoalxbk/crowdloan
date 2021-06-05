@@ -81,10 +81,10 @@ class PickRandomWinnerJob2 {
           case 2: // Hawk
             break;
           case 3: // Eagle
-            pkfBalance = new BigNumber(pkfBalance).multipliedBy(1.05);
+            pkfBalance = new BigNumber(pkfBalance).multipliedBy(1.05).toFixed();
             break;
           case 4: // Phoenix
-            pkfBalance = new BigNumber(pkfBalance).multipliedBy(1.1);
+            pkfBalance = new BigNumber(pkfBalance).multipliedBy(1.1).toFixed();
             break;
           default :
             break;
