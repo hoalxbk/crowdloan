@@ -24,12 +24,21 @@ export const createLemonadeTheme = (options: ThemeOptions = {}) => {
 
 const themeOptions = {
   colors: {
+    white: '#FFFFFF',
     primary: '#FFCC00',
     secondary: '#3A39BB',
     primaryText: '#636363',
     secondaryText: '#363636',
     metamask: '#FF8F44',
     mainBackground: '#202020',
+    cornflowerBlue: '#6195ED',
+    malibu: '#6398FF',
+    silverChalice: '#AEAEAE',
+    tuna: '#303035',
+    shark: '#191920',
+    sharkLight: '#222228',
+    abbey: '#44454B',
+    cardinal: '#D01F36',
   },
 };
 

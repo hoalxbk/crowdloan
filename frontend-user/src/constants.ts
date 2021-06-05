@@ -64,14 +64,14 @@ export const CONVERSION_RATE = [
     key: 'UPKF',
     keyMainnet: 'UNI-V2'
   },
-  {
-    name: 'Staked sPKF',
-    rate: 1,
-    symbol: 'sPKF',
-    address: process.env.REACT_APP_MANTRA_LP,
-    key: 'sPKF',
-    keyMainnet: 'sPKF'
-  },
+  // {
+  //   name: 'Staked sPKF',
+  //   rate: 1,
+  //   symbol: 'sPKF',
+  //   address: process.env.REACT_APP_MANTRA_LP,
+  //   key: 'sPKF',
+  //   keyMainnet: 'sPKF'
+  // },
   // {
   //   name: 'NFT',
   //   rate: 100
@@ -80,32 +80,32 @@ export const CONVERSION_RATE = [
 
 export const TIERS = [
   {
-    name: '-',
+    name: 'Start',
     icon: '/images/icons/rocket.svg',
-    bg: '/images/icons/red-kite-bg.png',
-    bgColor: '#8D8DCC',
+    bg: '/images/icons/rocket_bg.svg',
+    bgColor: '#B8B8FF',
   },
   {
     name: 'Dove',
-    bg: '/images/icons/hawk-bg.png',
-    bgColor: '#5252AD',
+    bg: '/images/icons/bronze-medal_bg.svg',
+    bgColor: '#8181D8',
     icon: '/images/icons/bronze-medal.svg'
   },
   {
     name: 'Hawk',
-    bg: '/images/icons/falcon-bg.png',
-    bgColor: '#3F3FA3',
+    bg: '/images/icons/silver-medal_bg.svg',
+    bgColor: '#6F44E9',
     icon: '/images/icons/silver-medal.svg'
   },
   {
     name: 'Eagle',
-    bg: '/images/icons/eagle-bg.png',
-    bgColor: '#1B1BA3',
+    bg: '/images/icons/golden-medal_bg.svg',
+    bgColor: '#4646FF',
     icon: '/images/icons/golden-medal.svg'
   },
   {
     name: 'Phoenix',
-    bg: '/images/icons/phoenix-bg.png',
+    bg: '/images/icons/diamond_bg.svg',
     bgColor: '',
     icon: '/images/icons/diamond.svg'
   }

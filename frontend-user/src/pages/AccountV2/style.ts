@@ -25,6 +25,14 @@ const useStyles = makeStyles((theme: any) => {
         paddingRight: '40px'
       }
     },
+
+    sectionBot: {
+      color: theme?.custom?.colors?.white,
+      background: theme?.custom?.colors?.tuna,
+      borderRadius: 12,
+      padding: "36px 32px",
+    },
+
     errorBanner: {
       color: 'white',
       backgroundColor: '#FF4C00',
@@ -48,27 +56,14 @@ const useStyles = makeStyles((theme: any) => {
         bottom: '-10px',
       }
     },
+
     mainContent: {
-      display: 'grid',
-      gridTemplateColumns: '5fr 4fr',
-      gap: '100px',
-      marginTop: '10px',
-      marginBottom: '120px',
+      display: 'flex',
       position: 'relative',
-      [theme.breakpoints.down('md')]: {
-        gridTemplateColumns: '1fr',
-      },
-      [theme.breakpoints.down('sm')]: {
-        gridTemplateColumns: '1fr',
-        padding: '40px',
-        paddingTop: '150px',
-      },
-      [theme.breakpoints.only('xs')]: {
-        gridTemplateColumns: '1fr',
-        padding: '20px',
-        paddingTop: '100px',
-      },
+      marginTop: 10,
+      flexDirection: 'column',
     },
+
     leftPanel: {
     },
     rightPanel: {
@@ -81,11 +76,6 @@ const useStyles = makeStyles((theme: any) => {
     [theme.breakpoints.down('xs')]: {
       accountContainer: {
         padding: '24px',
-      },
-      mainContent: {
-        padding: '20px 0',
-        marginBottom: '80px',
-        gap: '60px'
       },
     }
   };
