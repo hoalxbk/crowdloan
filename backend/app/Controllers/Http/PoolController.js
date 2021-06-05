@@ -478,30 +478,6 @@ class PoolController {
     }
   }
 
-  async getNotified({ request, params }) {
-    const inputParams = request.all();
-    const campaignId = params.campaignId;
-
-    console.log('[getNotified] - inputParams: ', inputParams);
-
-
-
-    try {
-      let listData = (new WhitelistBannerSettingService).getSetting(walletAddress, inputParams);
-      listData = listData.orderBy('created_at', 'DESC');
-      listData = await listData.paginate(page,limit);
-
-      return HelperUtils.responseSuccess(listData);
-    } catch (e) {
-      console.log(e);
-      return HelperUtils.responseErrorInternal('Get Joined Pool Fail !!!');
-    }
-
-
-  }
-
-
-
 }
 
 module.exports = PoolController

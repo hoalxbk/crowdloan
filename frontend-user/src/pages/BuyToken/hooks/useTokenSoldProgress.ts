@@ -6,6 +6,7 @@ import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import Pool_ABI from '../../../abi/Pool.json';
 import { getContractInstance, SmartContractMethod } from '../../../services/web3';
 import {NFT_PLUS_AMOUNT_PRODUCTION} from "../../../constants";
+import {getProgressWithPools} from "../../../utils/campaign";
 
 const DECIMAL_PLACES = 8;
 
@@ -31,24 +32,14 @@ const useTokenSoldProgress = (poolAddress: string | undefined, totalTokens: numb
 
         if (poolContract) {
           const tokensSold = await poolContract.methods.tokenSold().call();
+          let tokensSoldCal = new BigNumber(tokensSold).div(new BigNumber(10).pow(18)).toFixed();
+          let { progress, tokenSold, totalSoldCoin } = getProgressWithPools({
+            token_sold: tokensSoldCal,
+            total_sold_coin: totalTokens
+          });
 
-          let tokensSoldCal = new BigNumber(tokensSold).div(new BigNumber(10).pow(18));
-          if (poolAddress === '0xac3932F8B1fEBA8eBf3A50B16bFb39EF71F1F7d4') {
-            tokensSoldCal = new BigNumber('500000');
-          } else if (poolAddress == '0x50c06D1AD331b28c4Db9D7f0b24aBa065314ec72') {
-            tokensSoldCal = tokensSoldCal.plus(NFT_PLUS_AMOUNT_PRODUCTION || '0');
-          }
-
-          // const tokensSoldCal =
-          //   poolAddress === '0xac3932F8B1fEBA8eBf3A50B16bFb39EF71F1F7d4' ? new BigNumber('500000') :
-          //   new BigNumber(tokensSold).div(new BigNumber(10).pow(18));
-
-          setTokenSold(tokensSoldCal.toFixed(DECIMAL_PLACES));
-          setSoldProgress(
-            !tokensSoldCal.eq(new BigNumber(0)) ?
-            tokensSoldCal.div(new BigNumber(totalTokens)).multipliedBy(100).toFixed(DECIMAL_PLACES):
-            new BigNumber(0).toFixed(DECIMAL_PLACES)
-         );
+          setTokenSold(new BigNumber(tokenSold).toFixed(DECIMAL_PLACES));
+          setSoldProgress(new BigNumber(progress).toFixed(DECIMAL_PLACES));
         }
       }
     }

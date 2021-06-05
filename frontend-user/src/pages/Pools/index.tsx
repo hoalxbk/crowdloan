@@ -16,6 +16,7 @@ import Pagination from '@material-ui/lab/Pagination';
 import {getPoolStatusByPoolDetail} from "../../utils/getPoolStatusByPoolDetail";
 import {NETWORK_AVAILABLE, NFT_PLUS_AMOUNT_PRODUCTION} from "../../constants";
 import BigNumber from 'bignumber.js';
+import {getProgressWithPools} from "../../utils/campaign";
 
 const iconSearch = 'images/icons/search.svg';
 
@@ -102,17 +103,8 @@ const Pools = (props: any) => {
 
       await Promise.all(listData.map(async (pool: any) => {
         if (pool.is_deploy === 0) return;
-        if (pool.id == 22) {
-          const tokenSold = '500000';
-          pool.tokenSold = tokenSold;
-        } else if (pool.id == 23) {
-          const tokenSold = NFT_PLUS_AMOUNT_PRODUCTION || 0;
-          pool.tokenSold = new BigNumber(tokenSold).plus(pool.tokenSold || 0).toFixed();
-        } else {
-          const tokenSold = await getTokenSold(pool);
-          pool.tokenSold = tokenSold;
-        }
-
+        const tokenSold = await getTokenSold(pool);
+        pool.tokenSold = tokenSold;
       }));
 
       setPools(listData);

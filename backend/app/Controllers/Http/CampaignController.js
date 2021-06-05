@@ -167,12 +167,6 @@ class CampaignController {
     }
   }
 
-  async campaignDelete({request}) {
-    const walletAddress = request.params.walletAddress
-    const campaign = request.params.campaign
-    // const deleted =
-  }
-
   async CampaignChanged({request}) {
     try {
       console.log('WEBHOOK-Update Campaign');
