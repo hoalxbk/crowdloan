@@ -8,6 +8,8 @@ const WinnerListUserModel = use('App/Models/WinnerListUser');
 const WhitelistService = use('App/Services/WhitelistUserService');
 const UserBalanceSnapshotService = use('App/Services/UserBalanceSnapshotService');
 const HelperUtils = use('App/Common/HelperUtils');
+const BigNumber = use('bignumber.js');
+
 const priority = 'critical'; // Priority of job, can be low, normal, medium, high or critical
 const attempts = 5; // Number of times to attempt job if it fails
 const remove = true; // Should jobs be automatically removed on completion
@@ -71,7 +73,23 @@ class PickRandomWinnerJob2 {
         const wallet = whitelistObj.data[i].wallet_address;
         const receivedData = await HelperUtils.getUserTierSmart(wallet);
         const tier = receivedData[0];
-        const pkfBalance = receivedData[1];
+        const pkfBalanceSmartContract = receivedData[1];
+        let pkfBalance = pkfBalanceSmartContract;
+        switch (tier) {
+          case 1: // Dove
+            break;
+          case 2: // Hawk
+            break;
+          case 3: // Eagle
+            pkfBalance = new BigNumber(pkfBalance).multipliedBy(1.05);
+            break;
+          case 4: // Phoenix
+            pkfBalance = new BigNumber(pkfBalance).multipliedBy(1.1);
+            break;
+          default :
+            break;
+        }
+
         // mock test
         // const tier = Math.floor(Math.random() * 5);
         // const tier = 3;
@@ -81,16 +99,16 @@ class PickRandomWinnerJob2 {
         // TODO need get setting from Db
         let tickets = 0;
         switch (tier) {
-          case 1:
+          case 1: // Dove
             tickets = Math.floor(pkfBalance / 500);
             break;
-          case 2:
+          case 2: // Hawk
             tickets = Math.floor(pkfBalance / 500);
             break;
-          case 3:
+          case 3: // Eagle
             tickets = Math.floor(pkfBalance / 2000);
             break;
-          case 4:
+          case 4: // Phoenix
             tickets = Math.floor(pkfBalance / 2000);
             break;
           default :
@@ -102,7 +120,8 @@ class PickRandomWinnerJob2 {
           wallet_address: wallet,
           level: tier,
           lottery_ticket: tickets,
-          pkf_balance: pkfBalance
+          pkf_balance: pkfBalanceSmartContract,
+          pkf_balance_with_weight_rate: pkfBalance,
         });
         userSnapshots.push(userSnapShot);
       }
@@ -153,15 +172,15 @@ class PickRandomWinnerJob2 {
         } else {
           // case ticket_allow > no of users
           // calc lottery ticket for each user base on amount sPKF
-          const totalPKFObj = await userSnapshotService.sumPKFBalanceByFilters(filters);
-          const totalPKF = totalPKFObj[0]['sum(`pkf_balance`)'];
+          const totalPKFObj = await userSnapshotService.sumPKFWithWeightRateBalanceByFilters(filters);
+          const totalPKF = totalPKFObj[0]['sum(`pkf_balance_with_weight_rate`)'];
           winners = userSnapshots.toJSON().map(snapshot => {
             const winnerModel = new WinnerListUserModel();
             winnerModel.fill({
               wallet_address: snapshot.wallet_address,
               campaign_id: data.campaign_id,
               level: snapshot.level,
-              lottery_ticket: 1 + ((tier.ticket_allow - count) * snapshot.pkf_balance / totalPKF)
+              lottery_ticket: 1 + ((tier.ticket_allow - count) * snapshot.pkf_balance_with_weight_rate / totalPKF)
             });
             return winnerModel;
           });
