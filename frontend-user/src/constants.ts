@@ -64,14 +64,14 @@ export const CONVERSION_RATE = [
     key: 'UPKF',
     keyMainnet: 'UNI-V2'
   },
-  // {
-  //   name: 'Staked sPKF',
-  //   rate: 1,
-  //   symbol: 'sPKF',
-  //   address: process.env.REACT_APP_MANTRA_LP,
-  //   key: 'sPKF',
-  //   keyMainnet: 'sPKF'
-  // },
+  {
+    name: 'Staked sPKF',
+    rate: 1,
+    symbol: 'sPKF',
+    address: process.env.REACT_APP_MANTRA_LP,
+    key: 'sPKF',
+    keyMainnet: 'sPKF'
+  },
   // {
   //   name: 'NFT',
   //   rate: 100
