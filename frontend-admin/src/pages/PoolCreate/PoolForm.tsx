@@ -403,36 +403,6 @@ function PoolForm(props: any) {
     <div className="contentPage">
       <Grid container spacing={2}>
         <Grid item xs={6}>
-          <div className="">
-            <div className={classes.exchangeRate}>
-              <WhitelistLink
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                control={control}
-                watch={watch}
-              />
-
-              <GuideLink
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                control={control}
-                watch={watch}
-              />
-
-              <AnnouncementTime
-                poolDetail={poolDetail}
-                register={register}
-                setValue={setValue}
-                errors={errors}
-                control={control}
-                watch={watch}
-              />
-            </div>
-          </div>
 
           <div className="">
             <div className={classes.exchangeRate}>
@@ -589,6 +559,37 @@ function PoolForm(props: any) {
             control={control}
             watch={watch}
           />
+
+          <div className="">
+            <div className={classes.exchangeRate}>
+              <WhitelistLink
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+                watch={watch}
+              />
+
+              <GuideLink
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+                watch={watch}
+              />
+
+              <AnnouncementTime
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+                watch={watch}
+              />
+            </div>
+          </div>
 
         </Grid>
 
