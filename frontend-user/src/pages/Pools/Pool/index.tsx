@@ -25,9 +25,9 @@ const Pool = (props: any): JSX.Element => {
   } = props
 
   useEffect(() => {
-    let { progress, tokenSold, totalSoldCoin } = getProgressWithPools(pool);
-    setProgress(parseFloat(progress));
-    console.log('Progress: ', progress);
+    let { progress: progressPercent, tokenSold, totalSoldCoin } = getProgressWithPools(pool);
+    setProgress(parseFloat(progressPercent));
+    console.log('Progress: ', progressPercent);
   }, [pool.tokenSold])
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const Pool = (props: any): JSX.Element => {
             <div className="progress">
               <span
                 className={`current-progress ${progress > 0 ? '' : 'inactive'}`}
-                style={{ width: `${progress > 99 ? 100 : new BigNumber(progress).toFixed(2)}%` }}
+                style={{ width: `${new BigNumber(progress).toFixed(2)}%` }}
               ></span>
             </div>
           </div>

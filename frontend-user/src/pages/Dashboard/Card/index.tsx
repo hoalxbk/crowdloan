@@ -29,22 +29,6 @@ const Card = (props: any): JSX.Element => {
   } = getProgressWithPools(pool);
 
   // useEffect(() => {
-  //   if (pool.id == 22) {
-  //     setProgress(100);
-  //     pool.tokenSold = '500000';
-  //     pool.total_sold_coin = '500000';
-  //   } else if (pool.id == 23) {
-  //     const tokenSold = NFT_PLUS_AMOUNT_PRODUCTION;
-  //     // pool.tokenSold = new BigNumber(tokenSold).plus(pool.tokenSold || 0).toFixed();
-  //     setProgress(parseFloat(
-  //       new BigNumber(pool.tokenSold).plus(tokenSold).toFixed()
-  //     ) * 100 / parseFloat(pool.total_sold_coin) || 0);
-  //   } else {
-  //     setProgress(parseFloat(pool.tokenSold) * 100 / parseFloat(pool.total_sold_coin) || 0);
-  //   }
-  // }, [pool.tokenSold])
-
-  // useEffect(() => {
   //   const currentTime = moment().unix()
   //   let diffTime = 0;
   //   if(pool.start_join_pool_time > currentTime) {
