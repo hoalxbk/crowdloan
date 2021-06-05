@@ -1,10 +1,14 @@
 import React from 'react';
 import useStyles from "../style";
 import {INSTRUCTION_WHITELIST_LINK, WHITELIST_LINK} from "../../../constants";
+import moment from "moment";
 
 function WhiteListUserGuideBanner(props: any) {
   const styles = useStyles();
-
+  const { poolDetails } = props;
+  if (!poolDetails?.whitelistBannerSetting) {
+    return <></>
+  }
   return (
     <>
       {/*<p className={styles.poolTicketWinner}>*/}
@@ -22,14 +26,17 @@ function WhiteListUserGuideBanner(props: any) {
         <div className={styles.poolWhiteListLineSmall}>✓ Clicked the "Apply Whitelist" button</div>
         <div className={styles.poolWhiteListLineSmall}>
           x  You need to fill out the Whitelist Form, please click {' '}
-          <a style={{ color: '#1a73e8', textDecoration: 'underline' }} href={WHITELIST_LINK} target={'_blank'}>here</a>.
+          <a style={{ color: '#1a73e8', textDecoration: 'underline' }} href={poolDetails.whitelistBannerSetting.whitelist_link} target={'_blank'}>here</a>.
           (Skip if you have already filled out the form)
         </div>
 
         <div className={styles.poolWhiteListLine}>
-          You are ready for the lottery after completing the above 3 steps.  Please stay tuned for the winner announcement on Tuesday, June 1, 2021.
+          You are ready for the lottery after completing the above 3 steps.  Please stay tuned for the winner announcement on
+          {' '}
+          {moment.unix(poolDetails.whitelistBannerSetting.announcement_time).format('dddd, MMMM DD, YYYY')}.
+          {/*Tuesday, June 1, 2021.*/}
           You can read more about the instruction {' '}
-          <a style={{ color: '#1a73e8', textDecoration: 'underline' }} href={INSTRUCTION_WHITELIST_LINK} target={'_blank'}>here</a>.
+          <a style={{ color: '#1a73e8', textDecoration: 'underline' }} href={poolDetails.whitelistBannerSetting.guide_link} target={'_blank'}>here</a>.
         </div>
         <div className={styles.poolWhiteListLine}></div>
 

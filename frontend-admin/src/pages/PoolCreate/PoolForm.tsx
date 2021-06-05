@@ -37,6 +37,9 @@ import ClaimConfigTable from "./Components/ClaimConfig/ClaimConfigTable";
 import {campaignClaimConfigFormat} from "../../utils/campaign";
 import PrivatePoolSetting from "./Components/PrivatePoolSetting";
 import BuyTokens from "./Components/BuyRemainTokens/BuyTokens";
+import WhitelistLink from "./Components/WhitelistBannerSetting/WhitelistLink";
+import GuideLink from "./Components/WhitelistBannerSetting/GuideLink";
+import AnnouncementTime from "./Components/WhitelistBannerSetting/AnnouncementTime";
 
 function PoolForm(props: any) {
   const classes = useStyles();
@@ -158,6 +161,12 @@ function PoolForm(props: any) {
 
       // Wallet
       wallet: isEdit ? poolDetail?.wallet : {},
+
+      // Whitelist Banner Setting
+      guide_link: data.guide_link,
+      whitelist_link: data.whitelist_link,
+      announcement_time: data.announcement_time ? data.announcement_time.unix() : null,
+
     };
 
     console.log('[createUpdatePool] - Submit with data: ', submitData);
@@ -228,6 +237,11 @@ function PoolForm(props: any) {
       // Time
       // Release time will auto fill from first record of Campaign Claim Config Table
       release_time: data.release_time ? data.release_time.unix() : null,
+
+      // Whitelist Banner Setting
+      guide_link: data.guide_link,
+      whitelist_link: data.whitelist_link,
+      announcement_time: data.announcement_time ? data.announcement_time.unix() : null,
     };
 
     console.log('[updatePoolAfterDeloy] - Submit with data: ', submitData);
@@ -389,7 +403,36 @@ function PoolForm(props: any) {
     <div className="contentPage">
       <Grid container spacing={2}>
         <Grid item xs={6}>
+          <div className="">
+            <div className={classes.exchangeRate}>
+              <WhitelistLink
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+                watch={watch}
+              />
 
+              <GuideLink
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+                watch={watch}
+              />
+
+              <AnnouncementTime
+                poolDetail={poolDetail}
+                register={register}
+                setValue={setValue}
+                errors={errors}
+                control={control}
+                watch={watch}
+              />
+            </div>
+          </div>
 
           <div className="">
             <div className={classes.exchangeRate}>

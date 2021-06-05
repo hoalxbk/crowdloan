@@ -3,6 +3,7 @@
 const CampaignModel = use('App/Models/Campaign');
 const CampaignClaimConfigModel = use('App/Models/CampaignClaimConfig');
 const TierModel = use('App/Models/Tier');
+const WhitelistBannerSettingModel = use('App/Models/WhitelistBannerSetting');
 const Config = use('Config');
 const Const = use('App/Common/Const');
 const BigNumber = use('bignumber.js');
@@ -148,6 +149,22 @@ class PoolService {
     await campaign.tiers().saveMany(tiers);
 
     console.log('inputParams.tier_configuration', JSON.stringify(tiers));
+  }
+
+  async updateWhitelistBannerSetting(campaign, data) {
+    if (!data.guide_link && !data.whitelist_link && !data.announcement_time) {
+      await campaign.whitelistBannerSetting().delete();
+      console.log('WhitelistBannerSetting Clear', data);
+      return true;
+    }
+
+    const setting = new WhitelistBannerSettingModel();
+    setting.fill(data);
+    console.log('[updateWhitelistBannerSetting] - setting', JSON.stringify(setting));
+    await campaign.whitelistBannerSetting().delete();
+    await campaign.whitelistBannerSetting().save(setting);
+
+    console.log('WhitelistBannerSetting Setting', JSON.stringify(setting));
   }
 
   async getPoolRedisCache(poolId) {

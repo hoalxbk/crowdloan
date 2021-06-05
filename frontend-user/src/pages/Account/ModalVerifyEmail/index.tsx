@@ -27,7 +27,7 @@ const ModalVerifyEmail = (props: any) => {
     email,
     setEmail
   } = props;
-  
+
   useEffect(() => {
     setInputEmail(email);
   }, [email])
