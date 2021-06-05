@@ -79,7 +79,7 @@ export const getProgressWithPools = (pool: any) => {
   }
 
   // Normal Case
-  if (new BigNumber(tokenSold).gt(totalSoldCoin)) {
+  if (new BigNumber(tokenSold).gt(totalSoldCoin)) { // If tokenSold > totalSoldCoin ==> tokenSold = totalSoldCoin
     tokenSold = totalSoldCoin;
   }
   progress = new BigNumber(tokenSold).div(totalSoldCoin).multipliedBy(100).toFixed();
@@ -87,7 +87,7 @@ export const getProgressWithPools = (pool: any) => {
   if (new BigNumber(progress).lte(0)) {
     progress = '0';
   }
-  if (new BigNumber(progress).gt(100)) {
+  if (new BigNumber(progress).gt(99)) {
     progress = '100';
   }
 

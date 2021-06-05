@@ -9,7 +9,8 @@ import { numberWithCommas } from '../../../utils/formatNumber';
 import useCommonStyle from '../../../styles/CommonStyle';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
 import {PoolStatus} from "../../../utils/getPoolStatus";
-import {getAccessPoolText} from "../../../utils/campaign";
+import {getAccessPoolText, getProgressWithPools} from "../../../utils/campaign";
+import BigNumber from 'bignumber.js';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -24,7 +25,9 @@ const Pool = (props: any): JSX.Element => {
   } = props
 
   useEffect(() => {
-    setProgress(pool.tokenSold * 100 / pool.total_sold_coin || 0);
+    let { progress, tokenSold, totalSoldCoin } = getProgressWithPools(pool);
+    setProgress(parseFloat(progress));
+    console.log('Progress: ', progress);
   }, [pool.tokenSold])
 
   useEffect(() => {
@@ -102,9 +105,12 @@ const Pool = (props: any): JSX.Element => {
             {getAccessPoolText(pool)}
           </div>
           <div className={styles.progress}>
-            <span className={commonStyle.nnb1418d}>{`${progress.toFixed(2)}%`}</span>
+            <span className={commonStyle.nnb1418d}>{`${new BigNumber(progress).toFixed(2)}%`}</span>
             <div className="progress">
-              <span className={`current-progress ${progress !== 0 ? '' : 'inactive'}`} style={{ width: `${progress > 100 ? 100 : Math.round(progress)}%` }}></span>
+              <span
+                className={`current-progress ${progress > 0 ? '' : 'inactive'}`}
+                style={{ width: `${progress > 99 ? 100 : new BigNumber(progress).toFixed(2)}%` }}
+              ></span>
             </div>
           </div>
           <div className={styles.status}>
