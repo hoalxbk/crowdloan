@@ -205,10 +205,14 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
     // Check if max buy greater than total ICO coins sold
     if (maxBuy.gt(new BigNumber(tokenBalance))) {
-      return new BigNumber(tokenBalance).toFixed(6);
+      return (new BigNumber(tokenBalance).gt(0))
+        ? new BigNumber(tokenBalance).toFixed(6)
+        : '0';
     }
 
-    return (maxBuy.toFixed(6));
+    return (new BigNumber(maxBuy).gt(0))
+      ? (maxBuy.toFixed(6))
+      : '0';
   }, [tokenBalance, maximumBuy, userPurchased, poolAmount, tokenSold, rate]);
 
   const { retrieveTokenSold, tokenSold: totalUserTokenSold  } = useTokenSold(tokenDetails, poolAddress, ableToFetchFromBlockchain);
@@ -449,7 +453,9 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             {' '} available for your TIER.
             {' '} The remaining amount is {' '}
             {numberWithCommas(
-              new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()
+              new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).gt(0)
+                ? new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()
+                : '0'
             )} {currencyName}.
           </p>
           {currentUserTier && currentUserTier.start_time && currentUserTier.end_time && (
