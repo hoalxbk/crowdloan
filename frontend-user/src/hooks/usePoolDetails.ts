@@ -138,6 +138,7 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
         displayPriceRate: !!data.display_price_rate,
         priceUsdt: new BigNumber(data.price_usdt).toFixed(),
         campaignClaimConfig,
+        whitelistBannerSetting: data.whitelistBannerSetting,
         isPrivate: data.is_private,
       }
     }

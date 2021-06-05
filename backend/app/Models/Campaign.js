@@ -34,6 +34,10 @@ class Campaign extends Model {
     return this.hasMany('App/Models/CampaignClaimConfig')
   }
 
+  whitelistBannerSetting() {
+    return this.hasOne('App/Models/WhitelistBannerSetting')
+  }
+
   userBalanceSnapshotsPre() {
     return this.hasMany('App/Models/UserBalanceSnapshotPre')
   }

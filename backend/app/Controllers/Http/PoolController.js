@@ -5,6 +5,7 @@ const WalletAccountModel = use('App/Models/WalletAccount');
 const WalletAccountService = use('App/Services/WalletAccountService');
 const Const = use('App/Common/Const');
 const PoolService = use('App/Services/PoolService');
+const WhitelistBannerSettingService = use('App/Services/WhitelistBannerSettingService');
 const HelperUtils = use('App/Common/HelperUtils');
 const RedisUtils = use('App/Common/RedisUtils');
 
@@ -37,6 +38,7 @@ class PoolController {
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type', 'is_private',
       'min_tier', 'tier_configuration', 'claim_configuration',
+      'guide_link', 'whitelist_link', 'announcement_time',
     ]);
 
     const tokenInfo = inputParams.tokenInfo;
@@ -94,6 +96,13 @@ class PoolController {
       console.log('[createPool] - Update Tier Config - inputParams.tier_configuration', inputParams.tier_configuration);
       await poolService.updateTierConfig(campaign, inputParams.tier_configuration || []);
 
+      // Update Whitelist Banner Setting
+      await poolService.updateWhitelistBannerSetting(campaign, {
+        guide_link: inputParams.guide_link,
+        whitelist_link: inputParams.whitelist_link,
+        announcement_time: inputParams.announcement_time,
+      });
+
       // Create Web3 Account
       const campaignId = campaign.id;
       const account = await (new WalletAccountService).createWalletAddress(campaignId);
@@ -116,6 +125,7 @@ class PoolController {
       'start_time', 'finish_time', 'release_time', 'start_join_pool_time', 'end_join_pool_time',
       'accept_currency', 'network_available', 'buy_type', 'pool_type', 'is_private',
       'min_tier', 'tier_configuration', 'claim_configuration',
+      'guide_link', 'whitelist_link', 'announcement_time',
     ]);
 
     const tokenInfo = inputParams.tokenInfo;
@@ -170,6 +180,13 @@ class PoolController {
       if (!campaign.is_deploy) {
         await poolService.updateTierConfig(campaign, inputParams.tier_configuration || []);
       }
+
+      // Update Whitelist Banner Setting
+      await poolService.updateWhitelistBannerSetting(campaign, {
+        guide_link: inputParams.guide_link,
+        whitelist_link: inputParams.whitelist_link,
+        announcement_time: inputParams.announcement_time,
+      });
 
       // Delete cache
       RedisUtils.deleteRedisPoolDetail(campaignId);
@@ -281,7 +298,12 @@ class PoolController {
     const poolId = params.campaignId;
     console.log('[getPoolAdmin] - Start getPool (Admin) with poolId: ', poolId);
     try {
-      let pool = await CampaignModel.query().with('tiers').with('campaignClaimConfig').where('id', poolId).first();
+      let pool = await CampaignModel.query()
+        .with('tiers')
+        .with('campaignClaimConfig')
+        .with('whitelistBannerSetting')
+        .where('id', poolId)
+        .first();
       if (!pool) {
         return HelperUtils.responseNotFound('Pool not found');
       }
@@ -325,7 +347,12 @@ class PoolController {
         return HelperUtils.responseSuccess(JSON.parse(cachedPoolDetail));
       }
 
-      let pool = await CampaignModel.query().with('tiers').with('campaignClaimConfig').where('id', poolId).first();
+      let pool = await CampaignModel.query()
+        .with('tiers')
+        .with('campaignClaimConfig')
+        .with('whitelistBannerSetting')
+        .where('id', poolId)
+        .first();
       if (!pool) {
         return HelperUtils.responseNotFound('Pool not found');
       }
@@ -351,6 +378,9 @@ class PoolController {
 
         // Claim Config
         'campaignClaimConfig',
+
+        // Whitelist Banner Setting
+        'whitelistBannerSetting',
       ]);
 
       console.log('[getPublicPool] - pool.tiers: ', JSON.stringify(pool.tiers));
@@ -447,6 +477,30 @@ class PoolController {
       return HelperUtils.responseErrorInternal('Get Joined Pool Fail !!!');
     }
   }
+
+  async getNotified({ request, params }) {
+    const inputParams = request.all();
+    const campaignId = params.campaignId;
+
+    console.log('[getNotified] - inputParams: ', inputParams);
+
+
+
+    try {
+      let listData = (new WhitelistBannerSettingService).getSetting(walletAddress, inputParams);
+      listData = listData.orderBy('created_at', 'DESC');
+      listData = await listData.paginate(page,limit);
+
+      return HelperUtils.responseSuccess(listData);
+    } catch (e) {
+      console.log(e);
+      return HelperUtils.responseErrorInternal('Get Joined Pool Fail !!!');
+    }
+
+
+  }
+
+
 
 }
 
