@@ -216,6 +216,7 @@ class PickRandomWinnerJob2 {
     // create winner model list
     const winnerModelList = [];
     winnerSnapshots.forEach((snapshot) => {
+      console.log(`Winner user with wallet ${snapshot.wallet_address} tier ${snapshot.level} ticket win ${snapshot.winner_ticket}`);
       const winnerModel = new WinnerListUserModel();
       winnerModel.fill({
         wallet_address: snapshot.wallet_address,
