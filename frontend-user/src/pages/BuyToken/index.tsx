@@ -41,7 +41,7 @@ import { pushMessage } from '../../store/actions/message';
 import {getIconCurrencyUsdt} from "../../utils/usdt";
 import ApplyWhitelistModal from "./ApplyWhitelistModal/ApplyWhitelistModal";
 import WhiteListGuideText from "./ApplyWhitelistModal/WhiteListGuideText";
-import {ACCEPT_CURRENCY, INSTRUCTION_WHITELIST_LINK, POOL_TYPE, WHITELIST_LINK} from "../../constants";
+import {ACCEPT_CURRENCY, INSTRUCTION_WHITELIST_LINK, POOL_TYPE, TIER_LEVELS, WHITELIST_LINK} from "../../constants";
 import PoolInfoTable from "./PoolInfoTable/PoolInfoTable";
 import WhiteListUserGuideBanner from "./WhiteListUserGuideBanner/WhiteListUserGuideBanner";
 import {getEtherscanName, getEtherscanTransactionAddress, getEtherscanTransactionLink} from "../../utils/network";
@@ -309,6 +309,7 @@ const BuyToken: React.FC<any> = (props: any) => {
               </span>
             </div>
             {ableToFetchFromBlockchain && (winnersList && winnersList.total > 0) && verifiedEmail &&
+            (currentUserTier && currentUserTier.level == TIER_LEVELS.DOVE) &&
               <p className={styles.poolTicketWinner}>
                 {existedWinner &&
                 <div>
