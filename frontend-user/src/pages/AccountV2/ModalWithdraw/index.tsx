@@ -132,7 +132,7 @@ const ModalWithdraw = (props: any) => {
     >
       <div className="modal-content">
         <DialogTitle id="alert-dialog-slide-title" className="modal-content__head">
-          <img src={closeIcon} className="btn-close" onClick={handleClose}/>
+          <img src={closeIcon} className="btn-close" onClick={handleClose} alt=""/>
           <h2 className="title">You have {numberWithCommas(totalStaked)} {listTokenDetails[0]?.symbol} staked</h2>
         </DialogTitle>
         <DialogContent className="modal-content__body">

@@ -2,157 +2,140 @@ import { makeStyles } from '@material-ui/core';
 
 const useStyles = makeStyles((theme: any) => {
   return {
-    content: {
-      width: '100%',
-      background: 'rgba(255, 255, 255, 0.06)',
-      borderRadius: '8px', 
-      padding: '25px 40px 35px 40px',
-      marginTop: '270px',
+    contentManageTier: {
+      width: '52%',
+      maxWidth: '100%',
+
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+      },
 
       '& .button-area': {
         display: 'flex',
         alignItems: 'center',
         flexDirection: 'row',
-        justifyContent: 'center'
+        justifyContent: 'flex-start',
+        marginBottom: 56,
       },
 
       '& .button-area .btn': {
+        color: theme?.custom?.colors?.white,
         height: '42px',
         borderRadius: '40px',
         fontFamily: 'DM Sans',
-        fontStyle: 'normal',
-        fontWeight: 'bold',
-        fontSize: '14px',
-        lineHeight: '18px',
-        color: '#FFFFFF',
+        fontWeight: '500',
+        fontSize: 16,
+        lineHeight: '24px',
         border: 'none',
         outline: 'none',
         padding: '0 35px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        width: '40%',
+        minWidth: 160,
 
         '&:hover': {
-          cursor: 'pointer'
+          cursor: 'pointer',
         },
 
         '&.disabled': {
-          backgroundColor: 'silver'
+          backgroundColor: 'silver',
         },
       },
 
       '& .button-area .btn-lock': {
         background: '#3232DC',
-        marginRight: '7%'
+        marginRight: 8,
       },
 
       '& .button-area .btn-unlock': {
-        background: '#D01F36',
-      },
-      [theme.breakpoints.down('md')]: {
-        marginTop: '0',
-      },
-
-      [theme.breakpoints.down('xs')]: {
-        padding: '25px 24px 35px 24px',
-        marginTop: '0',
-
-        '& .button-area': {
-          flexDirection: 'column',
-
-          '& .btn': {
-            width: '100%',
-          },
-
-          '& .btn-lock': {
-            marginRight: '0',
-            marginBottom: '12px'
-          },
-        }
+        background: theme?.custom?.colors?.cardinal,
       },
     },
+
     noteNetwork: {
+      color: theme?.custom?.colors?.cardinal,
       font: 'normal normal bold 14px/18px DM Sans',
-      color: '#D01F36',
       marginTop: '15px',
     },
+
     manageTier: {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between'
     },
+
     walletBalance: {
-      marginTop: '55px'
+      background: theme?.custom?.colors?.sharkLight,
+      border: `1px solid ${theme?.custom?.colors?.abbey}`,
+      borderRadius: 8,
     },
+
     tableHead: {
-      color: '#fff',
-      font: 'normal normal bold 14px/18px DM Sans',
-      marginBottom: '20px',
+      background: theme?.custom?.colors?.shark,
+      color: theme?.custom?.colors?.white,
+      borderRadius: '8px 8px 0px 0px',
+      fontFamily: 'DM Sans',
+      fontWeight: 500,
+      fontSize: 16,
+      lineHeight: '24px',
+      textAlign: 'center',
 
       '& .group': {
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        minHeight: 56,
+        alignItems: 'center',
+        paddingLeft: 27,
+        paddingRight: 27,
       }
     },
+
     tableBody:  {
-      color: '#fff',
-      height: '200px',
+      color: theme?.custom?.colors?.white,
+      fontFamily: 'DM Sans',
+      fontWeight: 500,
+      fontSize: 16,
+      lineHeight: '24px',
+
       '& .group': {
         display: 'flex',
         justifyContent: 'space-between',
         borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-        minHeight: '48px',
-        alignItems: 'center'
+        minHeight: 56,
+        alignItems: 'center',
+        paddingLeft: 27,
+        paddingRight: 27,
       },
 
       '& .group span': {
         width: '33%',
+        wordBreak: 'break-all',
 
         '&:first-child': {
-          font: 'normal normal bold 14px/18px DM Sans',
-          color: '#fff'
         },
+
         '&:last-child': {
           textAlign: 'right',
-          font: 'normal normal normal 14px/24px Helvetica',
-          color: '#999999'
         },
+
         '&:nth-child(2)': {
           textAlign: 'center',
-          font: 'normal normal normal 14px/24px Helvetica',
-          color: '#999999'
         }
       }
     },
-    noteStake: {
-      font: 'normal normal bold 14px/18px DM Sans',
-      color: '#FFF',
-      marginBottom: '50px'
-    },
-    textDefault: {
-      fontFamily: 'Helvetica',
-      fontStyle: 'normal',
-      fontWeight: 'normal',
-      fontSize: '14px',
-      lineHeight: '24px',
-      color: '#999999',
-    },
+
     balance: {
       fontFamily: 'DM Sans',
       fontStyle: 'normal',
       fontWeight: 'bold',
       fontSize: '28px',
       lineHeight: '32px',
-      color: '#FFFFFF',
+      color: theme?.custom?.colors?.white,
       marginTop: '8px',
       marginBottom: '13px',
     },
-    title: {
-      color: '#FFF',
-      font: 'normal normal bold 24px/32px DM Sans'
-    }
   };
 });
 
