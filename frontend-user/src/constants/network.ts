@@ -73,6 +73,7 @@ export const APP_NETWORKS: {[key in APP_NETWORKS_NAME]: NetworkInfo } = {
 
 export const APP_NETWORKS_ID: (string | undefined)[] = [ETH_CHAIN_ID, BSC_CHAIN_ID];
 export const NETWORK_URL = process.env.REACT_APP_NETWORK_URL;
+export const NETWORK_BSC_URL = process.env.REACT_APP_BSC_RPC_URL;
 export const FORMATIC_KEY = process.env.REACT_APP_FORMATIC_KEY;
 export const FORMATIC_KEY_TEST = process.env.REACT_APP_FORMATIC_KEY_TEST;
 
