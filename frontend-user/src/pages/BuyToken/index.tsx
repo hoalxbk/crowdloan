@@ -81,7 +81,8 @@ const BuyToken: React.FC<any> = (props: any) => {
   const { tokenSold, soldProgress } = useTokenSoldProgress(
       poolDetails?.poolAddress,
       poolDetails?.amount,
-      poolDetails?.networkAvailable
+      poolDetails?.networkAvailable,
+      poolDetails,
   );
   const { joinPool, poolJoinLoading, joinPoolSuccess } = usePoolJoinAction({ poolId: poolDetails?.id });
   const { data: existedWinner } = useFetch<Array<any>>(
