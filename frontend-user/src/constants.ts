@@ -111,6 +111,14 @@ export const TIERS = [
   }
 ];
 
+export const TIER_LEVELS = {
+  NONE: 0,
+  DOVE: 1,
+  HAWK: 2,
+  EAGLE: 3,
+  PHOENIX: 4,
+};
+
 export const KYC_STATUS = {
   INCOMPLETE: 0, // Blockpass verifications pending
   APPROVED: 1, // profile has been approved by Merchant
