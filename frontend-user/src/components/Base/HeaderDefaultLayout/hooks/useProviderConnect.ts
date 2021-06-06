@@ -1,4 +1,4 @@
-import { useState, useEffect, SetStateAction, Dispatch, useCallback } from 'react';
+import {useState, useEffect, SetStateAction, Dispatch, useCallback, useContext} from 'react';
 import { useDispatch } from 'react-redux';
 import { UnsupportedChainIdError, useWeb3React } from '@web3-react/core';
 import { WalletConnectConnector } from '@web3-react/walletconnect-connector'
@@ -8,22 +8,33 @@ import BigNumber from 'bignumber.js';
 import usePrevious from '../../../../hooks/usePrevious';
 import { useTypedSelector } from '../../../../hooks/useTypedSelector';
 import { ConnectorNames } from '../../../../constants/connectors';
-import { APP_NETWORKS_ID, ETH_CHAIN_ID, BSC_CHAIN_ID, ChainIdNameMapping, chainId } from '../../../../constants/network';
+import {
+  APP_NETWORKS_ID,
+  ETH_CHAIN_ID,
+  BSC_CHAIN_ID,
+  ChainIdNameMapping,
+  chainId,
+  NETWORK_NAME_MAPPINGS
+} from '../../../../constants/network';
 import { requestSupportNetwork } from '../../../../utils/setupNetwork';
 import { getAppNetworkName } from '../../../../utils/network/getAppNetworkName';
 import { connectWalletSuccess, disconnectWallet } from '../../../../store/actions/wallet';
 import getAccountBalance from '../../../../utils/getAccountBalance';
 
 import { settingAppNetwork, NetworkUpdateType, settingCurrentConnector } from '../../../../store/actions/appNetwork';
+import {alertFailure} from "../../../../store/actions/alert";
+import {AppContext} from "../../../../AppContext";
 
 const useProviderConnect = (
-  setOpenConnectDialog?: Dispatch<SetStateAction<boolean>>, 
+  setOpenConnectDialog?: Dispatch<SetStateAction<boolean>>,
   openConnectDialog?: boolean,
   binanceAvailable?: boolean
 ) => {
   const dispatch = useDispatch();
 
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
+  const { logout: disconnectWallet } = useContext(AppContext);
+
   const [account, setAccount] = useState<string | undefined>(undefined);
 
   const [appNetworkLoading, setAppNetworkLoading] = useState(false);
@@ -60,9 +71,9 @@ const useProviderConnect = (
     const handleWeb3ReactUpdate = (updated: any) => {
       if (updated.account) {
         if (updated.account) {
-          setAccount(updated.account); 
+          setAccount(updated.account);
         } else setAccount(undefined);
-      } 
+      }
 
       if (updated.chainId) {
         const chainId = Number(updated.chainId).toString();
@@ -74,8 +85,8 @@ const useProviderConnect = (
           //   APP_NETWORKS_ID[APP_NETWORKS_ID.indexOf(chainId.toString())] as string
           // ));
         }
-        
-        chainId && dispatch(settingAppNetwork(NetworkUpdateType.Wallet, chainId.toString()))  
+
+        chainId && dispatch(settingAppNetwork(NetworkUpdateType.Wallet, chainId.toString()))
       }
     }
 
@@ -116,9 +127,9 @@ const useProviderConnect = (
   // UseEffect for trying login after fullfilled app chain id and connector
    useEffect(() => {
       const tryLoginAfterSwitch = async () => {
-        currentConnector 
-        && appChainID 
-        && ((appChainID === BSC_CHAIN_ID && binanceAvailable) || appChainID === ETH_CHAIN_ID) 
+        currentConnector
+        && appChainID
+        && ((appChainID === BSC_CHAIN_ID && binanceAvailable) || appChainID === ETH_CHAIN_ID)
         && await tryActivate(currentConnector, appChainID, walletName[walletName.length - 1] as string);
       }
 
@@ -141,12 +152,12 @@ const useProviderConnect = (
     const handleProviderChosen = (name: string, connector: AbstractConnector) => {
       console.log('Wallet Connected: ', name);
       setCurrentConnector(connector);
-      walletName.indexOf(name) < 0 && setWalletName([...walletName, name]); 
+      walletName.indexOf(name) < 0 && setWalletName([...walletName, name]);
     }
 
   const switchNetwork = (appChainID: string, walletChainID: string) => {
     if (appChainID && walletChainID) {
-      Number(appChainID) !== Number(walletChainID) ? 
+      Number(appChainID) !== Number(walletChainID) ?
         setLoginError(`App network (${getAppNetworkName(appChainID)}) doesn't mach to network selected in wallet: ${ChainIdNameMapping[Number(walletChainID) as chainId]}.`) : setLoginError('');
       currentConnector && activate(currentConnector, undefined, true).catch(err =>
         console.log('Fail when switch between network:', err.message)
@@ -155,6 +166,10 @@ const useProviderConnect = (
 
     return;
   }
+
+
+
+
 
   const tryActivate = useCallback(async (connector: AbstractConnector, appChainID: string, wallet: string) => {
       try {
@@ -177,16 +192,33 @@ const useProviderConnect = (
             }
 
             await activate(connector, undefined, true)
-            .then(() => { 
+            .then(() => {
               dispatch(settingCurrentConnector(wallet));
               setWalletNameSuccess(wallet);
             })
-            .catch(error => {
+            .catch(async error => {
+
+
+
+
+
               if (error instanceof UnsupportedChainIdError) {
                 console.debug('Error when activate: ', error.message);
-                activate(connector);
+                disconnectWallet && dispatch(disconnectWallet());
+                setCurrentConnector(undefined);
+                setConnectWalletLoading(false);
+                setWalletName([]);
+                localStorage.removeItem('walletconnect');
+
+                await activate(connector);
+                const currentChainId = await connector?.getChainId();
+                // const b = connector?.supportedChainIds;
+
+                dispatch(alertFailure(`App network (${NETWORK_NAME_MAPPINGS[appChainID]}) doesn\'t mach to network selected in wallet: ${NETWORK_NAME_MAPPINGS[currentChainId]}. Please change network in wallet  or  change app network.`));
+
+                return;
               } else {
-                dispatch(disconnectWallet());
+                disconnectWallet && dispatch(disconnectWallet());
                 setConnectWalletLoading(false);
                 setWalletName(walletName.filter(name => wallet !== name));
                 console.debug('Error when try to activate: ', error.message);
@@ -211,24 +243,26 @@ const useProviderConnect = (
 
         dispatch(
           connectWalletSuccess(
-            walletNameSuccess, 
-            [connectedAccount], 
-            { 
-              [connectedAccount]: new BigNumber(accountBalance._hex).div(new BigNumber(10).pow(18)).toFixed(5) 
+            walletNameSuccess,
+            [connectedAccount],
+            {
+              [connectedAccount]: new BigNumber(accountBalance._hex).div(new BigNumber(10).pow(18)).toFixed(5)
             }
           )
         );
 
         setConnectWalletLoading(false);
-      } 
-    } 
+      }
+    }
     getAccountDetails();
   }, [walletNameSuccess, connectedAccount, appChainID, walletChainID]);
 
   const handleConnectorDisconnect = useCallback(() => {
-    dispatch(disconnectWallet());
+    disconnectWallet && dispatch(disconnectWallet());
     dispatch(settingCurrentConnector(undefined));
     dispatch(settingAppNetwork(NetworkUpdateType.Wallet, undefined));
+
+    localStorage.removeItem("walletconnect");
 
     deactivate();
     setAccount(undefined);
@@ -238,12 +272,12 @@ const useProviderConnect = (
     setConnectWalletLoading(false);
     setLoginError('');
   }, []);
-  
+
   return {
     handleProviderChosen,
     setWalletName,
     walletName,
-    connectWalletLoading, 
+    connectWalletLoading,
     walletNameSuccess,
     loginError,
     currentConnector,

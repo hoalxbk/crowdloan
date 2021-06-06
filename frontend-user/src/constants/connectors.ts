@@ -1,5 +1,5 @@
 import {BscConnector} from '@binance-chain/bsc-connector'
-import {WalletConnectConnector} from '@web3-react/walletconnect-connector'
+import {URI_AVAILABLE, WalletConnectConnector} from '@web3-react/walletconnect-connector'
 import {WalletLinkConnector} from '@web3-react/walletlink-connector'
 import {InjectedConnector} from '@web3-react/injected-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
@@ -145,8 +145,8 @@ export const SUPPORTED_WALLETS_BSC: { [key: string]: WalletInfo } = {
     description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
     disableIcon: '/images/wallet-connect-disabled.svg',
     href: null,
-    mobile: true,
-    mobileOnly: true,
+    // mobile: true,
+    // mobileOnly: true,
     // deepLink: '',
   },
 }

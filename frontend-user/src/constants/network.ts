@@ -42,6 +42,16 @@ export const ChainIdNameMapping: { [key in ChainId]: string }  = {
   [ChainId.BSC_TESTNET]: 'BSC Testnet'
 }
 
+export const NETWORK_NAME_MAPPINGS: any = {
+  '1': 'Mainnet',
+  '3': 'Ropsten',
+  '5': 'Goerli',
+  '42': 'Kovan',
+  '4': 'Rinkeby',
+  '56': 'BSC Mainnet',
+  '97': 'BSC Testnet'
+};
+
 export interface NetworkInfo {
   name: string;
   id?: string | undefined;
