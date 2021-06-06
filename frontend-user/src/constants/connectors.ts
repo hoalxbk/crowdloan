@@ -47,7 +47,7 @@ export const walletConnect = new WalletConnectConnector({
 export const walletConnectBsc = new WalletConnectConnector({
   // rpc: {[Number(ETH_CHAIN_ID)]: NETWORK_URL as string},
   // rpc: { 56: 'https://bsc-dataseed.binance.org/' },
-  rpc: { [Number(BSC_CHAIN_ID)]: NETWORK_BSC_URL as string },
+  rpc: { [Number(BSC_CHAIN_ID)]: 'https://bsc-dataseed.binance.org/' },
   bridge: 'https://bridge.walletconnect.org',
   qrcode: true,
   pollingInterval: 10000
@@ -79,6 +79,7 @@ export enum ConnectorNames {
   MetaMask = "MetaMask",
   BSC = "BSC Wallet",
   WalletConnect = "WalletConnect",
+  WalletConnectBsc = "WalletConnect",
   WalletLinkConnect = "Coinbase Wallet",
   Fortmatic = 'Fortmatic'
 }
@@ -104,15 +105,6 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
     disableIcon: '/images/wallet-connect-disabled.svg',
     href: null,
     mobile: true
-  },
-  WALLET_CONNECT_BSC: {
-    connector: walletConnectBsc,
-    name: ConnectorNames.WalletConnect,
-    icon: '/images/WalletConnect.svg',
-    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
-    disableIcon: '/images/wallet-connect-disabled.svg',
-    href: null,
-    mobile: true,
   },
   BSC_WALLET: {
     connector: bscConnector,
@@ -140,6 +132,21 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   //   href: null,
   //   mobile: true
   // },
+};
+
+export const SUPPORTED_WALLETS_BSC: { [key: string]: WalletInfo } = {
+  METAMASK: SUPPORTED_WALLETS.METAMASK,
+  BSC_WALLET: SUPPORTED_WALLETS.BSC_WALLET,
+  WALLET_CONNECT: {
+    connector: walletConnectBsc,
+    name: ConnectorNames.WalletConnect,
+    icon: '/images/WalletConnect.svg',
+    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+    disableIcon: '/images/wallet-connect-disabled.svg',
+    href: null,
+    mobile: true,
+    mobileOnly: true,
+  },
 }
 
 
@@ -148,15 +155,12 @@ export const connectorsByName: { [key in ConnectorNames]: AbstractConnector } = 
   [ConnectorNames.BSC]: bscConnector,
   [ConnectorNames.Fortmatic]: fortmatic,
   [ConnectorNames.WalletConnect]: walletConnect,
+  [ConnectorNames.WalletConnectBsc]: walletConnectBsc,
   [ConnectorNames.WalletLinkConnect]: walletLinkConnect,
 }
 
 export const connectorsSupportByNetwork: {[key: string]: { [key:string]: WalletInfo }  } = {
   [APP_NETWORKS_NAME.METAMASK]: SUPPORTED_WALLETS,
-  [APP_NETWORKS_NAME.BSC]: Object.assign({}, {
-    METAMASK: SUPPORTED_WALLETS.METAMASK,
-    BSC_WALLET: SUPPORTED_WALLETS.BSC_WALLET,
-    WALLET_CONNECT: SUPPORTED_WALLETS.WALLET_CONNECT_BSC,
-  })
-}
+  [APP_NETWORKS_NAME.BSC]: SUPPORTED_WALLETS_BSC,
+};
 
