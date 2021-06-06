@@ -99,9 +99,25 @@ const ManageTier = (props: any) => {
   }
 
   return (
-    <>
-      <div className={styles.contentManageTier}>
-        
+    <div className={`${classNamePrefix}__component`}>
+      <div className={styles.content}>
+        <div className={styles.manageTier}>
+          <h2 className={styles.title}>Wallet balance</h2>
+        </div>
+        <div className={styles.walletBalance}>
+          <div className={styles.tableHead}>
+            <div className="group">
+              <span>Currency</span>
+              <span>Available Balance</span>
+              <span>Staked</span>
+            </div>
+          </div>
+          <div className={styles.tableBody}>
+            {renderToken('PKF', balance?.pkf, userInfo?.pkfStaked)}
+            {renderToken(CONVERSION_RATE[0]?.symbol, balance?.uni, userInfo?.uniStaked)}
+            {renderToken(CONVERSION_RATE[1]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
+          </div>
+        </div>
         <div className="button-area">
           <button
             className={`btn btn-lock ${(emailVerified == USER_STATUS.UNVERIFIED || wrongChain || !isAuth || ETH_CHAIN_ID !== appChainID) ? 'disabled' : ''}`}
@@ -118,35 +134,6 @@ const ManageTier = (props: any) => {
             Unstake
           </button>
         </div>
-
-        <ModalDeposit
-          setOpenModalDeposit={setOpenModalDeposit}
-          setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
-          listTokenDetails={listTokenDetails}
-          open={openModalDeposit}
-          totalStaked={total}
-        />
-        <ModalWithdraw
-          setOpenModalWithdraw={setOpenModalWithdraw}
-          setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
-          listTokenDetails={listTokenDetails}
-          open={openModalWithdraw}
-          totalStaked={total}
-        />
-        <div className={styles.walletBalance}>
-          <div className={styles.tableHead}>
-            <div className="group">
-              <span>Currency</span>
-              <span>Available Balance</span>
-              <span>Staked</span>
-            </div>
-          </div>
-          <div className={styles.tableBody}>
-            {renderToken('PKF', balance?.pkf, userInfo?.pkfStaked)}
-            {renderToken(CONVERSION_RATE[0]?.symbol, balance?.uni, userInfo?.uniStaked)}
-            {renderToken(CONVERSION_RATE[1]?.symbol, balance?.mantra, userInfo?.mantraStaked)}
-          </div>
-        </div>
         {ETH_CHAIN_ID !== appChainID && <p className={styles.noteNetwork}>Note: To change tier, please switch to ETH network to do Stake/Unstake</p>}
         {/* <p className={styles.balance}>
           {(wrongChain || !isAuth) && <AnimatedNumber
@@ -160,6 +147,20 @@ const ManageTier = (props: any) => {
           &nbsp;{tokenDetails?.symbol}
         </p> */}
       </div>
+      <ModalDeposit
+        setOpenModalDeposit={setOpenModalDeposit}
+        setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
+        listTokenDetails={listTokenDetails}
+        open={openModalDeposit}
+        totalStaked={total}
+      />
+      <ModalWithdraw
+        setOpenModalWithdraw={setOpenModalWithdraw}
+        setOpenModalTransactionSubmitting={setOpenModalTransactionSubmitting}
+        listTokenDetails={listTokenDetails}
+        open={openModalWithdraw}
+        totalStaked={total}
+      />
 
       <Dialog
         open={openModalTransactionSubmitting}
@@ -170,7 +171,7 @@ const ManageTier = (props: any) => {
         className={commonStyles.loadingTransaction}
       >
         <DialogContent className="content">
-          <img src={iconClose} onClick={() => setOpenModalTransactionSubmitting(false)} alt=""/>
+          <img src={iconClose} onClick={() => setOpenModalTransactionSubmitting(false)}/>
           <span className={commonStyles.nnb1824d}>Transaction Submitting</span>
           <CircularProgress color="primary" />
         </DialogContent>
@@ -181,7 +182,7 @@ const ManageTier = (props: any) => {
         setTransactionHashes={setTransactionHashes}
         open={transactionHashes.length > 0}
       />}
-    </>
+    </div>
   );
 };
 

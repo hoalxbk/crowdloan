@@ -80,32 +80,32 @@ export const CONVERSION_RATE = [
 
 export const TIERS = [
   {
-    name: 'Start',
+    name: '-',
     icon: '/images/icons/rocket.svg',
-    bg: '/images/icons/rocket_bg.svg',
-    bgColor: '#B8B8FF',
+    bg: '/images/icons/red-kite-bg.png',
+    bgColor: '#8D8DCC',
   },
   {
     name: 'Dove',
-    bg: '/images/icons/bronze-medal_bg.svg',
-    bgColor: '#8181D8',
+    bg: '/images/icons/hawk-bg.png',
+    bgColor: '#5252AD',
     icon: '/images/icons/bronze-medal.svg'
   },
   {
     name: 'Hawk',
-    bg: '/images/icons/silver-medal_bg.svg',
-    bgColor: '#6F44E9',
+    bg: '/images/icons/falcon-bg.png',
+    bgColor: '#3F3FA3',
     icon: '/images/icons/silver-medal.svg'
   },
   {
     name: 'Eagle',
-    bg: '/images/icons/golden-medal_bg.svg',
-    bgColor: '#4646FF',
+    bg: '/images/icons/eagle-bg.png',
+    bgColor: '#1B1BA3',
     icon: '/images/icons/golden-medal.svg'
   },
   {
     name: 'Phoenix',
-    bg: '/images/icons/diamond_bg.svg',
+    bg: '/images/icons/phoenix-bg.png',
     bgColor: '',
     icon: '/images/icons/diamond.svg'
   }
