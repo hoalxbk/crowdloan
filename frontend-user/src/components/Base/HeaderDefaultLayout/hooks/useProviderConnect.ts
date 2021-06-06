@@ -23,7 +23,6 @@ import getAccountBalance from '../../../../utils/getAccountBalance';
 
 import { settingAppNetwork, NetworkUpdateType, settingCurrentConnector } from '../../../../store/actions/appNetwork';
 import {alertFailure} from "../../../../store/actions/alert";
-import {AppContext} from "../../../../AppContext";
 
 const useProviderConnect = (
   setOpenConnectDialog?: Dispatch<SetStateAction<boolean>>,
@@ -203,13 +202,13 @@ const useProviderConnect = (
 
               if (error instanceof UnsupportedChainIdError) {
                 console.debug('Error when activate: ', error.message);
-                disconnectWallet && dispatch(disconnectWallet());
+                dispatch(disconnectWallet());
                 setCurrentConnector(undefined);
                 setConnectWalletLoading(false);
                 setWalletName([]);
                 localStorage.removeItem('walletconnect');
 
-                await activate(connector);
+                // await activate(connector);
                 const currentChainId = await connector?.getChainId();
                 // const b = connector?.supportedChainIds;
 
@@ -217,7 +216,7 @@ const useProviderConnect = (
 
                 return;
               } else {
-                disconnectWallet && dispatch(disconnectWallet());
+                dispatch(disconnectWallet());
                 setConnectWalletLoading(false);
                 setWalletName(walletName.filter(name => wallet !== name));
                 console.debug('Error when try to activate: ', error.message);
@@ -257,7 +256,7 @@ const useProviderConnect = (
   }, [walletNameSuccess, connectedAccount, appChainID, walletChainID]);
 
   const handleConnectorDisconnect = useCallback(() => {
-    disconnectWallet && dispatch(disconnectWallet());
+    dispatch(disconnectWallet());
     dispatch(settingCurrentConnector(undefined));
     dispatch(settingAppNetwork(NetworkUpdateType.Wallet, undefined));
 
