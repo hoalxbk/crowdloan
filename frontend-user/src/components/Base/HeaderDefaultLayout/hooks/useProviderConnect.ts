@@ -196,10 +196,6 @@ const useProviderConnect = (
             })
             .catch(async error => {
 
-
-
-
-
               if (error instanceof UnsupportedChainIdError) {
                 console.debug('Error when activate: ', error.message);
                 dispatch(disconnectWallet());
