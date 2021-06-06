@@ -458,7 +458,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
                 : '0'
             )} {currencyName}.
           </p>
-          {currentUserTier && currentUserTier.start_time && currentUserTier.end_time && (
+
+          {!!currentUserTier && !!currentUserTier.start_time && !!currentUserTier.end_time && (
             <p className={styles.buyTokenFormTitle}>
               You can buy from {' '}
               { convertUnixTimeToDateTime(currentUserTier.start_time, 1) }

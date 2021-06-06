@@ -10,7 +10,7 @@ import {getProgressWithPools} from "../../../utils/campaign";
 
 const DECIMAL_PLACES = 8;
 
-const useTokenSoldProgress = (poolAddress: string | undefined, totalTokens: number | undefined, networkAvailable: string | undefined) => {
+const useTokenSoldProgress = (poolAddress: string | undefined, totalTokens: number | undefined, networkAvailable: string | undefined, poolDetails: any = {}) => {
   const [soldProgress, setSoldProgress] = useState<string>("0");
   const [tokenSold, setTokenSold] = useState<string>("0");
 
@@ -35,7 +35,8 @@ const useTokenSoldProgress = (poolAddress: string | undefined, totalTokens: numb
           let tokensSoldCal = new BigNumber(tokensSold).div(new BigNumber(10).pow(18)).toFixed();
           let { progress, tokenSold, totalSoldCoin } = getProgressWithPools({
             token_sold: tokensSoldCal,
-            total_sold_coin: totalTokens
+            total_sold_coin: totalTokens,
+            finish_time: poolDetails.finish_time || poolDetails.endBuyTime,
           });
 
           setTokenSold(new BigNumber(tokenSold).toFixed(DECIMAL_PLACES));

@@ -62,7 +62,7 @@ const LotteryWinners: React.FC<LotteryWinnersProps> = (props: LotteryWinnersProp
 
   return (
     <div className={styles.LotteryWinners}>
-      <p className={styles.LotteryWinnersMessage} style={{ marginTop: 15 }}>There are {totalWinners} winners. Please check your individual caps to see how much you can buy.</p>
+      <p className={styles.LotteryWinnersMessage} style={{ marginTop: 15 }}>There are {totalWinners || 0} winners. Please check your individual caps to see how much you can buy.</p>
 
       {/*{*/}
       {/*  searchedWinners.length > 0 && verifiedEmail && (*/}

@@ -1,14 +1,16 @@
 import {BscConnector} from '@binance-chain/bsc-connector'
-import {WalletConnectConnector} from '@web3-react/walletconnect-connector'
+import {URI_AVAILABLE, WalletConnectConnector} from '@web3-react/walletconnect-connector'
 import {WalletLinkConnector} from '@web3-react/walletlink-connector'
 import {InjectedConnector} from '@web3-react/injected-connector'
 import { AbstractConnector } from '@web3-react/abstract-connector'
 import {FortmaticConnector} from '../connectors/Fortmatic';
-import {ETH_CHAIN_ID} from './network';
+import {BSC_CHAIN_ID, ETH_CHAIN_ID, NETWORK_BSC_URL} from './network';
 
 import {FORMATIC_KEY, NETWORK_URL, APP_NETWORKS_NAME } from './network';
 
 const METAMASK_DEEPLINK = process.env.REACT_APP_METAMASK_DEEPLINK;
+console.log('METAMASK_DEEPLINK', METAMASK_DEEPLINK);
+console.log('FORMATIC_KEY, NETWORK_URL, APP_NETWORKS_NAME', FORMATIC_KEY, NETWORK_URL, APP_NETWORKS_NAME);
 
 export const bscConnector = new BscConnector({}) as any;
 export const injected = new InjectedConnector({});
@@ -44,6 +46,15 @@ export const walletConnect = new WalletConnectConnector({
   pollingInterval: 10000
 });
 
+export const walletConnectBsc = new WalletConnectConnector({
+  // rpc: { 56: 'https://bsc-dataseed.binance.org/' },
+  rpc: { [Number(BSC_CHAIN_ID)]: 'https://bsc-dataseed.binance.org/' },
+  bridge: 'https://bridge.walletconnect.org',
+  qrcode: true,
+  pollingInterval: 10000
+});
+
+
 // mainnet only
 export const fortmatic = new FortmaticConnector({
   apiKey: FORMATIC_KEY ?? '',
@@ -69,6 +80,7 @@ export enum ConnectorNames {
   MetaMask = "MetaMask",
   BSC = "BSC Wallet",
   WalletConnect = "WalletConnect",
+  WalletConnectBsc = "WalletConnect",
   WalletLinkConnect = "Coinbase Wallet",
   Fortmatic = 'Fortmatic'
 }
@@ -121,6 +133,19 @@ export const SUPPORTED_WALLETS: { [key: string]: WalletInfo } = {
   //   href: null,
   //   mobile: true
   // },
+};
+
+export const SUPPORTED_WALLETS_BSC: { [key: string]: WalletInfo } = {
+  METAMASK: SUPPORTED_WALLETS.METAMASK,
+  BSC_WALLET: SUPPORTED_WALLETS.BSC_WALLET,
+  WALLET_CONNECT: {
+    connector: walletConnectBsc,
+    name: ConnectorNames.WalletConnect,
+    icon: '/images/WalletConnect.svg',
+    description: 'Connect to Trust Wallet, Rainbow Wallet and more...',
+    disableIcon: '/images/wallet-connect-disabled.svg',
+    href: null,
+  },
 }
 
 
@@ -129,14 +154,12 @@ export const connectorsByName: { [key in ConnectorNames]: AbstractConnector } = 
   [ConnectorNames.BSC]: bscConnector,
   [ConnectorNames.Fortmatic]: fortmatic,
   [ConnectorNames.WalletConnect]: walletConnect,
+  [ConnectorNames.WalletConnectBsc]: walletConnectBsc,
   [ConnectorNames.WalletLinkConnect]: walletLinkConnect,
 }
 
 export const connectorsSupportByNetwork: {[key: string]: { [key:string]: WalletInfo }  } = {
   [APP_NETWORKS_NAME.METAMASK]: SUPPORTED_WALLETS,
-  [APP_NETWORKS_NAME.BSC]: Object.assign({}, {
-    METAMASK: SUPPORTED_WALLETS.METAMASK,
-    BSC_WALLET: SUPPORTED_WALLETS.BSC_WALLET
-  })
-}
+  [APP_NETWORKS_NAME.BSC]: SUPPORTED_WALLETS_BSC,
+};
 

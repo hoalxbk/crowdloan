@@ -42,6 +42,16 @@ export const ChainIdNameMapping: { [key in ChainId]: string }  = {
   [ChainId.BSC_TESTNET]: 'BSC Testnet'
 }
 
+export const NETWORK_NAME_MAPPINGS: any = {
+  '1': 'Mainnet',
+  '3': 'Ropsten',
+  '5': 'Goerli',
+  '42': 'Kovan',
+  '4': 'Rinkeby',
+  '56': 'BSC Mainnet',
+  '97': 'BSC Testnet'
+};
+
 export interface NetworkInfo {
   name: string;
   id?: string | undefined;
@@ -73,6 +83,7 @@ export const APP_NETWORKS: {[key in APP_NETWORKS_NAME]: NetworkInfo } = {
 
 export const APP_NETWORKS_ID: (string | undefined)[] = [ETH_CHAIN_ID, BSC_CHAIN_ID];
 export const NETWORK_URL = process.env.REACT_APP_NETWORK_URL;
+export const NETWORK_BSC_URL = process.env.REACT_APP_BSC_RPC_URL;
 export const FORMATIC_KEY = process.env.REACT_APP_FORMATIC_KEY;
 export const FORMATIC_KEY_TEST = process.env.REACT_APP_FORMATIC_KEY_TEST;
 
