@@ -9,6 +9,8 @@ import {BSC_CHAIN_ID, ETH_CHAIN_ID, NETWORK_BSC_URL} from './network';
 import {FORMATIC_KEY, NETWORK_URL, APP_NETWORKS_NAME } from './network';
 
 const METAMASK_DEEPLINK = process.env.REACT_APP_METAMASK_DEEPLINK;
+console.log('METAMASK_DEEPLINK', METAMASK_DEEPLINK);
+console.log('FORMATIC_KEY, NETWORK_URL, APP_NETWORKS_NAME', FORMATIC_KEY, NETWORK_URL, APP_NETWORKS_NAME);
 
 export const bscConnector = new BscConnector({}) as any;
 export const injected = new InjectedConnector({});
@@ -45,7 +47,6 @@ export const walletConnect = new WalletConnectConnector({
 });
 
 export const walletConnectBsc = new WalletConnectConnector({
-  // rpc: {[Number(ETH_CHAIN_ID)]: NETWORK_URL as string},
   // rpc: { 56: 'https://bsc-dataseed.binance.org/' },
   rpc: { [Number(BSC_CHAIN_ID)]: 'https://bsc-dataseed.binance.org/' },
   bridge: 'https://bridge.walletconnect.org',
@@ -146,6 +147,7 @@ export const SUPPORTED_WALLETS_BSC: { [key: string]: WalletInfo } = {
     href: null,
     mobile: true,
     mobileOnly: true,
+    // deepLink: '',
   },
 }
 
