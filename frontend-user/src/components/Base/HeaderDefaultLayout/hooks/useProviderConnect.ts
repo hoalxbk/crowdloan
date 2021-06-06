@@ -33,7 +33,6 @@ const useProviderConnect = (
   const dispatch = useDispatch();
 
   const { appChainID, walletChainID } = useTypedSelector(state => state.appNetwork).data;
-  const { logout: disconnectWallet } = useContext(AppContext);
 
   const [account, setAccount] = useState<string | undefined>(undefined);
 
