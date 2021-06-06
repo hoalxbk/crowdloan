@@ -19,7 +19,7 @@ function BuyTokens(props: any) {
     <>
       <div className={classes.formControl}>
 
-      <label className={classes.formControlLabel}>Start Join Pool Time</label>
+      <label className={classes.formControlLabel}>Buy Remain Tokens</label>
       {acceptCurrency !== ACCEPT_CURRENCY.ETH &&
         <ApproveButton
           poolDetail={poolDetail}

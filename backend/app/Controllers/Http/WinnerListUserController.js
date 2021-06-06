@@ -20,27 +20,27 @@ class WinnerListUserController {
     const pageSize = request.input('limit') ? request.input('limit') : 10;
     console.log(`[getWinnerListPublic] - start getWinnerList with campaign_id ${campaign_id} and page ${page} and pageSize ${pageSize}`);
     try {
-      // let campaign = null;
-      // // Try get Campaign detail from Redis Cache
-      // if (await RedisUtils.checkExistRedisPoolDetail(campaign_id)) {
-      //   let cachedPoolDetail = await RedisUtils.getRedisPoolDetail(campaign_id);
-      //   console.log('[getWinnerListPublic] - Exist cache data Public Pool Detail: ', cachedPoolDetail);
-      //   if (cachedPoolDetail) {
-      //     campaign = JSON.parse(cachedPoolDetail);
-      //   }
-      // } else {
-      //   campaign = await CampaignModel.query().where('id', campaign_id).first();
-      //   console.log('[getWinnerListPublic] - Don\'t exist cache data Public Pool Detail. Getting from DB. ');
-      //   console.log(JSON.stringify(campaign));
-      // }
-      // if (!campaign) {
-      //   return HelperUtils.responseNotFound('Pool not found');
-      // }
-      //
-      // // console.log('[getWinnerListPublic] - Winner List Status:', campaign.public_winner_status, campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE);
-      // if (campaign && (campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
-      //   return HelperUtils.responseSuccess([]);
-      // }
+      let campaign = null;
+      // Try get Campaign detail from Redis Cache
+      if (await RedisUtils.checkExistRedisPoolDetail(campaign_id)) {
+        let cachedPoolDetail = await RedisUtils.getRedisPoolDetail(campaign_id);
+        console.log('[getWinnerListPublic] - Exist cache data Public Pool Detail: ', cachedPoolDetail);
+        if (cachedPoolDetail) {
+          campaign = JSON.parse(cachedPoolDetail);
+        }
+      } else {
+        campaign = await CampaignModel.query().where('id', campaign_id).first();
+        console.log('[getWinnerListPublic] - Don\'t exist cache data Public Pool Detail. Getting from DB. ');
+        console.log(JSON.stringify(campaign));
+      }
+      if (!campaign) {
+        return HelperUtils.responseNotFound('Pool not found');
+      }
+
+      console.log('[getWinnerListPublic] - Winner List Status:', campaign.public_winner_status, campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE);
+      if (campaign && (campaign.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
+        return HelperUtils.responseSuccess([]);
+      }
 
       console.log('[getWinnerListPublic] - Get Winner List');
       // get from redis cached
@@ -261,13 +261,13 @@ class WinnerListUserController {
       const campaign_id = params.campaignId;
       const wallet_address = inputParams.wallet_address;
 
-      // // Check Public Winner Status
-      // const poolService = new PoolService;
-      // const poolExist = await poolService.getPoolById(campaign_id);
-      // console.log('[checkExistWinner] - poolExist.public_winner_status:', poolExist && poolExist.public_winner_status);
-      // if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
-      //   return HelperUtils.responseNotFound('User not exist in Winner User List');
-      // }
+      // Check Public Winner Status
+      const poolService = new PoolService;
+      const poolExist = await poolService.getPoolById(campaign_id);
+      console.log('[checkExistWinner] - poolExist.public_winner_status:', poolExist && poolExist.public_winner_status);
+      if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
+        return HelperUtils.responseNotFound('User not exist in Winner User List');
+      }
 
       const winnerService = new WinnerListService();
       let existRecord = await winnerService.buildQueryBuilder({
@@ -303,13 +303,13 @@ class WinnerListUserController {
       const campaign_id = params.campaignId;
       const winnerService = new WinnerListService();
 
-      // // Check Public Winner Status
-      // const poolService = new PoolService;
-      // const poolExist = await poolService.getPoolById(campaign_id);
-      // console.log('[checkPickedWinner] - poolExist.public_winner_status:', poolExist?.public_winner_status);
-      // if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
-      //   return HelperUtils.responseSuccess(false, 'The campaign has not yet chosen a winner');
-      // }
+      // Check Public Winner Status
+      const poolService = new PoolService;
+      const poolExist = await poolService.getPoolById(campaign_id);
+      console.log('[checkPickedWinner] - poolExist.public_winner_status:', (poolExist && poolExist.public_winner_status));
+      if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
+        return HelperUtils.responseSuccess(false, 'The campaign has not yet chosen a winner');
+      }
 
       // TODO: Add to Cache
       let existRecord = await winnerService.buildQueryBuilder({ campaign_id }).first();
