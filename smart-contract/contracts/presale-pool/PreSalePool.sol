@@ -90,6 +90,7 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     event TokenClaimed(address user, uint256 amount);
     event RefundedIcoToken(address wallet, uint256 amount);
     event PoolStatsChanged();
+    event TokenChanged(address token);
 
     // -----------------------------------------
     // Constructor
@@ -256,6 +257,12 @@ contract PreSalePool is Ownable, ReentrancyGuard, Pausable, RedKiteWhitelist {
     function setPoolExtentions(bool _whitelist) external onlyOwner() {
         useWhitelist = _whitelist;
         emit PoolStatsChanged();
+    }
+
+    function changeSaleToken(address _token) external onlyOwner() {
+        require(_token != address(0));
+        token = IERC20(_token);
+        emit TokenChanged(_token);
     }
 
     function buyTokenByEtherWithPermission(
