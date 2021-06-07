@@ -33,6 +33,17 @@ class TierService {
   async findAllByFilter(filterParams) {
     return await this.buildQueryBuilder(filterParams).fetch();
   }
+
+  formatDataPrivateWinner(data, isPublicWinner) {
+    const formattedData = {
+      min_buy: isPublicWinner ? data.min_buy : 0,
+      max_buy: isPublicWinner ? data.max_buy : 0,
+      start_time: isPublicWinner ? data.start_time : 0,
+      end_time: isPublicWinner ? data.end_time : 0,
+      level: data.level,
+    };
+    return formattedData;
+  }
 }
 
 module.exports = TierService

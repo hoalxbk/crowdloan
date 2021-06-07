@@ -180,7 +180,8 @@ class PickRandomWinnerJob2 {
               wallet_address: snapshot.wallet_address,
               campaign_id: data.campaign_id,
               level: snapshot.level,
-              lottery_ticket: 1 + ((tier.ticket_allow - count) * snapshot.pkf_balance_with_weight_rate / totalPKF)
+              // lottery_ticket: 1 + ((tier.ticket_allow - count) * snapshot.pkf_balance_with_weight_rate / totalPKF)
+              lottery_ticket: (tier.ticket_allow * snapshot.pkf_balance_with_weight_rate / totalPKF)
             });
             return winnerModel;
           });
