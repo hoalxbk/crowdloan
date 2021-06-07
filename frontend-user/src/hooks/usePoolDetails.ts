@@ -47,6 +47,7 @@ export type PoolDetails = {
   displayPriceRate: any;
   priceUsdt: string;
   isPrivate: string;
+  campaignClaimConfig: any;
 }
 
 export type PoolDetailsReturnType ={
