@@ -56,9 +56,9 @@ const useUserTier = (address: string, networkAvailable: string): UserTier => {
             networkAvailable === 'eth'
           );
           const totalUnstakedResult = await contract?.methods.getUnstake(address).call();
-          const totalUnstaked = (new BigNumber(totalUnstakedResult.amount)).div(new BigNumber(10**(tokenDetails?.decimals || 0)))
+          const totalUnstaked = 0;// (new BigNumber(totalUnstakedResult.amount)).div(new BigNumber(10**(tokenDetails?.decimals || 0)))
           const totalStaked = new BigNumber(userInfo.totalStaked);
-          let balance = await contract?.methods.balanceOf(address).call();
+          let balance = new BigNumber(0); // await contract?.methods.balanceOf(address).call();
           balance = (new BigNumber(balance).div(Math.pow(10, 18)))
           console.log('getTotalUnstaked balance', totalUnstakedResult, totalUnstaked, balance);
 

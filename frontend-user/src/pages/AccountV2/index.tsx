@@ -49,7 +49,7 @@ const AccountV2 = (props: any) => {
   const { currentTier, totalStaked, totalUnstaked, total } = useUserTier(connectedAccount || '', 'eth')
 
   useEffect(() => {
-    if (isAuth && connectedAccount && !wrongChain) { 
+    if (isAuth && connectedAccount && !wrongChain) {
       dispatch(getBalance(connectedAccount));
       dispatch(getUserTier(connectedAccount));
       dispatch(getAllowance(connectedAccount));
