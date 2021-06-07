@@ -177,7 +177,10 @@ const getUserTierSmart = async (wallet_address) => {
   // get 4 tiers
   const tiers = receivedData[0].slice(0, 4);
   // calc pfk equal
-  const pkfEq = new BigNumber(receivedData[1]).plus(new BigNumber(receivedData[2].amount).plus(new BigNumber(receivedData[3])).multipliedBy(sPkfRate));
+  const pkfEq = new BigNumber(receivedData[1]);
+  // Remove sPKF Stake
+  // .plus(new BigNumber(receivedData[2].amount).plus(new BigNumber(receivedData[3])).multipliedBy(sPkfRate));
+
   let userTier = 0;
   tiers.map((pkfRequire, index) => {
     if (pkfEq.gte(pkfRequire)) {
