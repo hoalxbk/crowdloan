@@ -8,7 +8,7 @@ const useStyles = makeStyles((theme: any) => {
       '& button:first-child': {
         marginRight: 10
       },
-      
+
       '& button': {
         padding: '0 25px',
         width: '130px',
@@ -122,7 +122,7 @@ const useStyles = makeStyles((theme: any) => {
     purchasableCurrencyIcon: {
       width: 30,
       height: 30,
-      marginRight: 7 
+      marginRight: 7
     },
     purchasableCurrencyMax: {
       padding: '5px 10px',
@@ -153,7 +153,16 @@ const useStyles = makeStyles((theme: any) => {
       fontSize: 16,
       color: '#8db4ff',
       fontFamily: 'DM Sans'
-    }
+    },
+    allowcationWrap: {
+
+    },
+    allowcationTitle: {
+      minWidth: 130,
+      display: 'inline-block',
+    },
+    allowcationContent: {
+    },
   };
 });
 

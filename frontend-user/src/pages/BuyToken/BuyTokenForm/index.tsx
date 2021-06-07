@@ -446,27 +446,45 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
       {
         <>
           <p className={styles.buyTokenFormTitle}>
-            You have {' '}
-            {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {currencyName}
-            {' '}  BOUGHT from {' '}
-            {numberWithCommas(new BigNumber(maximumBuy).toFixed())} {currencyName}
-            {' '} available for your TIER.
-            {' '} The remaining amount is {' '}
-            {numberWithCommas(
-              new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).gt(0)
-                ? new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()
-                : '0'
-            )} {currencyName}.
-          </p>
+            <div className={styles.allowcationWrap}>
+              <span className={styles.allowcationTitle}>Max Allocation: </span>
+              <span className={styles.allocationContent}>
+                {numberWithCommas(new BigNumber(maximumBuy).toFixed())} {currencyName}
+              </span>
+            </div>
 
-          {!!currentUserTier && !!currentUserTier.start_time && !!currentUserTier.end_time && (
-            <p className={styles.buyTokenFormTitle}>
-              You can buy from {' '}
-              { convertUnixTimeToDateTime(currentUserTier.start_time, 1) }
-              {' '} to {' '}
-              { convertUnixTimeToDateTime(currentUserTier.end_time, 1) }
-            </p>
-          )}
+            <div className={styles.allowcationWrap}>
+              <span className={styles.allowcationTitle}>Have Bought: </span>
+              <span className={styles.allocationContent}>
+                {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {currencyName}
+              </span>
+            </div>
+
+            <div className={styles.allowcationWrap}>
+              <span className={styles.allowcationTitle}>Remaining: </span>
+              <span className={styles.allocationContent}>
+                {numberWithCommas(
+                  new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).gt(0)
+                    ? new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()
+                    : '0'
+                )} {currencyName}
+              </span>
+            </div>
+
+            <div className={styles.allowcationWrap}>
+              <span className={styles.allowcationTitle}>Tier Buy Time: </span>
+              <span className={styles.allocationContent}>
+              {!!currentUserTier && !!currentUserTier.start_time && !!currentUserTier.end_time &&
+                <>
+                  { convertUnixTimeToDateTime(currentUserTier.start_time, 1) }
+                  {' '} to {' '}
+                  { convertUnixTimeToDateTime(currentUserTier.end_time, 1) }
+                </>
+              }
+              </span>
+            </div>
+
+          </p>
         </>
       }
       <div className={styles.buyTokenInputForm}>
