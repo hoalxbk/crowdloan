@@ -1,16 +1,15 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
-import { HashLoader } from "react-spinners";
-import { useParams, useLocation } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { Link } from 'react-router-dom';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
+import {HashLoader} from "react-spinners";
+import {Link, useLocation, useParams} from 'react-router-dom';
+import {useDispatch} from 'react-redux';
 //@ts-ignore
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import BigNumber from 'bignumber.js';
 import Tooltip from '@material-ui/core/Tooltip';
-import withWidth, { isWidthUp, isWidthDown } from '@material-ui/core/withWidth';
+import withWidth, {isWidthDown, isWidthUp} from '@material-ui/core/withWidth';
 
-import { useTypedSelector } from '../../hooks/useTypedSelector';
-import usePoolDetailsMapping, { PoolDetailKey, poolDetailKey } from './hooks/usePoolDetailsMapping';
+import {useTypedSelector} from '../../hooks/useTypedSelector';
+import usePoolDetailsMapping, {PoolDetailKey} from './hooks/usePoolDetailsMapping';
 import useAuth from '../../hooks/useAuth';
 import usePoolDetails from '../../hooks/usePoolDetails';
 import useTokenSoldProgress from './hooks/useTokenSoldProgress';
@@ -26,25 +25,22 @@ import BuyTokenForm from './BuyTokenForm';
 import Button from './Button';
 import StatusBar from './StatusBar';
 import Countdown from '../../components/Base/Countdown';
-import DefaultLayout  from '../../components/Layout/DefaultLayout';
-import { ETH_CHAIN_ID } from '../../constants/network';
+import DefaultLayout from '../../components/Layout/DefaultLayout';
+import {ETH_CHAIN_ID, NETWORK_BSC_NAME, NETWORK_ETH_NAME} from '../../constants/network';
+import {getPoolCountDown} from '../../utils/getPoolCountDown';
+import {getPoolStatus} from '../../utils/getPoolStatus';
+import {numberWithCommas} from '../../utils/formatNumber';
 
-import { NETWORK_ETH_NAME, NETWORK_BSC_NAME } from '../../constants/network';
-import { getPoolCountDown } from '../../utils/getPoolCountDown';
-import { getPoolStatus } from '../../utils/getPoolStatus';
-import { numberWithCommas } from '../../utils/formatNumber';
-
-import { sotaTiersActions } from '../../store/constants/sota-tiers';
+import {sotaTiersActions} from '../../store/constants/sota-tiers';
 
 import useStyles from './style';
-import { pushMessage } from '../../store/actions/message';
+import {pushMessage} from '../../store/actions/message';
 import {getIconCurrencyUsdt} from "../../utils/usdt";
-import ApplyWhitelistModal from "./ApplyWhitelistModal/ApplyWhitelistModal";
-import WhiteListGuideText from "./ApplyWhitelistModal/WhiteListGuideText";
-import {ACCEPT_CURRENCY, INSTRUCTION_WHITELIST_LINK, POOL_TYPE, TIER_LEVELS, WHITELIST_LINK} from "../../constants";
+import {POOL_TYPE, TIER_LEVELS} from "../../constants";
 import PoolInfoTable from "./PoolInfoTable/PoolInfoTable";
 import WhiteListUserGuideBanner from "./WhiteListUserGuideBanner/WhiteListUserGuideBanner";
-import {getEtherscanName, getEtherscanTransactionAddress, getEtherscanTransactionLink} from "../../utils/network";
+import {getEtherscanName, getEtherscanTransactionAddress} from "../../utils/network";
+import PoolIsEndMessage from "./PoolIsEndMessage/PoolIsEndMessage";
 
 const copyImage = "/images/copy.svg";
 const poolImage = "/images/pool_circle.svg";
@@ -355,7 +351,9 @@ const BuyToken: React.FC<any> = (props: any) => {
                   }
                 </div>
                 <span style={{ marginLeft: 14 }}>
-                  This pool is ended, thanks for all!
+                  <PoolIsEndMessage
+                    poolDetails={poolDetails}
+                  />
                 </span>
               </p>
             }
@@ -509,7 +507,9 @@ const BuyToken: React.FC<any> = (props: any) => {
                           marginTop: 40,
                           font: 'normal normal bold 14px/18px DM Sans'
                         }}>
-                        {(poolDetails?.startBuyTime && poolDetails?.endBuyTime) ? 'This pool is ended.' : ''}
+                        <PoolIsEndMessage
+                          poolDetails={poolDetails}
+                        />
                       </p>
                     )
                   }
