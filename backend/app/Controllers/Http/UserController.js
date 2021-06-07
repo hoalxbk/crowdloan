@@ -8,6 +8,7 @@ const Event = use('Event')
 
 const ErrorFactory = use('App/Common/ErrorFactory');
 const PoolService = use('App/Services/PoolService');
+const TierService = use('App/Services/TierService');
 const ReservedListService = use('App/Services/ReservedListService');
 const UserService = use('App/Services/UserService');
 const UserModel = use('App/Models/User');
@@ -292,6 +293,7 @@ class UserController {
 
   async getCurrentTier({request, params}) {
     try {
+      const formatDataPrivateWinner = (new TierService).formatDataPrivateWinner;
       const {walletAddress, campaignId} = params;
       const filterParams = {
         wallet_address: walletAddress,
@@ -303,7 +305,8 @@ class UserController {
       const poolService = new PoolService;
       const poolExist = await poolService.getPoolById(campaignId);
       console.log('[getCurrentTier] - poolExist.public_winner_status:', poolExist && poolExist.public_winner_status);
-      if (!poolExist || (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PRIVATE)) {
+
+      if (!poolExist) {
         return HelperUtils.responseSuccess({
           min_buy: 0,
           max_buy: 0,
@@ -312,6 +315,8 @@ class UserController {
           level: 0,
         });
       }
+      const isPublicWinner = (poolExist.public_winner_status == Const.PUBLIC_WINNER_STATUS.PUBLIC);
+      console.log('[getCurrentTier] - isPublicWinner:', isPublicWinner);
 
       // Check user is in reserved list
       const reserve = await (new ReservedListService).buildQueryBuilder(filterParams).first();
@@ -325,7 +330,7 @@ class UserController {
           level: 0
         }
         console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
-        return HelperUtils.responseSuccess(tier);
+        return HelperUtils.responseSuccess(formatDataPrivateWinner(tier, isPublicWinner));
       } else {
         // Get Tier in smart contract
         const userTier = (await HelperUtils.getUserTierSmart(walletAddress))[0];
@@ -333,13 +338,13 @@ class UserController {
         const tierDb = await TierModel.query().where('campaign_id', campaignId).where('level', userTier).first();
         if (!tierDb) {
           console.log(`[getCurrentTier] - Not exist Tier ${userTier} for campaign ${campaignId}`);
-          return HelperUtils.responseSuccess({
+          return HelperUtils.responseSuccess(formatDataPrivateWinner({
             min_buy: 0,
             max_buy: 0,
             start_time: 0,
             end_time: 0,
             level: 0,
-          });
+          }, isPublicWinner));
         }
         // get lottery ticket from winner list
         const winner = await WinnerModel.query().where('campaign_id', campaignId).where('wallet_address', walletAddress).first();
@@ -350,13 +355,13 @@ class UserController {
             console.log(`Do not found tier of winner ${winner.level}`)
             return HelperUtils.responseBadRequest();
           }
-          return HelperUtils.responseSuccess({
+          return HelperUtils.responseSuccess(formatDataPrivateWinner({
             min_buy: tier.min_buy,
             max_buy: tier.max_buy * winner.lottery_ticket,
             start_time: tier.start_time,
             end_time: tier.end_time,
             level: userTier
-          });
+          }, isPublicWinner));
         }
         // user not winner
         const tier = {
@@ -367,7 +372,8 @@ class UserController {
           level: userTier
         }
         console.log('[getCurrentTier] - tier:', JSON.stringify(tier));
-        return HelperUtils.responseSuccess(tier);
+        console.log('[getCurrentTier] - Response:', formatDataPrivateWinner(tier, isPublicWinner));
+        return HelperUtils.responseSuccess(formatDataPrivateWinner(tier, isPublicWinner));
       }
     } catch (e) {
       console.log(e);
