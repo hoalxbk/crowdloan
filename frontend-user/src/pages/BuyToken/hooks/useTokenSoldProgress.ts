@@ -4,7 +4,7 @@ import BigNumber from 'bignumber.js';
 
 import { useTypedSelector } from '../../../hooks/useTypedSelector';
 import Pool_ABI from '../../../abi/Pool.json';
-import { getContractInstance, SmartContractMethod } from '../../../services/web3';
+import {getContractInstance, getPoolContract, SmartContractMethod} from '../../../services/web3';
 import {NFT_PLUS_AMOUNT_PRODUCTION} from "../../../constants";
 import {getProgressWithPools} from "../../../utils/campaign";
 
@@ -21,14 +21,16 @@ const useTokenSoldProgress = (poolAddress: string | undefined, totalTokens: numb
   useEffect(() => {
     const calSoldProgress = async () => {
       if (poolAddress && networkAvailable && totalTokens && ethers.utils.isAddress(poolAddress)) {
-        const poolContract = getContractInstance(
-          Pool_ABI,
-          poolAddress,
-          connector,
-          appChainID,
-          SmartContractMethod.Read,
-          networkAvailable === 'eth'
-        );
+        // const poolContract = getContractInstance(
+        //   Pool_ABI,
+        //   poolAddress,
+        //   connector,
+        //   appChainID,
+        //   SmartContractMethod.Read,
+        //   networkAvailable === 'eth'
+        // );
+
+        const poolContract = getPoolContract({ networkAvailable, poolHash: poolAddress });
 
         if (poolContract) {
           const tokensSold = await poolContract.methods.tokenSold().call();
