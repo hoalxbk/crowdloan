@@ -166,7 +166,7 @@ const getUserTierSmart = async (wallet_address) => {
     tierSc.methods.getTiers().call(),
     tierSc.methods.userTotalStaked(wallet_address).call(),
   ]);
-  console.log('receivedData: ', receivedData);
+  console.log('[getUserTierSmart] - receivedData: ', receivedData);
 
   // get 4 tiers
   const tiers = receivedData[0].slice(0, 4);
