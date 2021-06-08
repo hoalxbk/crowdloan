@@ -27,19 +27,19 @@ const HeaderDefaultLayout = () => {
             <a href="#"><i className="custom-icon-github"></i></a> */}
           </div>
         </div>
-        {showBanner && <div className={styles.banner}>
-          <img src="/images/icons/ring.svg" alt="red-warning icon" />
-          <img src={iconClose} onClick={() => setShowBanner(false)} className={styles.closeBtn}/>
-          <span className={styles.loginErrorBannerText}>
-          NFTify (N1) launches on 4 June.
-          &nbsp;&nbsp;<button
-            className={styles.btnChangeAppNetwork}
-            onClick={() => {window.open('#/buy-token/23', '_blank')}}
-          >
-            View Details
-          </button>
-          </span>
-        </div>}
+        {/*{showBanner && <div className={styles.banner}>*/}
+        {/*  <img src="/images/icons/ring.svg" alt="red-warning icon" />*/}
+        {/*  <img src={iconClose} onClick={() => setShowBanner(false)} className={styles.closeBtn}/>*/}
+        {/*  <span className={styles.loginErrorBannerText}>*/}
+        {/*  NFTify (N1) launches on 4 June.*/}
+        {/*  &nbsp;&nbsp;<button*/}
+        {/*    className={styles.btnChangeAppNetwork}*/}
+        {/*    onClick={() => {window.open('#/buy-token/23', '_blank')}}*/}
+        {/*  >*/}
+        {/*    View Details*/}
+        {/*  </button>*/}
+        {/*  </span>*/}
+        {/*</div>}*/}
       </div>
     </>
   );
