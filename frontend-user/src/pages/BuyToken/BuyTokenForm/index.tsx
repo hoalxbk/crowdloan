@@ -456,7 +456,11 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
             <div className={styles.allowcationWrap}>
               <span className={styles.allowcationTitle}>Have Bought: </span>
               <span className={styles.allocationContent}>
-                {numberWithCommas(new BigNumber(userPurchased).multipliedBy(rate).toFixed())} {currencyName}
+                {numberWithCommas(
+                  new BigNumber(userPurchased).multipliedBy(rate)
+                    .decimalPlaces(2, BigNumber.ROUND_CEIL) // Round UP with 2 decimal places: 1.369999 --> 1.37
+                    .toFixed()
+                )} {currencyName}
               </span>
             </div>
 
@@ -464,9 +468,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
               <span className={styles.allowcationTitle}>Remaining: </span>
               <span className={styles.allocationContent}>
                 {numberWithCommas(
-                  new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).gt(0)
-                    ? new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).toFixed()
-                    : '0'
+                  new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).lte(0)
+                    ? '0'
+                    : (
+                      new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate))
+                        .decimalPlaces(2, BigNumber.ROUND_DOWN) // Round DOWN with 2 decimal places: 1.369999 --> 1.36
+                        .toFixed()
+                    )
                 )} {currencyName}
               </span>
             </div>
