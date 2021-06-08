@@ -2,6 +2,7 @@ import _ from "lodash";
 import moment from "moment";
 import BigNumber from 'bignumber.js';
 import {BUY_TYPE, NFT_PLUS_AMOUNT_PRODUCTION, POOL_IS_PRIVATE} from "../constants";
+import {convertFromWei, getPoolContract} from "../services/web3";
 
 export const checkIsFinishTime = (campaignDetail: any): boolean => {
 
@@ -102,3 +103,19 @@ export const checkPoolIsFinish = (pool: any) => {
   const currentTime = moment().unix();
   return (pool.finish_time && currentTime > pool.finish_time);
 };
+
+export const getTokenSold = async (pool: any) => {
+  let result = '0';
+  try {
+    const networkAvailable = pool.network_available || pool.networkAvailable;
+    const poolHash = pool.campaign_hash || pool.campaignHash;
+    const contract = getPoolContract({ networkAvailable, poolHash });
+    if (contract) {
+      result = await contract.methods.tokenSold().call();
+      result = convertFromWei(result.toString());
+    }
+  } catch (error) {
+    console.log(error);
+  }
+  return result;
+}

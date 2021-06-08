@@ -201,17 +201,18 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   const availableMaximumBuy = useMemo(() => {
     // Transform Maximum Buy in USDT tokens to ICO tokens by rate
-    const maxBuy = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
+    const maxBuy = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate))
+      .decimalPlaces(2, BigNumber.ROUND_FLOOR);
 
     // Check if max buy greater than total ICO coins sold
     if (maxBuy.gt(new BigNumber(tokenBalance))) {
       return (new BigNumber(tokenBalance).gt(0))
-        ? new BigNumber(tokenBalance).toFixed(6)
+        ? new BigNumber(tokenBalance).decimalPlaces(2, BigNumber.ROUND_FLOOR).toFixed()
         : '0';
     }
 
     return (new BigNumber(maxBuy).gt(0))
-      ? (maxBuy.toFixed(6))
+      ? (maxBuy.decimalPlaces(2, BigNumber.ROUND_FLOOR).toFixed())
       : '0';
   }, [tokenBalance, maximumBuy, userPurchased, poolAmount, tokenSold, rate]);
 
@@ -326,8 +327,8 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
 
   useEffect(() => {
     if (maximumBuy && userPurchased && rate) {
-      const remainingAmount = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate));
-      remainingAmount.gt(0) && setInput(remainingAmount.toFixed(6));
+      const remainingAmount = new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate)).decimalPlaces(2, BigNumber.ROUND_FLOOR);
+      remainingAmount.gt(0) && setInput(remainingAmount.toFixed(2));
     }
 
     return () => {
@@ -472,7 +473,7 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
                     ? '0'
                     : (
                       new BigNumber(maximumBuy).minus(new BigNumber(userPurchased).multipliedBy(rate))
-                        .decimalPlaces(2, BigNumber.ROUND_DOWN) // Round DOWN with 2 decimal places: 1.369999 --> 1.36
+                        .decimalPlaces(2, BigNumber.ROUND_FLOOR) // Round DOWN with 2 decimal places: 1.369999 --> 1.36
                         .toFixed()
                     )
                 )} {currencyName}
@@ -525,7 +526,13 @@ const BuyTokenForm: React.FC<BuyTokenFormProps> = (props: any) => {
           <span className={styles.purchasableCurrency}>
             <button
               className={styles.purchasableCurrencyMax}
-              onClick={() => setInput(availableMaximumBuy)}
+              onClick={
+                () => {
+                  setInput(
+                    new BigNumber(availableMaximumBuy).decimalPlaces(2, BigNumber.ROUND_FLOOR).toFixed()
+                  )
+                }
+              }
             >
               Max
             </button>

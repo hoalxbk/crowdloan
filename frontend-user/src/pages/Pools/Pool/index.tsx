@@ -9,7 +9,7 @@ import { numberWithCommas } from '../../../utils/formatNumber';
 import useCommonStyle from '../../../styles/CommonStyle';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
 import {PoolStatus} from "../../../utils/getPoolStatus";
-import {getAccessPoolText, getProgressWithPools} from "../../../utils/campaign";
+import {getAccessPoolText, getProgressWithPools, getTokenSold} from "../../../utils/campaign";
 import BigNumber from 'bignumber.js';
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
@@ -25,10 +25,33 @@ const Pool = (props: any): JSX.Element => {
   } = props
 
   useEffect(() => {
-    let { progress: progressPercent, tokenSold, totalSoldCoin } = getProgressWithPools(pool);
-    setProgress(parseFloat(progressPercent));
-    console.log('Progress: ', progressPercent);
-  }, [pool.tokenSold])
+    const getTokenSoldByPool = async () => {
+      let resTokenSold = '0';
+      if (pool.is_deploy) {
+        const tokenSold = await getTokenSold(pool);
+        console.log('pool45', pool.id, pool, tokenSold);
+        resTokenSold = tokenSold;
+      }
+
+      console.log('resTokenSold==>: ', resTokenSold);
+      let { progress: progressPercent, tokenSold, totalSoldCoin } = getProgressWithPools({
+        ...pool,
+        tokenSold: resTokenSold,
+      });
+      setProgress(parseFloat(progressPercent));
+      console.log('Progress: ', progressPercent);
+    };
+
+    getTokenSoldByPool();
+    const intervalProgress = setInterval(() => {
+      getTokenSoldByPool();
+    }, 20000);
+
+    return () => {
+      intervalProgress && clearInterval(intervalProgress);
+    }
+
+  }, [pool])
 
   useEffect(() => {
     const currentTime = moment().unix()
