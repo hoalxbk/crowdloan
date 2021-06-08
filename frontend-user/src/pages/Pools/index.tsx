@@ -62,21 +62,21 @@ const Pools = (props: any) => {
     });
   }, 500);
 
-  const getTokenSold = async (pool: any) => {
-    let result = '0';
-    try {
-      const networkAvailable = pool.network_available || pool.networkAvailable;
-      const poolHash = pool.campaign_hash || pool.campaignHash;
-      const contract = getPoolContract({ networkAvailable, poolHash });
-      if (contract) {
-        result = await contract.methods.tokenSold().call();
-        result = convertFromWei(result.toString());
-      }
-    } catch (error) {
-      console.log(error);
-    }
-    return result;
-  }
+  // const getTokenSold = async (pool: any) => {
+  //   let result = '0';
+  //   try {
+  //     const networkAvailable = pool.network_available || pool.networkAvailable;
+  //     const poolHash = pool.campaign_hash || pool.campaignHash;
+  //     const contract = getPoolContract({ networkAvailable, poolHash });
+  //     if (contract) {
+  //       result = await contract.methods.tokenSold().call();
+  //       result = convertFromWei(result.toString());
+  //     }
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  //   return result;
+  // }
 
   useEffect(() => {
     const manipulatePoolsData = async () => {
@@ -101,11 +101,11 @@ const Pools = (props: any) => {
 
       // if(!appChain || !connector) return;
 
-      await Promise.all(listData.map(async (pool: any) => {
-        if (pool.is_deploy === 0) return;
-        const tokenSold = await getTokenSold(pool);
-        pool.tokenSold = tokenSold;
-      }));
+      // await Promise.all(listData.map(async (pool: any) => {
+      //   if (pool.is_deploy === 0) return;
+      //   const tokenSold = await getTokenSold(pool);
+      //   pool.tokenSold = tokenSold;
+      // }));
 
       setPools(listData);
     };
