@@ -13,6 +13,7 @@ const ReservedListService = use('App/Services/ReservedListService');
 const UserService = use('App/Services/UserService');
 const UserModel = use('App/Models/User');
 const TierModel = use('App/Models/Tier');
+const BlockpassApprovedModel = use('App/Models/BlockPassApproved');
 const WinnerModel = use('App/Models/WinnerListUser');
 const PasswordResetModel = use('App/Models/PasswordReset');
 const BlockPassModel = use('App/Models/BlockPass');
@@ -441,6 +442,46 @@ class UserController {
       const wallet = JSON.parse(response.body).data.identities.crypto_address_eth.value;
       const kycStatus = JSON.parse(response.body).data.status;
 
+      // save to db to log
+      const blockPassObj = new BlockPassModel();
+      blockPassObj.fill({
+        client_id: params.clientId,
+        guid: params.guid,
+        status: params.status,
+        event: params.event,
+        record_id: params.recordId,
+        ref_id: params.refId,
+        submit_count: params.submitCount,
+        block_pass_id: params.blockPassID,
+        in_review_date: params.inreviewDate,
+        waiting_date: params.waitingDate,
+        approved_date: params.approvedDate,
+        email: email,
+        wallet_address: wallet,
+        env: params.env
+      });
+      blockPassObj.save();
+
+      if (Const.KYC_STATUS[kycStatus.toString().toUpperCase()] == Const.KYC_STATUS.APPROVED) {
+        const blockpassApproved = new BlockpassApprovedModel();
+        blockpassApproved.fill({
+          client_id: params.clientId,
+          guid: params.guid,
+          status: params.status,
+          record_id: params.recordId,
+          ref_id: params.refId,
+          submit_count: params.submitCount,
+          block_pass_id: params.blockPassID,
+          in_review_date: params.inreviewDate,
+          waiting_date: params.waitingDate,
+          approved_date: params.approvedDate,
+          email: email,
+          wallet_address: wallet,
+          env: params.env
+        });
+        blockpassApproved.save();
+      } 
+
       const user = await UserModel.query().where('email', email).where('wallet_address', wallet).first();
       if (!user) {
         console.log(`Do not found user with email ${email} and wallet ${wallet}`);
@@ -456,23 +497,7 @@ class UserController {
       });
       await UserModel.query().where('id', user.id).update(userModel);
 
-      // save to db to log
-      const blockPassObj = new BlockPassModel();
-      blockPassObj.fill({
-        client_id: params.clientId,
-        guid: params.guid,
-        status: params.status,
-        event: params.event,
-        record_id: params.recordId,
-        ref_id: params.refId,
-        submit_count: params.submitCount,
-        block_pass_id: params.blockPassID,
-        in_review_date: params.inreviewDate,
-        waiting_date: params.waitingDate,
-        approved_date: params.approvedDate,
-        env: params.env
-      });
-      blockPassObj.save();
+           
       return HelperUtils.responseSuccess();
     } catch (e) {
       console.log(e);
