@@ -463,23 +463,43 @@ class UserController {
       blockPassObj.save();
 
       if (Const.KYC_STATUS[kycStatus.toString().toUpperCase()] == Const.KYC_STATUS.APPROVED) {
-        const blockpassApproved = new BlockpassApprovedModel();
-        blockpassApproved.fill({
-          client_id: params.clientId,
-          guid: params.guid,
-          status: params.status,
-          record_id: params.recordId,
-          ref_id: params.refId,
-          submit_count: params.submitCount,
-          block_pass_id: params.blockPassID,
-          in_review_date: params.inreviewDate,
-          waiting_date: params.waitingDate,
-          approved_date: params.approvedDate,
-          email: email,
-          wallet_address: wallet,
-          env: params.env
-        });
-        blockpassApproved.save();
+        const approvedRecord = BlockpassApprovedModel().query().where('record_id', params.recordId).first();
+        if (!approvedRecord) {
+          const blockpassApproved = new BlockpassApprovedModel();
+          blockpassApproved.fill({
+            client_id: params.clientId,
+            guid: params.guid,
+            status: params.status,
+            record_id: params.recordId,
+            ref_id: params.refId,
+            submit_count: params.submitCount,
+            block_pass_id: params.blockPassID,
+            in_review_date: params.inreviewDate,
+            waiting_date: params.waitingDate,
+            approved_date: params.approvedDate,
+            email: email,
+            wallet_address: wallet,
+            env: params.env
+          });
+          blockpassApproved.save();
+        } else {
+          approvedRecord.merge({
+            client_id: params.clientId,
+            guid: params.guid,
+            status: params.status,
+            record_id: params.recordId,
+            ref_id: params.refId,
+            submit_count: params.submitCount,
+            block_pass_id: params.blockPassID,
+            in_review_date: params.inreviewDate,
+            waiting_date: params.waitingDate,
+            approved_date: params.approvedDate,
+            email: email,
+            wallet_address: wallet,
+            env: params.env
+          });
+          approvedRecord.save();
+        }
       } 
 
       const user = await UserModel.query().where('email', email).where('wallet_address', wallet).first();
