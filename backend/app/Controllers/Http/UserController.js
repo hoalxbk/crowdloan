@@ -463,7 +463,7 @@ class UserController {
       blockPassObj.save();
 
       if (Const.KYC_STATUS[kycStatus.toString().toUpperCase()] == Const.KYC_STATUS.APPROVED) {
-        const approvedRecord = BlockpassApprovedModel().query().where('record_id', params.recordId).first();
+        const approvedRecord = await BlockpassApprovedModel.query().where('record_id', params.recordId).first();
         if (!approvedRecord) {
           const blockpassApproved = new BlockpassApprovedModel();
           blockpassApproved.fill({
