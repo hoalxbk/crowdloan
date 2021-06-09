@@ -173,7 +173,9 @@ class PickRandomWinnerJob2 {
           // case ticket_allow > no of users
           // calc lottery ticket for each user base on amount sPKF
           const totalPKFObj = await userSnapshotService.sumPKFWithWeightRateBalanceByFilters(filters);
-          const totalPKF = totalPKFObj[0]['sum(`pkf_balance_with_weight_rate`)'];
+          const totalPKF = totalPKFObj[0]['sum(`pkf_balance`)'];
+          const totalPKFWithWeightBalanceObj = await userSnapshotService.sumPKFWithWeightRateBalanceByFilters(filters);
+          const totalPKFWithWeightBalance = totalPKFWithWeightBalanceObj[0]['sum(`pkf_balance_with_weight_rate`)'];
           winners = userSnapshots.toJSON().map(snapshot => {
             const winnerModel = new WinnerListUserModel();
             winnerModel.fill({
@@ -181,7 +183,7 @@ class PickRandomWinnerJob2 {
               campaign_id: data.campaign_id,
               level: snapshot.level,
               // lottery_ticket: 1 + ((tier.ticket_allow - count) * snapshot.pkf_balance_with_weight_rate / totalPKF)
-              lottery_ticket: (tier.ticket_allow * snapshot.pkf_balance_with_weight_rate / totalPKF)
+              lottery_ticket: this.caculateAllowcationByTier(snapshot, tier, totalPKF, totalPKFWithWeightBalance),
             });
             return winnerModel;
           });
@@ -190,6 +192,34 @@ class PickRandomWinnerJob2 {
       // save to winner list
       await campaignUpdated.winners().saveMany(winners);
     }
+  }
+
+  static async caculateAllowcationByTier(snapshot, tierConfig, totalPKF, totalPKFWithWeightBalance) {
+    // userPkfBalance  // (1)
+    // 1.05  // (2)
+    // totalPKFWithWeightBalance // (3)
+    // totakPkf // (4) // raw total pkf of all user
+
+    let userPkfBalance = snapshot.pkf_balance;
+    const userTier = snapshot.level;
+    switch (userTier) {
+      case 1: // Dove
+        break;
+      case 2: // Hawk
+        break;
+      case 3: // Eagle
+        userPkfBalance = new BigNumber(userPkfBalance).multipliedBy(1.05).toFixed();
+        break;
+      case 4: // Phoenix
+        userPkfBalance = new BigNumber(userPkfBalance).multipliedBy(1.1).toFixed();
+        break;
+      default :
+        break;
+    }
+
+    // userPkfBalance * totalPKFWithWeightBalance / totalPKF;
+    const ticket = new BigNumber(userPkfBalance).multipliedBy(totalPKFWithWeightBalance).div(totalPKF).toFixed(6);
+    return ticket || 0;
   }
 
   static async pickupRandom(userSnapshots, totalWinners, campaign_id, tier) {

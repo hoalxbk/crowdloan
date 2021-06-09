@@ -4,7 +4,7 @@ const WhitelistService = use('App/Services/WhitelistUserService')
 const TierService = use('App/Services/TierService');
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
-const PickRandomWinnerJob3 = use('App/Jobs/PickRandomWinnerJob3')
+const PickRandomWinnerJob2 = use('App/Jobs/PickRandomWinnerJob2')
 
 class WhiteListUserController {
   async getWhiteList({request}) {
@@ -131,7 +131,7 @@ class WhiteListUserController {
         tiers : tierData
       }
       // dispatch to job to pick random user
-      PickRandomWinnerJob3.handle(randomData);
+      PickRandomWinnerJob2.handle(randomData);
       return HelperUtils.responseSuccess(null, "Pickup random winner successful !")
     } catch (e) {
       console.log(e);
