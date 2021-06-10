@@ -34,6 +34,16 @@ class UserBalanceSnapshotService {
     return await this.buildQueryBuilder(params).sum('pkf_balance_with_weight_rate');
   }
 
+  async sumPKFWithWeightRateBalance(params) {
+    return await this.buildQueryBuilder(params)
+      .where(query => {
+        query.where('level', '2') // Hawk
+          .orWhere('level', '3')  // Eagle
+          .orWhere('level', '4'); // Phoenix
+      })
+      .sum('pkf_balance_with_weight_rate');
+  }
+
   async getAllSnapshotByFilters(params) {
     return await this.buildQueryBuilder(params).fetch();
   }

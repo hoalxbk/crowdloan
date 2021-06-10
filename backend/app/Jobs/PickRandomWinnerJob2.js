@@ -144,6 +144,15 @@ class PickRandomWinnerJob2 {
     await campaignUpdated.winners().delete();
     let tierList = await TierModel.query().where('campaign_id', data.campaign_id).fetch();
     tierList = JSON.parse(JSON.stringify(tierList));
+
+    const userSnapshotService = new UserBalanceSnapshotService();
+    const totalPKFObj = await userSnapshotService.sumPKFWithWeightRateBalance({
+      campaign_id: data.campaign_id,
+    });
+    const totalPKF = totalPKFObj[0]['sum(`pkf_balance_with_weight_rate`)'];
+
+    console.log('totalPKFtotalPKFtotalPKF============================>', totalPKF);
+
     for (let i = 0; i < data.tiers.length; i++) {
       const tier = data.tiers[i];
       const filters = {
@@ -151,7 +160,6 @@ class PickRandomWinnerJob2 {
         level: tier.level
       };
       // get all user by campaign and tier level to process
-      const userSnapshotService = new UserBalanceSnapshotService();
       const userSnapshots = await userSnapshotService.getAllSnapshotByFilters(filters);
       const countObj = await userSnapshotService.countByFilters(filters);
       const count = countObj[0]['count(*)'];
@@ -160,28 +168,13 @@ class PickRandomWinnerJob2 {
         continue;
       }
       let winners;
-      if (tier.level == 1) {
+      if (tier.level <= 1) {
         // pickup random lottery ticket for these tiers 1 Dove
         winners = await PickRandomWinnerJob2.pickupRandom(userSnapshots.toJSON(), tier.ticket_allow, data.campaign_id);
       } else {
-        // pickup random lottery ticket for  tier 2,3,4 Hawk Eagle Phoenix
-        if (tier.ticket_allow <= count) {
-          // always allocate at least an ticket for each user who has tier 3
-          winners = userSnapshots.toJSON().map((snapshot) => {
-            const winnerModel = new WinnerListUserModel();
-            winnerModel.fill({
-              wallet_address: snapshot.wallet_address,
-              campaign_id: data.campaign_id,
-              level: snapshot.level,
-              lottery_ticket: 1
-            });
-            return winnerModel;
-          });
-        } else {
+          // pickup random lottery ticket for  tier 2,3,4 Hawk Eagle Phoenix
           // case ticket_allow > no of users
           // calc lottery ticket for each user base on amount sPKF
-          const totalPKFObj = await userSnapshotService.sumPKFWithWeightRateBalanceByFilters(filters);
-          const totalPKF = totalPKFObj[0]['sum(`pkf_balance_with_weight_rate`)'];
           const tiers = tierList;
           console.log('data.tiers', tiers);
           winners = userSnapshots.toJSON().map(snapshot => {
@@ -196,7 +189,6 @@ class PickRandomWinnerJob2 {
             });
             return winnerModel;
           });
-        }
       }
       console.log('END doPickupRandomWinner: winners:', JSON.stringify(winners));
       // save to winner list
