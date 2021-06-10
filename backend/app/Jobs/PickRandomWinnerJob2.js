@@ -245,7 +245,7 @@ class PickRandomWinnerJob2 {
         tier.level === 4      // Phoenix
       ) {
         sumTotal = new BigNumber(sumTotal).plus(
-          new BigNumber(tier?.ticket_allow || 0).multipliedBy(tier?.max_buy || 0)
+          new BigNumber(tier.ticket_allow || 0).multipliedBy(tier.max_buy || 0)
         );
       }
     }

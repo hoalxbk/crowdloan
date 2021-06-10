@@ -14,7 +14,8 @@ export type Tier = {
   name: string,
   // maxBuy: string,s
   startTime: string,
-  endTime: string
+  endTime: string,
+  level: string | number,
 }
 
 export type PoolDetails = {
@@ -91,7 +92,8 @@ const usePoolDetails = (poolId : number): PoolDetailsReturnType => {
           name: tier.name,
           // maxBuy: `${tier.max_buy} ${data.accept_currency.toUpperCase()}`,
           startTime: tier.start_time,
-          endTime: tier.end_time
+          endTime: tier.end_time,
+          level: tier.level,
         })
       })
 
