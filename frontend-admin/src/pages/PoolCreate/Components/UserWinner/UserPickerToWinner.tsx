@@ -11,7 +11,7 @@ function UserPickerToWinner(props: any) {
   const dispatch = useDispatch();
   const [inputPicker, setInputPicker] = useState('');
 
-  const handlePickerRandom = async (e: any) => {
+  const handlePickerRandom = async (rule: string) => {
     // eslint-disable-next-line no-restricted-globals
     if (!confirm('Do you want pick random ?')) {
       return false;
@@ -21,7 +21,7 @@ function UserPickerToWinner(props: any) {
     console.log('pickerNumber', pickerNumber);
 
     // Call API random
-    await pickerRandomWinner(poolDetail?.id, pickerNumber)
+    await pickerRandomWinner(poolDetail?.id, rule)
       .then((res) => {
         console.log('[pickerRandomWinner] - res', res);
         if (res.status === 200) {
@@ -55,9 +55,16 @@ function UserPickerToWinner(props: any) {
         <Button
           variant="contained"
           color="primary"
-          onClick={handlePickerRandom}
+          onClick={() => handlePickerRandom('rule-normal')}
           style={{ marginLeft: 10, marginTop: -5 }}
-        >Pick</Button>
+        >Pick With Normal Rule</Button>
+
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => handlePickerRandom('rule-with-weight')}
+          style={{ marginLeft: 10, marginTop: -5 }}
+        >Pick With Weight Rate</Button>
       </div>
 
     </>

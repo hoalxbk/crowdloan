@@ -4,7 +4,6 @@ const kue = use('Kue');
 const Const = use('App/Common/Const');
 const UserBalanceSnapshotModel = use('App/Models/UserBalanceSnapshot');
 const CampaignModel = use('App/Models/Campaign');
-const TierModel = use('App/Models/Tier');
 const WinnerListUserModel = use('App/Models/WinnerListUser');
 const WhitelistService = use('App/Services/WhitelistUserService');
 const UserBalanceSnapshotService = use('App/Services/UserBalanceSnapshotService');
@@ -18,7 +17,7 @@ const jobFn = job => { // Function to be run on the job before it is saved
   job.backoff()
 };
 
-class PickRandomWinnerJob2 {
+class PickRandomWinnerNormalRule {
   // If this getter isn't provided, it will default to 1.
   // Increase this number to increase processing concurrency.
   static get concurrency() {
@@ -32,12 +31,12 @@ class PickRandomWinnerJob2 {
 
   // This is where the work is done.
   static async handle(data) {
-    console.log('PickRandomWinnerJob2-job started', data);
+    console.log('PickRandomWinnerNormalRule-job started', data);
     try {
       // do snapshot balance
-      await PickRandomWinnerJob2.doSnapshotBalance(data);
+      await PickRandomWinnerNormalRule.doSnapshotBalance(data);
       // pickup random winner after snapshot all whitelist user balance
-      await PickRandomWinnerJob2.doPickupRandomWinner(data);
+      await PickRandomWinnerNormalRule.doPickupRandomWinner(data);
     } catch (e) {
       console.log('Pickup random winner has error', e);
       throw e;
@@ -59,11 +58,8 @@ class PickRandomWinnerJob2 {
         page: i,
         pageSize: 10
       }
-
-      console.log('Start with filterParams:========>', filterParams);
       const whitelistService = new WhitelistService();
       whitelist = await whitelistService.findWhitelistUser(filterParams);
-      console.log('Whitelist', JSON.stringify(whitelist));
       // loop to get balance of each user on white list
       const whitelistObj = whitelist.toJSON();
       if (whitelistObj.total > 10 * i) {
@@ -71,13 +67,11 @@ class PickRandomWinnerJob2 {
       } else {
         isLoopContinue = false;
       }
-      console.log('whitelistObj.total:', whitelistObj.total);
       let userSnapshots = [];
       for (let i = 0; i < whitelistObj.data.length; i++) {
         // get user PKF balance and tier from SC
         const wallet = whitelistObj.data[i].wallet_address;
         const receivedData = await HelperUtils.getUserTierSmart(wallet);
-        console.log('getUserTierSmart: ', receivedData);
         const tier = receivedData[0];
         const pkfBalanceSmartContract = receivedData[1];
         let pkfBalance = pkfBalanceSmartContract;
@@ -142,8 +136,6 @@ class PickRandomWinnerJob2 {
     // delete old winner
     const campaignUpdated = await CampaignModel.query().where('id', data.campaign_id).first();
     await campaignUpdated.winners().delete();
-    let tierList = await TierModel.query().where('campaign_id', data.campaign_id).fetch();
-    tierList = JSON.parse(JSON.stringify(tierList));
     for (let i = 0; i < data.tiers.length; i++) {
       const tier = data.tiers[i];
       const filters = {
@@ -162,7 +154,7 @@ class PickRandomWinnerJob2 {
       let winners;
       if (tier.level == 1) {
         // pickup random lottery ticket for these tiers 1 Dove
-        winners = await PickRandomWinnerJob2.pickupRandom(userSnapshots.toJSON(), tier.ticket_allow, data.campaign_id);
+        winners = await PickRandomWinnerNormalRule.pickupRandom(userSnapshots.toJSON(), tier.ticket_allow, data.campaign_id);
       } else {
         // pickup random lottery ticket for  tier 2,3,4 Hawk Eagle Phoenix
         if (tier.ticket_allow <= count) {
@@ -182,83 +174,22 @@ class PickRandomWinnerJob2 {
           // calc lottery ticket for each user base on amount sPKF
           const totalPKFObj = await userSnapshotService.sumPKFWithWeightRateBalanceByFilters(filters);
           const totalPKF = totalPKFObj[0]['sum(`pkf_balance_with_weight_rate`)'];
-          const tiers = tierList;
-          console.log('data.tiers', tiers);
           winners = userSnapshots.toJSON().map(snapshot => {
             const winnerModel = new WinnerListUserModel();
-            const tickets = this.caculateAllowcationByTier(snapshot, tier, tiers, totalPKF);
-            console.log('WINNER:', snapshot, tickets);
             winnerModel.fill({
               wallet_address: snapshot.wallet_address,
               campaign_id: data.campaign_id,
               level: snapshot.level,
-              lottery_ticket: tickets,
+              // lottery_ticket: 1 + ((tier.ticket_allow - count) * snapshot.pkf_balance_with_weight_rate / totalPKF)
+              lottery_ticket: (tier.ticket_allow * snapshot.pkf_balance_with_weight_rate / totalPKF)
             });
             return winnerModel;
           });
         }
       }
-      console.log('END doPickupRandomWinner: winners:', JSON.stringify(winners));
       // save to winner list
       await campaignUpdated.winners().saveMany(winners);
     }
-  }
-
-  static caculateAllowcationByTier(snapshot, tierObj, tiers, totalPKF) {
-    // userPkfBalance  // (1)
-    // 1.05  // (2)
-    // totalPKFWithWeightBalance // (3)
-    // totakPkf // (4) // raw total pkf of all user
-
-    const totalPKFAllocate = (this.sumTotalAllowcatePkf(tiers)) || 0;
-    let userPkfBalance = snapshot.pkf_balance || 0;
-    const userTier = snapshot.level || 0;
-    switch (userTier) {
-      case 1: // Dove
-        break;
-      case 2: // Hawk
-        break;
-      case 3: // Eagle
-        userPkfBalance = new BigNumber(userPkfBalance).multipliedBy(1.05).toFixed();
-        break;
-      case 4: // Phoenix
-        userPkfBalance = new BigNumber(userPkfBalance).multipliedBy(1.1).toFixed();
-        break;
-      default :
-        break;
-    }
-
-    if (new BigNumber(totalPKF || 0).lte(0)) {
-      return 0;
-    }
-    console.log('tierObj: ==========>', tierObj);
-    // userPkfBalance * totalPKFWithWeightBalance / totalPKF;
-    const tickets = new BigNumber(userPkfBalance)
-      .multipliedBy(totalPKFAllocate)
-      .div(totalPKF)
-      .div(tierObj.max_buy) // Price per 1 ticket
-      .toFixed();
-
-    console.log('SUM Result:', userPkfBalance, totalPKFAllocate, totalPKF);
-    console.log('TICKET: ', tickets);
-    return tickets || 0;
-  }
-
-  static sumTotalAllowcatePkf(tiers) {
-    let sumTotal = 0;
-    for (let i = 0; i < tiers.length; i++) {
-      const tier = tiers[i];
-      if (tier.level === 2 ||   // Hawk
-        tier.level === 3 ||   // Eagle
-        tier.level === 4      // Phoenix
-      ) {
-        sumTotal = new BigNumber(sumTotal).plus(
-          new BigNumber(tier?.ticket_allow || 0).multipliedBy(tier?.max_buy || 0)
-        );
-      }
-    }
-    console.log('sumTotalAllowcatePkf', (new BigNumber(sumTotal)).toFixed());
-    return (new BigNumber(sumTotal)).toFixed();
   }
 
   static async pickupRandom(userSnapshots, totalWinners, campaign_id, tier) {
@@ -326,5 +257,5 @@ class PickRandomWinnerJob2 {
   }
 }
 
-module.exports = PickRandomWinnerJob2
+module.exports = PickRandomWinnerNormalRule;
 
