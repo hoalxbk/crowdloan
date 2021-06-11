@@ -161,9 +161,18 @@ const Card = (props: any): JSX.Element => {
             </div>
             <div>
               <div>
-                <span>{`${new BigNumber(progress).toFixed(2)}%`}</span>
+                <span>
+                  {new BigNumber(progress).gte(100) ?
+                    new BigNumber(progress).toFixed(0) :
+                    new BigNumber(progress).toFixed(2)
+                  }
+                  %
+                </span>
               </div>
-              <span>{numberWithCommas(tokenSold)}/{numberWithCommas(totalSoldCoin)}</span>
+              <span>
+                {numberWithCommas(tokenSold, 0)}
+                /
+                {numberWithCommas(totalSoldCoin)}</span>
             </div>
           </div>
         </div>
