@@ -107,7 +107,10 @@ const FormAdmin = (props: any) => {
             className={styles.inputG}
             name="email"
             placeholder="Email"
-            ref={register({ required: true, maxLength: 255 })}
+            ref={register({
+              // required: true,
+              maxLength: 255
+            })}
           />
           {errors.email && <span className={commonStyle.error}>This field is required</span>}
         </div>
