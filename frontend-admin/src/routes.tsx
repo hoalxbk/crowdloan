@@ -74,7 +74,7 @@ const Routes: React.FC<RouteComponentProps> = (props: RouteComponentProps) => {
         <PrivateRoute path={adminRoute('/setting')} component={Setting} />
         <PrivateRoute path={adminRoute('/profile')} component={Profile} />
 
-        <Route path={adminRoute('/register')} component={Register} />
+        {/*<Route path={adminRoute('/register')} component={Register} />*/}
         <Route path={adminRoute('/login')} component={Login} />
         <Route path={('/forgot-password')} exact component={ForgotPassword} />
         <Route path={('/reset-password/user/:token')} component={ResetPassword} />

@@ -158,7 +158,7 @@ const ResetPassword: React.FC<any> = (props: any) => {
           <br/>
           <Link className="login-button" to={adminRoute('/login')}>Sign in ?</Link>
           <br/>
-          <Link className="login-button" to={adminRoute('/register')}>Sign up ?</Link>
+          {/*<Link className="login-button" to={adminRoute('/register')}>Sign up ?</Link>*/}
 
           <button disabled={resetPasswordLoading} type="submit" className="login__form-button">
             Reset Password
