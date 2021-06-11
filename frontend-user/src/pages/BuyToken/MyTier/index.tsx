@@ -25,7 +25,8 @@ const headers = ['Tier', 'Allocation (%)', 'Start Buy Time', 'End Buy Time'];
 
 const MyTier: React.FC<MyTierProps> = ({ tiers, poolDetails }: MyTierProps) => {
   const styles = useStyles();
-  const poolPickWeight = 859;
+  const poolPickWeight = 27;
+  // const poolPickWeight = 860;
   const isPickeWeight = poolDetails.id == poolPickWeight;
   console.log('poolDetails -- poolDetails===>', poolDetails);
 
