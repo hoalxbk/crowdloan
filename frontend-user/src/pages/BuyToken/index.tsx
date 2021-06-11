@@ -424,11 +424,12 @@ const BuyToken: React.FC<any> = (props: any) => {
 
                     <div className={styles.btnGroup}>
                       {
+                        (availableJoin && !alreadyJoinPool && !joinPoolSuccess && !disableAllButton) &&
                         <Button
                           text={(!alreadyJoinPool && !joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
                           // text={(!joinPoolSuccess) ? 'Apply Whitelist': 'Applied Whitelist '}
                           backgroundColor={'#D01F36'}
-                          disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess || disableAllButton}
+                          // disabled={!availableJoin || alreadyJoinPool || joinPoolSuccess || disableAllButton}
                           loading={poolJoinLoading}
                           onClick={joinPool}
                           style={{
