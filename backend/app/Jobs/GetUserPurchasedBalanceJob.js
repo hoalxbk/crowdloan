@@ -27,7 +27,7 @@ class GetUserPurchasedBalanceJob {
 
   // This is required. This is a unique key used to identify this job.
   static get key () {
-    return Const.JOB_KEY.SEND_ADMIN_INFO_EMAIL;
+    return Const.JOB_KEY.GET_USER_PURCHASED_BALANCE;
   }
 
   // This is where the work is done.

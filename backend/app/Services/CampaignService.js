@@ -267,11 +267,21 @@ class CampaignService {
       }
     }
 
-  async findByCampaignId(campaign_id) {
-    let builder = CampaignModel.query()
-      .where('id', campaign_id);
-    return await builder.first();
-  }
+    async findByCampaignId(campaign_id) {
+      let builder = CampaignModel.query().where('id', campaign_id);
+      return await builder.first();
+    }
+
+    async updatePickWinnerRule(campaign_id, rule) {
+      const campaign = this.findByCampaignId(campaign_id);
+      if (!campaign) {
+        return false;
+      }
+      let result = CampaignModel.query().where('id', campaign_id).update({
+        pick_winner_rule: rule
+      });
+      return result;
+    }
 }
 
 module.exports = CampaignService;

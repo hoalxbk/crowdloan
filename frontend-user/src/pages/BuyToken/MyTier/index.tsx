@@ -14,15 +14,21 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import useStyles from './style';
+import TierTableWithWeightRate from "./TierTableWithWeightRate";
 
 type MyTierProps = {
   tiers: Tier[] | undefined,
-} 
+  poolDetails: any,
+}
 
 const headers = ['Tier', 'Allocation (%)', 'Start Buy Time', 'End Buy Time'];
 
-const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
+const MyTier: React.FC<MyTierProps> = ({ tiers, poolDetails }: MyTierProps) => {
   const styles = useStyles();
+  const poolPickWeight = 27;
+  // const poolPickWeight = 860;
+  const isPickeWeight = poolDetails.id == poolPickWeight;
+  console.log('poolDetails -- poolDetails===>', poolDetails);
 
   return (
     <div className={styles.MyTier}>
@@ -48,24 +54,37 @@ const MyTier: React.FC<MyTierProps> = ({ tiers }: MyTierProps) => {
               </TableRow>
             </TableHead>
             <TableBody>
-              {tiers && tiers.length> 0 && tiers.map((row: any, index) => (
-              <TableRow key={index}>
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {row.allocation}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {!row.startTime && '--'}
-                  {row.startTime &&convertTimeToStringFormat(new Date(row.startTime * 1000))}
-                </TableCell>
-                <TableCell component="th" scope="row">
-                  {!row.endTime && '--'}
-                  {row.endTime && convertTimeToStringFormat(new Date(row.endTime * 1000))}
-                </TableCell>
-                </TableRow>
-            ))}
+              {!isPickeWeight &&
+                <>
+                  {tiers && tiers.length> 0 && tiers.map((row: any, index) => (
+                    <TableRow key={index}>
+                      <TableCell component="th" scope="row">
+                        {row.name}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        {row.allocation}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        {!row.startTime && '--'}
+                        {row.startTime &&convertTimeToStringFormat(new Date(row.startTime * 1000))}
+                      </TableCell>
+                      <TableCell component="th" scope="row">
+                        {!row.endTime && '--'}
+                        {row.endTime && convertTimeToStringFormat(new Date(row.endTime * 1000))}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </>
+              }
+
+              {isPickeWeight &&
+                tiers && tiers.length > 0 && (
+                  <TierTableWithWeightRate
+                    tiers={tiers}
+                  />
+                )
+              }
+
             </TableBody>
             </Table>
         </TableContainer>

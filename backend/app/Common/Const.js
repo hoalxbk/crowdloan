@@ -49,6 +49,7 @@ module.exports = Object.freeze({
     SEND_FORGOT_PASSWORD: 'SendForgotPasswordJob-job',
     SEND_CONFIRMATION_EMAIL: 'SendConfirmationEmailJob-job',
     SEND_ADMIN_INFO_EMAIL: 'SendAdminInfoEmailJob-job',
+    GET_USER_PURCHASED_BALANCE: 'GetUserPurchasedBalanceJob-job',
     PICKUP_RANDOM_WINNER: 'PickupRandomWinner-job'
   },
   ACTIVE: 0,
@@ -145,4 +146,9 @@ module.exports = Object.freeze({
     PUBLIC: 0,
     PRIVATE: 1,
   },
+  PICK_WINNER_RULE: {
+    RULE_NORMAL: 'rule-normal',
+    RULE_WITH_WEIGHT_RATE: 'rule-with-weight-rate',
+  },
+
 });

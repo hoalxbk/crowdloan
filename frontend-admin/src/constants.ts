@@ -38,6 +38,10 @@ export const POOL_IS_PRIVATE = {
   PUBLIC: 0,
   PRIVATE: 1,
 };
+export const PICK_WINNER_RULE = {
+  RULE_NORMAL: 'rule-normal',
+  RULE_WITH_WEIGHT_RATE: 'rule-with-weight-rate',
+};
 
 export const USDT_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDT_ADDRESS;
 export const USDC_ADDRESS = process.env.REACT_APP_SMART_CONTRACT_USDC_ADDRESS;

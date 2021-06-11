@@ -2,9 +2,12 @@
 
 const WhitelistService = use('App/Services/WhitelistUserService')
 const TierService = use('App/Services/TierService');
+const CampaignService = use('App/Services/CampaignService');
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
-const PickRandomWinnerJob2 = use('App/Jobs/PickRandomWinnerJob2')
+const PickRandomWinnerJob2 = use('App/Jobs/PickRandomWinnerJob2');
+const PickRandomWinnerNormalRule = use('App/Jobs/PickRandomWinnerNormalRule');
+const Const = use('App/Common/Const');
 
 class WhiteListUserController {
   async getWhiteList({request}) {
@@ -102,8 +105,8 @@ class WhiteListUserController {
   async getRandomWinners({request}) {
     // get request params
     const campaign_id = request.params.campaignId;
-    const total_ticket = request.params.number;
-    console.log(`Pick random winner with campaign ${campaign_id} and total ticket ${total_ticket}`);
+    const rule = request.params.number;
+    console.log(`Pick random winner with campaign ${campaign_id} and total ticket ${rule}`);
     try {
       // get tier setting from db
       const tierService = new TierService();
@@ -120,7 +123,8 @@ class WhiteListUserController {
         if (item.ticket_allow) {
           const tierObj = {
             level: item.level,
-            ticket_allow: item.ticket_allow
+            ticket_allow: item.ticket_allow,
+            max_buy: item.max_buy,
           };
           tierData.push(tierObj);
         }
@@ -131,7 +135,13 @@ class WhiteListUserController {
         tiers : tierData
       }
       // dispatch to job to pick random user
-      PickRandomWinnerJob2.handle(randomData);
+      if (rule == Const.PICK_WINNER_RULE.RULE_NORMAL) {
+        PickRandomWinnerNormalRule.handle(randomData);
+        (new CampaignService).updatePickWinnerRule(campaign_id, Const.PICK_WINNER_RULE.RULE_NORMAL);
+      } else if (rule == Const.PICK_WINNER_RULE.RULE_WITH_WEIGHT_RATE) {
+        PickRandomWinnerJob2.handle(randomData);
+        (new CampaignService).updatePickWinnerRule(campaign_id, Const.PICK_WINNER_RULE.RULE_WITH_WEIGHT_RATE);
+      }
       return HelperUtils.responseSuccess(null, "Pickup random winner successful !")
     } catch (e) {
       console.log(e);

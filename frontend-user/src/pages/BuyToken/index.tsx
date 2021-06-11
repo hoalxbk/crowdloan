@@ -603,7 +603,11 @@ const BuyToken: React.FC<any> = (props: any) => {
                    )
                 }
                 {
-                  activeNav === HeaderType.MyTier && <MyTier tiers={poolDetails?.tiersWithDetails} />
+                  activeNav === HeaderType.MyTier &&
+                    <MyTier
+                      tiers={poolDetails?.tiersWithDetails}
+                      poolDetails={poolDetails}
+                    />
                 }
                 {
                   poolDetails?.type === POOL_TYPE.CLAIMABLE && (
