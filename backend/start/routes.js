@@ -64,9 +64,9 @@ Route.group(() => {
 Route.group(() => {
   // Auth
   Route.post('/login', 'AuthAdminController.login').validator('Login').middleware('checkSignature');
-  Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignature');
-  Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
-  Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');
+  // Route.post('/register', 'AuthAdminController.adminRegister').validator('Register').middleware('checkSignature');
+  // Route.get('confirm-email/:token', 'AdminController.confirmEmail'); // Confirm email when register
+  // Route.post('forgot-password', 'AdminController.forgotPassword').validator('ForgotPassword').middleware('checkSignature');
   Route.get('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.post('check-wallet-address', 'AuthAdminController.checkWalletAddress');
   Route.get('check-token/:token', 'AdminController.checkToken');
