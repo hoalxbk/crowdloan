@@ -2,10 +2,12 @@
 
 const WhitelistService = use('App/Services/WhitelistUserService')
 const TierService = use('App/Services/TierService');
+const CampaignService = use('App/Services/CampaignService');
 const HelperUtils = use('App/Common/HelperUtils');
 const Redis = use('Redis');
 const PickRandomWinnerJob2 = use('App/Jobs/PickRandomWinnerJob2');
 const PickRandomWinnerNormalRule = use('App/Jobs/PickRandomWinnerNormalRule');
+const Const = use('App/Common/Const');
 
 class WhiteListUserController {
   async getWhiteList({request}) {
@@ -133,10 +135,12 @@ class WhiteListUserController {
         tiers : tierData
       }
       // dispatch to job to pick random user
-      if (rule == 'rule-normal') {
+      if (rule == Const.PICK_WINNER_RULE.RULE_NORMAL) {
         PickRandomWinnerNormalRule.handle(randomData);
-      } else if (rule == 'rule-with-weight') {
+        (new CampaignService).updatePickWinnerRule(campaign_id, Const.PICK_WINNER_RULE.RULE_NORMAL);
+      } else if (rule == Const.PICK_WINNER_RULE.RULE_WITH_WEIGHT_RATE) {
         PickRandomWinnerJob2.handle(randomData);
+        (new CampaignService).updatePickWinnerRule(campaign_id, Const.PICK_WINNER_RULE.RULE_WITH_WEIGHT_RATE);
       }
       return HelperUtils.responseSuccess(null, "Pickup random winner successful !")
     } catch (e) {

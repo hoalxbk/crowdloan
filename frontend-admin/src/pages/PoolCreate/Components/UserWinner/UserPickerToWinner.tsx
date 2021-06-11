@@ -4,6 +4,7 @@ import {useCommonStyle} from "../../../../styles";
 import {pickerRandomWinner} from "../../../../request/participants";
 import {useDispatch} from "react-redux";
 import {alertFailure, alertSuccess} from "../../../../store/actions/alert";
+import {PICK_WINNER_RULE} from "../../../../constants";
 
 function UserPickerToWinner(props: any) {
   const commonStyle = useCommonStyle();
@@ -55,14 +56,14 @@ function UserPickerToWinner(props: any) {
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handlePickerRandom('rule-normal')}
+          onClick={() => handlePickerRandom(PICK_WINNER_RULE.RULE_NORMAL)}
           style={{ marginLeft: 10, marginTop: -5 }}
         >Pick With Normal Rule</Button>
 
         <Button
           variant="contained"
           color="primary"
-          onClick={() => handlePickerRandom('rule-with-weight')}
+          onClick={() => handlePickerRandom(PICK_WINNER_RULE.RULE_WITH_WEIGHT_RATE)}
           style={{ marginLeft: 10, marginTop: -5 }}
         >Pick With Weight Rate</Button>
       </div>

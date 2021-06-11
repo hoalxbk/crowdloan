@@ -48,6 +48,11 @@ export const POOL_IS_PRIVATE = {
   PRIVATE: 1,
 };
 
+export const PICK_WINNER_RULE = {
+  RULE_NORMAL: 'rule-normal',
+  RULE_WITH_WEIGHT_RATE: 'rule-with-weight-rate',
+};
+
 export const USER_STATUS = {
   UNVERIFIED: 0,
   ACTIVE: 1,

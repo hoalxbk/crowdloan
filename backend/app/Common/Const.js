@@ -145,4 +145,9 @@ module.exports = Object.freeze({
     PUBLIC: 0,
     PRIVATE: 1,
   },
+  PICK_WINNER_RULE: {
+    RULE_NORMAL: 'rule-normal',
+    RULE_WITH_WEIGHT_RATE: 'rule-with-weight-rate',
+  },
+
 });
