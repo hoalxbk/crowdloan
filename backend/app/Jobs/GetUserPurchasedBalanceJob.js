@@ -83,7 +83,6 @@ class GetUserPurchasedBalanceJob {
           .update({
             user_purchased_amount: userPurchasedAmount,
           });
-        return res;
       } else {
         console.log('Create User Purchase: ');
         // Create User purchase
@@ -92,9 +91,9 @@ class GetUserPurchasedBalanceJob {
           wallet_address: winnerWallet,
           user_purchased_amount: userPurchasedAmount,
         });
-        return res;
       }
     }
+    return 1;
   }
 
   // Dispatch
