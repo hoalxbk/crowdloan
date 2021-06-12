@@ -411,7 +411,7 @@ class PoolController {
     const page = param.page ? param.page : Config.get('const.page_default');
     param.limit = limit;
     param.page = page;
-    param.is_search = true;
+    param.is_search = true
     console.log('Start Pool List with params: ', param);
 
     try {
@@ -422,7 +422,11 @@ class PoolController {
       // }
 
       let listData = (new PoolService).buildSearchQuery(param);
-      listData = listData.orderBy('id', 'ASC');
+      if (process.env.NODE_ENV == 'development') {
+        listData = listData.orderBy('id', 'DESC');
+      } else {
+        listData = listData.orderBy('id', 'ASC');
+      }
       listData = await listData.paginate(page,limit);
 
       // // Cache data

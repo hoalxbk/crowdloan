@@ -24,7 +24,11 @@ const UserJoinPool = (props: any) => {
       <div className={classes.formControl}>
         <label className={classes.formControlLabel}>List User Join Pools:</label>
       </div>
-      <Tabs defaultActiveKey="1" onChange={callback}>
+      <Tabs defaultActiveKey="1" onChange={callback}
+        style={{
+          minHeight: 500
+        }}
+      >
         <TabPane tab="Participant" key="1">
           <UserParticipant poolDetail={poolDetail} />
         </TabPane>
@@ -40,8 +44,8 @@ const UserJoinPool = (props: any) => {
               control={control}
             />
           </div>
-
           <UserWinner poolDetail={poolDetail} />
+
         </TabPane>
         <TabPane tab="Reserve" key="3">
           <UserReverse poolDetail={poolDetail} />
