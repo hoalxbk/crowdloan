@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useDispatch} from 'react-redux';
 import useStyles from './style';
 import {numberWithCommas} from '../../../utils/formatNumber';
@@ -7,7 +7,7 @@ import {ACCEPT_CURRENCY, BUY_TYPE, NETWORK} from '../../../constants';
 import useFetch from '../../../hooks/useFetch';
 import {getIconCurrencyUsdt} from "../../../utils/usdt";
 import {PoolStatus} from "../../../utils/getPoolStatus";
-import {getAccessPoolText, getProgressWithPools} from "../../../utils/campaign";
+import {checkPoolIsFinish, getAccessPoolText, getProgressWithPools, getTokenSold} from "../../../utils/campaign";
 import BigNumber from 'bignumber.js';
 
 const dotIcon = '/images/icons/dot.svg'
@@ -16,17 +16,42 @@ const BSCIcon = "/images/bsc.svg";
 
 const Card = (props: any): JSX.Element => {
   const styles = useStyles();
-
   const {
-    pool
-  } = props
+    pool, autoFetch
+  } = props;
   const { data: participants } = useFetch<any>(`/user/counting/${pool.id}`);
 
-  let {
-    progress,
-    tokenSold,
-    totalSoldCoin,
-  } = getProgressWithPools(pool);
+  const [progress, setProgress] = useState('0');
+  const [tokenSold, setTokenSold] = useState('0');
+  const [totalSoldCoin, setTotalSoldCoin] = useState('0');
+  useEffect(() => {
+    const getTokenProgressInfoByPool = async () => {
+      console.log('Run getTokenProgressInfoByPool========>');
+      if (autoFetch) {
+        pool.tokenSold = await getTokenSold(pool);
+      }
+      let {
+        progress: progressPercent,
+        tokenSold: totalTokenSold,
+        totalSoldCoin: totalToken,
+      } = getProgressWithPools(pool);
+
+      setProgress(progressPercent);
+      setTokenSold(totalTokenSold);
+      setTotalSoldCoin(totalToken);
+    };
+
+    getTokenProgressInfoByPool();
+    if (autoFetch) {
+      const intervalProgress = setInterval(() => {
+        getTokenProgressInfoByPool();
+      }, 15000);
+
+      return () => {
+        intervalProgress && clearInterval(intervalProgress);
+      }
+    }
+  }, [pool]);
 
   // useEffect(() => {
   //   const currentTime = moment().unix()

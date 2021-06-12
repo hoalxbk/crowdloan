@@ -276,7 +276,7 @@ const BuyToken: React.FC<any> = (props: any) => {
                       {isWidthUp('sm', props.width) && poolDetails?.tokenDetails?.address}
                       {isWidthDown('xs', props.width) && shortenAddress(poolDetails?.tokenDetails?.address || '', 8)}
 
-                      <CopyToClipboard text={poolDetails?.tokenDetails?.address}
+                      <CopyToClipboard text={poolDetails?.tokenDetails?.address || ''}
                         onCopy={() => {
                         setCopiedAddress(true);
                         setTimeout(() => {

@@ -97,7 +97,7 @@ const Dashboard = (props: any) => {
         <h2>Upcoming Pools</h2>
         <div className="pools">
           {upcomingPools.map((pool: any, index) => {
-            return index < 8 && <Card pool={pool} key={pool.id}/>
+            return index < 8 && <Card pool={pool} key={pool.id} autoFetch={true} />
           })}
         </div>
         {/*<button className="btn" onClick={() => window.open('https://t.me/PolkaFoundryANN', '_blank')}>*/}
@@ -113,7 +113,7 @@ const Dashboard = (props: any) => {
         <h2>Featured Pools</h2>
         <div className="pools">
           {featurePools.map((pool: any, index) => {
-            return index < 8 && <Card pool={pool} key={pool.id}/>
+            return index < 8 && <Card pool={pool} key={pool.id} autoFetch={false} />
           })}
         </div>
         {/*<a href="https://t.me/PolkaFoundryANN" target="_blank" className="btn" style={{width: '170px'}}>*/}
