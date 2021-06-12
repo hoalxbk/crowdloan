@@ -45,7 +45,7 @@ const Card = (props: any): JSX.Element => {
     if (autoFetch) {
       const intervalProgress = setInterval(() => {
         getTokenProgressInfoByPool();
-      }, 15000);
+      }, 10000);
 
       return () => {
         intervalProgress && clearInterval(intervalProgress);
