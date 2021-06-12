@@ -57,6 +57,13 @@ export const getAccessPoolText = (pool: any) => {
   return ((buyType + '').toLowerCase() == BUY_TYPE.WHITELIST_LOTTERY ? "Whitelist/Lottery" : BUY_TYPE.FCFS.toUpperCase());
 };
 
+export const calculateTokenSoldWhenFinish = (totalSoldCoin: string | number) => {
+  const result = new BigNumber(totalSoldCoin).minus(
+    new BigNumber(totalSoldCoin).div(10000)
+  ).toFixed();
+  return result;
+};
+
 export const getProgressWithPools = (pool: any) => {
   let tokenSold = pool.tokenSold || pool.token_sold || '0';
   let totalSoldCoin = pool.totalSoldCoin || pool.total_sold_coin || '0';
@@ -66,7 +73,7 @@ export const getProgressWithPools = (pool: any) => {
   if (isFinish) {
     return {
       progress: '100',
-      tokenSold: totalSoldCoin,
+      tokenSold: calculateTokenSoldWhenFinish(totalSoldCoin),
       totalSoldCoin: totalSoldCoin,
     }
   }
