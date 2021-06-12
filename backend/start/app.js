@@ -66,6 +66,7 @@ const aliases = {}
 const commands = [
   'App/Commands/AutoJoinUser',
   'App/Commands/SnapshotBalanceCommand',
+  'App/Commands/GetUserPurchasedBalanceCommand',
   // 'App/Commands/SignatureCommand',
 ];
 
