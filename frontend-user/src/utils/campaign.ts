@@ -116,6 +116,10 @@ export const getTokenSold = async (pool: any) => {
   try {
     const networkAvailable = pool.network_available || pool.networkAvailable;
     const poolHash = pool.campaign_hash || pool.campaignHash;
+    if (poolHash == 'Token contract not available yet.') {
+      return '0';
+    }
+
     const contract = getPoolContract({ networkAvailable, poolHash });
     if (contract) {
       result = await contract.methods.tokenSold().call();
