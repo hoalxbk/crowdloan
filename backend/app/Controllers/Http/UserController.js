@@ -500,24 +500,38 @@ class UserController {
           });
           approvedRecord.save();
         }
-      } 
+      }
 
-      const user = await UserModel.query().where('email', email).where('wallet_address', wallet).first();
-      if (!user) {
+      if (!email || !wallet) {
         console.log(`Do not found user with email ${email} and wallet ${wallet}`);
         return HelperUtils.responseBadRequest();
       }
-      // update user KYC status
-      const userModel = new UserModel();
-      userModel.fill({
-        ...JSON.parse(JSON.stringify(user)),
-        is_kyc: Const.KYC_STATUS[kycStatus.toString().toUpperCase()],
-        record_id: params.recordId,
-        ref_id: params.refId
-      });
-      await UserModel.query().where('id', user.id).update(userModel);
 
-           
+      let user = await UserModel.query().where('email', email).where('wallet_address', wallet).first();
+      if (!user) {
+        user = new UserModel();
+        user.fill({
+          email,
+          is_kyc: Const.KYC_STATUS.APPROVED,
+          wallet_address: wallet,
+          record_id: params.recordId,
+          ref_id: params.refId,
+          is_active: Const.USER_STATUS.ACTIVE,
+          username: email,
+          signature: email,
+        });
+        user.save();
+      }
+      // // update user KYC status
+      // const userModel = new UserModel();
+      // userModel.fill({
+      //   ...JSON.parse(JSON.stringify(user)),
+      //   is_kyc: Const.KYC_STATUS[kycStatus.toString().toUpperCase()],
+      //   record_id: params.recordId,
+      //   ref_id: params.refId
+      // });
+      // await UserModel.query().where('id', user.id).update(userModel);
+
       return HelperUtils.responseSuccess();
     } catch (e) {
       console.log(e);

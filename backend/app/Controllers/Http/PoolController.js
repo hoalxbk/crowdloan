@@ -411,7 +411,7 @@ class PoolController {
     const page = param.page ? param.page : Config.get('const.page_default');
     param.limit = limit;
     param.page = page;
-    param.is_search = true;
+    param.is_search = true
     console.log('Start Pool List with params: ', param);
 
     try {
