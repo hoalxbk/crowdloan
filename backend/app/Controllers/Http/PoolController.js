@@ -422,7 +422,11 @@ class PoolController {
       // }
 
       let listData = (new PoolService).buildSearchQuery(param);
-      listData = listData.orderBy('id', 'ASC');
+      if (process.env.NODE_ENV == 'development') {
+        listData = listData.orderBy('id', 'DESC');
+      } else {
+        listData = listData.orderBy('id', 'ASC');
+      }
       listData = await listData.paginate(page,limit);
 
       // // Cache data
