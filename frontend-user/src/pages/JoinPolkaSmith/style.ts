@@ -1,5 +1,7 @@
 import { makeStyles } from '@material-ui/core';
+import {isMobile} from 'react-device-detect';
 
+// @ts-ignore
 const useStyles = makeStyles((theme: any) => {
   return {
     polkaSmithMain: {
@@ -7,11 +9,12 @@ const useStyles = makeStyles((theme: any) => {
       height: "auto",
       paddingTop: 20,
       fontSize: 16,
+      padding: isMobile ? 20 : 0
     },
     polkaSmithContainer: {
       maxWidth: 1280,
       alignItems: "center",
-      padding: 60,
+      padding: isMobile ? 0 : 60,
       fontFamily: 'DM Sans',
       margin: "auto",
       color: "white",
@@ -22,15 +25,19 @@ const useStyles = makeStyles((theme: any) => {
     },
     headerText: {
       display: "inline-block",
-      width: "45%"
+      width: !isMobile ? "45%" : "100%"
     },
     headerImg: {
-      display: "inline-block",
+      display: !isMobile ? "inline-block" : "none",
       width: "55%",
       paddingLeft: 50
     },
     headerText1: {
-      fontSize: 48,
+      fontSize: isMobile ? 36 : 48,
+      "& img": {
+        width: isMobile ? 32 : 40,
+        height: isMobile ? 32 : 40
+      }
     },
     headerContent :{
       marginTop: 20,
@@ -42,15 +49,25 @@ const useStyles = makeStyles((theme: any) => {
       width: "100%",
       marginTop: 60,
       display: "flex",
+      flexWrap: "wrap",
       borderWidth: 1,
       borderStyle: "solid",
       borderColor: "#ffffff36"
     },
      label: {
-      width: "25%",
+      width: isMobile ? "100%" : "20%",
        padding: 20,
        lineHeight: 1.8,
-       borderRight: "inherit"
+       border: isMobile ? "inherit" : "unset",
+       textAlign: isMobile ? "center !important" : "unset",
+       borderRight: "inherit",
+       "& h3": {
+        fontSize: 16,
+       },
+       "& span": {
+         fontSize: 16,
+         fontWeight: "bold"
+       }
      },
     introMain: {
       marginTop: 100,
@@ -59,40 +76,31 @@ const useStyles = makeStyles((theme: any) => {
       width: "100%",
       borderRadius: 10,
       textAlign: "center",
-      padding: 20,
+      padding: isMobile ? 10 : 20,
+      "& h3" :{
+        fontSize: isMobile ? "14px !important" : "16px",
+      },
     },
     introContainer: {
       display: "flex",
       width: "100%",
-    },
-    introCounting: {
-      marginTop: 50,
-      marginBottom: 50,
-      display: "flex",
-      justifyContent: "center"
+      flexWrap: "wrap",
+
     },
     introBlock: {
       display: "inline-block",
-      width: "50%",
+      width: isMobile ? "100%" : "50%",
       alignContent: "center",
       textAlign: "center",
       lineHeight: 2
     },
-    timeContainer: {
-      borderRadius: 10,
-      width: 70,
-      height: 70,
-      lineHeight: 2,
-      backgroundColor: "#ffffff16",
-      textAlign: "center",
-    },
     introContribute: {
       borderWidth: 3,
-      padding: 30,
-      margin: 30,
+      padding: isMobile ? 10 : 30,
+      margin: isMobile ? 0 : 30,
       borderStyle: "solid",
       borderRadius: 5,
-      borderColor: "#6398FF"
+      borderColor: "#6398FF",
     },
     joinBTN: {
       height: '42px',
@@ -144,21 +152,27 @@ const useStyles = makeStyles((theme: any) => {
     },
     additionalContainer: {
       textAlign: "center",
-      padding: 100,
+      marginTop: isMobile ? 50 : 100,
+      padding: isMobile ? 0 : 100,
       lineHeight: 1.8
     },
     additionalInfo: {
       display: "flex",
+      flexWrap: "wrap",
       marginTop: 40
     },
     additionalLabelContainer: {
       display: "inline-block",
-      width: "33.333%",
+      width: isMobile ? "100%" : "33.333%",
+      paddingLeft: isMobile ? "0 !important" : 0,
+      paddingRight: isMobile ? "0 !important" : 0,
+      padding: isMobile ? 10 : 0,
     },
     additionalLabel: {
       width: "100%",
       borderRadius: 5,
       backgroundColor: "#ffffff16",
+      margin: isMobile ? "10" : "unset",
       padding: 10,
       "& h2" : {
         fontSize: 24
@@ -177,16 +191,16 @@ const useStyles = makeStyles((theme: any) => {
     },
     leaderBoardItem: {
       display: "inline-flex",
-      width: "50%",
+      width: isMobile ? "100%" : "50%",
       "& h3": {
         display: "inline-block",
         width: "70%",
-        fontSize: 16,
+        fontSize: isMobile ? 14: 16,
         margin: "auto",
         fontWeight: 500,
       },
       "& h2": {
-        fontSize: 18,
+        fontSize: isMobile ? 14: 18,
         display: "inline-block",
         width: "30%",
         margin: "auto",
@@ -199,47 +213,6 @@ const useStyles = makeStyles((theme: any) => {
         lineHeight: 2,
         fontSize: 44
       }
-    },
-    auctionPlanContainer: {
-      marginTop: 30,
-      display: "flex",
-      flexWrap: "wrap",
-    },
-    auctionPlanDetail: {
-      display: "inline-block",
-      background: "linear-gradient(#481845, #080C33)",
-      width: "33.333%",
-      padding: '50px 20px'
-    },
-    auctionPlanDetail1: {
-      display: "inline-block",
-      background: "linear-gradient(#E6447D90, #080C3380)",
-      width: "33.333%",
-      textAlign: "center",
-      padding: '50px 20px'
-    },
-    auctionKeyword: {
-      height: '32px',
-      width: 180,
-      fontFamily: 'DM Sans',
-      fontStyle: 'normal',
-      fontWeight: 'bold',
-      fontSize: 16,
-      lineHeight: '18px',
-      color: '#FFFFFF',
-      border: 'none',
-      outline: 'none',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      borderRadius: '60px',
-      backgroundColor: '#DA366E',
-      margin: '10px auto 0',
-    },
-    auctionDes: {
-      color: "#D9DAF2",
-      marginTop: 20,
-      lineHeight: 1.5
     },
     askedQuestions : {
       textAlign: "center",
@@ -268,7 +241,11 @@ const useStyles = makeStyles((theme: any) => {
       color: "#D9DAF2",
       height: "fit-content",
       transition: "height 600ms ease-out",
-      margin: '15px 0'
+      marginBottom: '15px',
+      lineHeight: 1.5,
+      "& a" : {
+        color: "#4e5bf1"
+      }
     },
     navQuestion: {
       marginTop: 20,
@@ -287,13 +264,40 @@ const useStyles = makeStyles((theme: any) => {
       margin: "20px 0 40px 0",
       padding: "20px 0 40px 0"
     },
+    detailInfo: {
+      display: "inline-block",
+      width: isMobile ? "100%" : "50%",
+      "& h3" :{
+        fontSize: 16
+      },
+      "& h2" : {
+        fontSize: 22
+      }
+    },
     contributeForm: {
       maxWidth: 630,
       margin: "20px auto",
+      "& h1" :{
+        fontSize: isMobile ? "28px !important" : "36px",
+      },
+      "& h2" :{
+        fontSize: isMobile ? "22px !important" : "24px",
+      },
+      "& h4" :{
+        fontSize: isMobile ? "14px !important" : "16px",
+      }
     },
     contributeInputGroup: {
       display: "flex",
       margin: "20px 0px"
+    },
+    errorMessage: {
+      width: "100%",
+      textAlign: "right",
+      minHeight: 20,
+      marginTop: -15,
+      color: "#ff5151",
+      fontSize: 15
     },
     contributeInputLabel: {
       display: "inline-block",
@@ -334,7 +338,6 @@ const useStyles = makeStyles((theme: any) => {
       right: 5,
       zIndex: 9999
     }
-
   };
 });
 
